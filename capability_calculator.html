@@ -1,0 +1,1468 @@
+<!--
+SBS Process Capability Study Calculator | Copyright (c) 2024 Specialty Bolt and Screw, Inc.
+Fingerprint: SBS-CAPABILITY-v1 | https://shop.specialtybolt.com/
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Process Capability Study Calculator</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/3.0.1/chartjs-plugin-annotation.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1D3557;
+  --navy-dark: #12243a;
+  --orange: #E87722;
+  --orange-light: #F0913A;
+  --orange-pale: #FDF0E5;
+  --white: #ffffff;
+  --gray-50: #F8F9FA;
+  --gray-100: #F0F2F5;
+  --gray-200: #E2E6EA;
+  --gray-300: #CED4DA;
+  --gray-400: #ADB5BD;
+  --gray-500: #6C757D;
+  --gray-600: #495057;
+  --gray-700: #343A40;
+  --active-green: #1A8A4A;
+  --active-bg: #E8F5EE;
+  --obsolete-red: #C0392B;
+  --obsolete-bg: #FDECEA;
+  --withdrawn-amber: #B7610A;
+  --withdrawn-bg: #FEF3E2;
+  --orange-dark: #c4631a;
+  --bg: #F0F2F5;
+  --surface: #ffffff;
+  --card-bg: #F8F9FA;
+  --border: #E2E6EA;
+  --border-light: #E2E6EA;
+  --text: #343A40;
+  --text-mid: #495057;
+  --muted: #6C757D;
+  --green: #1A8A4A;
+  --green-bg: #E8F5EE;
+  --red: #C0392B;
+  --red-bg: #FDECEA;
+  --amber: #B7610A;
+  --amber-bg: #FEF3E2;
+  --tab-inactive: #E2E6EA;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  min-height: 100vh;
+}
+
+/* ══════════════════════════════
+   PRINT STYLES
+══════════════════════════════ */
+@media print {
+  .no-print { display: none !important; }
+  .print-show { display: block !important; }
+
+  body { background: white !important; font-size: 11pt; }
+
+  .page-wrap { background: white !important; box-shadow: none !important; }
+  .main { padding: 0 !important; max-width: 100% !important; }
+
+  /* Only show the active tab content */
+  .tab-content { display: none !important; }
+  .tab-content.active { display: block !important; }
+
+  /* Notes tab: show all text nicely */
+  #tab-notes.active .notes-body { column-count: 1 !important; }
+
+  .card {
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+    break-inside: avoid;
+    margin-bottom: 12pt !important;
+    page-break-inside: avoid;
+  }
+
+  .results-section { display: block !important; }
+
+  canvas { max-width: 100% !important; height: auto !important; }
+
+  .print-header-block {
+    display: flex !important;
+    align-items: center;
+    gap: 16px;
+    padding: 12pt 0 10pt;
+    border-bottom: 3pt solid #e87722;
+    margin-bottom: 14pt;
+  }
+  .print-header-block h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #e87722;
+    letter-spacing: 0.03em;
+  }
+  .print-header-block p {
+    font-size: 9pt;
+    color: #888;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-family: 'Source Code Pro', monospace;
+    margin-top: 3pt;
+  }
+
+  .section-head { background: #e87722 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .status-banner { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .status-banner.pass { background: #eaf6ef !important; }
+  .status-banner.fail { background: #fdecea !important; }
+  .data-tbl th { background: #e87722 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .prob-table th { background: #f0efec !important; }
+  .prob-table tr.within td { background: #eaf6ef !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .prob-table tr.outside td { background: #fdecea !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .tile { border-top-width: 4px !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+
+.print-show { display: none; }
+.print-header-block { display: none; }
+
+/* ══════════════════════════════
+   HEADER  (SBS Design System)
+══════════════════════════════ */
+.header {
+  background: #ffffff;
+  padding: 0.65rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border-bottom: 3px solid var(--orange);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header-left { display: flex; align-items: center; gap: 16px; }
+.header-logo img { height: 48px; display: block; }
+.header-divider { width: 1px; height: 36px; background: var(--gray-200); flex-shrink: 0; }
+.header-brand { display: flex; flex-direction: column; gap: 2px; }
+.header-brand h1 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 24px; font-weight: 800;
+  letter-spacing: 0.03em; text-transform: uppercase;
+  color: var(--navy); line-height: 1;
+}
+.header-brand p { font-family: 'Inter', sans-serif; font-size: 11px; color: var(--gray-500); margin-top: 1px; }
+.header-actions { display: flex; align-items: center; gap: 10px; }
+.btn-hdr {
+  padding: 8px 16px; border-radius: 6px;
+  font-family: 'Barlow', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.3px;
+  cursor: pointer; border: none;
+  background: var(--orange); color: white;
+  transition: all 0.15s;
+  display: flex; align-items: center; gap: 7px;
+  box-shadow: 0 2px 6px rgba(232,119,34,0.3);
+}
+.btn-hdr:hover { background: var(--orange-light); transform: translateY(-1px); }
+.btn-hdr.solid { background: var(--orange); color: white; }
+.btn-hdr.navy { background: var(--navy); color: white; }
+.btn-hdr.navy:hover { background: var(--navy-dark); }
+
+/* ══════════════════════════════
+   TAB NAVIGATION
+══════════════════════════════ */
+.tab-nav {
+  background: var(--orange);
+  padding: 0 36px;
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  position: relative;
+  z-index: 9;
+}
+
+.tab-btn {
+  padding: 9px 20px 11px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--tab-inactive);
+  color: #666;
+  border: none;
+  border-radius: 7px 7px 0 0;
+  cursor: pointer;
+  position: relative;
+  top: 0;
+  transition: background 0.12s, color 0.12s, top 0.12s;
+  border-top: 3px solid transparent;
+  white-space: nowrap;
+  user-select: none;
+}
+.tab-btn:hover { background: #eae7e2; color: #333; }
+.tab-btn.active {
+  background: var(--surface);
+  color: var(--orange);
+  border-top-color: var(--orange);
+  font-weight: 700;
+  top: 2px;
+  box-shadow: 0 -2px 7px rgba(0,0,0,0.09);
+  z-index: 2;
+}
+.tab-btn.notes-tab { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.8); border-top-color: transparent; margin-left: 12px; border-left: 1px solid rgba(255,255,255,0.2); }
+.tab-btn.notes-tab:hover { background: rgba(255,255,255,0.22); color: white; }
+.tab-btn.notes-tab.active { background: var(--surface); color: var(--navy); border-top-color: var(--orange); }
+
+.btn-add-tab {
+  padding: 9px 15px 11px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(255,255,255,0.14);
+  color: rgba(255,255,255,0.9);
+  border: 2px dashed rgba(255,255,255,0.45);
+  border-bottom: none;
+  border-radius: 7px 7px 0 0;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  transition: all 0.15s;
+}
+.btn-add-tab:hover { background: rgba(255,255,255,0.25); }
+
+/* ══════════════════════════════
+   PAGE / MAIN
+══════════════════════════════ */
+.page-wrap {
+  background: var(--surface);
+  min-height: calc(100vh - 125px);
+  border-top: none;
+  box-shadow: 0 -1px 0 var(--border-light);
+}
+
+.main { padding: 28px 36px 70px; max-width: 1100px; margin: 0 auto; }
+
+@media (max-width: 680px) {
+  .main { padding: 16px 16px 50px; }
+  .header, .tab-nav { padding: 0 16px; }
+  .header-brand h1 { font-size: 18px; }
+}
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ══════════════════════════════
+   SECTION HEADS
+══════════════════════════════ */
+.section-head {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: white;
+  background: var(--navy);
+  display: inline-block;
+  padding: 3px 13px;
+  border-radius: 3px;
+  margin-bottom: 14px;
+}
+
+/* ══════════════════════════════
+   CARDS
+══════════════════════════════ */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 22px;
+  margin-bottom: 18px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+}
+
+.card-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--navy);
+  padding-bottom: 13px;
+  border-bottom: 2px solid var(--orange-light);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card-title::before {
+  content: '';
+  display: inline-block;
+  width: 4px; height: 15px;
+  background: var(--orange);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* ══════════════════════════════
+   FORMS
+══════════════════════════════ */
+.form-grid  { display: grid; grid-template-columns: repeat(auto-fill, minmax(185px,1fr)); gap: 15px; }
+.form-grid-2{ display: grid; grid-template-columns: repeat(2,1fr); gap: 15px; }
+@media (max-width: 580px) { .form-grid-2 { grid-template-columns: 1fr; } }
+
+.field { display: flex; flex-direction: column; gap: 5px; }
+.lrow  { display: flex; align-items: center; gap: 6px; }
+
+label {
+  font-family: 'Barlow', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--gray-500);
+}
+
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+  padding: 9px 11px;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: var(--gray-700);
+  background: white;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+  width: 100%;
+  -moz-appearance: textfield;
+}
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+input:focus, select:focus, textarea:focus {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(232,119,34,0.13);
+  background: white;
+}
+input::placeholder, textarea::placeholder { color: #bbb; font-style: italic; }
+textarea { resize: vertical; min-height: 58px; }
+
+.hint { font-size: 11px; color: var(--muted); font-style: italic; margin-top: 2px; }
+/* ── SYNCED FIELD ── */
+.synced-field input {
+  border-color: #b8d4f0;
+  background: #f0f7ff;
+}
+.sync-note {
+  font-size: 10px;
+  color: #5b8ec4;
+  font-style: italic;
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.sync-note svg { flex-shrink: 0; }
+
+
+/* ══════════════════════════════
+   INFO TOOLTIP
+══════════════════════════════ */
+.tip-wrap { position: relative; display: inline-flex; align-items: center; }
+.tip-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 15px; height: 15px;
+  border-radius: 50%;
+  background: var(--orange);
+  color: white;
+  font-size: 9px; font-weight: 700;
+  font-family: 'Barlow', sans-serif;
+  cursor: pointer; border: none; flex-shrink: 0; line-height: 1;
+}
+.tip-box {
+  display: none;
+  position: absolute;
+  left: 22px; top: 50%;
+  transform: translateY(-50%);
+  background: #222; color: #f0f0f0;
+  font-family: 'Barlow', sans-serif;
+  font-size: 12px; line-height: 1.55;
+  padding: 10px 14px;
+  border-radius: 7px;
+  width: 240px;
+  z-index: 9999;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.28);
+  pointer-events: none;
+}
+.tip-box::before {
+  content: '';
+  position: absolute;
+  left: -6px; top: 50%;
+  transform: translateY(-50%);
+  border: 6px solid transparent;
+  border-right-color: #222; border-left: 0;
+}
+.tip-wrap:hover .tip-box { display: block; }
+
+/* ══════════════════════════════
+   MEASUREMENT GRID
+══════════════════════════════ */
+.sample-row { display: flex; align-items: flex-end; gap: 13px; flex-wrap: wrap; }
+.sample-row .field { min-width: 200px; }
+
+.btn-set {
+  padding: 9px 22px;
+  background: var(--orange); color: white;
+  border: none; border-radius: 6px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 13px; font-weight: 700;
+  cursor: pointer; transition: all 0.15s;
+  height: 38px; white-space: nowrap;
+}
+.btn-set:hover { background: var(--orange-dark); }
+
+.meas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(95px,1fr));
+  gap: 8px;
+  margin-top: 14px;
+  padding: 14px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+}
+.meas-cell { display: flex; flex-direction: column; gap: 3px; align-items: center; }
+.meas-cell label { font-size: 10px; font-weight: 700; color: var(--navy); font-family: 'Inter', sans-serif; text-transform: uppercase; letter-spacing: 0.04em; }
+.meas-cell input { text-align: center; padding: 7px 4px; font-size: 13px; font-weight: 500; }
+.meas-cell input.oos { border-color: var(--red); background: var(--red-bg); color: var(--red); }
+.meas-count-label { font-family: 'Source Code Pro', monospace; font-size: 11px; color: var(--muted); margin: 12px 0 0; }
+
+/* ══════════════════════════════
+   CALCULATE BUTTON
+══════════════════════════════ */
+.btn-calc {
+  width: 100%; padding: 14px;
+  background: var(--orange); color: white;
+  border: none; border-radius: 7px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 17px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  cursor: pointer; transition: all 0.15s;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.btn-calc:hover { background: var(--orange-dark); box-shadow: 0 4px 16px rgba(232,119,34,0.3); transform: translateY(-1px); }
+.btn-calc:active { transform: none; }
+
+/* ══════════════════════════════
+   RESULTS
+══════════════════════════════ */
+.results-section { display: none; margin-top: 26px; }
+.results-section.visible { display: block; }
+
+.status-banner {
+  padding: 13px 20px;
+  border-radius: 7px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 15px; font-weight: 700;
+  letter-spacing: 0.07em; text-transform: uppercase;
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 20px;
+  border-left: 5px solid;
+}
+.status-banner.pass { background: var(--green-bg); color: var(--green); border-left-color: var(--green); }
+.status-banner.fail { background: var(--red-bg);   color: var(--red);   border-left-color: var(--red); }
+
+.tiles-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(148px,1fr)); gap: 11px; margin-bottom: 18px; }
+
+.tile {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 13px 15px;
+  border-top: 4px solid var(--tile-color, #ccc);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.tile-label { font-family: 'Inter', sans-serif; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+.tile-val   { font-family: 'Inter', sans-serif; font-size: 20px; font-weight: 500; color: var(--tile-color, var(--text)); line-height: 1.1; }
+.tile-sub   { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+.badge { display: inline-block; padding: 2px 9px; border-radius: 20px; font-family: 'Barlow', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 6px; }
+.badge-pass { background: var(--green-bg); color: var(--green); }
+.badge-fail { background: var(--red-bg); color: var(--red); }
+
+.prob-table { width: 100%; border-collapse: collapse; margin-bottom: 18px; }
+.prob-table th { background: #f0efec; font-family: 'Barlow', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; padding: 8px 13px; text-align: left; color: var(--text-mid); border: 1px solid var(--border); }
+.prob-table td { padding: 8px 13px; border: 1px solid var(--border); font-family: 'Inter', sans-serif; font-size: 12px; }
+.prob-table tr.within td  { background: var(--green-bg); color: var(--green); font-weight: 500; }
+.prob-table tr.outside td { background: var(--red-bg);   color: var(--red); }
+
+.chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 18px 22px; margin-bottom: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.chart-title { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); padding-bottom: 11px; border-bottom: 1px solid var(--border-light); margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+.chart-title::before { content: ''; width: 4px; height: 14px; background: var(--orange); border-radius: 2px; }
+
+.data-tbl { width: 100%; border-collapse: collapse; font-family: 'Inter', sans-serif; font-size: 12px; }
+.data-tbl th { background: var(--orange); color: white; padding: 8px 12px; text-align: left; font-family: 'Barlow', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+.data-tbl td { padding: 6px 12px; border-bottom: 1px solid var(--border-light); }
+.data-tbl tr:nth-child(even) td { background: #fafaf8; }
+.data-tbl tr.oos-row td { background: var(--red-bg); color: var(--red); }
+
+.sep { height: 1px; background: var(--border-light); margin: 20px 0; }
+
+/* ══════════════════════════════
+   NOTES / THEORY TAB
+══════════════════════════════ */
+.notes-hero {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
+  border-radius: 10px;
+  padding: 32px 36px;
+  margin-bottom: 28px;
+  color: white;
+}
+.notes-hero h2 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 28px; font-weight: 700;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  line-height: 1.1; margin-bottom: 8px;
+}
+.notes-hero p { font-size: 14px; opacity: 0.88; line-height: 1.6; max-width: 620px; }
+
+.theory-section { margin-bottom: 32px; }
+.theory-section h3 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 18px; font-weight: 700;
+  letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--orange); margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--orange-light);
+  display: flex; align-items: center; gap: 10px;
+}
+.theory-section h3 .num {
+  background: var(--orange);
+  color: white;
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700;
+  flex-shrink: 0;
+}
+.theory-section p { line-height: 1.7; color: var(--text-mid); margin-bottom: 10px; }
+.theory-section p strong { color: var(--text); font-weight: 600; }
+.theory-section ul { padding-left: 20px; margin-bottom: 10px; }
+.theory-section ul li { line-height: 1.7; color: var(--text-mid); margin-bottom: 4px; }
+.theory-section ul li strong { color: var(--text); }
+
+.formula-box {
+  background: #f7f6f3;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--orange);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 12px 0;
+  font-family: 'Source Code Pro', monospace;
+  font-size: 13px;
+  line-height: 1.9;
+  color: #333;
+}
+.formula-box .f-row { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.formula-box .f-lbl { font-weight: 500; color: var(--orange); min-width: 52px; }
+.formula-box .f-eq  { color: #333; }
+.formula-box .f-note { font-size: 11px; color: var(--muted); font-family: 'Barlow', sans-serif; font-style: italic; }
+
+.compare-table { width: 100%; border-collapse: collapse; margin: 14px 0; }
+.compare-table th { background: var(--orange); color: white; padding: 9px 14px; text-align: left; font-family: 'Barlow', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+.compare-table td { padding: 9px 14px; border-bottom: 1px solid var(--border-light); font-size: 13px; vertical-align: top; line-height: 1.5; color: var(--text-mid); }
+.compare-table tr:nth-child(even) td { background: #fafaf8; }
+.compare-table td:first-child { font-family: 'Source Code Pro', monospace; font-weight: 500; color: var(--orange); white-space: nowrap; }
+
+.callout {
+  background: var(--orange-light);
+  border: 1px solid #f5d5b0;
+  border-left: 4px solid var(--orange);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 14px 0;
+  font-size: 13px;
+  line-height: 1.65;
+  color: #6b3f10;
+}
+.callout strong { color: var(--orange-dark); }
+
+.ppm-table { width: 100%; border-collapse: collapse; margin: 14px 0; }
+.ppm-table th { background: #3a3a3a; color: white; padding: 8px 14px; font-family: 'Barlow', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; text-align: left; }
+.ppm-table td { padding: 8px 14px; border-bottom: 1px solid var(--border-light); font-family: 'Source Code Pro', monospace; font-size: 12px; }
+.ppm-table tr:nth-child(even) td { background: #fafaf8; }
+.ppm-table td.good { color: var(--green); font-weight: 500; }
+.ppm-table td.warn { color: var(--amber); }
+.ppm-table td.bad  { color: var(--red); }
+</style>
+</head>
+<body>
+
+<!-- Hidden logo for print/PDF (never embed base64 in JS strings) -->
+<img id="sbsLogoPrint" src="data:image/png;base64,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" alt="SBS Specialty Bolt and Screw" style="display:none;">
+
+<!-- ======= HEADER (SBS Design System) ======= -->
+<div class="header no-print">
+  <div class="header-left">
+    <div class="header-logo">
+      <a href="https://shop.specialtybolt.com/" target="_blank" rel="noopener">
+        <img src="data:image/png;base64,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" alt="SBS Specialty Bolt and Screw" style="height:48px;display:block;">
+      </a>
+    </div>
+    <div class="header-divider"></div>
+    <div class="header-brand">
+      <h1>Process Capability Study Calculator</h1>
+      <p>Cp · Cpk · Pp · Ppk · Statistical Process Control</p>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button class="btn-hdr solid" id="pdfBtn" data-sbs-action="exportPDF">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      <span id="pdfBtnLabel">Download PDF</span>
+    </button>
+  </div>
+</div>
+
+<!-- ══ TAB NAV ══ -->
+<div class="tab-nav no-print" id="tabNav">
+  <button class="tab-btn active" id="tabBtn_f1" data-sbs-action="switchTab" data-tab="f1">Feature 1</button>
+  <button class="tab-btn" id="tabBtn_f2" data-sbs-action="switchTab" data-tab="f2">Feature 2</button>
+  <button class="btn-add-tab" id="addTabBtn" data-sbs-action="addFeatureTab">＋ Additional Feature</button>
+  <button class="tab-btn notes-tab" id="tabBtn_notes" data-sbs-action="switchTab" data-tab="tab-notes">Notes and Theory</button>
+</div>
+
+<!-- ══ PAGE WRAP ══ -->
+<div class="page-wrap">
+<div class="main">
+
+  <!-- ════ FEATURE 1 ════ -->
+  <div id="f1" class="tab-content active">
+    <div id="inner_f1"></div>
+  </div>
+
+  <!-- ════ FEATURE 2 ════ -->
+  <div id="f2" class="tab-content">
+    <div id="inner_f2"></div>
+  </div>
+
+  <!-- ════ NOTES & THEORY ════ -->
+  <div id="tab-notes" class="tab-content">
+
+    <div class="notes-hero">
+      <h2>Process Capability — Theory &amp; Practice</h2>
+      <p>A reference guide to understanding Cp, Cpk, Pp, Ppk, PPM, and the statistical foundations of process capability studies in manufacturing and quality engineering.</p>
+    </div>
+
+    <!-- 1. What is Process Capability -->
+    <div class="theory-section card">
+      <h3><span class="num">1</span>What Is Process Capability?</h3>
+      <p>Process capability is a statistical measure of a manufacturing process's ability to produce output that consistently falls within specified engineering tolerances. It answers the question: <strong>"Is our process capable of meeting customer requirements?"</strong></p>
+      <p>All processes exhibit natural variation. The goal of capability analysis is to quantify that variation relative to the tolerance window defined by the Lower Specification Limit (LSL) and Upper Specification Limit (USL). The wider the specification window compared to the process spread, the more capable the process.</p>
+      <p>Process capability is expressed as a ratio of two quantities:</p>
+      <ul>
+        <li><strong>Available room</strong> — defined by the specification limits (USL − LSL)</li>
+        <li><strong>Required room</strong> — defined by the natural spread of the process (6σ or 6s)</li>
+      </ul>
+      <div class="callout">
+        <strong>Key Principle:</strong> A capable process does not just produce parts within spec today — it reliably produces parts within spec over time, even under normal process variation.
+      </div>
+    </div>
+
+    <!-- 2. Specification Limits -->
+    <div class="theory-section card">
+      <h3><span class="num">2</span>Specification Limits: LSL &amp; USL</h3>
+      <p><strong>LSL (Lower Specification Limit)</strong> is the minimum acceptable value for a given feature. Any measurement below this value is considered non-conforming.</p>
+      <p><strong>USL (Upper Specification Limit)</strong> is the maximum acceptable value. Any measurement above it is non-conforming.</p>
+      <p>Specification limits are set by engineering design requirements, customer agreements, or regulatory standards. They are <em>not</em> the same as control limits, which are statistical boundaries derived from the process data itself.</p>
+      <div class="callout">
+        <strong>Common Mistake:</strong> Setting specification limits based on what the process currently produces, rather than what the design actually requires. This inflates apparent capability and masks real engineering risk.
+      </div>
+      <p>When only one specification limit exists (e.g., flatness must be ≤ 0.005 mm — no lower limit), only Cpu/Ppu or Cpl/Ppl is meaningful, not Cp/Pp.</p>
+    </div>
+
+    <!-- 3. Cp and Pp -->
+    <div class="theory-section card">
+      <h3><span class="num">3</span>Cp and Pp — Potential Capability (No Centering)</h3>
+      <p>Both Cp and Pp measure the ratio of the specification width to the process spread. Neither accounts for whether the process is centered within the specification.</p>
+      <div class="formula-box">
+        <div class="f-row"><span class="f-lbl">Cp =</span><span class="f-eq">(USL − LSL) / 6σ</span><span class="f-note">σ from control chart moving range</span></div>
+        <div class="f-row"><span class="f-lbl">Pp =</span><span class="f-eq">(USL − LSL) / 6s</span><span class="f-note">s = calculated std deviation from all data</span></div>
+      </div>
+      <p><strong>The critical difference:</strong></p>
+      <ul>
+        <li><strong>Cp</strong> uses <em>σ</em> — estimated from the average moving range (R̄/d₂). This captures <em>within-subgroup</em> short-term variation only, assuming the process is in statistical control.</li>
+        <li><strong>Pp</strong> uses <em>s</em> — the standard deviation calculated from all data points. This captures <em>total</em> historical variation, including any shifts, trends, or instability over time.</li>
+      </ul>
+      <div class="callout">
+        <strong>Interpretation:</strong> If Cp ≈ Pp, the process is in statistical control — the two variation estimates agree. If Cp ≫ Pp, special-cause variation is inflating the overall standard deviation, signaling an unstable process.
+      </div>
+    </div>
+
+    <!-- 4. Cpk and Ppk -->
+    <div class="theory-section card">
+      <h3><span class="num">4</span>Cpk and Ppk — Centering-Adjusted Capability</h3>
+      <p>Cp and Pp assume the process is perfectly centered between the specification limits. In practice, the process mean (x̄) is rarely exactly at the midpoint of the tolerance. Cpk and Ppk correct for this by measuring distance from the mean to the <em>nearest</em> specification limit.</p>
+      <div class="formula-box">
+        <div class="f-row"><span class="f-lbl">Cpu =</span><span class="f-eq">(USL − x̄) / 3σ</span></div>
+        <div class="f-row"><span class="f-lbl">Cpl =</span><span class="f-eq">(x̄ − LSL) / 3σ</span></div>
+        <div class="f-row"><span class="f-lbl">Cpk =</span><span class="f-eq">min(Cpu, Cpl)</span><span class="f-note">worst-case direction determines Cpk</span></div>
+        <div class="f-row" style="margin-top:8px;"><span class="f-lbl">Ppk =</span><span class="f-eq">min(Ppu, Ppl)</span><span class="f-note">same logic using s instead of σ</span></div>
+      </div>
+      <p>Because Cpk uses the nearest limit, it will always be ≤ Cp. The difference between Cp and Cpk reflects how off-center the process mean is:</p>
+      <ul>
+        <li><strong>Cp = Cpk</strong> → the process is perfectly centered</li>
+        <li><strong>Cp &gt; Cpk</strong> → the process mean is shifted toward one specification limit</li>
+        <li><strong>Cpk &lt; 0</strong> → the mean is outside a specification limit entirely</li>
+      </ul>
+    </div>
+
+    <!-- 5. Comparison table -->
+    <div class="theory-section card">
+      <h3><span class="num">5</span>Side-by-Side Comparison: Cp, Cpk, Pp, Ppk</h3>
+      <table class="compare-table">
+        <thead><tr><th>Index</th><th>Variation Used</th><th>Centering?</th><th>What It Tells You</th><th>When to Use</th></tr></thead>
+        <tbody>
+          <tr><td>Cp</td><td>σ (within, MR chart)</td><td>No</td><td>Potential capability if perfectly centered</td><td>Stable, in-control processes</td></tr>
+          <tr><td>Cpk</td><td>σ (within, MR chart)</td><td>Yes</td><td>Actual capability accounting for mean offset</td><td>Primary conformance index for stable processes</td></tr>
+          <tr><td>Pp</td><td>s (all data)</td><td>No</td><td>Historical performance potential</td><td>Initial studies, all data over time</td></tr>
+          <tr><td>Ppk</td><td>s (all data)</td><td>Yes</td><td>Actual historical performance with centering</td><td>Long-term performance, unstable processes</td></tr>
+        </tbody>
+      </table>
+      <div class="callout">
+        <strong>Rule of Thumb:</strong> Use <strong>Cpk</strong> for ongoing process control on a stable process. Use <strong>Ppk</strong> for initial qualification studies (PPAP, FAI) or when evaluating a process that may have experienced instability over the study period.
+      </div>
+    </div>
+
+    <!-- 6. Sigma levels & PPM -->
+    <div class="theory-section card">
+      <h3><span class="num">6</span>Sigma Levels, Cpk Thresholds &amp; PPM</h3>
+      <p>The capability index can be directly related to the probability of a non-conforming part (defect rate), expressed as Parts Per Million (PPM). The table below assumes a normally distributed, centered process:</p>
+      <table class="ppm-table">
+        <thead><tr><th>Cpk Value</th><th>Sigma Level (±)</th><th>Defect Rate (%)</th><th>PPM Defective</th><th>Typical Application</th></tr></thead>
+        <tbody>
+          <tr><td>0.33</td><td>1σ</td><td class="bad">31.73%</td><td class="bad">317,310</td><td>Unacceptable</td></tr>
+          <tr><td>0.67</td><td>2σ</td><td class="bad">4.55%</td><td class="bad">45,500</td><td>Unacceptable</td></tr>
+          <tr><td>1.00</td><td>3σ</td><td class="warn">0.27%</td><td class="warn">2,700</td><td>Minimum threshold (some industries)</td></tr>
+          <tr><td>1.33</td><td>4σ</td><td class="good">0.0063%</td><td class="good">63</td><td>Standard automotive / manufacturing</td></tr>
+          <tr><td>1.50</td><td>4.5σ</td><td class="good">0.00068%</td><td class="good">6.8</td><td>Common internal target</td></tr>
+          <tr><td>1.67</td><td>5σ</td><td class="good">0.000057%</td><td class="good">0.57</td><td>Safety-critical / medical devices</td></tr>
+          <tr><td>2.00</td><td>6σ</td><td class="good">0.0000002%</td><td class="good">0.002</td><td>Six Sigma standard</td></tr>
+        </tbody>
+      </table>
+      <p>Most manufacturing industries (AIAG, IATF 16949, AS9100) require a minimum <strong>Cpk of 1.33</strong> for production approval. Safety-critical features often require <strong>Cpk ≥ 1.67</strong>.</p>
+    </div>
+
+    <!-- 7. Short vs Long term -->
+    <div class="theory-section card">
+      <h3><span class="num">7</span>Short-Term vs. Long-Term Capability</h3>
+      <p>You may encounter the terms "short-term" and "long-term" capability used to describe Cpk and Ppk respectively. While this is common industry shorthand, it can be misleading:</p>
+      <ul>
+        <li><strong>Cp / Cpk</strong> (using σ from moving range) reflects variation <em>within subgroups</em> — effectively the best the process can do when it is operating consistently. Some call this "short-term" or "potential" capability.</li>
+        <li><strong>Pp / Ppk</strong> (using s from all data) reflects <em>all variation</em> over the entire study period — including shifts between subgroups, time-based drift, and special causes. Some call this "long-term" or "actual" capability.</li>
+      </ul>
+      <div class="callout">
+        <strong>Dr. Donald Wheeler's view:</strong> There is no short-term and long-term capability — only capability estimated from within-subgroup variation versus capability estimated from overall variation. If the process is in statistical control, both estimates will agree.
+      </div>
+      <p>When Cpk ≫ Ppk, it means the process has experienced instability or shifts over time that the within-subgroup σ cannot detect. This is a signal to investigate assignable causes and improve process stability — not simply to report Ppk and move on.</p>
+    </div>
+
+    <!-- 8. Interpreting the four metrics together -->
+    <div class="theory-section card">
+      <h3><span class="num">8</span>Reading All Four Indices Together</h3>
+      <table class="compare-table">
+        <thead><tr><th>Pattern</th><th>What It Means</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td>Cp ≈ Pp, Cpk ≈ Ppk</td><td>Process is in control and centered</td><td>Best-case — maintain and monitor</td></tr>
+          <tr><td>Cp ≈ Pp, Cpk &lt; Cp</td><td>Process is stable but off-center</td><td>Adjust process mean toward target</td></tr>
+          <tr><td>Cp &gt; Pp</td><td>Process is out of statistical control (s inflated)</td><td>Identify and eliminate special causes</td></tr>
+          <tr><td>Cp &gt; Pp, Cpk &lt; Cp</td><td>Both unstable and off-center</td><td>Stabilize first, then center</td></tr>
+          <tr><td>All indices &lt; 1.0</td><td>Process spread exceeds tolerance</td><td>Reduce variation or redesign tolerance</td></tr>
+          <tr><td>Cpk &gt; 1.33, Ppk &lt; 1.33</td><td>Capable short-term but not long-term</td><td>Investigate time-based shifts or drift</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 9. PPM -->
+    <div class="theory-section card">
+      <h3><span class="num">9</span>PPM — Parts Per Million</h3>
+      <p><strong>PPM (Parts Per Million)</strong> is a defect rate metric expressing how many parts out of one million would be expected to be non-conforming, assuming a normal distribution. It is derived directly from the probability estimates:</p>
+      <div class="formula-box">
+        <div class="f-row"><span class="f-lbl">PPM below</span><span class="f-eq">= Pr(x &lt; LSL) × 1,000,000</span></div>
+        <div class="f-row"><span class="f-lbl">PPM above</span><span class="f-eq">= Pr(x &gt; USL) × 1,000,000</span></div>
+        <div class="f-row"><span class="f-lbl">PPM total</span><span class="f-eq">= (PPM below) + (PPM above)</span></div>
+      </div>
+      <p>PPM is intuitive for communicating defect rates to non-technical stakeholders. A process with Cpk = 1.33 produces approximately <strong>63 defective parts per million</strong>. A Six Sigma process produces fewer than <strong>3.4 PPM</strong> (accounting for a 1.5σ shift).</p>
+      <div class="callout">
+        <strong>Note:</strong> PPM calculated from the normal distribution is a theoretical estimate. Actual defect rates may differ if the process is not normally distributed or if the distribution has heavy tails. Always validate the normality assumption for critical features.
+      </div>
+    </div>
+
+    <!-- 10. Sample size & best practices -->
+    <div class="theory-section card">
+      <h3><span class="num">10</span>Sample Size &amp; Best Practices</h3>
+      <p>The accuracy of capability indices depends heavily on sample size. The following guidelines apply:</p>
+      <ul>
+        <li><strong>Minimum 30 samples</strong> recommended for initial capability studies (AIAG MSA/SPC guidelines)</li>
+        <li><strong>50–125 samples</strong> for PPAP submission studies (typically 25 subgroups of 5)</li>
+        <li>Samples should be representative of normal production conditions — not cherry-picked</li>
+        <li>Measurements should be taken in <strong>time order</strong> to detect trends and assess control</li>
+        <li>Validate the measurement system (Gauge R&amp;R) before collecting data — gauge variation must be small relative to the tolerance</li>
+        <li>Check for normality (Shapiro-Wilk, Anderson-Darling) before interpreting capability indices</li>
+      </ul>
+      <div class="callout">
+        <strong>Gauge R&amp;R Rule:</strong> Measurement system variation should be less than 10% of the tolerance (or 10% of the process variation). If gauge R&amp;R exceeds 30%, the measurement system is unacceptable and capability indices are unreliable.
+      </div>
+    </div>
+
+  </div><!-- /tab-notes -->
+
+</div><!-- /main -->
+  <div style="background:#F8F9FA;border-top:1px solid #E2E6EA;padding:12px 36px;text-align:center;">
+    <p style="font-family:'Inter',sans-serif;font-size:11.5px;color:#6C757D;max-width:900px;margin:0 auto;line-height:1.6;">
+      <strong style="color:#1D3557;">Disclaimer:</strong>
+      This tool is provided by Specialty Bolt and Screw, Inc. for reference purposes only. Capability indices are based on normal distribution assumptions. Results should be validated by a qualified quality engineer before use in production decisions. All measurements and specifications remain the responsibility of the user.
+    </p>
+  </div>
+</div><!-- /page-wrap -->
+
+<script>
+// ══════════════════════════════════
+//  TOOLTIP HELPER
+// ══════════════════════════════════
+function tip(text) {
+  return `<span class="tip-wrap"><button class="tip-btn" type="button">i</button><span class="tip-box">${text}</span></span>`;
+}
+
+const INFO = {
+  partNum:    "Unique identifier for this part or component — used for drawing and production traceability.<br><br><em>e.g. 25CHENS</em>",
+  lotNum:     "The production batch this sample set was drawn from. Enables isolation of quality issues to specific runs.",
+  partDesc:   "Short descriptive name of the part.<br><br><em>e.g. Pivot Shaft</em>",
+  featName:   "The specific dimension or characteristic being measured on this tab. Each tab = one feature.<br><br><em>e.g. Outer Diameter @ Datum A</em>",
+  inspMethod: "The gauge or instrument used to collect measurements. Must be appropriate for the tolerance. Validate with Gauge R&amp;R before use.<br><br><em>e.g. Micrometer, CMM, Caliper, Pin Gauge</em>",
+  inspector:  "Name or ID of the person collecting the data. Required for traceability.",
+  date:       "Date the study was performed.",
+  lsl:        "<strong>Lower Specification Limit</strong> — the minimum acceptable value. Measurements below this are non-conforming. Set by engineering drawings or customer requirements.",
+  usl:        "<strong>Upper Specification Limit</strong> — the maximum acceptable value. Measurements above this are non-conforming. Setting tight specs reduces apparent capability even on a stable process.",
+  minCp:      "<strong>Min Cp:</strong> Potential capability threshold (no centering). Industry standard ≥ 1.33 (= 4σ each side of center).",
+  minCpk:     "<strong>Min Cpk:</strong> The primary conformance index. Accounts for process centering. ≥ 1.33 standard; ≥ 1.67 for safety-critical features.",
+  minPp:      "<strong>Min Pp:</strong> Historical performance index using all data (not control-chart sigma). Reflects total variation including any process shifts.",
+  minPpk:     "<strong>Min Ppk:</strong> Historical performance adjusted for centering. If Ppk ≪ Cpk, the process has experienced instability over time.",
+  sampleCount:"Total number of individual part measurements. Minimum 30 recommended for reliable indices. Collect in production time order.",
+  sigma:      "σ estimated from the control chart average moving range (R̄ ÷ 1.128). Captures within-subgroup variation only. Leave blank to auto-estimate from consecutive measurement ranges.",
+  notes:      "Any observations about conditions, equipment issues, outliers, or environmental factors that may affect interpretation."
+};
+
+// ══════════════════════════════════
+//  BUILD FEATURE HTML
+// ══════════════════════════════════
+function buildFeatureHTML(fid, num) {
+  return `
+  <!-- Print header (hidden on screen) -->
+  <div class="print-header-block">
+    <div>
+      <h1>Process Capability Study Calculator</h1>
+      <p>Cp · Cpk · Pp · Ppk · Statistical Process Control — Feature ${num}</p>
+    </div>
+  </div>
+
+  <!-- Part Info -->
+  <div class="card">
+    <div class="card-title">Part Information — Feature ${num}</div>
+    <div class="form-grid">
+      <div class="field ${fid !== 'f1' ? 'synced-field' : ''}" id="${fid}_partNum_wrap">
+        <div class="lrow"><label>Part Number</label>${tip(INFO.partNum)}</div>
+        <input type="text" id="${fid}_partNum" placeholder="e.g. 25CHENS" oninput="markOverride('${fid}','partNum')">
+        ${fid !== 'f1' ? '<div class="sync-note" id="${fid}_partNum_note"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>Synced from Feature 1 — edit to override</div>' : ''}
+      </div>
+      <div class="field ${fid !== 'f1' ? 'synced-field' : ''}" id="${fid}_lotNum_wrap">
+        <div class="lrow"><label>Lot Number</label>${tip(INFO.lotNum)}</div>
+        <input type="text" id="${fid}_lotNum" placeholder="e.g. LOT-2024-07A" oninput="markOverride('${fid}','lotNum')">
+        ${fid !== 'f1' ? '<div class="sync-note" id="${fid}_lotNum_note"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>Synced from Feature 1 — edit to override</div>' : ''}
+      </div>
+      <div class="field ${fid !== 'f1' ? 'synced-field' : ''}" id="${fid}_partDesc_wrap">
+        <div class="lrow"><label>Part Description</label>${tip(INFO.partDesc)}</div>
+        <input type="text" id="${fid}_partDesc" placeholder="e.g. Pivot Shaft" oninput="markOverride('${fid}','partDesc')">
+        ${fid !== 'f1' ? '<div class="sync-note" id="${fid}_partDesc_note"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>Synced from Feature 1 — edit to override</div>' : ''}
+      </div>
+      <div class="field"><div class="lrow"><label>Feature / Characteristic</label>${tip(INFO.featName)}</div><input type="text" id="${fid}_featName" placeholder="e.g. OD @ Datum A"></div>
+      <div class="field"><div class="lrow"><label>Inspection Method</label>${tip(INFO.inspMethod)}</div><input type="text" id="${fid}_inspMethod" placeholder="e.g. Micrometer"></div>
+      <div class="field ${fid !== 'f1' ? 'synced-field' : ''}" id="${fid}_inspector_wrap">
+        <div class="lrow"><label>Inspector</label>${tip(INFO.inspector)}</div>
+        <input type="text" id="${fid}_inspector" placeholder="Name or ID" oninput="markOverride('${fid}','inspector')">
+        ${fid !== 'f1' ? '<div class="sync-note" id="${fid}_inspector_note"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>Synced from Feature 1 — edit to override</div>' : ''}
+      </div>
+      <div class="field"><div class="lrow"><label>Study Date</label>${tip(INFO.date)}</div><input type="text" id="${fid}_date" placeholder="${new Date().toLocaleDateString()}"></div>
+    </div>
+  </div>
+
+  <!-- Spec Limits -->
+  <div class="card">
+    <div class="card-title">Specification Limits &amp; Conformance Thresholds</div>
+    <div class="form-grid">
+      <div class="field"><div class="lrow"><label>LSL — Lower Spec Limit</label>${tip(INFO.lsl)}</div><input type="number" id="${fid}_lsl" placeholder="e.g. 24.950" step="any" oninput="highlightOOS('${fid}')"></div>
+      <div class="field"><div class="lrow"><label>USL — Upper Spec Limit</label>${tip(INFO.usl)}</div><input type="number" id="${fid}_usl" placeholder="e.g. 25.050" step="any" oninput="highlightOOS('${fid}')"></div>
+      <div class="field"><div class="lrow"><label>Min. Acceptable Cp</label>${tip(INFO.minCp)}</div><input type="number" id="${fid}_minCp" value="1.33" step="0.01"></div>
+      <div class="field"><div class="lrow"><label>Min. Acceptable Cpk</label>${tip(INFO.minCpk)}</div><input type="number" id="${fid}_minCpk" value="1.33" step="0.01"></div>
+      <div class="field"><div class="lrow"><label>Min. Acceptable Pp</label>${tip(INFO.minPp)}</div><input type="number" id="${fid}_minPp" value="1.33" step="0.01"></div>
+      <div class="field"><div class="lrow"><label>Min. Acceptable Ppk</label>${tip(INFO.minPpk)}</div><input type="number" id="${fid}_minPpk" value="1.33" step="0.01"></div>
+    </div>
+  </div>
+
+  <!-- Measurements -->
+  <div class="card">
+    <div class="card-title">Measurement Data Entry</div>
+    <div class="sample-row">
+      <div class="field"><div class="lrow"><label>Number of Samples Measured</label>${tip(INFO.sampleCount)}</div><input type="number" id="${fid}_count" min="2" max="500" placeholder="e.g. 30"></div>
+      <button class="btn-set" data-sbs-action="buildGrid" data-fid="${fid}">Set Grid →</button>
+    </div>
+    <div id="${fid}_grid"></div>
+  </div>
+
+  <!-- Additional settings -->
+  <div class="card">
+    <div class="card-title">Additional Settings</div>
+    <div class="form-grid-2">
+      <div class="field">
+        <div class="lrow"><label>σ from Control Chart (optional override)</label>${tip(INFO.sigma)}</div>
+        <input type="number" id="${fid}_sigma" placeholder="Auto-estimated if blank" step="any" min="0">
+        <span class="hint">Leave blank to auto-estimate from moving ranges between consecutive measurements</span>
+      </div>
+      <div class="field">
+        <div class="lrow"><label>Notes / Observations</label>${tip(INFO.notes)}</div>
+        <textarea id="${fid}_notes" placeholder="Environmental conditions, gauge issues, outliers…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-calc" data-sbs-action="calcFeature" data-fid="${fid}">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>
+    Calculate Capability
+  </button>
+
+  <!-- RESULTS -->
+  <div class="results-section" id="${fid}_results">
+    <div class="sep"></div>
+    <div class="section-head">Results</div>
+    <div id="${fid}_statusBanner" class="status-banner"></div>
+    <div class="section-head" style="margin-top:4px;">Statistical Summary</div>
+    <div class="tiles-grid" id="${fid}_statTiles"></div>
+    <div class="section-head">Capability Indices</div>
+    <div class="tiles-grid" id="${fid}_capTiles"></div>
+    <div class="section-head">Non-Conformance Probability</div>
+    <table class="prob-table" id="${fid}_probTable" style="margin-bottom:18px;"></table>
+    <div class="chart-card">
+      <div class="chart-title">Normal Distribution / Bell Curve</div>
+      <canvas id="${fid}_chart" height="230"></canvas>
+    </div>
+    <div class="card">
+      <div class="card-title">Measurement Data Table</div>
+      <div style="overflow-x:auto;"><table class="data-tbl" id="${fid}_dataTable"></table></div>
+    </div>
+  </div>
+  `;
+}
+
+// ══════════════════════════════════
+//  INIT
+// ══════════════════════════════════
+const charts = {};
+let featureCount = 2;
+
+// Fields that are synced from Feature 1 to follower features
+const SYNCED_FIELDS = ['partNum','lotNum','partDesc','inspector'];
+// Tracks which fields have been manually overridden per feature
+const overrides = {};
+
+document.addEventListener('DOMContentLoaded', () => {
+  ['f1','f2'].forEach((fid, i) => {
+    document.getElementById('inner_'+fid).innerHTML = buildFeatureHTML(fid, i+1);
+    document.getElementById(fid+'_date').value = new Date().toLocaleDateString();
+  // Pre-populate synced fields from Feature 1
+  SYNCED_FIELDS.forEach(field => {
+    const src = document.getElementById('f1_' + field);
+    const dest = document.getElementById(fid + '_' + field);
+    if (src && dest) dest.value = src.value;
+  });
+  });
+
+  // Attach live-sync listeners on Feature 1 fields
+  SYNCED_FIELDS.forEach(field => {
+    const src = document.getElementById('f1_' + field);
+    if (!src) return;
+    src.addEventListener('input', () => syncFromF1(field));
+  });
+});
+
+// Sync a single field value from f1 to all follower features (unless overridden)
+function syncFromF1(field) {
+  const srcEl = document.getElementById('f1_' + field);
+  if (!srcEl) return;
+  const val = srcEl.value;
+
+  // Sync to f2 and any dynamically added features
+  for (let n = 2; n <= featureCount; n++) {
+    const fid = 'f' + n;
+    if (overrides[fid] && overrides[fid][field]) continue; // user has overridden
+    const dest = document.getElementById(fid + '_' + field);
+    if (dest) dest.value = val;
+  }
+}
+
+// Called when user manually edits a synced field on a follower feature
+function markOverride(fid, field) {
+  if (!overrides[fid]) overrides[fid] = {};
+  overrides[fid][field] = true;
+
+  // Update the note text and remove blue tint
+  const wrap = document.getElementById(fid + '_' + field + '_wrap');
+  if (wrap) wrap.classList.remove('synced-field');
+  const note = document.getElementById(fid + '_' + field + '_note');
+  if (note) {
+    note.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Overridden — not syncing from Feature 1';
+    note.style.color = '#e87722';
+  }
+}
+
+// ══════════════════════════════════
+//  TABS
+// ══════════════════════════════════
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+function addFeatureTab() {
+  featureCount++;
+  const fid = 'f' + featureCount;
+  const num = featureCount;
+
+  // Create content div
+  const div = document.createElement('div');
+  div.id = fid;
+  div.className = 'tab-content';
+  const inner = document.createElement('div');
+  inner.id = 'inner_' + fid;
+  div.appendChild(inner);
+  document.querySelector('.main').appendChild(div);
+  inner.innerHTML = buildFeatureHTML(fid, num);
+  document.getElementById(fid+'_date').value = new Date().toLocaleDateString();
+
+  // Create tab button — insert before the add button
+  const nav = document.getElementById('tabNav');
+  const addBtn = document.getElementById('addTabBtn');
+  const btn = document.createElement('button');
+  btn.className = 'tab-btn';
+  btn.id = 'tabBtn_' + fid;
+  btn.textContent = 'Feature ' + num;
+  btn.setAttribute('data-sbs-action', 'switchTab');
+  btn.setAttribute('data-tab', fid);
+  nav.insertBefore(btn, addBtn);
+
+  switchTab(fid, btn);
+}
+
+// ══════════════════════════════════
+//  PRINT — opens a new top-level
+//  window so print() is never blocked
+//  by iframe sandboxing.
+// ══════════════════════════════════
+//  PDF EXPORT using html2canvas + jsPDF
+// ══════════════════════════════════
+// ======= SBS EVENT DELEGATION =======
+document.addEventListener('click', function(e) {
+  var el = e.target;
+  var action = null;
+  for (var i = 0; i < 6; i++) {
+    if (!el || el === document.body) break;
+    if (el.getAttribute && el.getAttribute('data-sbs-action')) {
+      action = el.getAttribute('data-sbs-action');
+      break;
+    }
+    el = el.parentNode;
+  }
+  if (action === 'exportPDF') { exportPDF(); }
+  if (action === 'addFeatureTab') { addFeatureTab(); }
+  if (action === 'switchTab') {
+    var tab = el.getAttribute('data-tab');
+    if (tab) switchTab(tab, el);
+  }
+  if (action === 'buildGrid') {
+    var fid = el.getAttribute('data-fid');
+    if (fid) buildMeasGrid(fid);
+  }
+  if (action === 'calcFeature') {
+    var fid = el.getAttribute('data-fid');
+    if (fid) calculate(fid);
+  }
+});
+
+async function exportPDF() {
+  const btn = document.getElementById('pdfBtn');
+  const lbl = document.getElementById('pdfBtnLabel');
+  btn.disabled = true;
+  lbl.textContent = 'Generating…';
+
+  try {
+    // Determine what to capture — the active tab content
+    const activeTab = document.querySelector('.tab-content.active');
+    if (!activeTab) { alert('Nothing to export.'); return; }
+
+    // Make results visible for capture
+    const resultsEl = activeTab.querySelector('.results-section');
+    const wasHidden = resultsEl && !resultsEl.classList.contains('visible');
+
+    // Temporarily expand for capture
+    const allCards = activeTab.querySelectorAll('.card');
+
+    // Build a print-friendly clone in a hidden div
+    const printArea = document.createElement('div');
+    printArea.style.cssText = 'position:fixed;left:-9999px;top:0;width:900px;background:white;padding:32px;font-family:Barlow,sans-serif;';
+
+    // Header block
+    const partNum  = activeTab.querySelector('[id$="_partNum"]')?.value  || '';
+    const partDesc = activeTab.querySelector('[id$="_partDesc"]')?.value || '';
+    const featName = activeTab.querySelector('[id$="_featName"]')?.value || '';
+    const inspector= activeTab.querySelector('[id$="_inspector"]')?.value|| '';
+    const studyDate= activeTab.querySelector('[id$="_date"]')?.value     || new Date().toLocaleDateString();
+    const lotNum   = activeTab.querySelector('[id$="_lotNum"]')?.value   || '';
+
+    var logoSrc = document.getElementById('sbsLogoPrint').src;
+    printArea.innerHTML = `
+      <div style="display:flex;align-items:center;gap:16px;border-bottom:4px solid #E87722;padding-bottom:14px;margin-bottom:20px;">
+        <img src="${logoSrc}" alt="SBS" style="height:44px;display:block;">
+        <div style="width:1px;height:36px;background:#E2E6EA;"></div>
+        <div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;text-transform:uppercase;letter-spacing:0.04em;color:#1D3557;">Process Capability Study Calculator</div>
+          <div style="font-family:'Inter',sans-serif;font-size:11px;color:#6C757D;margin-top:2px;">Cp · Cpk · Pp · Ppk · Statistical Process Control | Specialty Bolt and Screw, Inc.</div>
+        </div>
+      </div>
+      <table style="width:100%;border-collapse:collapse;margin-bottom:20px;font-size:12px;">
+        <tr>
+          <td style="padding:4px 10px 4px 0;color:#888;font-weight:600;width:130px;">Part Number</td><td style="padding:4px 0;font-weight:600;">${partNum||'—'}</td>
+          <td style="padding:4px 10px 4px 20px;color:#888;font-weight:600;width:130px;">Lot Number</td><td style="padding:4px 0;font-weight:600;">${lotNum||'—'}</td>
+        </tr>
+        <tr>
+          <td style="padding:4px 10px 4px 0;color:#888;font-weight:600;">Part Description</td><td style="padding:4px 0;">${partDesc||'—'}</td>
+          <td style="padding:4px 10px 4px 20px;color:#888;font-weight:600;">Feature</td><td style="padding:4px 0;">${featName||'—'}</td>
+        </tr>
+        <tr>
+          <td style="padding:4px 10px 4px 0;color:#888;font-weight:600;">Inspector</td><td style="padding:4px 0;">${inspector||'—'}</td>
+          <td style="padding:4px 10px 4px 20px;color:#888;font-weight:600;">Date</td><td style="padding:4px 0;">${studyDate}</td>
+        </tr>
+      </table>
+    `;
+
+    // Clone the active tab content (inputs + results)
+    const clone = activeTab.cloneNode(true);
+    clone.style.cssText = 'display:block;';
+    // Force results visible in clone
+    clone.querySelectorAll('.results-section').forEach(r => r.style.display = 'block');
+    // Remove buttons from clone
+    clone.querySelectorAll('.btn-calc,.btn-set').forEach(b => b.remove());
+    printArea.appendChild(clone);
+    document.body.appendChild(printArea);
+
+    // Render chart canvas images into clone
+    // Copy canvas pixel data from the live canvases to clone canvases
+    const liveCanvases = activeTab.querySelectorAll('canvas');
+    const cloneCanvases = clone.querySelectorAll('canvas');
+    liveCanvases.forEach((lc, i) => {
+      if (cloneCanvases[i]) {
+        cloneCanvases[i].width  = lc.width;
+        cloneCanvases[i].height = lc.height;
+        const ctx = cloneCanvases[i].getContext('2d');
+        ctx.drawImage(lc, 0, 0);
+      }
+    });
+
+    await new Promise(r => setTimeout(r, 300));
+
+    const canvas = await html2canvas(printArea, {
+      scale: 1.8,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      logging: false,
+      width: 900,
+    });
+
+    document.body.removeChild(printArea);
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+    const pageW = pdf.internal.pageSize.getWidth();   // 210mm
+    const pageH = pdf.internal.pageSize.getHeight();  // 297mm
+    const margin = 10;
+    const usableW = pageW - margin * 2;
+
+    const imgW = canvas.width;
+    const imgH = canvas.height;
+    const ratio = usableW / (imgW * 0.2645); // px to mm at 96dpi equiv
+
+    const totalImgH = imgH * 0.2645 / (imgW * 0.2645 / usableW); // mm
+    const usableH = pageH - margin * 2;
+
+    let yOffset = 0;
+    let pageNum = 0;
+
+    while (yOffset < totalImgH) {
+      if (pageNum > 0) pdf.addPage();
+
+      // Crop slice of canvas for this page
+      const srcY = yOffset / totalImgH * imgH;
+      const srcH = Math.min((usableH / totalImgH) * imgH, imgH - srcY);
+
+      const sliceCanvas = document.createElement('canvas');
+      sliceCanvas.width  = imgW;
+      sliceCanvas.height = srcH;
+      const sctx = sliceCanvas.getContext('2d');
+      sctx.drawImage(canvas, 0, srcY, imgW, srcH, 0, 0, imgW, srcH);
+
+      const sliceData = sliceCanvas.toDataURL('image/jpeg', 0.92);
+      const sliceHmm  = srcH / imgH * totalImgH;
+
+      pdf.addImage(sliceData, 'JPEG', margin, margin, usableW, sliceHmm);
+      yOffset += usableH;
+      pageNum++;
+    }
+
+    // Build filename
+    const safePart = (partNum || 'capability').replace(/[^a-zA-Z0-9_-]/g,'_');
+    const safeFeat = (featName || 'study').replace(/[^a-zA-Z0-9_-]/g,'_');
+    const pageCount = pdf.internal.getNumberOfPages();
+    for (let p = 1; p <= pageCount; p++) {
+      pdf.setPage(p);
+      pdf.setFontSize(8);
+      pdf.setTextColor(108, 117, 125);
+      pdf.text('Specialty Bolt and Screw, Inc. | specialtybolt.com', pageW/2, pageH - 6, { align: 'center' });
+    }
+    pdf.save(`${safePart}_${safeFeat}_capability_study.pdf`);
+
+  } catch (err) {
+    console.error(err);
+    alert('PDF generation failed: ' + err.message);
+  } finally {
+    btn.disabled = false;
+    lbl.textContent = 'Download PDF';
+  }
+}
+
+
+// ══════════════════════════════════
+//  MEASUREMENT GRID
+// ══════════════════════════════════
+function buildMeasGrid(fid) {
+  const n = parseInt(document.getElementById(fid+'_count')?.value);
+  if (!n || n < 2 || n > 500) { alert('Please enter a number between 2 and 500.'); return; }
+  let html = `<div class="meas-count-label">${n} sample inputs — enter values below</div><div class="meas-grid">`;
+  for (let i = 1; i <= n; i++) {
+    html += `<div class="meas-cell"><label>#${i}</label><input type="number" id="${fid}_m${i}" step="any" placeholder="—" oninput="highlightOOS('${fid}')"></div>`;
+  }
+  html += '</div>';
+  document.getElementById(fid+'_grid').innerHTML = html;
+}
+
+function highlightOOS(fid) {
+  const lsl = parseFloat(document.getElementById(fid+'_lsl')?.value);
+  const usl = parseFloat(document.getElementById(fid+'_usl')?.value);
+  for (let i = 1; i <= 500; i++) {
+    const el = document.getElementById(fid+'_m'+i);
+    if (!el) break;
+    const v = parseFloat(el.value);
+    el.classList.remove('oos');
+    if (!isNaN(v) && ((!isNaN(lsl) && v < lsl) || (!isNaN(usl) && v > usl))) el.classList.add('oos');
+  }
+}
+
+// ══════════════════════════════════
+//  STATISTICS
+// ══════════════════════════════════
+function getVals(fid) {
+  const vals = [];
+  for (let i = 1; i <= 500; i++) {
+    const el = document.getElementById(fid+'_m'+i);
+    if (!el) break;
+    const v = parseFloat(el.value);
+    if (!isNaN(v)) vals.push(v);
+  }
+  return vals;
+}
+
+function mean(a) { return a.reduce((s,x)=>s+x,0)/a.length; }
+function stdev(a,m) { const mu=m!==undefined?m:mean(a); return Math.sqrt(a.reduce((s,x)=>s+(x-mu)**2,0)/(a.length-1)); }
+function sigmaFromMR(a) {
+  if (a.length < 2) return null;
+  let s=0; for(let i=1;i<a.length;i++) s+=Math.abs(a[i]-a[i-1]);
+  return (s/(a.length-1))/1.128;
+}
+function normCDF(z) {
+  const a1=0.254829592,a2=-0.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=0.3275911;
+  const sign=z<0?-1:1; z=Math.abs(z)/Math.sqrt(2);
+  const t=1/(1+p*z);
+  return 0.5*(1+sign*(1-(((((a5*t+a4)*t)+a3)*t+a2)*t+a1)*t*Math.exp(-z*z)));
+}
+function normPDF(x,mu,s) { return Math.exp(-0.5*((x-mu)/s)**2)/(s*Math.sqrt(2*Math.PI)); }
+function pf(v,d){ return v===null?'N/A':(+v).toFixed(d); }
+function pct(v){ return v===null?'N/A':(v*100).toFixed(4)+'%'; }
+function capColor(v,th) {
+  if(v===null) return '#999';
+  if(v>=th) return 'var(--green)';
+  if(v>=th*0.85) return 'var(--amber)';
+  return 'var(--red)';
+}
+
+// ══════════════════════════════════
+//  CALCULATE
+// ══════════════════════════════════
+function calculate(fid) {
+  const vals = getVals(fid);
+  if (vals.length < 2) { alert('Enter at least 2 measurements.'); return; }
+
+  const lsl = parseFloat(document.getElementById(fid+'_lsl')?.value);
+  const usl = parseFloat(document.getElementById(fid+'_usl')?.value);
+  if (isNaN(lsl)&&isNaN(usl)) { alert('Enter at least one specification limit (LSL or USL).'); return; }
+  if (!isNaN(lsl)&&!isNaN(usl)&&usl<=lsl) { alert('USL must be greater than LSL.'); return; }
+
+  const g = id => parseFloat(document.getElementById(id)?.value);
+  const minCp=g(fid+'_minCp')||1.33, minCpk=g(fid+'_minCpk')||1.33;
+  const minPp=g(fid+'_minPp')||1.33, minPpk=g(fid+'_minPpk')||1.33;
+  const sigOvr = g(fid+'_sigma');
+
+  const xBar=mean(vals), s=stdev(vals,xBar);
+  const sigma=(!isNaN(sigOvr)&&sigOvr>0)?sigOvr:sigmaFromMR(vals);
+  const xMin=Math.min(...vals), xMax=Math.max(...vals);
+
+  let Cp=null,Pp=null;
+  if(!isNaN(lsl)&&!isNaN(usl)){
+    const ET=usl-lsl;
+    if(sigma) Cp=ET/(6*sigma);
+    Pp=ET/(6*s);
+  }
+
+  let Cpu=null,Cpl=null,Ppu=null,Ppl=null;
+  if(!isNaN(usl)){if(sigma)Cpu=(usl-xBar)/(3*sigma);Ppu=(usl-xBar)/(3*s);}
+  if(!isNaN(lsl)){if(sigma)Cpl=(xBar-lsl)/(3*sigma);Ppl=(xBar-lsl)/(3*s);}
+
+  let Cpk=null,Ppk=null;
+  if(Cpu!==null&&Cpl!==null)Cpk=Math.min(Cpu,Cpl);else if(Cpu!==null)Cpk=Cpu;else if(Cpl!==null)Cpk=Cpl;
+  if(Ppu!==null&&Ppl!==null)Ppk=Math.min(Ppu,Ppl);else if(Ppu!==null)Ppk=Ppu;else if(Ppl!==null)Ppk=Ppl;
+
+  const prBelow=!isNaN(lsl)?normCDF((lsl-xBar)/s):0;
+  const prAbove=!isNaN(usl)?1-normCDF((usl-xBar)/s):0;
+  const prWithin=1-prBelow-prAbove;
+
+  const rsec=document.getElementById(fid+'_results');
+  rsec.classList.add('visible');
+
+  // Status banner
+  const allPass=(Cpk===null||Cpk>=minCpk)&&(Ppk===null||Ppk>=minPpk);
+  const banner=document.getElementById(fid+'_statusBanner');
+  banner.className='status-banner '+(allPass?'pass':'fail');
+  banner.innerHTML=`<span style="font-size:20px;">${allPass?'✓':'✗'}</span>${allPass?'PROCESS CAPABLE — All indices meet conformance thresholds.':'PROCESS NOT CAPABLE — One or more indices fall below conformance thresholds.'}`;
+
+  // Stat tiles
+  document.getElementById(fid+'_statTiles').innerHTML=[
+    {label:'n — Sample Size',val:vals.length,d:0,c:'#444'},
+    {label:'x̄ — Mean',val:xBar,d:4,c:'#1a3a5c'},
+    {label:'Min Value',val:xMin,d:4,c:'#1a3a5c'},
+    {label:'Max Value',val:xMax,d:4,c:'#1a3a5c'},
+    {label:'s — Std Dev (all data)',val:s,d:5,c:'#555'},
+    {label:'σ — Sigma (MR chart)',val:sigma,d:5,c:'#555'},
+  ].map(t=>`<div class="tile" style="--tile-color:${t.c}">
+    <div class="tile-label">${t.label}</div>
+    <div class="tile-val" style="font-size:16px;">${t.val!==null?(+t.val).toFixed(t.d):'N/A'}</div>
+  </div>`).join('');
+
+  // Cap tiles
+  document.getElementById(fid+'_capTiles').innerHTML=[
+    {label:'Cp',val:Cp,th:minCp},
+    {label:'Cpk',val:Cpk,th:minCpk},
+    {label:'Pp',val:Pp,th:minPp},
+    {label:'Ppk',val:Ppk,th:minPpk},
+  ].map(t=>{
+    const c=capColor(t.val,t.th);
+    const pass=t.val!==null&&t.val>=t.th;
+    const fail=t.val!==null&&t.val<t.th;
+    return `<div class="tile" style="--tile-color:${c}">
+      <div class="tile-label">${t.label}</div>
+      <div class="tile-val">${pf(t.val,3)}</div>
+      <div class="tile-sub">Min: ${t.th}</div>
+      ${pass?'<span class="badge badge-pass">Pass ✓</span>':fail?'<span class="badge badge-fail">Fail ✗</span>':''}
+    </div>`;
+  }).join('');
+
+  // Prob table
+  const lslLbl=isNaN(lsl)?'LSL':lsl, uslLbl=isNaN(usl)?'USL':usl;
+  document.getElementById(fid+'_probTable').innerHTML=`
+    <thead><tr><th>Condition</th><th>Probability</th><th>PPM</th></tr></thead>
+    <tbody>
+    <tr class="outside"><td>Pr(x &lt; ${lslLbl}) — Below LSL</td><td>${pct(isNaN(lsl)?null:prBelow)}</td><td>${isNaN(lsl)?'N/A':Math.round(prBelow*1e6).toLocaleString()}</td></tr>
+    <tr class="outside"><td>Pr(x &gt; ${uslLbl}) — Above USL</td><td>${pct(isNaN(usl)?null:prAbove)}</td><td>${isNaN(usl)?'N/A':Math.round(prAbove*1e6).toLocaleString()}</td></tr>
+    <tr class="within"><td>Pr(${lslLbl} &lt; x &lt; ${uslLbl}) — Within Spec</td><td>${pct(prWithin)}</td><td>${Math.round((1-prWithin)*1e6).toLocaleString()}</td></tr>
+    </tbody>`;
+
+  drawBell(fid,xBar,s,lsl,usl);
+
+  // Data table
+  const rows=vals.map((v,i)=>{
+    const oos=(!isNaN(lsl)&&v<lsl)||(!isNaN(usl)&&v>usl);
+    return `<tr class="${oos?'oos-row':''}"><td>${i+1}</td><td>${v}</td><td>${oos?'⚠ Out of Spec':'✓ OK'}</td></tr>`;
+  }).join('');
+  document.getElementById(fid+'_dataTable').innerHTML=`<thead><tr><th>#</th><th>Measurement</th><th>Status</th></tr></thead><tbody>${rows}</tbody>`;
+
+  setTimeout(()=>rsec.scrollIntoView({behavior:'smooth',block:'start'}),100);
+}
+
+// ══════════════════════════════════
+//  BELL CURVE
+// ══════════════════════════════════
+function drawBell(fid,mu,s,lsl,usl){
+  const canvas=document.getElementById(fid+'_chart');
+  if(!canvas) return;
+  if(charts[fid]){charts[fid].destroy();}
+  const range=4*s, lo=mu-range, hi=mu+range, steps=250;
+  const within=[],belowL=[],aboveU=[];
+  for(let i=0;i<=steps;i++){
+    const x=lo+(hi-lo)*i/steps, y=normPDF(x,mu,s);
+    const inL=!isNaN(lsl)&&x<lsl, inU=!isNaN(usl)&&x>usl;
+    within.push({x,y:(!inL&&!inU)?y:0});
+    belowL.push({x,y:inL?y:0});
+    aboveU.push({x,y:inU?y:0});
+  }
+  const anns={};
+  anns.mean={type:'line',xMin:mu,xMax:mu,borderColor:'#333',borderWidth:2,borderDash:[4,3],
+    label:{content:'x̄='+mu.toFixed(4),display:true,position:'start',color:'#333',backgroundColor:'rgba(255,255,255,0.9)',font:{family:'Source Code Pro',size:10}}};
+  if(!isNaN(lsl)) anns.lsl={type:'line',xMin:lsl,xMax:lsl,borderColor:'#c0392b',borderWidth:2,
+    label:{content:'LSL='+lsl,display:true,position:'start',color:'#c0392b',backgroundColor:'rgba(255,255,255,0.9)',font:{family:'Source Code Pro',size:10}}};
+  if(!isNaN(usl)) anns.usl={type:'line',xMin:usl,xMax:usl,borderColor:'#c0392b',borderWidth:2,
+    label:{content:'USL='+usl,display:true,position:'end',color:'#c0392b',backgroundColor:'rgba(255,255,255,0.9)',font:{family:'Source Code Pro',size:10}}};
+  charts[fid]=new Chart(canvas.getContext('2d'),{
+    type:'line',
+    data:{datasets:[
+      {label:'Within Spec',data:within,borderColor:'#e87722',backgroundColor:'rgba(232,119,34,0.12)',borderWidth:2.5,fill:true,tension:0.4,pointRadius:0,parsing:{xAxisKey:'x',yAxisKey:'y'}},
+      {label:'Out of Spec',data:[...belowL,...aboveU],borderColor:'#c0392b',backgroundColor:'rgba(192,57,43,0.16)',borderWidth:1.5,fill:true,tension:0.4,pointRadius:0,parsing:{xAxisKey:'x',yAxisKey:'y'}},
+    ]},
+    options:{
+      responsive:true,
+      plugins:{
+        legend:{labels:{font:{family:'Barlow',size:12},color:'#555'}},
+        annotation:{annotations:anns}
+      },
+      scales:{
+        x:{type:'linear',title:{display:true,text:'Measurement Value',font:{family:'Barlow',size:12},color:'#888'},ticks:{font:{family:'Source Code Pro',size:10},color:'#888',maxTicksLimit:10},grid:{color:'#eee'}},
+        y:{title:{display:true,text:'Probability Density',font:{family:'Barlow',size:12},color:'#888'},ticks:{font:{family:'Source Code Pro',size:10},color:'#888'},grid:{color:'#eee'}}
+      }
+    }
+  });
+}
+</script>
+</body>
+</html>

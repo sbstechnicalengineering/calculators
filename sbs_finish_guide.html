@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<!--
+  SBS Finish Guide | Copyright (c) 2024 Specialty Bolt & Screw, Inc.
+  Fingerprint: SBS-FINISH-GUIDE-v2 | https://shop.specialtybolt.com/
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SBS Finish Guide | Specialty Bolt &amp; Screw</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:#1D3557; --navy-dark:#12243a; --orange:#E87722; --orange-light:#F0913A;
+  --orange-pale:#FDF0E5; --white:#ffffff; --gray-50:#F8F9FA; --gray-100:#F0F2F5;
+  --gray-200:#E2E6EA; --gray-300:#CED4DA; --gray-400:#ADB5BD; --gray-500:#6C757D;
+  --gray-600:#495057; --gray-700:#343A40; --active-green:#1A8A4A; --active-bg:#E8F5EE;
+  --obsolete-red:#C0392B; --obsolete-bg:#FDECEA; --withdrawn-amber:#B7610A;
+  --withdrawn-bg:#FEF3E2; --header-h:72px; --tabs-h:46px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-700);min-height:100vh;}
+
+/* BETA MODAL */
+#beta-overlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(18,36,58,0.82);backdrop-filter:blur(5px);}
+#beta-modal{background:var(--white);border-radius:14px;width:min(520px,92vw);overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,0.32);}
+#beta-modal-hdr{background:var(--navy);border-bottom:4px solid var(--orange);padding:18px 22px;display:flex;align-items:center;gap:12px;}
+#beta-modal-hdr svg{color:var(--orange);flex-shrink:0;}
+#beta-modal-hdr-text{flex:1;}
+#beta-modal-hdr-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;color:var(--white);line-height:1.1;}
+#beta-modal-hdr-sub{font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,0.65);margin-top:2px;}
+.beta-pill{background:var(--orange);color:var(--white);font-family:'Barlow',sans-serif;font-size:10px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;padding:3px 10px;border-radius:20px;flex-shrink:0;}
+#beta-modal-body{padding:22px 24px;}
+#beta-modal-body p{font-family:'Inter',sans-serif;font-size:13px;color:var(--gray-600);line-height:1.65;margin-bottom:12px;}
+#beta-modal-body p:last-child{margin-bottom:0;}
+#beta-modal-body strong{color:var(--navy);}
+#beta-modal-footer{padding:16px 24px 22px;display:flex;justify-content:flex-end;}
+
+/* HEADER */
+#sbs-header{position:sticky;top:0;z-index:100;background:var(--white);border-bottom:3px solid var(--orange);box-shadow:0 2px 8px rgba(0,0,0,0.10);padding:0.65rem 1.5rem;display:flex;align-items:center;gap:1rem;min-height:var(--header-h);}
+#sbs-header .logo-link{display:flex;align-items:center;flex-shrink:0;}
+#sbs-header .logo-link img{height:48px;display:block;}
+.hdr-divider{width:1px;height:36px;background:var(--gray-200);flex-shrink:0;}
+.hdr-text{flex:1;min-width:0;}
+.hdr-title{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;color:var(--navy);line-height:1.1;}
+.hdr-sub{font-family:'Inter',sans-serif;font-size:11px;color:var(--gray-500);margin-top:2px;}
+.hdr-actions{display:flex;gap:8px;align-items:center;flex-shrink:0;}
+
+/* BUTTONS */
+.btn-orange,.btn-navy,.btn-gray{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:none;cursor:pointer;font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.3px;border-radius:6px;text-decoration:none;white-space:nowrap;transition:background 0.15s,transform 0.12s,box-shadow 0.15s;}
+.btn-orange{background:var(--orange);color:var(--white);box-shadow:0 2px 6px rgba(232,119,34,0.3);}
+.btn-orange:hover{background:var(--orange-light);transform:translateY(-1px);box-shadow:0 4px 10px rgba(232,119,34,0.35);}
+.btn-navy{background:var(--navy);color:var(--white);}
+.btn-navy:hover{background:var(--navy-dark);}
+.btn-gray{background:var(--gray-100);color:var(--gray-600);border:1px solid var(--gray-200);}
+.btn-gray:hover{background:var(--gray-200);}
+.btn-orange svg,.btn-navy svg,.btn-gray svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.2;}
+.btn-lg{padding:11px 24px;font-size:13px;border-radius:7px;}
+
+/* TABS */
+#tabs-bar{position:sticky;top:var(--header-h);z-index:95;background:var(--white);border-bottom:1px solid var(--gray-200);display:flex;align-items:stretch;padding:0 1.5rem;min-height:var(--tabs-h);}
+.tab-btn{font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;color:var(--gray-500);padding:0 18px;border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-1px;display:flex;align-items:center;gap:7px;transition:color 0.15s,border-color 0.15s;}
+.tab-btn:hover{color:var(--navy);}
+.tab-btn.active{color:var(--navy);border-bottom-color:var(--orange);}
+.tab-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.2;}
+
+/* FILTER BAR */
+#filter-bar{position:sticky;top:calc(var(--header-h) + var(--tabs-h));z-index:90;background:var(--white);border-bottom:1px solid var(--gray-200);padding:0.6rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;min-height:54px;}
+.filter-label{font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;color:var(--gray-500);text-transform:uppercase;white-space:nowrap;}
+.filter-group{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.sbs-select{appearance:none;font-family:'Inter',sans-serif;font-size:12px;color:var(--gray-700);background:var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236C757D' stroke-width='2.2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 8px center;border:1.5px solid var(--gray-200);border-radius:6px;padding:6px 28px 6px 10px;cursor:pointer;transition:border-color 0.15s;}
+.sbs-select:focus{outline:none;border-color:var(--orange);}
+.sbs-select.active{border-color:var(--orange);background-color:var(--orange-pale);color:var(--navy);}
+.search-wrap{position:relative;display:flex;align-items:center;flex:1;min-width:200px;max-width:360px;}
+.search-wrap svg.search-icon{position:absolute;left:10px;width:15px;height:15px;stroke:var(--gray-400);fill:none;stroke-width:2.2;pointer-events:none;}
+.search-input{width:100%;padding:7px 32px 7px 34px;font-family:'Inter',sans-serif;font-size:12px;font-style:italic;color:var(--gray-700);background:var(--white);border:2px solid var(--navy);border-radius:6px;transition:border-color 0.15s;}
+.search-input::placeholder{color:var(--gray-400);}
+.search-input:focus{outline:none;border-color:var(--orange);font-style:normal;}
+.search-clear{position:absolute;right:10px;cursor:pointer;display:none;background:none;border:none;padding:2px;}
+.search-clear svg{width:13px;height:13px;stroke:var(--gray-400);fill:none;stroke-width:2.2;}
+.result-count{font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;color:var(--orange);white-space:nowrap;margin-left:auto;}
+
+/* CONTENT */
+#content-area{padding:1.25rem 1.5rem 2rem;max-width:1400px;margin:0 auto;}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+
+/* SECTION HEADERS */
+.section-hdr{background:var(--orange);color:var(--white);font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;padding:7px 14px;border-radius:6px 6px 0 0;display:flex;align-items:center;gap:8px;margin-top:1.5rem;}
+.section-hdr:first-child{margin-top:0;}
+.section-dot{width:6px;height:6px;background:rgba(255,255,255,0.6);border-radius:50%;flex-shrink:0;}
+
+/* CARDS */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px;margin-bottom:4px;}
+.finish-card{background:var(--white);border-radius:10px;border:1.5px solid var(--gray-200);overflow:hidden;transition:transform 0.18s,box-shadow 0.18s,border-color 0.18s;position:relative;cursor:default;}
+.finish-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.10);}
+.finish-card::before{content:'';position:absolute;top:0;left:0;width:0;height:3px;background:var(--orange);transition:width 0.22s;}
+.finish-card:hover::before{width:100%;}
+.finish-card.selected{border-color:var(--orange);box-shadow:0 0 0 3px rgba(232,119,34,0.2);}
+.finish-card.selected::before{width:100%;}
+.card-header{padding:12px 14px 8px;border-bottom:1px solid var(--gray-100);display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+.card-title{font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:800;color:var(--navy);}
+.card-subtitle{font-family:'Barlow',sans-serif;font-size:11px;font-weight:600;color:var(--gray-500);margin-top:2px;}
+.card-header-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;}
+.badges{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end;}
+.badge{font-family:'Barlow',sans-serif;font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;white-space:nowrap;letter-spacing:0.2px;}
+.badge-green{background:var(--active-bg);color:var(--active-green);}
+.badge-red{background:var(--obsolete-bg);color:var(--obsolete-red);}
+.badge-amber{background:var(--withdrawn-bg);color:var(--withdrawn-amber);}
+.badge-navy{background:#E8EDF3;color:var(--navy);}
+.he-yes{background:var(--obsolete-bg);color:var(--obsolete-red);}
+.he-no{background:var(--active-bg);color:var(--active-green);}
+.rohs-yes{background:var(--active-bg);color:var(--active-green);}
+.rohs-no{background:var(--obsolete-bg);color:var(--obsolete-red);}
+.compare-toggle{display:inline-flex;align-items:center;gap:5px;font-family:'Barlow',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.2px;padding:3px 9px;border-radius:20px;border:1.5px solid var(--gray-300);background:transparent;color:var(--gray-500);cursor:pointer;transition:all 0.15s;white-space:nowrap;}
+.compare-toggle:hover{border-color:var(--orange);color:var(--orange);}
+.compare-toggle.active{border-color:var(--orange);background:var(--orange-pale);color:var(--orange);}
+.compare-toggle svg{width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:2.5;}
+.card-body{padding:10px 14px;}
+.card-desc{font-size:12px;color:var(--gray-600);line-height:1.55;margin-bottom:10px;}
+.mini-table{width:100%;border-collapse:collapse;margin-bottom:8px;font-size:11.5px;}
+.mini-table th{background:var(--gray-50);font-family:'Barlow',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--gray-500);padding:5px 7px;text-align:left;border-bottom:1px solid var(--gray-200);}
+.mini-table td{padding:4px 7px;font-size:11px;color:var(--gray-700);border-bottom:1px solid var(--gray-100);vertical-align:middle;}
+.mini-table tr:last-child td{border-bottom:none;}
+.mini-table tr:hover td{background:var(--gray-50);}
+.code-cell{font-family:'Barlow Condensed',sans-serif;font-weight:700;color:var(--navy);font-size:12px;}
+.thk-cell,.rust-cell{color:var(--gray-600);}
+.rust-cell{font-size:10.5px;}
+.card-note{font-size:11px;color:var(--gray-600);line-height:1.5;border-left:3px solid var(--orange);background:var(--gray-50);padding:7px 10px;border-radius:0 4px 4px 0;margin-top:8px;}
+.callout-box{background:var(--navy-dark);color:var(--white);font-family:'Inter',sans-serif;font-size:10.5px;line-height:1.5;padding:8px 12px;border-radius:5px;margin-top:8px;}
+.callout-box .co-label{font-family:'Barlow',sans-serif;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--orange-light);display:block;margin-bottom:3px;}
+.card-meta{display:flex;gap:8px;flex-wrap:wrap;padding:8px 14px 12px;border-top:1px solid var(--gray-100);}
+.meta-item{font-family:'Inter',sans-serif;font-size:10.5px;color:var(--gray-500);display:flex;align-items:center;gap:4px;}
+.meta-item strong{color:var(--gray-700);font-weight:600;}
+.cost-dots{color:var(--orange);font-weight:700;font-size:12px;}
+
+/* COMPARE BANNER */
+#compare-banner{position:fixed;bottom:0;left:0;right:0;z-index:200;background:var(--navy);border-top:3px solid var(--orange);padding:12px 1.5rem;display:none;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:0 -4px 20px rgba(0,0,0,0.25);}
+#compare-banner.visible{display:flex;}
+#compare-banner-items{display:flex;gap:8px;flex:1;flex-wrap:wrap;align-items:center;}
+.compare-chip{background:rgba(255,255,255,0.12);color:var(--white);font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;display:inline-flex;align-items:center;gap:6px;}
+.compare-chip-rm{background:none;border:none;color:rgba(255,255,255,0.5);cursor:pointer;font-size:14px;line-height:1;padding:0;display:inline-flex;align-items:center;}
+.compare-chip-rm:hover{color:var(--orange);}
+#compare-count-label{font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;color:rgba(255,255,255,0.65);white-space:nowrap;}
+#compare-banner-actions{display:flex;gap:8px;}
+
+/* COMPARE MODAL */
+#compare-overlay{position:fixed;inset:0;z-index:2147483647;display:none;align-items:flex-start;justify-content:center;background:rgba(18,36,58,0.80);backdrop-filter:blur(4px);padding-top:40px;}
+#compare-overlay.visible{display:flex;}
+#compare-modal{background:var(--white);border-radius:14px;width:min(1100px,95vw);max-height:88vh;display:flex;flex-direction:column;overflow:hidden;}
+#compare-modal-hdr{background:var(--white);border-bottom:4px solid var(--orange);padding:16px 22px;display:flex;align-items:center;gap:12px;flex-shrink:0;}
+#compare-modal-hdr img{height:38px;}
+#compare-modal-hdr-title{flex:1;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;color:var(--navy);}
+#compare-modal-close{width:34px;height:34px;border-radius:50%;background:var(--gray-100);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.15s;}
+#compare-modal-close:hover{background:var(--orange-pale);}
+#compare-modal-close svg{width:15px;height:15px;stroke:var(--gray-600);fill:none;stroke-width:2.2;}
+#compare-modal-body{overflow-y:auto;padding:22px;}
+.compare-table-wrap{overflow-x:auto;}
+.compare-table{border-collapse:collapse;width:100%;font-size:12px;}
+.compare-table th{background:var(--navy);color:var(--white);font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;padding:12px 16px;text-align:left;vertical-align:top;min-width:200px;}
+.compare-table th:first-child{background:var(--gray-50);color:var(--gray-500);font-family:'Barlow',sans-serif;font-size:10px;text-transform:uppercase;letter-spacing:1px;min-width:140px;font-weight:700;}
+.compare-table td{padding:10px 16px;border-bottom:1px solid var(--gray-100);vertical-align:top;color:var(--gray-700);}
+.compare-table td:first-child{background:var(--gray-50);font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--gray-500);}
+.compare-table tr:hover td{background:rgba(248,249,250,0.7);}
+.compare-table tr:hover td:first-child{background:var(--gray-100);}
+.compare-codes-list{display:flex;flex-direction:column;gap:3px;}
+.compare-code-item{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:var(--navy);}
+.compare-code-sub{font-family:'Inter',sans-serif;font-size:10.5px;color:var(--gray-500);}
+
+/* BEST PRACTICE TAB */
+.bp-hero{background:linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);padding:2.5rem 2rem;border-radius:10px;margin-bottom:1.5rem;color:var(--white);}
+.bp-hero-title{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:800;color:var(--white);margin-bottom:8px;}
+.bp-hero-sub{font-family:'Inter',sans-serif;font-size:14px;color:rgba(255,255,255,0.72);line-height:1.6;max-width:680px;}
+.bp-hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--orange);color:var(--white);font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;margin-bottom:12px;}
+.bp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;margin-bottom:1.5rem;}
+.bp-card{background:var(--white);border-radius:10px;border:1.5px solid var(--gray-200);padding:18px 20px;position:relative;overflow:hidden;}
+.bp-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:var(--orange);}
+.bp-card-step{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:var(--orange);margin-bottom:6px;}
+.bp-card-title{font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:800;color:var(--navy);margin-bottom:8px;}
+.bp-card-body{font-family:'Inter',sans-serif;font-size:12.5px;color:var(--gray-600);line-height:1.65;}
+.bp-card-body ul{padding-left:16px;margin-top:6px;}
+.bp-card-body li{margin-bottom:4px;}
+.bp-card-body strong{color:var(--gray-700);}
+.bp-section-hdr{background:var(--orange);color:var(--white);font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;padding:7px 14px;border-radius:6px 6px 0 0;display:flex;align-items:center;gap:8px;margin-top:1.5rem;margin-bottom:0;}
+.bp-matrix{background:var(--white);border:1.5px solid var(--gray-200);border-top:none;border-radius:0 0 10px 10px;overflow:hidden;margin-bottom:1.5rem;}
+.bp-matrix-table{width:100%;border-collapse:collapse;font-size:12px;}
+.bp-matrix-table th{background:var(--gray-50);font-family:'Barlow',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--gray-500);padding:8px 12px;text-align:left;border-bottom:1px solid var(--gray-200);}
+.bp-matrix-table td{padding:9px 12px;border-bottom:1px solid var(--gray-100);font-family:'Inter',sans-serif;font-size:12px;color:var(--gray-700);vertical-align:top;}
+.bp-matrix-table tr:last-child td{border-bottom:none;}
+.bp-matrix-table tr:hover td{background:var(--gray-50);}
+.bp-rating{display:flex;gap:3px;}
+.bp-dot{width:9px;height:9px;border-radius:50%;background:var(--gray-200);}
+.bp-dot.on{background:var(--orange);}
+.tradeoff-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;}
+.tradeoff-card{background:var(--white);border-radius:10px;border:1.5px solid var(--gray-200);padding:16px 18px;}
+.tradeoff-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:var(--navy);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.tradeoff-title svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2;}
+.tradeoff-title.pro{color:var(--active-green);}
+.tradeoff-title.con{color:var(--obsolete-red);}
+.tradeoff-item{font-family:'Inter',sans-serif;font-size:12px;color:var(--gray-600);padding:5px 0;border-bottom:1px solid var(--gray-100);line-height:1.5;}
+.tradeoff-item:last-child{border-bottom:none;}
+.tradeoff-item strong{color:var(--gray-700);}
+
+/* NO RESULTS */
+#no-results{display:none;text-align:center;padding:3rem 1rem;font-family:'Barlow Condensed',sans-serif;font-size:22px;color:var(--gray-400);font-weight:700;}
+
+/* DISCLAIMER */
+#disclaimer-bar{background:var(--gray-50);border-top:1px solid var(--gray-200);padding:0.9rem 1.5rem;text-align:center;margin-top:2rem;}
+#disclaimer-bar p{font-family:'Inter',sans-serif;font-size:11.5px;color:var(--gray-500);max-width:900px;margin:0 auto;line-height:1.6;}
+#disclaimer-bar strong{color:var(--navy);}
+
+/* RESPONSIVE */
+@media(max-width:700px){
+  #sbs-header{padding:0.65rem 1rem;}
+  .hdr-title{font-size:18px;}
+  #filter-bar{padding:0.6rem 1rem;}
+  #content-area{padding:1rem 0.75rem 2rem;}
+  .cards-grid{grid-template-columns:1fr;}
+  .tradeoff-grid{grid-template-columns:1fr;}
+}
+@media print{
+  #sbs-header,#tabs-bar,#filter-bar{position:static;}
+  .finish-card{break-inside:avoid;}
+  .btn-orange,.btn-navy,.btn-gray,.search-wrap,.sbs-select,#compare-banner{display:none!important;}
+}
+</style>
+</head>
+<body>
+
+<!-- BETA OVERLAY -->
+<div id="beta-overlay">
+  <div id="beta-modal">
+    <div id="beta-modal-hdr">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <div id="beta-modal-hdr-text">
+        <div id="beta-modal-hdr-title">Specialty Bolt &amp; Screw</div>
+        <div id="beta-modal-hdr-sub">SBS Fastener Finish Guide</div>
+      </div>
+      <span class="beta-pill">Beta</span>
+    </div>
+    <div id="beta-modal-body">
+      <p>This tool is currently in <strong>beta</strong>. The finish data, corrosion resistance values, and engineering guidance presented here are based on published standards and SBS field experience, but are being actively reviewed and refined.</p>
+      <p>We encourage you to <strong>use this tool</strong> and share your feedback with the SBS engineering team. If you notice missing finishes, data discrepancies, or have suggestions, please reach out directly so we can improve it for everyone.</p>
+      <p><strong>Thank you</strong> for being an early user. Your engagement helps us build better engineering resources for the SBS community.</p>
+    </div>
+    <div id="beta-modal-footer">
+      <button class="btn-orange btn-lg" data-sbs-action="dismissBeta">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        I Understand &mdash; Continue to Tool
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- PRINT LOGO (hidden) -->
+<img id="sbsLogoPrint" src="data:image/png;base64,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" style="display:none;" alt="">
+
+<!-- HEADER -->
+<header id="sbs-header">
+  <a class="logo-link" href="https://shop.specialtybolt.com/" target="_blank">
+    <img src="data:image/png;base64,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" alt="SBS Specialty Bolt &amp; Screw">
+  </a>
+  <div class="hdr-divider"></div>
+  <div class="hdr-text">
+    <div class="hdr-title">Fastener Finish Guide</div>
+    <div class="hdr-sub">Specialty Bolt &amp; Screw, Inc. &mdash; Coatings, platings and surface treatments reference</div>
+  </div>
+  <div class="hdr-actions">
+    <button class="btn-orange" data-sbs-action="printPage">
+      <svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Print
+    </button>
+  </div>
+</header>
+
+<!-- TABS -->
+<div id="tabs-bar">
+  <button class="tab-btn active" data-sbs-action="switchTab" data-tab="guide">
+    <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+    Finish Guide
+  </button>
+  <button class="tab-btn" data-sbs-action="switchTab" data-tab="bestpractice">
+    <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+    Best Practice
+  </button>
+</div>
+
+<!-- FILTER BAR (guide only) -->
+<div id="filter-bar">
+  <span class="filter-label">Filter By</span>
+  <div class="filter-group">
+    <select class="sbs-select" id="filter-category" data-sbs-action="filterChange">
+      <option value="">All Categories</option>
+      <option value="electroplate">Electroplate / Electrodeposit</option>
+      <option value="hotdip">Hot Dip Galvanized</option>
+      <option value="mechanical">Mechanical Plating</option>
+      <option value="zincflake">Zinc Flake Coating</option>
+      <option value="blackoxide">Black Oxide</option>
+      <option value="passivation">Passivation</option>
+      <option value="phosphate">Phosphate</option>
+      <option value="specialty">Specialty Coatings</option>
+    </select>
+    <select class="sbs-select" id="filter-he" data-sbs-action="filterChange">
+      <option value="">HE Risk: All</option>
+      <option value="yes">HE Risk: Yes</option>
+      <option value="no">HE Risk: No</option>
+    </select>
+    <select class="sbs-select" id="filter-rohs" data-sbs-action="filterChange">
+      <option value="">RoHS: All</option>
+      <option value="yes">RoHS: Compliant</option>
+      <option value="no">RoHS: Not Compliant</option>
+    </select>
+    <select class="sbs-select" id="filter-cost" data-sbs-action="filterChange">
+      <option value="">Cost: All</option>
+      <option value="$">$ Low</option>
+      <option value="$$">$$ Medium</option>
+      <option value="$$$">$$$ High</option>
+      <option value="$$$$">$$$$ Premium</option>
+    </select>
+  </div>
+  <div class="search-wrap">
+    <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input class="search-input" id="search-input" type="text" placeholder="Search finishes, codes, standards...">
+    <button class="search-clear" id="search-clear" data-sbs-action="clearSearch">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <span class="result-count" id="result-count"></span>
+</div>
+
+<!-- CONTENT -->
+<div id="content-area">
+
+  <!-- TAB: GUIDE -->
+  <div class="tab-pane active" id="tab-guide">
+    <div id="no-results">No finishes match your search. Try adjusting your filters.</div>
+    <div id="sections-container"></div>
+  </div>
+
+  <!-- TAB: BEST PRACTICE -->
+  <div class="tab-pane" id="tab-bestpractice">
+    <div class="bp-hero">
+      <div class="bp-hero-badge">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        Engineering Best Practice
+      </div>
+      <div class="bp-hero-title">Finish Selection Decision Framework</div>
+      <div class="bp-hero-sub">A structured approach to selecting the right surface finish for fastener applications. Work through the decision criteria in order of priority to identify the best solution for your specific environment and requirements.</div>
+    </div>
+
+    <div class="bp-grid">
+      <div class="bp-card">
+        <div class="bp-card-step">Step 1</div>
+        <div class="bp-card-title">Define the Environment</div>
+        <div class="bp-card-body">Start with the harshest condition the fastener will face throughout its service life.
+          <ul>
+            <li><strong>Indoor / dry:</strong> Minimal protection needed. Zinc clear or black oxide often sufficient.</li>
+            <li><strong>High humidity / mild outdoor:</strong> Zinc clear or yellow trivalent with sealant (96+ hr salt spray).</li>
+            <li><strong>Automotive / under-hood:</strong> Zinc Nickel or Geomet 321. Must survive thermal cycling.</li>
+            <li><strong>Marine / severe corrosion:</strong> Geomet 720+, Zinc Nickel 12ES, or stainless with passivation.</li>
+            <li><strong>Chemical / acid exposure:</strong> Consult SBS engineering. Organic coatings or speciality platings required.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="bp-card">
+        <div class="bp-card-step">Step 2</div>
+        <div class="bp-card-title">Confirm Base Material</div>
+        <div class="bp-card-body">The fastener material constrains which finishes are safe and effective.
+          <ul>
+            <li><strong>Low-carbon steel:</strong> All zinc electroplate options applicable. HE risk managed by baking.</li>
+            <li><strong>High-hardness / PC 10.9, 12.9:</strong> Avoid standard zinc electroplate. Use Geomet 321, Zinc-Tin, or mechanical zinc (no HE risk).</li>
+            <li><strong>Case-hardened tapping screws:</strong> Geomet 321 + ML preferred to prevent cold welding.</li>
+            <li><strong>Stainless steel:</strong> Passivation standard. Electropolish for galling risk. RIE 4037A for black aesthetic.</li>
+            <li><strong>Aluminum:</strong> Anodize. Never apply zinc electroplate directly to aluminum.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="bp-card">
+        <div class="bp-card-step">Step 3</div>
+        <div class="bp-card-title">Check Regulatory Requirements</div>
+        <div class="bp-card-body">Regulatory compliance can immediately eliminate options.
+          <ul>
+            <li><strong>RoHS / ELV (automotive, EU):</strong> Eliminates all Cr6 (hexavalent) finishes. Use trivalent (Cr3) or non-chrome alternatives only.</li>
+            <li><strong>REACH / SVHC:</strong> Cadmium and hexavalent chrome are SVHC. Avoid entirely unless military exemption applies.</li>
+            <li><strong>Torque-tension spec (K-factor):</strong> Dry film lubricants and topcoats (Geomet PLUS ML/VL) give tighter CoF range. Specify CoF target in callout.</li>
+            <li><strong>Food / medical / NSF:</strong> Consult SBS for FDA-compliant coating options.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="bp-card">
+        <div class="bp-card-step">Step 4</div>
+        <div class="bp-card-title">Assess Hydrogen Embrittlement Risk</div>
+        <div class="bp-card-body">HE can cause delayed fracture with no visible warning. It is critical for high-strength fasteners.
+          <ul>
+            <li><strong>HE occurs during:</strong> Acid pre-treatment (pickling) and electroplating. Atomic hydrogen diffuses into steel lattice.</li>
+            <li><strong>Most susceptible:</strong> Steels above 39 HRC (approx. Grade 10.9+), case-hardened, and spring steel.</li>
+            <li><strong>Prevention:</strong> Bake at 190-220C within 4 hrs of plating (ASTM F519 / ISO 4042).</li>
+            <li><strong>Preferred alternatives:</strong> Geomet 321, Mechanical Zinc, Zinc-Tin. Zero HE risk from process.</li>
+            <li><strong>Note:</strong> Zinc-Nickel has lower HE risk than plain zinc due to plating permeability, but is not zero.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="bp-card">
+        <div class="bp-card-step">Step 5</div>
+        <div class="bp-card-title">Consider Torque and Assembly</div>
+        <div class="bp-card-body">Coating thickness and lubricity directly affect the torque-tension relationship.
+          <ul>
+            <li><strong>Thread tolerance:</strong> Thick coatings (HDG, heavy zinc) may require over-tapped nuts or special clearances.</li>
+            <li><strong>Coefficient of Friction (CoF):</strong> Dry zinc can have CoF 0.12-0.20. Wax or PLUS ML topcoats target 0.09-0.16.</li>
+            <li><strong>Galling risk (stainless):</strong> Use wax lube, nickel strike, electropolish, or Molykote for A2/A4 fasteners in stainless assemblies.</li>
+            <li><strong>Re-use:</strong> Geomet 321 with ML topcoat maintains CoF through multiple installation cycles. Plain zinc degrades.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="bp-card">
+        <div class="bp-card-step">Step 6</div>
+        <div class="bp-card-title">Balance Cost vs. Performance</div>
+        <div class="bp-card-body">Over-engineering is as costly as under-engineering. Match the finish to the actual service life requirement.
+          <ul>
+            <li><strong>$ (Zinc Clear 3-5um):</strong> Interior, dry, non-critical. Short service life acceptable.</li>
+            <li><strong>$$ (Zinc Yellow with sealant, Mechanical Zinc):</strong> Outdoor, moderate exposure, 5-10 yr life.</li>
+            <li><strong>$$$ (Zinc Nickel, Geomet 321):</strong> Automotive, 10+ yr, or high-hardness requirements.</li>
+            <li><strong>$$$$ (Zinc Nickel 12ES, GEOBLACK):</strong> Premium aesthetics + extreme corrosion. Marine, luxury automotive, architecture.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="bp-section-hdr"><span class="section-dot"></span>Finish Performance Matrix</div>
+    <div class="bp-matrix">
+      <table class="bp-matrix-table">
+        <thead>
+          <tr>
+            <th>Finish</th>
+            <th>Corrosion Resist.</th>
+            <th>HE Risk</th>
+            <th>RoHS</th>
+            <th>Cost</th>
+            <th>Best For</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Zinc Clear (Cr3 Trivalent)</td><td><div class="bp-rating"><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot"></div><div class="bp-dot"></div><div class="bp-dot"></div></div></td><td><span class="badge he-yes">Yes</span></td><td><span class="badge rohs-yes">Yes</span></td><td><span class="cost-dots">$$</span></td><td>Interior, general purpose</td></tr>
+          <tr><td>Zinc Yellow (Cr3 Trivalent)</td><td><div class="bp-rating"><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot"></div><div class="bp-dot"></div></div></td><td><span class="badge he-yes">Yes</span></td><td><span class="badge rohs-yes">Yes</span></td><td><span class="cost-dots">$$</span></td><td>Outdoor, moderate exposure</td></tr>
+          <tr><td>Black Zinc (Cr3 + Sealant)</td><td><div class="bp-rating"><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot"></div><div class="bp-dot"></div></div></td><td><span class="badge he-yes">Yes</span></td><td><span class="badge rohs-yes">Yes</span></td><td><span class="cost-dots">$$</span></td><td>Black aesthetic, moderate protection</td></tr>
+          <tr><td>Zinc Nickel Clear (12B+S)</td><td><div class="bp-rating"><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot"></div></div></td><td><span class="badge badge-amber">Low</span></td><td><span class="badge rohs-yes">Yes</span></td><td><span class="cost-dots">$$$</span></td><td>Automotive, high-cycle assemblies</td></tr>
+          <tr><td>Black Zinc Nickel (12ES)</td><td><div class="bp-rating"><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot on"></div></div></td><td><span class="badge badge-amber">Low</span></td><td><span class="badge rohs-yes">Yes</span></td><td><span class="cost-dots">$$$</span></td><td>Premium black, 1000+ hr protection</td></tr>
+          <tr><td>Geomet 321 + ML Clear</td><td><div class="bp-rating"><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot on"></div></div></td><td><span class="badge he-no">None</span></td><td><span class="badge rohs-yes">Yes</span></td><td><span class="cost-dots">$$$$</span></td><td>High-hardness, automotive critical</td></tr>
+          <tr><td>Mechanical Zinc (Clear)</td><td><div class="bp-rating"><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot"></div><div class="bp-dot"></div><div class="bp-dot"></div></div></td><td><span class="badge he-no">None</span></td><td><span class="badge rohs-yes">Yes</span></td><td><span class="cost-dots">$$</span></td><td>Washers, HE-sensitive parts</td></tr>
+          <tr><td>Hot Dip Galvanized</td><td><div class="bp-rating"><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot"></div></div></td><td><span class="badge he-no">None</span></td><td><span class="badge rohs-yes">Yes</span></td><td><span class="cost-dots">$$</span></td><td>Structural, outdoor, large fasteners</td></tr>
+          <tr><td>Passivation (Stainless)</td><td><div class="bp-rating"><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot"></div><div class="bp-dot"></div></div></td><td><span class="badge he-no">None</span></td><td><span class="badge rohs-yes">Yes</span></td><td><span class="cost-dots">$</span></td><td>Stainless steel standard treatment</td></tr>
+          <tr><td>Cadmium</td><td><div class="bp-rating"><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot"></div></div></td><td><span class="badge he-yes">Yes</span></td><td><span class="badge rohs-no">No</span></td><td><span class="cost-dots">$$$$</span></td><td>Military only. Avoid in commercial.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bp-section-hdr" style="margin-top:1.5rem;"><span class="section-dot"></span>Key Trade-offs by Finish Type</div>
+    <div style="background:var(--white);border:1.5px solid var(--gray-200);border-top:none;border-radius:0 0 10px 10px;padding:1.25rem 1.5rem;margin-bottom:1.5rem;">
+      <div class="tradeoff-grid">
+        <div class="tradeoff-card">
+          <div class="tradeoff-title pro"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Zinc Electroplate: Pros</div>
+          <div class="tradeoff-item">Low cost, widely available from many suppliers</div>
+          <div class="tradeoff-item">Wide range of colors and thicknesses available</div>
+          <div class="tradeoff-item">Cr3 (trivalent) versions are RoHS compliant</div>
+          <div class="tradeoff-item">Sealant topcoats push performance above 96 hr salt spray</div>
+          <div class="tradeoff-item">Good base for paint and adhesive bonding</div>
+        </div>
+        <div class="tradeoff-card">
+          <div class="tradeoff-title con"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Zinc Electroplate: Cons</div>
+          <div class="tradeoff-item"><strong>Hydrogen Embrittlement risk</strong> on hardened steel (&gt;39 HRC)</div>
+          <div class="tradeoff-item">Thinner sacrificial layer than Geomet or HDG</div>
+          <div class="tradeoff-item">Performance degrades rapidly with scratches or damage</div>
+          <div class="tradeoff-item">CoF variability makes torque-tension control difficult</div>
+          <div class="tradeoff-item">Cr6 versions no longer acceptable in most applications</div>
+        </div>
+        <div class="tradeoff-card">
+          <div class="tradeoff-title pro"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Zinc Flake (Geomet): Pros</div>
+          <div class="tradeoff-item">Zero HE risk: safe for all hardness levels including 12.9</div>
+          <div class="tradeoff-item">Excellent corrosion resistance: 720+ hr standard salt spray</div>
+          <div class="tradeoff-item">Consistent CoF with topcoat selection (PLUS ML, VL, XL)</div>
+          <div class="tradeoff-item">RoHS and REACH compliant, chrome-free</div>
+          <div class="tradeoff-item">Good re-use performance vs. electroplate</div>
+        </div>
+        <div class="tradeoff-card">
+          <div class="tradeoff-title con"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Zinc Flake (Geomet): Cons</div>
+          <div class="tradeoff-item">Premium cost relative to electroplate</div>
+          <div class="tradeoff-item">Limited color options (silver/black; no true yellow)</div>
+          <div class="tradeoff-item">Minimum batch sizes may be required by applicators</div>
+          <div class="tradeoff-item">Fewer approved applicators than zinc electroplate</div>
+          <div class="tradeoff-item">Washers may stick together during dip-spin process</div>
+        </div>
+        <div class="tradeoff-card">
+          <div class="tradeoff-title pro"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Zinc Nickel: Pros</div>
+          <div class="tradeoff-item">Superior corrosion resistance vs. plain zinc (500-1080 hr)</div>
+          <div class="tradeoff-item">Black version combines aesthetics and performance</div>
+          <div class="tradeoff-item">Reduced (not zero) HE risk due to plating permeability</div>
+          <div class="tradeoff-item">Preferred in European automotive OEM specifications</div>
+          <div class="tradeoff-item">RoHS compliant with trivalent passivation</div>
+        </div>
+        <div class="tradeoff-card">
+          <div class="tradeoff-title con"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Zinc Nickel: Cons</div>
+          <div class="tradeoff-item">Higher cost than plain zinc electroplate</div>
+          <div class="tradeoff-item"><strong>NOT recommended on PC 12.9 or case-hardened parts</strong> due to residual HE risk</div>
+          <div class="tradeoff-item">Plating bath management is more complex than zinc</div>
+          <div class="tradeoff-item">Fewer applicators than standard zinc plate</div>
+          <div class="tradeoff-item">Nickel is SVHC in EU; process handling requirements apply</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bp-section-hdr" style="margin-top:0;"><span class="section-dot"></span>Quick Reference: Finish Selection by Application</div>
+    <div class="bp-matrix">
+      <table class="bp-matrix-table">
+        <thead>
+          <tr><th>Application</th><th>Recommended Finish</th><th>Why</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>General hardware, Grade 5/8, indoor</td><td>Zinc Clear Cr3 (Fe/Zn 5AN)</td><td>Low cost, RoHS, adequate protection for environment</td></tr>
+          <tr><td>Outdoor structural, Grade 5/8</td><td>Zinc Yellow Cr3 + Sealant (Fe/Zn 8CNS)</td><td>96+ hr white rust, RoHS, visible yellow for inspection</td></tr>
+          <tr><td>Automotive body, Grade 10.9</td><td>Geomet 321 + PLUS ML</td><td>No HE risk on high-hardness, 720 hr salt spray, controlled CoF</td></tr>
+          <tr><td>High-hardness tapping screw</td><td>Geomet 321 + PLUS ML</td><td>Prevents cold welding, no HE, consistent drive torque</td></tr>
+          <tr><td>Black premium aesthetic + protection</td><td>Black Zinc Nickel (Fe/Zn-Ni 8ES)</td><td>840 hr salt spray, RoHS, premium black appearance</td></tr>
+          <tr><td>Stainless fastener, standard</td><td>Passivation (ASTM A967)</td><td>Restores oxide layer, removes free iron, standard requirement</td></tr>
+          <tr><td>Stainless in stainless assembly</td><td>Passivation + Wax Lube</td><td>Mitigates galling risk on stainless-to-stainless thread engagement</td></tr>
+          <tr><td>Washer (HE sensitive)</td><td>Mechanical Zinc (ISO 12683)</td><td>No HE from process, adequate protection, cost effective</td></tr>
+          <tr><td>Marine / salt water exposure</td><td>Stainless A4 + Passivation</td><td>Stainless provides inherent corrosion resistance without coating</td></tr>
+          <tr><td>Military / extreme environment</td><td>Consult SBS Engineering</td><td>Application-specific; cadmium, special organics, or specialty alloys</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div><!-- end tab-bestpractice -->
+
+</div><!-- end content-area -->
+
+<!-- COMPARE BANNER -->
+<div id="compare-banner">
+  <span id="compare-count-label">0 of 4 selected</span>
+  <div id="compare-banner-items"></div>
+  <div id="compare-banner-actions">
+    <button class="btn-gray" data-sbs-action="clearCompare">Clear All</button>
+    <button class="btn-orange" data-sbs-action="openCompare">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Compare Finishes
+    </button>
+  </div>
+</div>
+
+<!-- COMPARE MODAL -->
+<div id="compare-overlay">
+  <div id="compare-modal">
+    <div id="compare-modal-hdr">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCABdATgDASIAAhEBAxEB/8QAHQAAAQQDAQEAAAAAAAAAAAAABwAFBgkDBAgCAf/EAFAQAAEDAwEEAwwGBgcFCQEAAAECAwQABREGBxIhMQgTURQWIkFWYXGBkZTR0hUyVZWhsTdCVJOiwRcjM1JidLIkcnWChDQ1NkNGU2SDhbP/xAAaAQACAwEBAAAAAAAAAAAAAAACAwABBAUG/8QANhEAAQMCAwUGBQMEAwAAAAAAAQACAwQRBRIhExQxUWEiM0FScbEGYoGRoRWC8DJCcvHB0eH/2gAMAwEAAhEDEQA/AOy6VIjIIPjqE6q0xqFzfkWHUMtB59zuucPUr41nqZnxNzMYXdBxT6eJkrsrnhvqptSrnu8XTWVrkmPcZ9xYcB/WWQD6D46bzqXUB53md++Neef8UxMOV0ZBXdZ8OSPFxILLpSlXNPfBflcPpief/vV8a3IL2sJ6wmJIvDxP91xfxqm/FDHmzYiVbvhx7Rd0gC6KyO2lkdooLW7SW0CZuqcmy4yD43ZagR6s5qQwdn90QnfumrZiccw06rHtJroRYnUy/wBNOR6kD3WGXD6eLjOPoCfZEfeHaPbX0EHkQahjdr0paAFzr4+6e2RcFfkCKyO670hbUdU1NCwP/aQpefXWsVzGd+Wt/csu5vf3Ic79ql9KhzM2s2lBIjW+U8fEVYSD/OmSZtauSwREtkdk+IrWVfhwrNLj9BH/AH39AVojwStf/Zb1IRhpEgczigJM2iarlHdRMQxnxMtD+ealOj9NakvikXDUV0ntRTxSz1pSpwecDkKTBjraqTZ08ZcfoAmzYK6nZnnkAH3KKQIIyCCPNSrHFYZjMIYYbDbaBhKRTDtJ1VF0Xoq5aklJ6xMRoqQ3nG+s8Ep9td5oJsPFcVxAufBSKlkdoqvDVu2naTqie64vUM2GytRKI0FRaSgdgKfCPrNR3vv155Taj9+e+NbxQO8SsJrm+AVmOR2ilkdoqs7vv155Taj9+e+NLvv155Taj9+e+NXuB8yrfh5VZjkdopVWd33688ptR+/PfGnCz7TdpFjfTIi6rvSSDykPKdSfNheRVGgd4FQVzfEKyGlQk6M+1R7aTpmSi6NtNXi3qSmR1Ywl1J5LA8XLjTT0zbrc7TsxjSLVcJcF5U5CS5HeU2ojHLKSDWUQnabM8VqMo2eccEccjtFLI7RVZSdba1UoJTqy/qJ5AXB35qyd9+vPKbUfvz3xrXuB8yy7+PKrMcjtFLI7RVZ3ffrzym1H7898aXffrzym1H7898am4HzKb8PKrMcjtFLIqs7vv155Taj9+e+NZbdtG19bZSX42r72lxJyN+YtY9YUSD7KrcHeZTfhyVllKgT0VdsFw2gR5lh1EW1XiC0HUPoTu9e1kAkjxKBI5c81u9KTa1N2dWaHb7GGjeLjvFDjg3gy2nmrHjOSAKzbB+02fitW2Zkz+CNORSyO0VW1c9pG0a8PqkSdWXxxRPHqZC20+xGBWn33688ptR+/PfGtO4O8yy783krMcjtFLI7RVZ3ffrzym1H7898aXffrzym1H7898avcD5lN+HlVmOR2ilVZ3fhrwH/xPqP35741KtEbc9o+lLgytd7k3OKhQ6yJPPWBafGN4+ED581RoHW0KsVzb6hWD0qZ9E6gh6r0nbNRW/Pc8+Ol5KTzSTzSfODkeqlWEixsVtBuLhPFY35EdgZefaaH+NYH517UkKSUqGQRg0P9YbOUXELkWuc807z6l1wqQfRnlWSrlniZmhZmPK9lqpYoZH5ZX5RztdP2oLxpB9lUS7zYDqSPqqUFH1Y5UOJCdmcaS44ldwlccpbTnd9GaiN8sd0ssgs3GI4yc4CsZSr0Gm6vC12MySvtJC0Ecxcr2VHhMcTLxyuIPI6IhI1ppa3pP0VpNrf/ALzxBz+dY5W1O9qSEw4cOKkcgElXwqA1v2+y3aeoJh26S9nkQ2cH18qytxStf2Yjbo0AewWl2G0je1IL9XEn3Kdpuu9UylEqujjYP6raQBTLJulyk57ouEp3PMKdUR7KlVt2aajlBKpCGYaDzLi8keoU7s6A07AR1l61K0Sk+EhtQA+NN3HEqgXkuB8xt7pe+YfBpHa/yi/shnWeLDlylYjRnnjnHgIJontytl9mI6tru1YOQrdLmD68Un9qVsioUi1WPdPiJISD6QKgwynj7+oaPTVQ4jO/uYCfXRRK26A1RN4i3lhPa8oJqT23ZI8rBuN0QgY+qyjJ/GmyftT1A8f9mZixh2BO9+dR+fq/Uk0KS/dpG4rmlKt0fhTQ/CIeDXPPXQf8JRZik3FzWDpqUW7PozSun5CJLi0LfQOCpLgwD2gU4TNaaaikoVdGnFg43GsqUT6BQCjouF2mNxmy/LfWcJSVFRox7P8AQMazJROuaUSJ5GUpPFLXo7T567GGYhLUHZ0cIY3xP8tcrlYhRRQDPVSlzvAfy+imsGQmXFbkJbcbSsZCXE7qsecUFums+trYutCDgOXBlKvR4VG+gd02W1r2MFaRkIuDJV5vrV7GmuJG3XlKnu3WXPvQ9jRpe2eOzKjtSGzCeO46gKTnwfEa7h+gLF9i233VHwrh/odSGI22iM7IebZb7ieG84oJH6vjNdyfTFo+1YPvCPjWitvtNFnorbPVY/oCxfYtt91R8KX0BYvsW2+6o+FZPpi0fasH3hHxpfTFo+1YPvCPjWTtLXosf0BYvsW2+6o+FATptWOMnZ9ZU2m0MpkLuyU4ixgFqHVOcPBGTR/+mLR9qwfeEfGsjT1vnFCmnYsotneSUqSvdPaOyjjeWODkMjA9pauYehPpLVdi1Fdrnd7NMgW6XACWXH0boWvfSeAPHlmpX04/0VRP+II/I0faAPTkONlcMdtwR+RpzJDJOHFJfGI4C0Lmzo2MMyNtmm2ZDLbzSpJCkLSFJPgnmDXf/wBAWL7FtvuqPhVf/RukMRdtem35T7TDKJJKnHFhKU+CeZPAV373y6c8oLT7438aZXXzi3JLorZDfmvf0BYvsW2+6o+FL6AsX2LbfdUfCvHfLpzygtPvjfxpd8unPKC0++N/GsXaWzsr2bBYiMGyW33VHwrk7pzaXsllu2m7pabdHhOzm5DcgMNhCV9X1e6cDhnwzXV3fNpzygtPvjfxrkrpv6wsWoL5YLPZp7M5y2IfXJcZWFISXOr3U5HAnCCTjtFaaTNtQs1Xl2RTH0KHFI20NoBIC4L4I7eGf5VudOV9a9rUOOSdxq1tlI7CVrz+Qr10HbRLlbUZV2Q0ruWDBWHHMcApeEpTnt5n1GsfTkaWja7FdIO6u1NAH0LXn862ab19Fk13b6oldCC12ybs9ujsy3RJK0z8BTrKVkDd7SK6A+gLF9i233VHwoBdB2fBi7PLoiTNjMKM/IDjqUk+D5zXQP0xaPtWD7wj41gqb7Vy3U9tkFj+gLF9i233VHwpfQFi+xbb7qj4Vk+mLR9qwfeEfGl9MWj7Vg+8I+NJ7SdosR09YDzsds90R8K4q6UWmLhO273GDp2xPOpLMYJbiRvBCi0n+6MCu2vpi0fakH3hHxrYjiKtSpMcMqU5jecRglWOWSOdNhmMTsyVNEJW2Q66Mdmven9jdps+oIL0GbHcfyy79ZKVOqUP9VKiXSpT3ZnF3NNY3K0DklXh51plBW86htI/WWoAfjXumrUmn7bf4nUT2iSPqOIOFI9BpMpeGEsFz10TYwwuAebD7rTvmoNJdQqPc7hBebUMFGes/LNC+5L2cNTXHmGbjISeTKDuo9R51j1ds7u9n35EMGfEHHeQPDSPOnx+kVCyCDg8DXhMVxKoL8s8LQRwuL/ngV7TDcPgDM0MpIPI2/Hgps3rOz28j6H0rCaIGN9876q15e0XUryC2zIZioPIMtBOPXURpyttgvVyI7itcp4HkoNkJ9p4VzG19ZJ2IyR0aLey6DqKkj7TwPVxv7r5Ovt5nKzLucp0+dw03qUpRypRUe0mpvb9mOoHkhya5Fgt+MuObxHqHD8ac2tF6NtoCrzqht5Q5oacSPwGTTf0utl7Ugt1cbe+qX+o0kfZjN+jRf20Q0rag224TlAQ4UiRk4y22SPbRMavOzGzEdyQDMWnkvqSs59KyK+Sdq8VlJRbbHujxFxwAewD+dNbhtJH39QP23P5SzX1L+5gP10UZtmzjU8zBXFbip7XljPsGalFt2SNjjcbqtX+FlGPxOaY521LUb//AGdESKP8De8f4s0wztYalmZ668SgDzShW6PYKc2XB4ODHPPXT/r2SnR4rNxc1g6ao12HTuntLIU4wGmVrGFPPuDePrPKsk3V+moZKXrvGKuxB3/yzXPK3pUlwJW668tRwAVEkmirs52fCP1d1vrQU9wU1GUOCPOrz+autQYtNUuENHCGtH2H2suZW4ZFA3a1UpcT9z97oi22Y3PholModS2vinrE7pI7cVHdrekUa40BdNOKWlt2Q3lhZ5JcHFJ/l66lYAAwBgClXrGFzbEnVeYeGuuLaKtPVOgta6SuLsa6WK5R1Nkjrm2lKbUO0LTwxTJi8dk/+OrRFpZdJQtKF45pIBxWPuOH+yMfuxXQFefFq55oR4OVX+Lx2T/46WLx2T/46tA7jh/sjH7sUu44f7Ix+7FXv/yqbj8yq/xeOyf/AB1kYuN+ty0vNTLjFUD4Kg4tPGrPO44f7Ix+7FAHpyxmG9ltuW0y22fpRHFKAP8Ay10cdYJHBuXigkpCxpdm4L50P9qd31fGn6Z1HLVMnQWw9HkL+utvOCFHxkEitjpyDOyuGey4I/I0GOhO6pG2VLYOA5BeCvPgZo0dOP8ARVE/4gj8jS3sDKkWTGPL6Y3XGFqgTrncGYNsjPSpbyt1pplJUtR7ABUm/o42jeSV992XTt0Z/wBOWl/80f8ASqrEKfU1JicAAkU9MJWkkqtn+jjaN5JX33ZdL+jjaN5JX33ZdWTUqz7+7ktG4t5qtk7ONouDnSV9x/ll0zRYbVnv7cfVlquTbTZBejf2DxH/ADDh7Ks/rlvp8WuILdpm8pZQmX170dSwMFSCkKAPbgg49JpsNWZH5SOKVNSCNuYHgin0brps9uGh+q0BFEJtlQ7sjOcX0uEc1n9bzHzVFOl1ssuutrXAvunY/dNytyVIcjggKdaPHh5wRy9NBXoVXWTC2ytW9txQYuEN5t1OeB3UlYPtTXcx4c6zS3gmuCtEVp4bFVfzbPqS0OKYl2y6wVg4KXGVt8fZWDF47J/8dWhKZjPgLU0y6DyJSDXnuOH+yMfuxTt/5tStx+ZVf4vHZP8A46WLx2T/AOOrQO44f7Ix+7FLuOH+yMfuxU3/AOVTcfmVX+Lx/wDP/jp005rPV+lbm3Mtd6uEOQ2Qd0uKwR2FJ4EGrLO44f7Ix+7FcNdM9ttrbXIS02lCe4mOCRgfVp0NSJnZS1KmpzC3MHLrvYxrIa92cWrUqkJbkPoKJLaeSXUEpVjzEjI8xFKht0GHVubHZqFHIavTyE+YdUyr8yaVcyZobIQF0YXFzASj1Wpcblb7a2Fz5seKk8i64E59GedbdYJ0OJPjqjzYzUhpXNDiQRSH5spyceqczLmGbh0UanbQ9Jxcj6RMhQ8TLSlfjjH40P8AU+ptFXOZ3UnTUl17PhK60MBf+9u5zUl1Lsrgyd56ySDEc59S5lSD6DzH40NL9pq9WR3cnwXEJzgOJG8hXoIrxmL1OJtGWaNuXmBcfm69bhdPh7jeJ5zcibH8WTq1rREL/ujTlohEclqbLrg/5ia15uutVSgQq7OtJ7GUpb/IZprt9jvE84h22U950tkipHb9mmppOFPMsREHxuuDh6hk1yI3YjOLR5rdBYfiwXUkbQQm8mW/XU/m5UUlz50tW9KmSHz2uOFX51r0SGtnVph4N51Mw2fGhoAfiT/KtxmBszth/rDJnrHaFrH8IAohg9QTeZzW+rh/6h/VYALRNLvQf6QrSCo4SCT5qdrdpq/3DBiWiY4k8ldWUp9p4USmtbaYtnC1aakAjkpuKlGfXzrWlbULkrIiacWkeIuLUfwA/nTm4dQx97Pf/EH3SnV9Y/uobepHsmG3bLtSSMGSYkNPj33N5XsTn86klu2RwkYNwuz7p8aWWwge05pjlbQdaP5DMNpgeLcjKJHtJpplai11LBC5dxAPibb3P9IFaGvwmH+mJzz1/wBj2SHNxOXjI1vp/D7otWPRWm7K+mVGh7z6PquvOFRHn48B7KdZd5tETPdV0hs48S3kg/nXPy4up7i6lt1u6SVLOAHCtWT66JWhtm8eD1c++hMiTzSxzQj09p/CutQYjJKdlS04a3xJ0H4C5lbQRxDaVM+Y8hqfdECFKjzI6ZEVwOtK+qsDgfRXK3TR1jq6xatt1rtF/uFugSIXWLajPFsLVvYJJTgmurkgJSEpAAAwAPFQC6Ymza66wsUC/WGKuXOtgUl1hsZWto8fBHjIPir11IQHjOvL1QJYciZOglKkSrRqZ6VIdfcVKbJW4sqJ8HtNdM5HaKrBg3LU+nVux4Nwu9pUpX9ahh5xnJHaARmtrv11v5W6h+8XvmrbLRmR5cCsUVWI2BpCs0yO0UsjtFVld+ut/K3UP3i981Lv11v5W6h+8Xvmpe4O8yZv48qs1yO0Vz906VD+iu3DtuqP/wCa65L79db+VuofvF75q17hedU35tES4XW83RAVvIafkOPAK5ZAJPGjioyx4cTwQSVgewttxRX6FLSl7Z2nAODcJ4n1pxRp6cf6Kon/ABBH5GmjoZbNLxp1M/V1/hOQnZbIYhsupwvcyCVkeLOAB66eenCne2UxiASRPR+VA94dUiyNjC2mN1zV0Z/05aX/AM0f9KqsQyO2qsbfKnW+Y3MgSJESS0ctvMrKFoPaFDiKfe/vXnljqP7ye+an1FMZXAgpFPUiJtiFZjkdtLI7arO7+9eeWOo/vJ75qXf3rzyx1H95PfNSNwd5k/f28lZjkdtcs9Pe7wlQdNWRD6FzA87JW2DkoRuhIJ7MknHoNc6d/evD/wCsdR/eT3zU2IjXy/3LeDNwuc19QBUQt1xZ9PEmmQ0mzeHEpc1XtGFoHFE7odhR272kgZxHk+r+pXTFte11rW5a0vttuOpbq7Ej3GQy3G7oUltKUuKAG6MDkB4q6H6JOx27aRff1fqiOYtwfZ6mJEV9dpB+spXYTjGOzOaFPSp2XX2ya9uGpbfbn5NmuTnX9aygqDLh+slWOWTxz56NsrHTn0QOje2Aeq6s2FKzsg0wSrJ7hTnJ85qbZHaKrHjaq1jBjoiRtR32My0N1DTc11CUDsABwK99+ut/K3UP3i981JdQkkm6c2uAAFlZrkdopZHaKrK79db+VuofvF75qXfrrfyt1D94vfNVbg7zK9/HlVmuR2iuFemn+m2R/kWP9NDXv11v5W6h+8XvmrFEgas1nem22mbre7i9hCVLK3lkeLKjngKdBTGF2YlJnqds3KAuvegs2pGx6cpQwHL28pPnHUsj8waVETYXoxzQWzG1aeklKpqEqellJyOtWSpQz48ZCc/4aVc6ZwdISF0YWlrACpxSrXuc2PbbbKuEte5HisredVjOEJSVE+wGo1ojVd11KzCnnS8mDapzHdEeU5JbUSgjKCUDiN4EGlhpIujLgDZS2vi0JWkpWkKSfERkVDdQ61nQdYPaatWmpF2ksW9M91SJCGwEFZTgb3M5FbEPXFvmbOntaR4z5jsMOOOR1YS4lTZIWg+LIIIq8hsqzi6lYAAwBgUiARggEeeoxo7UV6vqI8mXpd62wpDCX2n1y23MhQBSN1PEcDWvfdaqj6lOnLFZZN7uTTYckpacS23HSeW+tXAE9lTIb2Uzi11LQ02OTaB6q+7qf7o9lMn05MjaTm3u7Wd2C7DZdeXF65LiilAJ4KHDjit3T9zbvFihXZptTTcthLyUqPFIUM4NVlsrzXW/gdlKoXs72h23Wlyu8KHDkRlW9wbinSMSGiSEuox+qSk+ynibqRiNre36WVGcU9OhPS0vAjdSG1ISQRzyd8eyrLCDYqg8EXT5Spv1BMuEG3l+22pdzkBQAYS6lskeM5Vw4VFtB65uuqpb6U6SkwokaY9CkSHJbaurdaOFDdHEjPDNQNJF1C4A2U5pVFE64tzN31BbLmy5b3bKymSouqGH2CP7RHmyCD56d9J3Zy+6eh3dyA9A7qb6xDDxG+lJ+qTjtGDjz1C0jUqBwPBOlKo1rzVStMN21LNsduMm4y0xGGkOpb8MjOSVcAOFfNGasF/n3O1yrY/bLlbFpTIjuLSsYUMpUFJ4EGplNrqZheyd7hZLNcV79wtECYr+8/GQs/iK0zpDSZ56XsnuDXy0xva7ly7pcYemdMy741bVlqTIQ+hpHWDm2je+sR5qedGapt+qbAbtBQ611a1tPx3RhxlxHBSFDtBqyHAKgWkr13naR8lrH93tfLS7ztI+S1j+72vlr1obULOqtKwNQR47kdqY3vpbcIKk8SOOPRUe1xrq7aYuMZhekJUuNMnswIkhEttIddd+qMHiBnIyeyrAeTZQlgF1IBo/SQ5aXsg/6Br5a2oFhscB0OwLNbojg/WZioQfaBXuxS5823pfuVsVbZBUQWFOpcIHiO8nhxrR1xqNjS1hVdH47kkl1thplBALjjiglIyeA4kcTQ9omyvsgXT5Wrcrdb7mwI9ygRZrIO8G5DKXE57cKBFNGidTDUbVwS5AcgyrdLMWQypxLgCwkK4KTwIwoVIaoggqwQQmPvO0j5LWP7va+Wl3naR8lrH93tfLTNp3W83UM1arRpqS/aW5i4qp6pCEjKDhSgg+FgGnLW2rYumkw2BEkXG5T3C3DgxwOsdI4k8eASBzJo7PvZBdlrrP3naR8lrH93tfLS7ztI+S1j+72vlr7pu6Xue68i7acctKUJSptSpSHQvOcjweRH86iE3am7FjXq5nSs1yzWWe5DmTESGyU7it1Sw39YpGc1AHk2ChLALlS8aP0kDkaWsY/wDz2vlpwt9sttuSU2+3xIgPMMMpRn2CmPXerkaZtFsnM2525OXKexBjMtuJQVLezuklXADhW/Ybld5kSQ7dLC5a3G/7NtUlDvWDHanl66oh1rlEMt7BPFIgEEEAg8waHFz2t2mBsyg64dtstTct/qBDSR1qFhakrB8Xg7iifMKk6tVRVawt+nIzDkhyXBXOU8gjcabBAST/ALxVwqFjh4Kg9p8VtSNMaakOFyRp60OrPNS4TaifWRWI6P0keelrGf8AoGvlp7pt1Vd2rBpyfenmVvNwmFPKbQQCoDxDNUC46BWQOJWr3naR8lrH93tfLX0aP0kOWl7IP+ga+Wm7V+t42nNAJ1e7AkSWVNtLEdojrD1mMAefjSka8tQsNhvMRC5cW9TGojRQQC2paVHKvRukEUVn8UN2Jy70dKeTFk9wa+WnGBAgW9stwIUaIg/qstJQPYBTLrbVsXTQhRxDkXK53BwtwoMYDrHiBlR48EpA5k1sabud7nuvIu+nXLSlCUqbUqUh0OZzkeDyIx+NCQ61yiBbewT3SpUqFEtW7uxWbTMemtlyK2wtTyAgrKkBJKhujnwzw8dCHQzsO27RrRatn1xucvTchqQq5Qn2nO54ICctltSwCklWE7ozwo0V5Q2hGdxCU54nAxmja6wIQObcgoUah09d7zt2mGFebjZo5040hciM0D1n9evKN5QwDxzw40/6r07DsGxm82GzsvKabt7wQOK3HFKyST4yokk1OsDOccaR4jBq9odOirZjXqhdsac061HtseFfb7KuBt7aXIswvFtshA3gApIAweHOsVuubWg9pOp16hYktW++PNy4lwQwpxsbqN0tqKQSkjxUVQhCTkJSD5hSWhC07q0pUOwjNQvuT1UDLAdFFdSXSHqDZnfZdoW5Jadt8lDZ6pSSo9WoYCVAH8Kj9ynXGz7A4iIEZ83R+3Mw47YbO8l10BAJHMYyT6qJSUpSndSkBPYBwpEAjGBgVQcB4Ky0nxQOsenNVaD1no+4XB+HNt7kYWN4QoykqbSQVtqXzz4QIz4t6pLrm4xbJto03drj17cFNmmsqeQwtxKVqcZISd0HBIB9lE0gHmAa+KSlX1kg+kURlubkIdnYWC1LLdIV5tzdwtzqnYzhISpTakE4ODwUAeY7KhmxKO/HtmphIYcaK9T3FaQtJTvJLvBQzzB7an4AAwAAPNSAA5DFBmsCEeXUFC7bPp2PddU6LfMV5zrbmIs0tA4XGKSsocx+rvJTzooJASkJSAABgAeKvpAPMcqVQuJAHJQNsSeaF/SAZacY0uuS5LYiNXltUh+MFb7SN0+ECkEj01h2JsCNqnU6LT3dK0+6pt1idOQoPPPEeGN5YClJHDHCiqtKVjC0hQ7CM0kgJGEgAdgotp2MqHZ9rMhHs8v8LQEW7aZ1Q3KiSGbg/IjvCM44mW24srSUlIOTxxg08bHbfPbtWpL5Mhuwhfro/PjxnE4W22oBKd4eIkJzjz0Q1toWQVoSojlkZxXqo6S99OKjWWtrwQp2C6os8bQlg03Idks3VLZaUw5EdThWScElOPxp320x35DWjuoYcd6vVtvcXuIKt1IUrKjjkB21PQ22DkISD24r0QDzGaheM2YBQMOXKSlQy2+oMyBZrTcTKZ05Nmbt1kxW1KcaSElTf1QSkb4TlQ5UTa+KSlSSlSQoHmCKFjspuic3MLIG7G7jdUathaWZU61ZLa3IW3ORHW2i7E43SreH105JJPMjhRzJwMmvgQhIACUgDlgcq+1b3ZjdUxuUWQNucm1W7VkSVs3mXNu6S7mlNwtQYdEZaCohxagpO6gjnkHjUn2kd02HaPp7WrsKRMtUeK9Bl9Q2XFx98ghzdHEjhg4okhtsLKwhIUeZA4mvRAIwRkUW01VbPRMmmtVWLUbjyLPMVJLKQXCWHEAZzjipIyeFA266XvDmltb3pqTdVtRtSyJLtmIPUT2EvAqSU4ycpycjngV0W2222MNoSgH+6MV9wMEYGDzqmyZDoo6PONULdvqGpmj9Lu/7Y1DTqGA885FQrrGWRvFSxugkYHjxwqTbNpFidhTGbJeLrc0IcSp1c8uFSSRwAK0jhwPKpYUpIwUgjsIpJSlP1UgegVWfs5VeTtZkBbPpiZP2kXzRs2C8LJbnp1zYcUg9W4qW0lKUJPLKS4+afOjtEusv6Rvt8ivMSorDFkZ61BSSiOCFKGfEpRHHx4ov4Gc4Ge2kAByAFG6UkWQtiAN022m9RLncLlCjIkBdudDLyltlKVKKc+Cf1uFNO1ppx7ZpqFpltbji4LgShCcknHIAVJ0pSkkpSBk5OBzr6QCMEZFLBsbhMIuLIY7QIkh7Y3ZmG47q3ULtxU2lBKhhaM5HmqJ6y0/dtNa7sdrtsN+Rpy531m4NhtJIhPJSsOJ4ckq3gR580eiARggYpEA8wDijbKQluiBQ02jGRYNpWntbOwpMy0sQ37fLLDZcVGLikqS7ujiRwwccqmOmtVWLUa3kWaYqT1ASXCWHEAZzjipIyeB5U9EAjBGRXltttsYbQlA/wjFCXAixRhpBTdp2+Qr6xKehJkJTFluxHOuaLZK2zhRGeaew+OlTkkBPIAZOeFKhKIL/2Q==" alt="SBS">
+      <div id="compare-modal-hdr-title">Finish Comparison</div>
+      <button id="compare-modal-close" data-sbs-action="closeCompare">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div id="compare-modal-body">
+      <div class="compare-table-wrap">
+        <table class="compare-table" id="compare-table"></table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DISCLAIMER -->
+<div id="disclaimer-bar">
+  <p><strong>Disclaimer:</strong> This finish guide is provided for reference purposes only. Salt spray hours and corrosion resistance values are typical and may vary based on part geometry, base material condition, bath chemistry, and environmental exposure. Always verify finish specifications with your supplier. Specialty Bolt and Screw, Inc. makes no warranty regarding the accuracy or completeness of this information for any specific application.</p>
+</div>
+
+<script>
+var FINISHES=[{id:'zinc-clear',category:'electroplate',name:'Zinc and Clear',subtitle:'Electrodeposited Zinc Coating',description:'A clear or blueish chromate finish applied on top of the zinc to protect it from premature white rust (oxidization). The preferred RoHS-compliant option is trivalent (Cr3).',he:'yes',rohs_note:'Cr3: Yes / Cr6: No',cost:'$$',standard:'ASTM F1941',callout:'Electrodeposited Zinc alloy Coating, Yellow Fe/Zn 5A per ASTM F1941M-2016',note:'TCP (Trivalent commercial plating 72/96). Clear Hexavalent not RoHS compliant.',codes:[{code:'Fe/Zn 3A',thk:'3\u00b5m',conversion:'Clear Hexavalent (Cr6)',white:'6',red:'12',rohs:'No'},{code:'Fe/Zn 5A',thk:'5\u00b5m',conversion:'Clear Hexavalent (Cr6)',white:'8',red:'24',rohs:'No'},{code:'Fe/Zn 8A',thk:'8\u00b5m',conversion:'Clear Hexavalent (Cr6)',white:'8',red:'48',rohs:'No'},{code:'Fe/Zn 3AN',thk:'3\u00b5m',conversion:'Clear Trivalent (Cr3)',white:'6',red:'12',rohs:'Yes'},{code:'Fe/Zn 5AN',thk:'5\u00b5m',conversion:'Clear Trivalent (Cr3)',white:'8',red:'24',rohs:'Yes'},{code:'Fe/Zn 8AN',thk:'8\u00b5m',conversion:'Clear Trivalent (Cr3)',white:'8',red:'48',rohs:'Yes'},{code:'Fe/Zn 5ANS',thk:'5\u00b5m',conversion:'+ w/ Sealant Top Coat',white:'96',red:'120',rohs:'Yes'},{code:'Fe/Zn 8ANS',thk:'8\u00b5m',conversion:'+ w/ Sealant Top Coat',white:'96',red:'192',rohs:'Yes'}]},{id:'zinc-yellow',category:'electroplate',name:'Zinc and Yellow',subtitle:'Electrodeposited Zinc Coating',description:'Yellow hexavalent chromate finish offers higher corrosion resistance than clear. With trivalent conversion the color is a dye offering no additional corrosion protection.',he:'yes',rohs_note:'Cr3: Yes / Cr6: No',cost:'$$',standard:'ASTM F1941',callout:'Electrodeposited Zinc alloy Coating, Yellow Fe/Zn 5C per ASTM F1941M-2016',note:'Also known as YIC (Yellow Iridescent Chromate) or Z&Y (Zinc and Yellow).',codes:[{code:'Fe/Zn 3C',thk:'3\u00b5m',conversion:'Yellow Hexavalent (Cr6)',white:'24',red:'24',rohs:'No'},{code:'Fe/Zn 5C',thk:'5\u00b5m',conversion:'Yellow Hexavalent (Cr6)',white:'72',red:'96',rohs:'No'},{code:'Fe/Zn 8C',thk:'8\u00b5m',conversion:'Yellow Hexavalent (Cr6)',white:'72',red:'120',rohs:'No'},{code:'Fe/Zn 3CN',thk:'3\u00b5m',conversion:'Yellow Dye Trivalent (Cr3)',white:'6',red:'12',rohs:'Yes'},{code:'Fe/Zn 5CN',thk:'5\u00b5m',conversion:'Yellow Dye Trivalent (Cr3)',white:'8',red:'24',rohs:'Yes'},{code:'Fe/Zn 8CN',thk:'8\u00b5m',conversion:'Yellow Dye Trivalent (Cr3)',white:'8',red:'48',rohs:'Yes'},{code:'Fe/Zn 5CNS',thk:'5\u00b5m',conversion:'+ w/ Sealant Top Coat',white:'96',red:'120',rohs:'Yes'},{code:'Fe/Zn 8CNS',thk:'8\u00b5m',conversion:'+ w/ Sealant Top Coat',white:'96',red:'192',rohs:'Yes'}]},{id:'black-zinc',category:'electroplate',name:'Black Zinc',subtitle:'Electrodeposited Zinc Coating',description:'Black zinc has a slight iridescence with relatively low corrosion resistance. Hexavalent is not RoHS compliant. Use trivalent with sealant for best performance.',he:'yes',rohs_note:'Cr3: Yes / Cr6: No',cost:'$$',standard:'ASTM F1941',callout:'Electrodeposited Zinc alloy Coating, Black Fe/Zn 5E per ASTM F1941M-2016',codes:[{code:'Fe/Zn 3E',thk:'3\u00b5m',conversion:'Black Hexavalent (Cr6)',white:'-',red:'-',rohs:'No'},{code:'Fe/Zn 5E',thk:'5\u00b5m',conversion:'Black Hexavalent (Cr6)',white:'12',red:'-',rohs:'No'},{code:'Fe/Zn 8E',thk:'8\u00b5m',conversion:'Black Hexavalent (Cr6)',white:'24',red:'72',rohs:'No'},{code:'Fe/Zn 3EN',thk:'3\u00b5m',conversion:'Black Dye Trivalent (Cr3)',white:'6',red:'12',rohs:'Yes'},{code:'Fe/Zn 5EN',thk:'5\u00b5m',conversion:'Black Dye Trivalent (Cr3)',white:'8',red:'24',rohs:'Yes'},{code:'Fe/Zn 8EN',thk:'8\u00b5m',conversion:'Black Dye Trivalent (Cr3)',white:'8',red:'48',rohs:'Yes'},{code:'Fe/Zn 5ENS',thk:'5\u00b5m',conversion:'+ w/ Sealant Top Coat',white:'96',red:'120',rohs:'Yes'},{code:'Fe/Zn 8ENS',thk:'8\u00b5m',conversion:'+ w/ Sealant Top Coat',white:'96',red:'192',rohs:'Yes'}]},{id:'olive-green',category:'electroplate',name:'Olive Green (Opaque)',subtitle:'Electrodeposited Zinc Coating',description:'Olive green with a shading of brown or bronze. Not preferred due to quality issues. Consider Black Zinc or Black Zinc Nickel instead.',he:'yes',rohs_note:'Cr3: Yes / Cr6: No',cost:'$$',standard:'ASTM F1941',callout:'Electrodeposited Zinc alloy Coating, Olive Fe/Zn 5D per ASTM F1941M-2016',note:'Not recommended due to quality control limitations. Prefer Black Zinc or Black Zinc Nickel.',codes:[{code:'Fe/Zn 3D',thk:'3\u00b5m',conversion:'Opaque Hexavalent (Cr6)',white:'24',red:'24',rohs:'No'},{code:'Fe/Zn 5D',thk:'5\u00b5m',conversion:'Opaque Hexavalent (Cr6)',white:'72',red:'96',rohs:'No'},{code:'Fe/Zn 8D',thk:'8\u00b5m',conversion:'Opaque Hexavalent (Cr6)',white:'96',red:'144',rohs:'No'},{code:'Fe/Zn 3DN',thk:'3\u00b5m',conversion:'Opaque Dye Trivalent (Cr3)',white:'6',red:'12',rohs:'Yes'},{code:'Fe/Zn 5DN',thk:'5\u00b5m',conversion:'Opaque Dye Trivalent (Cr3)',white:'8',red:'24',rohs:'Yes'},{code:'Fe/Zn 8DN',thk:'8\u00b5m',conversion:'Opaque Dye Trivalent (Cr3)',white:'8',red:'48',rohs:'Yes'},{code:'Fe/Zn 5DNS',thk:'5\u00b5m',conversion:'+ w/ Sealant Top Coat',white:'96',red:'120',rohs:'Yes'},{code:'Fe/Zn 8DNS',thk:'8\u00b5m',conversion:'+ w/ Sealant Top Coat',white:'96',red:'192',rohs:'Yes'}]},{id:'zinc-nickel-clear',category:'electroplate',name:'Clear Zinc Nickel',subtitle:'Trivalent Clear Zinc Nickel Alloy',description:'Zinc nickel alloy provides excellent corrosion resistance due to nickel content. Suitable for applications where both performance and appearance are required.',he:'yes_partial',rohs_note:'Yes',cost:'$$$',standard:'ASTM F1941',callout:'Electrodeposited Zinc-Nickel alloy Coating, Fe/Zn-Ni 8B per ASTM F1941M-2016',note:'HE risk is lower than plain zinc due to plating permeability, but NOT zero. Not recommended on PC 12.9.',codes:[{code:'Fe/Zn-Ni 5B',thk:'5\u00b5m',conversion:'Trivalent Clear Zinc Nickel',white:'20',red:'150',rohs:'Yes'},{code:'Fe/Zn-Ni 8B',thk:'8\u00b5m',conversion:'Trivalent Clear Zinc Nickel',white:'20',red:'240',rohs:'Yes'},{code:'Fe/Zn-Ni 12B',thk:'12\u00b5m',conversion:'Trivalent Clear Zinc Nickel',white:'20',red:'500',rohs:'Yes'},{code:'Fe/Zn-Ni 5BS',thk:'5\u00b5m',conversion:'+ w/ Sealant Top Coat',white:'150',red:'300',rohs:'Yes'},{code:'Fe/Zn-Ni 8BS',thk:'8\u00b5m',conversion:'+ w/ Sealant Top Coat',white:'150',red:'400',rohs:'Yes'},{code:'Fe/Zn 12BS',thk:'12\u00b5m',conversion:'+ w/ Sealant Top Coat',white:'150',red:'620',rohs:'Yes'}]},{id:'black-zinc-nickel',category:'electroplate',name:'Black Zinc Nickel',subtitle:'Trivalent Black Zinc Nickel Alloy',description:'Excellent corrosion resistance with aesthetic black passivation. Best for applications where both performance and appearance are required.',he:'yes_partial',rohs_note:'Yes',cost:'$$$',standard:'ASTM F1941',callout:'Electrodeposited Zinc-Nickel alloy Coating, Black + Black Sealer Fe/Zn-Ni 8ENS per ASTM F1941M-2016',note:'BZN used on carbon steel fasteners. NOT recommended on PC 12.9 or case-hardened parts due to HE risk.',codes:[{code:'Fe/Zn-Ni 5E',thk:'5\u00b5m',conversion:'Trivalent Black Zinc Nickel',white:'100',red:'500',rohs:'Yes'},{code:'Fe/Zn-Ni 8E',thk:'8\u00b5m',conversion:'Trivalent Black Zinc Nickel',white:'100',red:'720',rohs:'Yes'},{code:'Fe/Zn-Ni 12E',thk:'12\u00b5m',conversion:'Trivalent Black Zinc Nickel',white:'100',red:'960',rohs:'Yes'},{code:'Fe/Zn-Ni 5ES',thk:'5\u00b5m',conversion:'+ w/ Sealant Top Coat',white:'220',red:'620',rohs:'Yes'},{code:'Fe/Zn-Ni 8ES',thk:'8\u00b5m',conversion:'+ w/ Sealant Top Coat',white:'220',red:'840',rohs:'Yes'},{code:'Fe/Zn 12ES',thk:'12\u00b5m',conversion:'+ w/ Sealant Top Coat',white:'220',red:'1080',rohs:'Yes'}]},{id:'zinc-cobalt',category:'electroplate',name:'Zinc Cobalt',subtitle:'Alloy Electroplate',description:'Not common. Refer to standard Fe Zn-Co per ASTM F1941. Premium cost and limited applicator availability.',he:'no',rohs_note:'No',cost:'$$$$',standard:'ASTM F1941',codes:[]},{id:'zinc-iron',category:'electroplate',name:'Zinc Iron',subtitle:'Alloy Electroplate',description:'Not common. Refer to standard Fe Zn-Fe per ASTM F1941.',he:'no',rohs_note:'No',cost:'$$$$',standard:'ASTM F1941',codes:[]},{id:'hdg',category:'hotdip',name:'Hot Dip Galvanized (HDG)',subtitle:'Immersion Zinc Coating',description:'Coating achieved by immersion in molten zinc. Pure zinc coating. Can be thick so threads need to be undersized to accommodate. No HE risk from process.',he:'no',rohs_note:'Yes',cost:'$$',standard:'ASTM A153 / ASTM A153M',note:'Used on large structural fasteners. Thread tolerance must account for coating thickness.',codes:[{code:'Class C',thk:'85\u00b5m min',conversion:'Pure Zinc',white:'-',red:'72+',rohs:'Yes'},{code:'Class D',thk:'45\u00b5m min',conversion:'Pure Zinc',white:'-',red:'48+',rohs:'Yes'}]},{id:'mech-zinc-clear',category:'mechanical',name:'Mechanical Zinc (Clear)',subtitle:'Mechanically Deposited Zinc Plating',description:'Used on carbon steel fasteners, typically washers which are susceptible to HE and may stick together in Geomet coating process. No acid pickling means zero HE risk.',he:'no',rohs_note:'Yes',cost:'$$',standard:'ASTM B695 / ISO 12683',callout:'Mechanically deposited zinc coating with clear trivalent chromate per ISO 12683 - Zn 8 M(Fe) Type 2A',codes:[{code:'Fe/Zn 8A, Type 2',thk:'8\u00b5m',conversion:'Clear Trivalent (Cr3)',white:'48',red:'96',rohs:'Yes'},{code:'Fe/Zn, Class 8, Type II',thk:'8\u00b5m',conversion:'Clear Trivalent (Cr3)',white:'72',red:'-',rohs:'Yes'}]},{id:'mech-zinc-yellow',category:'mechanical',name:'Mechanical Zinc (Yellow)',subtitle:'Mechanically Deposited Zinc Plating',description:'Used on carbon steel fasteners, typically washers susceptible to HE. Yellow trivalent chromate conversion. Zero HE risk from process.',he:'no',rohs_note:'Yes',cost:'$$',standard:'ISO 12683',callout:'Mechanically deposited zinc coating with yellow trivalent chromate per ISO 12683 - Zn 8 M(Fe) Type 2C',codes:[{code:'Fe/Zn 8C, Type 2',thk:'8\u00b5m',conversion:'Yellow Trivalent (Cr3)',white:'48',red:'96',rohs:'Yes'}]},{id:'geomet321',category:'zincflake',name:'GEOMET 321',subtitle:'Zinc Flake Coating (NOF Metal Coatings Group)',description:'Patented zinc-aluminum flake coating. Preferred for high-hardness material (PC 12.9) due to zero HE risk. PLUS ML top coat provides lubricity on tapping screws.',he:'no',rohs_note:'Yes',cost:'$$$$',standard:'ASTM F1136',callout:'Geomet 321 + ML Clear Sealer per ASTM F1136M-11, Grade 5, NC',note:'Top coat options: PLUS XL (CoF 0.06-0.09); PLUS VL (CoF 0.09-0.14); PLUS ML (CoF 0.10-0.16); PLUS 10 (CoF >0.20). Other brands: Magni, Doerken, Atotech, Zinctec, Armor Coat.',codes:[{code:'GEOMET 321, Grade 5',thk:'6-12 mil',conversion:'Non-Chrome (NC)',white:'720',red:'-',rohs:'Yes'},{code:'GEOMET 321 + ML Clear',thk:'6-12 mil',conversion:'Non-Chrome (NC)',white:'720',red:'-',rohs:'Yes'}]},{id:'geoblack',category:'zincflake',name:'GEOBLACK',subtitle:'Zinc Flake Coating with Black Sealer',description:'GEOMET 321 with black ML sealer top coat. Combines excellent corrosion performance of GEOMET 321 with a black aesthetic finish. Zero HE risk.',he:'no',rohs_note:'Yes',cost:'$$$$',standard:'ASTM F1136',callout:'Geomet 321 + ML Black Sealer per ASTM F1136M-11, Grade 5, NC',codes:[{code:'GEOMET 321 + ML Black',thk:'6-12 mil',conversion:'Non-Chrome (NC)',white:'720',red:'-',rohs:'Yes'}]},{id:'black-oxide',category:'blackoxide',name:'Black Oxide',subtitle:'Chemical Conversion Coating',description:'Thin black iron oxide coating. Minimal corrosion protection, primarily used for appearance. Requires oil or wax sealer for any meaningful corrosion resistance.',he:'no',rohs_note:'Yes',cost:'$',standard:'MIL-DTL-13924D',callout:'Black Oxide per MIL 13924D Class 4 Type Nova 34',note:'Salt spray performance on stainless is reference only. Stainless does not corrode predictably like carbon steel.',codes:[{code:'Class 4, Type NOVA 34',thk:'Conversion',conversion:'Black Iron Oxide',white:'-',red:'100+',rohs:'Yes'}]},{id:'passivation',category:'passivation',name:'Passivation',subtitle:'Stainless Steel Surface Treatment',description:'Removes free iron from stainless steel surface deposited during manufacturing to restore and enhance the thin protective oxide film.',he:'no',rohs_note:'Yes',cost:'$',standard:'ASTM A967 / QQ-P-35C',callout:'Passivation per ASTM A967-05 Nitric 1 OR Passivation per QQ-P-35C Type II',note:'Salt spray performance on stainless is reference only. Standard treatment for all stainless fasteners.',codes:[{code:'Nitric 1',thk:'None',conversion:'Passivation',white:'-',red:'-',rohs:'Yes'},{code:'Type II',thk:'None',conversion:'Passivation',white:'-',red:'-',rohs:'Yes'}]},{id:'rie4037a',category:'specialty',name:'RIE 4037A with 5250 Top Coat',subtitle:'Proprietary Dip-Spin Chrome Free Coating',description:'Used on stainless steel fasteners. Proprietary coating with excellent corrosion and UV resistance. Black finish with clear top coat. CoF: 0.09-0.15.',he:'no',rohs_note:'Yes',cost:'$$',standard:'N/A',callout:'RIE 4037A BLACK PLUS 5250 CLEAR TOPCOAT',note:'500+ hours salt spray. Chrome-free and RoHS compliant.',codes:[{code:'RIE 4037A + 5250',thk:'Dip-Spin',conversion:'Chrome Free',white:'-',red:'500+',rohs:'Yes'}]},{id:'electropolished',category:'specialty',name:'Electropolished',subtitle:'Surface Treatment for Stainless Steel',description:'Removes a uniform layer of surface material creating a burr-free finish with reduced galling risk and superior corrosion resistance. Often combined with passivation.',he:'no',rohs_note:'Yes',cost:'$$$',standard:'ASTM A967',codes:[]},{id:'phosphate',category:'phosphate',name:'Phosphate (Phos and Oil)',subtitle:'Iron Phosphate Chemical Conversion',description:'Thin grey phosphate coating from phosphoric acid solution. Lower protection than zinc but excellent base for paint or organic lubrication. Common in automotive.',he:'yes',rohs_note:'Yes',cost:'$',standard:'GM6046M',note:'Often used as a paint adhesion base. Black Zinc Phosphate available for aesthetic applications.',codes:[{code:'Phos and Oil',thk:'Conversion',conversion:'Iron Phosphate',white:'-',red:'24+',rohs:'Yes'},{code:'Black Phosphate',thk:'Conversion',conversion:'Zinc Phosphate',white:'-',red:'24+',rohs:'Yes'}]},{id:'chrome',category:'specialty',name:'Chrome Plate',subtitle:'Electroplated Chrome over Nickel',description:'Hard, bright reflective finish electroplated over nickel. Easy to clean. Used in heavy condensation areas. Not sacrificial. Black chrome version available.',he:'no',rohs_note:'No (Cr6)',cost:'$$$$',standard:'ASTM B456',note:'Hexavalent chromium; not RoHS compliant. Black chrome version available for aesthetic applications.',codes:[{code:'Chrome over Ni',thk:'0.25-0.75\u00b5m',conversion:'Cr6 Electroplate',white:'-',red:'96+',rohs:'No'},{code:'Black Chrome',thk:'0.25-0.75\u00b5m',conversion:'Cr6 Electroplate',white:'-',red:'96+',rohs:'No'}]},{id:'anodize',category:'specialty',name:'Anodization',subtitle:'Aluminum Surface Treatment',description:'Electrolytic process producing wear and corrosion resistant aluminum oxide on aluminum. Available in clear, black, and multiple colors. Type III (hard anodize) for maximum wear.',he:'no',rohs_note:'Yes',cost:'$$',standard:'MIL-A-8625',codes:[{code:'Type II Clear',thk:'5-25\u00b5m',conversion:'Anodic Oxide',white:'-',red:'336+',rohs:'Yes'},{code:'Type II Black',thk:'5-25\u00b5m',conversion:'Anodic Oxide + Dye',white:'-',red:'336+',rohs:'Yes'},{code:'Type III Hard',thk:'25-50\u00b5m',conversion:'Hard Anodic Oxide',white:'-',red:'1000+',rohs:'Yes'}]},{id:'wax-lube',category:'specialty',name:'Wax Lubricant',subtitle:'Dry Film Lubricant over Stainless Steel',description:'Wax over stainless steel provides lubricity and mitigates galling risk. Applied as post-treatment. Common on A2/A4 fasteners used in stainless assemblies.',he:'no',rohs_note:'Yes',cost:'$',standard:'N/A',codes:[]},{id:'cadmium',category:'specialty',name:'Cadmium Plate',subtitle:'Cadmium Electroplate',description:'High corrosion resistance especially in marine environments. Formerly very popular but toxic and banned in all but military applications. Avoid if possible.',he:'yes',rohs_note:'No',cost:'$$$$',standard:'ASTM F1941',note:'AVOID in commercial applications. Toxic. Banned except for military use. Cadmium is SVHC under REACH.',codes:[]}];
+var SECTIONS=[{id:'electroplate',label:'Electroplate and Electrodeposit Coating'},{id:'hotdip',label:'Hot Dip Galvanized (HDG)'},{id:'mechanical',label:'Mechanical Plating'},{id:'zincflake',label:'Zinc Flake Coating'},{id:'blackoxide',label:'Black Oxide'},{id:'passivation',label:'Passivation'},{id:'phosphate',label:'Phosphate'},{id:'specialty',label:'Specialty Coatings and Treatments'}];
+var compareSet={};
+var MAX_COMPARE=4;
+function toggleCompare(id){if(compareSet[id]){delete compareSet[id];}else{if(Object.keys(compareSet).length>=MAX_COMPARE){alert('Maximum 4 finishes can be compared at once.');return;}compareSet[id]=true;}updateCompareUI();}
+function updateCompareUI(){var ids=Object.keys(compareSet);var banner=document.getElementById('compare-banner');if(ids.length>0){banner.classList.add('visible');}else{banner.classList.remove('visible');}var items=document.getElementById('compare-banner-items');items.innerHTML='';for(var i=0;i<ids.length;i++){var f=FINISHES.find(function(x){return x.id===ids[i];});if(!f)continue;var chip=document.createElement('span');chip.className='compare-chip';chip.innerHTML=f.name+'<button class="compare-chip-rm" data-sbs-action="removeCompare" data-id="'+f.id+'">&times;<\/button>';items.appendChild(chip);}document.getElementById('compare-count-label').textContent=ids.length+' of '+MAX_COMPARE+' selected';var allCards=document.querySelectorAll('.finish-card');for(var j=0;j<allCards.length;j++){var card=allCards[j];var cid=card.getAttribute('data-id');var btn=card.querySelector('.compare-toggle');if(compareSet[cid]){card.classList.add('selected');if(btn){btn.classList.add('active');btn.innerHTML='<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/><\/svg> In Compare';}}else{card.classList.remove('selected');if(btn){btn.classList.remove('active');btn.innerHTML='<svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/><\/svg> Compare';}}}}
+function buildCompareTable(){var ids=Object.keys(compareSet);if(!ids.length)return;var finishes=ids.map(function(id){return FINISHES.find(function(x){return x.id===id;});}).filter(Boolean);var rows=[{label:'Category',fn:function(f){return f.category.charAt(0).toUpperCase()+f.category.slice(1);}},{label:'Standard',fn:function(f){return f.standard;}},{label:'HE Risk',fn:function(f){var c=f.he==='no'?'he-no':'he-yes';var l=f.he==='no'?'No':f.he==='yes_partial'?'Low':'Yes';return '<span class="badge '+c+'">'+l+'<\/span>';}},{label:'RoHS',fn:function(f){var c=f.rohs_note==='Yes'?'rohs-yes':'rohs-no';return '<span class="badge '+c+'">'+f.rohs_note+'<\/span>';}},{label:'Relative Cost',fn:function(f){return '<span class="cost-dots">'+f.cost+'<\/span>';}},{label:'Best White Rust (hr)',fn:function(f){if(!f.codes||!f.codes.length)return 'N/A';var best=0;for(var i=0;i<f.codes.length;i++){var v=parseInt(f.codes[i].white)||0;if(v>best)best=v;}return best>0?best+' hr':'N/A';}},{label:'Best Red Rust (hr)',fn:function(f){if(!f.codes||!f.codes.length)return 'N/A';var best=0;for(var i=0;i<f.codes.length;i++){var v=parseInt(f.codes[i].red)||0;if(v>best)best=v;}return best>0?best+' hr':'N/A';}},{label:'Thicknesses Available',fn:function(f){if(!f.codes||!f.codes.length)return 'Varies';var thks=[...new Set(f.codes.map(function(c){return c.thk;}))];return thks.join(', ');}},{label:'Typical Callout',fn:function(f){return f.callout?('<code style="font-size:10.5px;background:var(--gray-50);padding:2px 5px;border-radius:3px;">'+f.callout+'<\/code>'):'See standard for details';}}];var thead='<thead><tr><th>Attribute<\/th>';for(var i=0;i<finishes.length;i++){thead+='<th>'+finishes[i].name+'<\/th>';}thead+='<\/tr><\/thead>';var tbody='<tbody>';for(var r=0;r<rows.length;r++){tbody+='<tr><td>'+rows[r].label+'<\/td>';for(var c=0;c<finishes.length;c++){tbody+='<td>'+rows[r].fn(finishes[c])+'<\/td>';}tbody+='<\/tr>';}tbody+='<\/tbody>';document.getElementById('compare-table').innerHTML=thead+tbody;}
+function buildCard(f){var heClass=f.he==='no'?'badge he-no':'badge he-yes';var heLabel=f.he==='no'?'No HE Risk':f.he==='yes_partial'?'HE Risk (Low)':'HE Risk';var rohsClass=f.rohs_note==='Yes'?'badge rohs-yes':'badge rohs-no';var inCmp=compareSet[f.id];var codesHtml='';if(f.codes&&f.codes.length){codesHtml='<table class="mini-table"><thead><tr><th>Code<\/th><th>Thk<\/th><th>Conversion<\/th><th>WR/RR (hr)<\/th><th>RoHS<\/th><\/tr><\/thead><tbody>';for(var i=0;i<f.codes.length;i++){var c=f.codes[i];var rustTxt=(c.white==='-'&&c.red==='-')?'-':(c.white+' / '+c.red);codesHtml+='<tr><td class="code-cell">'+c.code+'<\/td><td class="thk-cell">'+c.thk+'<\/td><td>'+c.conversion+'<\/td><td class="rust-cell">'+rustTxt+'<\/td><td><span class="badge '+(c.rohs==='Yes'?'rohs-yes':'rohs-no')+'">'+c.rohs+'<\/span><\/td><\/tr>';}codesHtml+='<\/tbody><\/table>';}var calloutHtml=f.callout?'<div class="callout-box"><span class="co-label">Typical Call Out<\/span>'+f.callout+'<\/div>':'';var noteHtml=f.note?'<div class="card-note">'+f.note+'<\/div>':'';return '<div class="finish-card'+(inCmp?' selected':'')+'" data-id="'+f.id+'" data-category="'+f.category+'" data-he="'+f.he+'" data-rohs="'+f.rohs_note+'" data-cost="'+f.cost+'">'+'<div class="card-header"><div><div class="card-title">'+f.name+'<\/div><div class="card-subtitle">'+f.subtitle+'<\/div><\/div>'+'<div class="card-header-right"><div class="badges"><span class="'+heClass+'">'+heLabel+'<\/span><span class="'+rohsClass+'">RoHS: '+f.rohs_note+'<\/span><\/div>'+'<button class="compare-toggle'+(inCmp?' active':'')+'" data-sbs-action="toggleCompare" data-id="'+f.id+'">'+(inCmp?'<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"><\/polyline><\/svg> In Compare':'<svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/><\/svg> Compare')+'<\/button><\/div><\/div>'+'<div class="card-body"><div class="card-desc">'+f.description+'<\/div>'+codesHtml+calloutHtml+noteHtml+'<\/div>'+'<div class="card-meta"><span class="meta-item">Standard: <strong>'+f.standard+'<\/strong><\/span><span class="meta-item">Cost: <strong class="cost-dots">'+f.cost+'<\/strong><\/span><\/div>'+'<\/div>';}
+function tokenize(str){return str.toLowerCase().replace(/[^a-z0-9\u00b5]+/g,' ').trim().split(/\s+/).filter(Boolean);}
+function matchesSearch(f,tokens){if(!tokens.length)return true;var haystack=[f.name,f.subtitle,f.description,f.standard,f.callout||'',f.note||'',f.category,f.cost,f.he,(f.codes||[]).map(function(c){return c.code+' '+c.conversion+' '+c.thk;}).join(' ')].join(' ').toLowerCase();return tokens.every(function(t){return haystack.indexOf(t)>-1;});}
+function render(){var catVal=document.getElementById('filter-category').value;var heVal=document.getElementById('filter-he').value;var rohsVal=document.getElementById('filter-rohs').value;var costVal=document.getElementById('filter-cost').value;var raw=document.getElementById('search-input').value;var tokens=tokenize(raw);document.getElementById('search-clear').style.display=raw?'block':'none';var total=0;var html='';for(var s=0;s<SECTIONS.length;s++){var sec=SECTIONS[s];var filtered=FINISHES.filter(function(f){if(f.category!==sec.id)return false;if(catVal&&f.category!==catVal)return false;if(heVal){if(heVal==='yes'&&f.he==='no')return false;if(heVal==='no'&&f.he!=='no')return false;}if(rohsVal){if(rohsVal==='yes'&&f.rohs_note.indexOf('Yes')===-1)return false;if(rohsVal==='no'&&f.rohs_note!=='No')return false;}if(costVal&&f.cost!==costVal)return false;if(!matchesSearch(f,tokens))return false;return true;});if(!filtered.length)continue;total+=filtered.length;html+='<div class="section-hdr"><span class="section-dot"><\/span>'+sec.label+'<\/div><div class="cards-grid">';for(var i=0;i<filtered.length;i++){html+=buildCard(filtered[i]);}html+='<\/div>';}document.getElementById('sections-container').innerHTML=html;document.getElementById('no-results').style.display=total===0?'block':'none';document.getElementById('result-count').textContent=total+' finish'+(total!==1?'es':'');updateCompareUI();}
+document.addEventListener('click',function(e){var el=e.target;var action=null;var dataId=null;for(var i=0;i<8;i++){if(!el||el===document.body)break;if(el.getAttribute&&el.getAttribute('data-sbs-action')){action=el.getAttribute('data-sbs-action');dataId=el.getAttribute('data-id');break;}el=el.parentNode;}if(action==='dismissBeta'){document.getElementById('beta-overlay').style.display='none';}
+if(action==='switchTab'){var tab=el.getAttribute('data-tab');document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});el.classList.add('active');document.querySelectorAll('.tab-pane').forEach(function(p){p.classList.remove('active');});document.getElementById('tab-'+tab).classList.add('active');document.getElementById('filter-bar').style.display=tab==='guide'?'flex':'none';}
+if(action==='filterChange'){render();}
+if(action==='clearSearch'){document.getElementById('search-input').value='';render();}
+if(action==='printPage'){window.print();}
+if(action==='toggleCompare'){toggleCompare(dataId);render();}
+if(action==='removeCompare'){delete compareSet[dataId];render();}
+if(action==='clearCompare'){compareSet={};render();}
+if(action==='openCompare'){buildCompareTable();document.getElementById('compare-overlay').classList.add('visible');}
+if(action==='closeCompare'){document.getElementById('compare-overlay').classList.remove('visible');}});
+document.addEventListener('change',function(e){var el=e.target;if(el&&el.id&&(el.id==='filter-category'||el.id==='filter-he'||el.id==='filter-rohs'||el.id==='filter-cost')){render();}});
+document.getElementById('search-input').addEventListener('input',function(){render();});
+document.getElementById('compare-overlay').addEventListener('click',function(e){if(e.target===this){this.classList.remove('visible');}});
+function updateStickyOffsets(){var hh=document.getElementById('sbs-header').offsetHeight;var th=document.getElementById('tabs-bar').offsetHeight;document.documentElement.style.setProperty('--header-h',hh+'px');document.documentElement.style.setProperty('--tabs-h',th+'px');}
+window.addEventListener('resize',updateStickyOffsets);
+updateStickyOffsets();
+render();
+</script>
+</body>
+</html>

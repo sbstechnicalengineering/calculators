@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<!--
+  SBS Knurling Design Assistance Tool | Copyright (c) 2024 Specialty Bolt & Screw, Inc.
+  Fingerprint: SBS-KNURL-v1 | https://shop.specialtybolt.com/
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Knurling Design Assistance Tool | SBS</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1D3557;
+  --navy-dark: #12243a;
+  --orange: #E87722;
+  --orange-light: #F0913A;
+  --orange-pale: #FDF0E5;
+  --white: #ffffff;
+  --gray-50: #F8F9FA;
+  --gray-100: #F0F2F5;
+  --gray-200: #E2E6EA;
+  --gray-300: #CED4DA;
+  --gray-400: #ADB5BD;
+  --gray-500: #6C757D;
+  --gray-600: #495057;
+  --gray-700: #343A40;
+  --active-green: #1A8A4A;
+  --active-bg: #E8F5EE;
+  --obsolete-red: #C0392B;
+  --obsolete-bg: #FDECEA;
+  --withdrawn-amber: #B7610A;
+  --withdrawn-bg: #FEF3E2;
+  --radius-sm: 6px;
+  --header-height: 72px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: var(--gray-100); color: var(--gray-700); min-height: 100vh; }
+
+/* HEADER */
+#sbs-header {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--white);
+  border-bottom: 3px solid var(--orange);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  display: flex; align-items: center;
+  padding: 0 24px; gap: 18px;
+  height: var(--header-height);
+}
+#sbs-header a.logo-link img { height: 52px; display: block; }
+.header-divider { width: 1px; height: 38px; background: var(--gray-200); flex-shrink: 0; }
+.header-title-block { flex: 1; }
+.header-title-block h1 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 22px; font-weight: 800;
+  color: var(--navy); line-height: 1.1;
+  letter-spacing: 0.2px;
+}
+.header-title-block p {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px; color: var(--gray-500);
+  margin-top: 2px;
+}
+.header-actions { display: flex; gap: 8px; }
+.btn-primary {
+  background: var(--orange); color: var(--white);
+  font-family: 'Barlow', sans-serif; font-size: 12px; font-weight: 700;
+  padding: 8px 14px; border-radius: var(--radius-sm);
+  border: none; cursor: pointer; letter-spacing: 0.3px;
+  display: flex; align-items: center; gap: 6px;
+  transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+}
+.btn-primary:hover { background: var(--orange-light); transform: translateY(-1px); box-shadow: 0 3px 10px rgba(232,119,34,0.3); }
+.btn-secondary {
+  background: var(--navy); color: var(--white);
+  font-family: 'Barlow', sans-serif; font-size: 12px; font-weight: 700;
+  padding: 8px 14px; border-radius: var(--radius-sm);
+  border: none; cursor: pointer; letter-spacing: 0.3px;
+  display: flex; align-items: center; gap: 6px;
+  transition: background 0.15s, transform 0.1s;
+}
+.btn-secondary:hover { background: var(--navy-dark); }
+
+/* MAIN LAYOUT */
+.main-content { max-width: 1200px; margin: 0 auto; padding: 28px 20px 40px; }
+
+/* SECTION HEADERS */
+.section-label {
+  font-family: 'Barlow', sans-serif; font-size: 11px; font-weight: 700;
+  letter-spacing: 1px; color: var(--gray-500); text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+/* PANELS */
+.panel {
+  background: var(--white); border-radius: 10px;
+  border: 1.5px solid var(--gray-200);
+  padding: 24px; margin-bottom: 20px;
+}
+.panel-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 20px; font-weight: 800; color: var(--navy);
+  margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
+}
+.panel-title svg { color: var(--orange); }
+
+/* GRID LAYOUTS */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+
+/* FORM ELEMENTS */
+.field-group { display: flex; flex-direction: column; gap: 5px; }
+.field-label {
+  font-family: 'Barlow', sans-serif; font-size: 11px; font-weight: 600;
+  letter-spacing: 1px; color: var(--gray-500); text-transform: uppercase;
+}
+.field-input {
+  font-family: 'Inter', sans-serif; font-size: 13px; color: var(--gray-700);
+  background: var(--white); border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-sm); padding: 8px 12px;
+  transition: border-color 0.15s; outline: none;
+  width: 100%;
+}
+.field-input:focus { border-color: var(--orange); }
+.field-input.with-unit { padding-right: 48px; text-align: right; }
+.input-wrapper { position: relative; }
+.unit-label {
+  position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+  font-family: 'Inter', sans-serif; font-size: 11px; color: var(--gray-400);
+  pointer-events: none;
+}
+select.field-input {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236C757D' stroke-width='2.2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 10px center;
+  padding-right: 30px; cursor: pointer;
+}
+select.field-input.active { border-color: var(--orange); background-color: var(--orange-pale); color: var(--navy); }
+
+/* RESULTS AREA */
+.results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; margin-top: 20px; }
+.result-card {
+  background: var(--gray-50); border: 1.5px solid var(--gray-200);
+  border-radius: 8px; padding: 16px; text-align: center;
+  position: relative; overflow: hidden;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.result-card::before {
+  content: ''; position: absolute; left: 0; top: 0;
+  width: 3px; height: 0; background: var(--orange);
+  transition: height 0.2s;
+}
+.result-card:hover::before { height: 100%; }
+.result-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+.result-value {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 28px; font-weight: 800; color: var(--navy);
+  line-height: 1.1;
+}
+.result-unit { font-size: 14px; font-weight: 600; color: var(--orange); margin-left: 2px; }
+.result-label {
+  font-family: 'Inter', sans-serif; font-size: 11px;
+  color: var(--gray-500); margin-top: 4px;
+}
+
+/* STATUS BADGES */
+.badge {
+  display: inline-block; padding: 3px 10px; border-radius: 20px;
+  font-family: 'Barlow', sans-serif; font-size: 11px; font-weight: 700;
+  letter-spacing: 0.3px;
+}
+.badge-green { background: var(--active-bg); color: var(--active-green); }
+.badge-red { background: var(--obsolete-bg); color: var(--obsolete-red); }
+.badge-amber { background: var(--withdrawn-bg); color: var(--withdrawn-amber); }
+.badge-navy { background: #E8ECF2; color: var(--navy); }
+.badge-orange { background: var(--orange-pale); color: var(--withdrawn-amber); }
+
+/* INFO BOX */
+.info-box {
+  background: var(--orange-pale); border-left: 4px solid var(--orange);
+  border-radius: 0 6px 6px 0; padding: 12px 16px;
+  font-family: 'Inter', sans-serif; font-size: 12px; color: var(--gray-600);
+  margin-top: 12px;
+}
+.info-box strong { color: var(--navy); }
+
+/* WARNING BOX */
+.warning-box {
+  background: var(--obsolete-bg); border-left: 4px solid var(--obsolete-red);
+  border-radius: 0 6px 6px 0; padding: 12px 16px;
+  font-family: 'Inter', sans-serif; font-size: 12px; color: var(--obsolete-red);
+  margin-top: 12px; display: none;
+}
+
+/* KNURL TYPE CARDS */
+.knurl-type-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-top: 12px; }
+.knurl-type-card {
+  border: 2px solid var(--gray-200); border-radius: 8px;
+  padding: 14px 12px; cursor: pointer;
+  transition: all 0.15s; background: var(--white);
+  text-align: center; position: relative;
+}
+.knurl-type-card:hover { border-color: var(--orange); background: var(--orange-pale); }
+.knurl-type-card.selected { border-color: var(--orange); background: var(--orange-pale); box-shadow: 0 0 0 3px rgba(232,119,34,0.15); }
+.knurl-type-card .knurl-icon { margin-bottom: 8px; }
+.knurl-type-card .knurl-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 16px; font-weight: 800; color: var(--navy);
+}
+.knurl-type-card .knurl-desc {
+  font-family: 'Inter', sans-serif; font-size: 10.5px; color: var(--gray-500);
+  margin-top: 4px; line-height: 1.4;
+}
+.knurl-type-card .check-mark {
+  position: absolute; top: 8px; right: 8px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--orange); display: none;
+  align-items: center; justify-content: center;
+}
+.knurl-type-card.selected .check-mark { display: flex; }
+
+/* PITCH TABLE */
+.pitch-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-family: 'Inter', sans-serif; }
+.pitch-table th {
+  background: var(--gray-50); text-transform: uppercase;
+  font-size: 10.5px; letter-spacing: 0.8px; color: var(--gray-500);
+  font-family: 'Barlow', sans-serif; font-weight: 700;
+  padding: 10px 12px; border-bottom: 1px solid var(--gray-200);
+  text-align: left;
+}
+.pitch-table td {
+  font-size: 13px; color: var(--gray-700);
+  padding: 9px 12px; border-bottom: 1px solid var(--gray-100);
+}
+.pitch-table tr:hover td { background: var(--gray-50); }
+.pitch-table tr.recommended td { background: #E8F5EE; }
+.pitch-table tr.recommended td:first-child { border-left: 3px solid var(--active-green); }
+
+/* DIAGRAM SVG */
+.diagram-container {
+  background: var(--gray-50); border: 1.5px solid var(--gray-200);
+  border-radius: 8px; padding: 20px; text-align: center;
+  margin-top: 12px;
+}
+
+/* TABS */
+.tabs { display: flex; gap: 0; border-bottom: 2px solid var(--gray-200); margin-bottom: 20px; }
+.tab-btn {
+  font-family: 'Barlow', sans-serif; font-size: 13px; font-weight: 600;
+  padding: 10px 18px; border: none; background: none; cursor: pointer;
+  color: var(--gray-500); border-bottom: 3px solid transparent;
+  margin-bottom: -2px; transition: color 0.15s, border-color 0.15s;
+  letter-spacing: 0.2px;
+}
+.tab-btn.active { color: var(--navy); border-bottom-color: var(--orange); }
+.tab-btn:hover:not(.active) { color: var(--gray-700); }
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+
+/* FOOTER DISCLAIMER */
+.footer-disclaimer {
+  background: var(--gray-50); border-top: 1px solid var(--gray-200);
+  padding: 14px 24px; text-align: center;
+  font-family: 'Inter', sans-serif; font-size: 11.5px; color: var(--gray-500);
+  margin-top: 32px; border-radius: 8px;
+}
+.footer-disclaimer strong { color: var(--navy); }
+
+/* PRINT LOGO */
+#sbsLogoPrint { display: none; }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  #sbs-header { padding: 0 14px; gap: 12px; }
+  .header-title-block h1 { font-size: 18px; }
+  .main-content { padding: 16px 12px 30px; }
+}
+@media (max-width: 480px) {
+  .header-actions { display: none; }
+  .knurl-type-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* PRINT STYLES */
+@media print {
+  #sbs-header { position: static; }
+  .header-actions { display: none; }
+  .btn-primary, .btn-secondary { display: none; }
+}
+
+/* BETA MODAL */
+#beta-overlay {
+  position: fixed; inset: 0; z-index: 2147483647;
+  background: rgba(18, 36, 58, 0.82);
+  backdrop-filter: blur(5px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+}
+#beta-modal {
+  background: var(--white);
+  border-radius: 14px;
+  max-width: 520px; width: 100%;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.40);
+  overflow: hidden;
+  animation: betaFadeIn 0.25s ease;
+}
+@keyframes betaFadeIn {
+  from { opacity: 0; transform: translateY(-18px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)     scale(1); }
+}
+#beta-modal-header {
+  background: var(--navy);
+  border-bottom: 4px solid var(--orange);
+  padding: 20px 24px;
+  display: flex; align-items: center; gap: 14px;
+}
+#beta-modal-header svg { flex-shrink: 0; }
+#beta-modal-header-text h2 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 22px; font-weight: 800;
+  color: var(--white); line-height: 1.1;
+}
+#beta-modal-header-text p {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px; color: rgba(255,255,255,0.60);
+  margin-top: 2px;
+}
+#beta-modal-body {
+  padding: 26px 28px 20px;
+}
+#beta-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--orange); color: var(--white);
+  font-family: 'Barlow', sans-serif; font-size: 11px; font-weight: 800;
+  letter-spacing: 1.2px; text-transform: uppercase;
+  padding: 4px 12px; border-radius: 20px;
+  margin-bottom: 18px;
+}
+#beta-modal-body p {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px; color: var(--gray-600);
+  line-height: 1.65; margin-bottom: 12px;
+}
+#beta-modal-body p:last-of-type { margin-bottom: 0; }
+#beta-modal-body strong { color: var(--navy); }
+#beta-modal-footer {
+  padding: 20px 28px 26px;
+  display: flex; justify-content: center;
+}
+#btn-beta-continue {
+  background: var(--orange); color: var(--white);
+  font-family: 'Barlow', sans-serif; font-size: 14px; font-weight: 700;
+  padding: 12px 32px; border-radius: var(--radius-sm);
+  border: none; cursor: pointer; letter-spacing: 0.4px;
+  width: 100%;
+  transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+}
+#btn-beta-continue:hover {
+  background: var(--orange-light);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(232,119,34,0.35);
+}
+</style>
+</head>
+<body>
+
+<!-- BETA MODAL OVERLAY -->
+<div id="beta-overlay">
+  <div id="beta-modal" role="dialog" aria-modal="true" aria-labelledby="beta-modal-title">
+    <div id="beta-modal-header">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#E87722" stroke-width="2.2" aria-hidden="true">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      <div id="beta-modal-header-text">
+        <h2 id="beta-modal-title">Specialty Bolt and Screw</h2>
+        <p>Knurling Design Assistance Tool</p>
+      </div>
+    </div>
+    <div id="beta-modal-body">
+      <div id="beta-badge">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        Beta
+      </div>
+      <p>This tool is currently in <strong>beta</strong>. Calculations are based on standard formulas from ASME B94.6 and DIN 82, but results should always be verified with a test piece before production use.</p>
+      <p>We encourage you to use the tool and <strong>share your feedback</strong> with our engineering team. Your input helps us improve accuracy, add features, and expand coverage to more knurl types and standards.</p>
+      <p>Thank you for being an early user. <strong>Specialty Bolt and Screw</strong> appreciates your support as we continue to develop this resource for the fastener community.</p>
+    </div>
+    <div id="beta-modal-footer">
+      <button id="btn-beta-continue" data-sbs-action="dismissBeta">I Understand - Continue to Tool</button>
+    </div>
+  </div>
+</div>
+
+<img id="sbsLogoPrint" src="data:image/png;base64,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" alt="SBS Logo">
+
+<!-- HEADER -->
+<header id="sbs-header">
+  <a class="logo-link" href="https://shop.specialtybolt.com/" target="_blank" rel="noopener">
+    <img src="data:image/png;base64,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" alt="SBS Specialty Bolt and Screw Logo">
+  </a>
+  <div class="header-divider"></div>
+  <div class="header-title-block">
+    <h1>Knurling Design Assistance Tool</h1>
+    <p>Calculate pitch, tooth geometry and diameter allowances per ASME B94.6 and DIN 82</p>
+  </div>
+  <div class="header-actions">
+    <button class="btn-secondary" data-sbs-action="printResults">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Print Results
+    </button>
+    <button class="btn-primary" data-sbs-action="calculateAll">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/></svg>
+      Calculate
+    </button>
+  </div>
+</header>
+
+<!-- MAIN -->
+<div class="main-content">
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" data-sbs-action="tab" data-tab="calculator">Knurl Calculator</button>
+    <button class="tab-btn" data-sbs-action="tab" data-tab="reference">Pitch Reference Tables</button>
+    <button class="tab-btn" data-sbs-action="tab" data-tab="patterns">Pattern Selection Guide</button>
+    <button class="tab-btn" data-sbs-action="tab" data-tab="troubleshoot">Troubleshooting</button>
+  </div>
+
+  <!-- TAB: CALCULATOR -->
+  <div class="tab-pane active" id="tab-calculator">
+
+    <!-- Knurl Type Selection -->
+    <div class="panel">
+      <div class="panel-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+        Knurl Pattern Type
+      </div>
+      <div class="knurl-type-grid" id="knurlTypeGrid">
+        <div class="knurl-type-card selected" data-sbs-action="selectKnurlType" data-type="straight">
+          <div class="knurl-icon">
+            <svg width="48" height="32" viewBox="0 0 48 32">
+              <rect x="0" y="0" width="48" height="32" rx="3" fill="#F0F2F5"/>
+              <line x1="6" y1="4" x2="6" y2="28" stroke="#1D3557" stroke-width="2.5"/>
+              <line x1="13" y1="4" x2="13" y2="28" stroke="#1D3557" stroke-width="2.5"/>
+              <line x1="20" y1="4" x2="20" y2="28" stroke="#1D3557" stroke-width="2.5"/>
+              <line x1="27" y1="4" x2="27" y2="28" stroke="#1D3557" stroke-width="2.5"/>
+              <line x1="34" y1="4" x2="34" y2="28" stroke="#1D3557" stroke-width="2.5"/>
+              <line x1="41" y1="4" x2="41" y2="28" stroke="#1D3557" stroke-width="2.5"/>
+            </svg>
+          </div>
+          <div class="knurl-name">Straight</div>
+          <div class="knurl-desc">Parallel grooves for axial grip</div>
+          <div class="check-mark">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </div>
+        <div class="knurl-type-card" data-sbs-action="selectKnurlType" data-type="diagonal">
+          <div class="knurl-icon">
+            <svg width="48" height="32" viewBox="0 0 48 32">
+              <rect x="0" y="0" width="48" height="32" rx="3" fill="#F0F2F5"/>
+              <line x1="2" y1="28" x2="10" y2="4" stroke="#1D3557" stroke-width="2.5"/>
+              <line x1="9" y1="28" x2="17" y2="4" stroke="#1D3557" stroke-width="2.5"/>
+              <line x1="16" y1="28" x2="24" y2="4" stroke="#1D3557" stroke-width="2.5"/>
+              <line x1="23" y1="28" x2="31" y2="4" stroke="#1D3557" stroke-width="2.5"/>
+              <line x1="30" y1="28" x2="38" y2="4" stroke="#1D3557" stroke-width="2.5"/>
+              <line x1="37" y1="28" x2="45" y2="4" stroke="#1D3557" stroke-width="2.5"/>
+            </svg>
+          </div>
+          <div class="knurl-name">Diagonal</div>
+          <div class="knurl-desc">Angled grooves, 30 degrees typical</div>
+          <div class="check-mark">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </div>
+        <div class="knurl-type-card" data-sbs-action="selectKnurlType" data-type="diamond">
+          <div class="knurl-icon">
+            <svg width="48" height="32" viewBox="0 0 48 32">
+              <rect x="0" y="0" width="48" height="32" rx="3" fill="#F0F2F5"/>
+              <line x1="2" y1="28" x2="10" y2="4" stroke="#1D3557" stroke-width="1.8"/>
+              <line x1="9" y1="28" x2="17" y2="4" stroke="#1D3557" stroke-width="1.8"/>
+              <line x1="16" y1="28" x2="24" y2="4" stroke="#1D3557" stroke-width="1.8"/>
+              <line x1="23" y1="28" x2="31" y2="4" stroke="#1D3557" stroke-width="1.8"/>
+              <line x1="30" y1="28" x2="38" y2="4" stroke="#1D3557" stroke-width="1.8"/>
+              <line x1="37" y1="28" x2="45" y2="4" stroke="#1D3557" stroke-width="1.8"/>
+              <line x1="2" y1="4" x2="10" y2="28" stroke="#E87722" stroke-width="1.8"/>
+              <line x1="9" y1="4" x2="17" y2="28" stroke="#E87722" stroke-width="1.8"/>
+              <line x1="16" y1="4" x2="24" y2="28" stroke="#E87722" stroke-width="1.8"/>
+              <line x1="23" y1="4" x2="31" y2="28" stroke="#E87722" stroke-width="1.8"/>
+              <line x1="30" y1="4" x2="38" y2="28" stroke="#E87722" stroke-width="1.8"/>
+              <line x1="37" y1="4" x2="45" y2="28" stroke="#E87722" stroke-width="1.8"/>
+            </svg>
+          </div>
+          <div class="knurl-name">Diamond</div>
+          <div class="knurl-desc">Crossed pattern for maximum grip</div>
+          <div class="check-mark">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </div>
+        <div class="knurl-type-card" data-sbs-action="selectKnurlType" data-type="convex">
+          <div class="knurl-icon">
+            <svg width="48" height="32" viewBox="0 0 48 32">
+              <rect x="0" y="0" width="48" height="32" rx="3" fill="#F0F2F5"/>
+              <path d="M6 4 Q24 20 42 4" stroke="#1D3557" stroke-width="2" fill="none"/>
+              <path d="M6 10 Q24 26 42 10" stroke="#1D3557" stroke-width="2" fill="none"/>
+              <path d="M6 16 Q24 32 42 16" stroke="#1D3557" stroke-width="2" fill="none"/>
+              <path d="M6 22 Q24 38 42 22" stroke="#1D3557" stroke-width="2" fill="none"/>
+            </svg>
+          </div>
+          <div class="knurl-name">Convex</div>
+          <div class="knurl-desc">Raised profile for press fit applications</div>
+          <div class="check-mark">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </div>
+        <div class="knurl-type-card" data-sbs-action="selectKnurlType" data-type="concave">
+          <div class="knurl-icon">
+            <svg width="48" height="32" viewBox="0 0 48 32">
+              <rect x="0" y="0" width="48" height="32" rx="3" fill="#F0F2F5"/>
+              <path d="M6 16 Q24 2 42 16" stroke="#1D3557" stroke-width="2" fill="none"/>
+              <path d="M6 22 Q24 8 42 22" stroke="#1D3557" stroke-width="2" fill="none"/>
+              <path d="M6 10 Q24 -4 42 10" stroke="#1D3557" stroke-width="2" fill="none"/>
+              <path d="M6 28 Q24 14 42 28" stroke="#1D3557" stroke-width="2" fill="none"/>
+            </svg>
+          </div>
+          <div class="knurl-name">Concave</div>
+          <div class="knurl-desc">Inward profile for knob and grip inserts</div>
+          <div class="check-mark">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INPUTS -->
+    <div class="panel">
+      <div class="panel-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        Part and Knurl Parameters
+      </div>
+      <div class="grid-3" style="gap:20px;">
+        <div>
+          <p class="section-label">Workpiece Dimensions</p>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div class="field-group">
+              <label class="field-label">Blank Diameter</label>
+              <div class="input-wrapper">
+                <input type="number" id="blankDia" class="field-input with-unit" value="0.750" step="0.001" min="0.001" placeholder="0.750">
+                <span class="unit-label" id="unitBlank">in</span>
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Knurl Length</label>
+              <div class="input-wrapper">
+                <input type="number" id="knurlLen" class="field-input with-unit" value="0.500" step="0.001" min="0.001" placeholder="0.500">
+                <span class="unit-label" id="unitLen">in</span>
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Material</label>
+              <select id="materialSel" class="field-input">
+                <option value="1.0">Aluminum (1.0)</option>
+                <option value="1.5">Brass (1.5)</option>
+                <option value="2.0" selected>Steel, Mild (2.0)</option>
+                <option value="2.5">Steel, Alloy (2.5)</option>
+                <option value="3.0">Stainless Steel (3.0)</option>
+                <option value="1.2">Plastic (1.2)</option>
+                <option value="1.8">Bronze (1.8)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div>
+          <p class="section-label">Knurl Specification</p>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div class="field-group">
+              <label class="field-label">Pitch (TPI or mm)</label>
+              <div class="input-wrapper">
+                <select id="pitchSel" class="field-input">
+                  <option value="64">64 TPI (Fine)</option>
+                  <option value="96">96 TPI (Medium Fine)</option>
+                  <option value="128" selected>128 TPI (Medium)</option>
+                  <option value="160">160 TPI (Medium Coarse)</option>
+                  <option value="192">192 TPI (Coarse)</option>
+                  <option value="0.4">0.4 mm (DIN Fine)</option>
+                  <option value="0.6">0.6 mm (DIN Medium)</option>
+                  <option value="0.8">0.8 mm (DIN Coarse)</option>
+                  <option value="1.0">1.0 mm (DIN Extra Coarse)</option>
+                </select>
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Unit System</label>
+              <select id="unitSel" class="field-input">
+                <option value="inch" selected>Inch (ASME B94.6)</option>
+                <option value="metric">Metric (DIN 82)</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Tooth Angle</label>
+              <select id="toothAngle" class="field-input">
+                <option value="60" selected>60 degrees (Standard)</option>
+                <option value="30">30 degrees (Shallow)</option>
+                <option value="90">90 degrees (Square)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div>
+          <p class="section-label">Application</p>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div class="field-group">
+              <label class="field-label">Application Type</label>
+              <select id="appType" class="field-input">
+                <option value="grip">Hand Grip or Thumb Turn</option>
+                <option value="press">Press Fit or Knurled Insert</option>
+                <option value="torque">Torque Transmission</option>
+                <option value="decor">Decorative or Aesthetic</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Surface Finish Goal</label>
+              <select id="finishGoal" class="field-input">
+                <option value="sharp">Sharp Tooth Profile</option>
+                <option value="flat" selected>Flat Top (Preferred)</option>
+                <option value="round">Rounded Crest</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Knurl Wheel Diameter</label>
+              <div class="input-wrapper">
+                <input type="number" id="wheelDia" class="field-input with-unit" value="0.500" step="0.001" min="0.001" placeholder="0.500">
+                <span class="unit-label" id="unitWheel">in</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="panel" id="resultsPanel">
+      <div class="panel-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Calculated Results
+        <span id="knurlTypeBadge" class="badge badge-navy" style="margin-left:8px;">Straight Knurl</span>
+        <span id="standardBadge" class="badge badge-orange" style="margin-left:4px;">ASME B94.6</span>
+      </div>
+
+      <div class="results-grid" id="resultsGrid">
+        <div class="result-card">
+          <div class="result-value" id="rPitch">--</div>
+          <div class="result-label">Diametral Pitch (TPI)</div>
+        </div>
+        <div class="result-card">
+          <div class="result-value" id="rPitchMM">--</div>
+          <div class="result-label">Pitch in Millimeters</div>
+        </div>
+        <div class="result-card">
+          <div class="result-value" id="rToothDepth">--<span class="result-unit" id="rUnitDepth">in</span></div>
+          <div class="result-label">Tooth Depth (Addendum)</div>
+        </div>
+        <div class="result-card">
+          <div class="result-value" id="rToothSpacing">--<span class="result-unit" id="rUnitSpacing">in</span></div>
+          <div class="result-label">Tooth Spacing (Pitch)</div>
+        </div>
+        <div class="result-card">
+          <div class="result-value" id="rTeethCount">--</div>
+          <div class="result-label">Number of Teeth on Part</div>
+        </div>
+        <div class="result-card">
+          <div class="result-value" id="rWheelTeeth">--</div>
+          <div class="result-label">Teeth on Knurl Wheel</div>
+        </div>
+        <div class="result-card">
+          <div class="result-value" id="rBlankDia">--<span class="result-unit" id="rUnitBlank2">in</span></div>
+          <div class="result-label">Corrected Blank Diameter</div>
+        </div>
+        <div class="result-card">
+          <div class="result-value" id="rFinishedDia">--<span class="result-unit" id="rUnitFin">in</span></div>
+          <div class="result-label">Finished Knurl Diameter</div>
+        </div>
+      </div>
+
+      <div id="warningBox" class="warning-box">
+        <strong>Caution:</strong> <span id="warningMsg"></span>
+      </div>
+
+      <div class="info-box" id="infoBox">
+        <strong>How to read these results:</strong> The corrected blank diameter accounts for material displacement during knurling. Turn the blank to this diameter before knurling to achieve the target finished diameter. The number of teeth must be a whole number to achieve a clean repeating pattern.
+      </div>
+    </div>
+
+    <!-- DIAGRAM -->
+    <div class="panel">
+      <div class="panel-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
+        Tooth Profile Diagram
+      </div>
+      <div class="diagram-container">
+        <svg id="toothDiagram" viewBox="0 0 560 200" xmlns="http://www.w3.org/2000/svg" style="max-width:560px;width:100%;height:auto;">
+          <!-- Background -->
+          <rect x="0" y="0" width="560" height="200" fill="#F8F9FA" rx="6"/>
+          <!-- Part body -->
+          <rect x="40" y="80" width="480" height="80" fill="#E2E6EA" rx="3"/>
+          <!-- Teeth will be drawn by JS -->
+          <g id="teethGroup"></g>
+          <!-- Dimension lines -->
+          <g id="dimLines"></g>
+          <!-- Labels -->
+          <text x="280" y="190" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#6C757D">Tooth profile cross-section (not to scale)</text>
+        </svg>
+      </div>
+      <div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:14px;">
+        <div style="display:flex;align-items:center;gap:6px;font-family:Inter,sans-serif;font-size:12px;color:var(--gray-600);">
+          <div style="width:14px;height:14px;background:var(--navy);border-radius:2px;"></div>
+          Part Material
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;font-family:Inter,sans-serif;font-size:12px;color:var(--gray-600);">
+          <div style="width:14px;height:14px;background:var(--orange);border-radius:2px;"></div>
+          Knurl Tooth Profile
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;font-family:Inter,sans-serif;font-size:12px;color:var(--gray-600);">
+          <div style="width:14px;height:14px;background:var(--active-bg);border:1.5px solid var(--active-green);border-radius:2px;"></div>
+          Pitch Reference
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end calculator tab -->
+
+  <!-- TAB: REFERENCE TABLES -->
+  <div class="tab-pane" id="tab-reference">
+    <div class="panel">
+      <div class="panel-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        ASME B94.6 Standard Pitch Reference
+      </div>
+      <div class="info-box">
+        <strong>ASME B94.6</strong> defines five standard pitches for inch-based knurling. Highlighted rows indicate the recommended pitch range for common screw machine diameters (0.25 in to 1.00 in).
+      </div>
+      <table class="pitch-table" style="margin-top:16px;">
+        <thead>
+          <tr>
+            <th>Pitch Designation</th>
+            <th>Teeth per Inch (TPI)</th>
+            <th>Tooth Spacing (in)</th>
+            <th>Tooth Depth (in)</th>
+            <th>Typical Dia. Range (in)</th>
+            <th>Application</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge badge-navy">Fine</span></td>
+            <td>64</td>
+            <td>0.01563</td>
+            <td>0.00781</td>
+            <td>0.125 to 0.375</td>
+            <td>Small parts, watchmaking, instruments</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-navy">Medium Fine</span></td>
+            <td>96</td>
+            <td>0.01042</td>
+            <td>0.00521</td>
+            <td>0.250 to 0.500</td>
+            <td>General purpose, thin wall parts</td>
+          </tr>
+          <tr class="recommended">
+            <td><span class="badge badge-green">Medium</span></td>
+            <td>128</td>
+            <td>0.00781</td>
+            <td>0.00391</td>
+            <td>0.375 to 0.750</td>
+            <td>Most common, fastener heads, knobs</td>
+          </tr>
+          <tr class="recommended">
+            <td><span class="badge badge-green">Medium Coarse</span></td>
+            <td>160</td>
+            <td>0.00625</td>
+            <td>0.00313</td>
+            <td>0.500 to 1.000</td>
+            <td>Grips, press inserts, couplings</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-amber">Coarse</span></td>
+            <td>192</td>
+            <td>0.00521</td>
+            <td>0.00260</td>
+            <td>0.750 and larger</td>
+            <td>Large diameter, heavy grip, pipe</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="panel" style="margin-top:0;">
+      <div class="panel-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        DIN 82 Metric Pitch Reference
+      </div>
+      <div class="info-box">
+        <strong>DIN 82</strong> is the German standard for knurling. Pitches are specified in mm. These are commonly used in European and metric applications.
+      </div>
+      <table class="pitch-table" style="margin-top:16px;">
+        <thead>
+          <tr>
+            <th>Pitch (mm)</th>
+            <th>Designation</th>
+            <th>Tooth Depth (mm)</th>
+            <th>Tooth Angle</th>
+            <th>Typical Dia. Range (mm)</th>
+            <th>Application</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>0.4</strong></td>
+            <td><span class="badge badge-navy">Fine</span></td>
+            <td>0.20</td>
+            <td>60 deg</td>
+            <td>3 to 10</td>
+            <td>Precision instruments, small parts</td>
+          </tr>
+          <tr class="recommended">
+            <td><strong>0.6</strong></td>
+            <td><span class="badge badge-green">Medium</span></td>
+            <td>0.30</td>
+            <td>60 deg</td>
+            <td>8 to 25</td>
+            <td>General use, metric fasteners</td>
+          </tr>
+          <tr class="recommended">
+            <td><strong>0.8</strong></td>
+            <td><span class="badge badge-green">Coarse</span></td>
+            <td>0.40</td>
+            <td>60 deg</td>
+            <td>16 to 45</td>
+            <td>Grips, handles, knobs</td>
+          </tr>
+          <tr>
+            <td><strong>1.0</strong></td>
+            <td><span class="badge badge-amber">Extra Coarse</span></td>
+            <td>0.50</td>
+            <td>60 deg</td>
+            <td>30 and larger</td>
+            <td>Heavy grip, large components</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="panel" style="margin-top:0;">
+      <div class="panel-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        Blank Diameter Correction per Application
+      </div>
+      <table class="pitch-table" style="margin-top:16px;">
+        <thead>
+          <tr>
+            <th>Application</th>
+            <th>Blank Dia. Adjustment</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Hand Grip or Thumb Turn</td>
+            <td>Reduce blank by 0.50 x tooth depth</td>
+            <td>Material flows outward; finished dia. is near nominal</td>
+          </tr>
+          <tr class="recommended">
+            <td>Press Fit Insert</td>
+            <td>Reduce blank by 0.75 x tooth depth</td>
+            <td>Oversize knurl OD needed for interference fit in hole</td>
+          </tr>
+          <tr>
+            <td>Torque Transmission</td>
+            <td>Reduce blank by 0.50 x tooth depth</td>
+            <td>Ensure tooth engagement over full length</td>
+          </tr>
+          <tr>
+            <td>Decorative</td>
+            <td>No correction required</td>
+            <td>Depth is minimal; grip is not critical</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div><!-- end reference tab -->
+
+  <!-- TAB: PATTERN GUIDE -->
+  <div class="tab-pane" id="tab-patterns">
+    <div class="panel">
+      <div class="panel-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        Pattern Selection Guide
+      </div>
+      <div class="grid-2" style="gap:16px;">
+
+        <div style="border:1.5px solid var(--gray-200);border-radius:8px;padding:18px;background:var(--white);">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+            <span class="badge badge-navy" style="font-size:13px;padding:5px 12px;">Straight</span>
+          </div>
+          <p style="font-family:Inter,sans-serif;font-size:13px;color:var(--gray-600);line-height:1.6;margin-bottom:10px;">Grooves run parallel to the part axis. Provides grip resistance to axial forces. Cannot transmit torque on its own without a mechanical stop.</p>
+          <div class="info-box" style="margin-top:0;">
+            <strong>Best for:</strong> Set screws, bushings, press-fit pins, decorative accents on turned parts.
+          </div>
+        </div>
+
+        <div style="border:1.5px solid var(--gray-200);border-radius:8px;padding:18px;background:var(--white);">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+            <span class="badge badge-navy" style="font-size:13px;padding:5px 12px;">Diagonal (Helical)</span>
+          </div>
+          <p style="font-family:Inter,sans-serif;font-size:13px;color:var(--gray-600);line-height:1.6;margin-bottom:10px;">Grooves are cut at an angle (30 deg typical). Provides grip in both axial and rotational directions. Available as left-hand or right-hand helix.</p>
+          <div class="info-box" style="margin-top:0;">
+            <strong>Best for:</strong> Drive shafts, gear locking features, handles that require rotational grip.
+          </div>
+        </div>
+
+        <div style="border:1.5px solid var(--gray-200);border-radius:8px;padding:18px;background:var(--white);">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+            <span class="badge badge-green" style="font-size:13px;padding:5px 12px;">Diamond (Cross)</span>
+          </div>
+          <p style="font-family:Inter,sans-serif;font-size:13px;color:var(--gray-600);line-height:1.6;margin-bottom:10px;">Formed by crossing two diagonal patterns. Produces a diamond or pyramidal tooth. Maximum grip in all directions. Most common industrial knurl pattern.</p>
+          <div class="info-box" style="margin-top:0;">
+            <strong>Best for:</strong> Thumb screws, knobs, handles, medical devices, any high-grip application.
+          </div>
+        </div>
+
+        <div style="border:1.5px solid var(--gray-200);border-radius:8px;padding:18px;background:var(--white);">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+            <span class="badge badge-orange" style="font-size:13px;padding:5px 12px;">Convex</span>
+          </div>
+          <p style="font-family:Inter,sans-serif;font-size:13px;color:var(--gray-600);line-height:1.6;margin-bottom:10px;">Rounded raised profile. Used when a knurled insert must expand into a plastic or soft material hole. The convex profile bites into surrounding material.</p>
+          <div class="info-box" style="margin-top:0;">
+            <strong>Best for:</strong> Knurled brass inserts for plastic, heat-set inserts, electronics enclosures.
+          </div>
+        </div>
+
+        <div style="border:1.5px solid var(--gray-200);border-radius:8px;padding:18px;background:var(--white);">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+            <span class="badge badge-amber" style="font-size:13px;padding:5px 12px;">Concave</span>
+          </div>
+          <p style="font-family:Inter,sans-serif;font-size:13px;color:var(--gray-600);line-height:1.6;margin-bottom:10px;">Inward curved profile. Used in soft or ergonomic grip applications. The concave form fits the contour of a fingertip naturally.</p>
+          <div class="info-box" style="margin-top:0;">
+            <strong>Best for:</strong> Medical device grips, precision adjustment knobs, pen bodies.
+          </div>
+        </div>
+
+        <div style="border:1.5px solid var(--gray-200);border-radius:8px;padding:18px;background:var(--white);">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+            <span class="badge badge-navy" style="font-size:13px;padding:5px 12px;">Pattern Selection Quick Guide</span>
+          </div>
+          <table style="width:100%;font-family:Inter,sans-serif;font-size:12px;border-collapse:collapse;">
+            <tr style="border-bottom:1px solid var(--gray-100);">
+              <td style="padding:5px 0;color:var(--gray-500);">Need axial hold only</td>
+              <td style="padding:5px 0;color:var(--navy);font-weight:600;">Straight</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--gray-100);">
+              <td style="padding:5px 0;color:var(--gray-500);">Need rotational hold</td>
+              <td style="padding:5px 0;color:var(--navy);font-weight:600;">Diagonal or Diamond</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--gray-100);">
+              <td style="padding:5px 0;color:var(--gray-500);">Press fit into plastic</td>
+              <td style="padding:5px 0;color:var(--navy);font-weight:600;">Convex or Diamond</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--gray-100);">
+              <td style="padding:5px 0;color:var(--gray-500);">Ergonomic finger grip</td>
+              <td style="padding:5px 0;color:var(--navy);font-weight:600;">Concave or Diamond</td>
+            </tr>
+            <tr>
+              <td style="padding:5px 0;color:var(--gray-500);">Decorative only</td>
+              <td style="padding:5px 0;color:var(--navy);font-weight:600;">Any pattern, fine pitch</td>
+            </tr>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div><!-- end patterns tab -->
+
+  <!-- TAB: TROUBLESHOOTING -->
+  <div class="tab-pane" id="tab-troubleshoot">
+    <div class="panel">
+      <div class="panel-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Knurling Troubleshooting Guide
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:14px;">
+
+        <div style="border:1.5px solid var(--gray-200);border-radius:8px;overflow:hidden;">
+          <div style="background:var(--obsolete-bg);padding:12px 16px;border-bottom:1px solid var(--gray-200);">
+            <strong style="font-family:'Barlow Condensed',sans-serif;font-size:17px;color:var(--obsolete-red);">Double Tracking or Doubling Pattern</strong>
+          </div>
+          <div style="padding:14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+            <div>
+              <p class="section-label">Causes</p>
+              <ul style="font-family:Inter,sans-serif;font-size:12.5px;color:var(--gray-600);line-height:1.8;padding-left:16px;">
+                <li>Blank diameter is not an exact multiple of pitch</li>
+                <li>Incorrect knurl wheel pitch selected</li>
+                <li>Workpiece and wheel pitches do not mesh</li>
+              </ul>
+            </div>
+            <div>
+              <p class="section-label">Solutions</p>
+              <ul style="font-family:Inter,sans-serif;font-size:12.5px;color:var(--gray-600);line-height:1.8;padding-left:16px;">
+                <li>Use this calculator to find the corrected blank diameter</li>
+                <li>Ensure number of teeth is a whole integer</li>
+                <li>Adjust blank by turning to nearest corrected diameter</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div style="border:1.5px solid var(--gray-200);border-radius:8px;overflow:hidden;">
+          <div style="background:var(--withdrawn-bg);padding:12px 16px;border-bottom:1px solid var(--gray-200);">
+            <strong style="font-family:'Barlow Condensed',sans-serif;font-size:17px;color:var(--withdrawn-amber);">Shallow or Incomplete Teeth</strong>
+          </div>
+          <div style="padding:14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+            <div>
+              <p class="section-label">Causes</p>
+              <ul style="font-family:Inter,sans-serif;font-size:12.5px;color:var(--gray-600);line-height:1.8;padding-left:16px;">
+                <li>Insufficient infeed pressure on knurl wheel</li>
+                <li>Knurl wheel worn or clogged with chips</li>
+                <li>Wrong pitch for the material hardness</li>
+                <li>Blank diameter too large for selected pitch</li>
+              </ul>
+            </div>
+            <div>
+              <p class="section-label">Solutions</p>
+              <ul style="font-family:Inter,sans-serif;font-size:12.5px;color:var(--gray-600);line-height:1.8;padding-left:16px;">
+                <li>Increase radial pressure; use plunge method</li>
+                <li>Clean wheel with brass brush; replace if worn</li>
+                <li>Switch to a coarser pitch for hard materials</li>
+                <li>Use the blank diameter correction in this tool</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div style="border:1.5px solid var(--gray-200);border-radius:8px;overflow:hidden;">
+          <div style="background:var(--active-bg);padding:12px 16px;border-bottom:1px solid var(--gray-200);">
+            <strong style="font-family:'Barlow Condensed',sans-serif;font-size:17px;color:var(--active-green);">Chatter or Vibration Marks</strong>
+          </div>
+          <div style="padding:14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+            <div>
+              <p class="section-label">Causes</p>
+              <ul style="font-family:Inter,sans-serif;font-size:12.5px;color:var(--gray-600);line-height:1.8;padding-left:16px;">
+                <li>Spindle speed too high</li>
+                <li>Knurl holder not rigid enough</li>
+                <li>Long workpiece with insufficient support</li>
+                <li>Loose tailstock or chuck</li>
+              </ul>
+            </div>
+            <div>
+              <p class="section-label">Solutions</p>
+              <ul style="font-family:Inter,sans-serif;font-size:12.5px;color:var(--gray-600);line-height:1.8;padding-left:16px;">
+                <li>Reduce spindle speed by 30 to 50 percent</li>
+                <li>Use a rigid knurl holder; minimize overhang</li>
+                <li>Support with live center on long parts</li>
+                <li>Check and tighten all toolholding components</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div style="border:1.5px solid var(--gray-200);border-radius:8px;overflow:hidden;">
+          <div style="background:var(--gray-100);padding:12px 16px;border-bottom:1px solid var(--gray-200);">
+            <strong style="font-family:'Barlow Condensed',sans-serif;font-size:17px;color:var(--navy);">Torn or Ragged Teeth</strong>
+          </div>
+          <div style="padding:14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+            <div>
+              <p class="section-label">Causes</p>
+              <ul style="font-family:Inter,sans-serif;font-size:12.5px;color:var(--gray-600);line-height:1.8;padding-left:16px;">
+                <li>Feed rate too fast</li>
+                <li>Knurl wheel too fine for material</li>
+                <li>Cutting fluid not applied or wrong type</li>
+                <li>Gummy material (aluminum, copper) without lubrication</li>
+              </ul>
+            </div>
+            <div>
+              <p class="section-label">Solutions</p>
+              <ul style="font-family:Inter,sans-serif;font-size:12.5px;color:var(--gray-600);line-height:1.8;padding-left:16px;">
+                <li>Reduce feed to 0.010 to 0.030 in per revolution</li>
+                <li>Use a coarser pitch wheel</li>
+                <li>Apply cutting oil continuously during knurling</li>
+                <li>For aluminum: use kerosene or light oil</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-box">
+          <strong>General Best Practices:</strong> Always plunge knurl wheels in fully before engaging feed. Use a feed rate of 0.010 to 0.030 in per revolution. Apply cutting fluid. Make multiple passes if depth is insufficient after first pass. Never reverse the lathe direction with knurl wheels engaged.
+        </div>
+      </div>
+    </div>
+  </div><!-- end troubleshoot tab -->
+
+  <!-- DISCLAIMER -->
+  <div class="footer-disclaimer">
+    <strong>Disclaimer:</strong> This tool provides calculated knurl geometry based on standard formulas from ASME B94.6 and DIN 82. Results are intended as a starting point for setup. Actual results depend on machine rigidity, material condition, tool wear, and operator technique. Always verify with a test piece before production. Specialty Bolt and Screw, Inc. assumes no responsibility for machining outcomes based on these calculations.
+  </div>
+
+</div><!-- end main-content -->
+
+<script>
+var _sbsKnurlType = 'straight';
+
+/* ── Safe DOM text setter — works whether element has a unit <span> child or not ── */
+function _setText(id, val) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  /* walk child nodes; set the first TEXT node, or just textContent if none */
+  var found = false;
+  for (var i = 0; i < el.childNodes.length; i++) {
+    if (el.childNodes[i].nodeType === 3) { /* TEXT_NODE */
+      el.childNodes[i].nodeValue = val;
+      found = true;
+      break;
+    }
+  }
+  if (!found) { el.textContent = val; }
+}
+
+/* ── Walk up the DOM without closest() ── */
+function _getAttr(node, attr) {
+  var el = node;
+  for (var i = 0; i < 8; i++) {
+    if (!el || el === document.body) return null;
+    if (el.getAttribute && el.getAttribute(attr)) return el.getAttribute(attr);
+    el = el.parentNode;
+  }
+  return null;
+}
+
+/* ── Main calculation ── */
+function _calcAll() {
+  var bd       = parseFloat(document.getElementById('blankDia').value) || 0.75;
+  var wd       = parseFloat(document.getElementById('wheelDia').value) || 0.5;
+  var pitchVal = document.getElementById('pitchSel').value;
+  var unit     = document.getElementById('unitSel').value;
+  var toothAng = parseInt(document.getElementById('toothAngle').value) || 60;
+  var matFact  = parseFloat(document.getElementById('materialSel').value) || 2.0;
+  var appType  = document.getElementById('appType').value;
+
+  var isMetric = (unit === 'metric');
+  var tpi, pitchMM, spacing, actualDepth;
+
+  if (isMetric) {
+    pitchMM     = parseFloat(pitchVal);
+    spacing     = pitchMM;
+    tpi         = Math.round(25.4 / pitchMM);
+  } else {
+    tpi         = parseFloat(pitchVal);
+    spacing     = 1 / tpi;
+    pitchMM     = 25.4 / tpi;
+  }
+
+  var halfAngle = (toothAng / 2) * (Math.PI / 180);
+  actualDepth   = spacing / (2 * Math.tan(halfAngle));
+
+  var partTeeth    = Math.round(Math.PI * bd / spacing);
+  var correctedBD  = (partTeeth * spacing) / Math.PI;
+  var wheelTeeth   = Math.round(Math.PI * wd / spacing);
+
+  var appFactor    = (appType === 'press') ? 0.75 : (appType === 'decor') ? 0 : 0.5;
+  var blankAdj     = correctedBD - (appFactor * actualDepth * matFact * 0.1);
+  var finishedDia  = blankAdj + (actualDepth * 0.5);
+  var unitLabel    = isMetric ? 'mm' : 'in';
+
+  /* result values */
+  _setText('rPitch',      tpi);
+  _setText('rPitchMM',    pitchMM.toFixed(3));
+  _setText('rToothDepth', actualDepth.toFixed(4));
+  document.getElementById('rUnitDepth').textContent = unitLabel;
+  _setText('rToothSpacing', isMetric ? spacing.toFixed(3) : spacing.toFixed(5));
+  document.getElementById('rUnitSpacing').textContent = unitLabel;
+  _setText('rTeethCount',   partTeeth);
+  _setText('rWheelTeeth',   wheelTeeth);
+  _setText('rBlankDia',     blankAdj.toFixed(4));
+  document.getElementById('rUnitBlank2').textContent = unitLabel;
+  _setText('rFinishedDia',  finishedDia.toFixed(4));
+  document.getElementById('rUnitFin').textContent = unitLabel;
+
+  /* warning */
+  var diff = Math.abs(correctedBD - bd);
+  var warn = '';
+  if (diff > 0.002) {
+    warn = 'Blank diameter should be adjusted by ' +
+      (isMetric ? (diff * 25.4).toFixed(3) + ' mm' : diff.toFixed(4) + ' in') +
+      ' to achieve a whole-number tooth count. Use corrected blank diameter for best results.';
+  }
+  var wb = document.getElementById('warningBox');
+  var wm = document.getElementById('warningMsg');
+  if (warn) { wb.style.display = 'block'; wm.textContent = warn; }
+  else       { wb.style.display = 'none'; }
+
+  /* badges */
+  var typeName = _sbsKnurlType.charAt(0).toUpperCase() + _sbsKnurlType.slice(1);
+  document.getElementById('knurlTypeBadge').textContent = typeName + ' Knurl';
+  document.getElementById('standardBadge').textContent  = isMetric ? 'DIN 82' : 'ASME B94.6';
+
+  _drawDiagram(spacing, actualDepth, toothAng, isMetric);
+}
+
+/* ── Tooth profile SVG diagram ── */
+function _drawDiagram(spacing, depth, angle, isMetric) {
+  var tg   = document.getElementById('teethGroup');
+  var dims = document.getElementById('dimLines');
+  tg.innerHTML   = '';
+  dims.innerHTML = '';
+
+  var scale       = isMetric ? 300 : 3000;
+  var dispSpacing = Math.min(Math.max(spacing * scale, 18), 40);
+  var dispDepth   = Math.min(Math.max(depth   * scale, 10), 20);
+  var baseY       = 120;
+  var startX      = 60;
+  var n           = Math.floor(440 / dispSpacing);
+
+  var pts = '';
+  for (var i = 0; i < n; i++) {
+    var x = startX + i * dispSpacing;
+    pts += x + ',' + baseY + ' ' + (x + dispSpacing / 2) + ',' + (baseY - dispDepth) + ' ';
+  }
+  pts += (startX + n * dispSpacing) + ',' + baseY;
+
+  var poly = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+  poly.setAttribute('points', pts);
+  poly.setAttribute('fill', '#E87722');
+  poly.setAttribute('stroke', '#B75A10');
+  poly.setAttribute('stroke-width', '1');
+  tg.appendChild(poly);
+
+  var sp2 = 60 + dispSpacing / 2;
+  var dimG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  dimG.innerHTML =
+    '<line x1="60" y1="148" x2="' + (60 + dispSpacing) + '" y2="148" stroke="#1A8A4A" stroke-width="1.2"/>' +
+    '<line x1="60" y1="144" x2="60" y2="152" stroke="#1A8A4A" stroke-width="1.2"/>' +
+    '<line x1="' + (60 + dispSpacing) + '" y1="144" x2="' + (60 + dispSpacing) + '" y2="152" stroke="#1A8A4A" stroke-width="1.2"/>' +
+    '<text x="' + sp2 + '" y="163" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#1A8A4A">Pitch<\/text>' +
+    '<line x1="' + sp2 + '" y1="' + (baseY - dispDepth) + '" x2="' + sp2 + '" y2="' + baseY + '" stroke="#1D3557" stroke-width="1" stroke-dasharray="3,2"/>' +
+    '<text x="' + (sp2 + 14) + '" y="' + (baseY - dispDepth / 2 + 3) + '" font-family="Inter,sans-serif" font-size="10" fill="#1D3557">Depth<\/text>';
+  dims.appendChild(dimG);
+}
+
+/* ── Unit switch ── */
+function _updateUnits() {
+  var unit  = document.getElementById('unitSel').value;
+  var isM   = (unit === 'metric');
+  var lbl   = isM ? 'mm' : 'in';
+  var ids   = ['unitBlank', 'unitLen', 'unitWheel'];
+  for (var i = 0; i < ids.length; i++) {
+    document.getElementById(ids[i]).textContent = lbl;
+  }
+  var pitchSel = document.getElementById('pitchSel');
+  if (isM) {
+    pitchSel.innerHTML =
+      '<option value="0.4">0.4 mm (DIN Fine)<\/option>' +
+      '<option value="0.6">0.6 mm (DIN Medium)<\/option>' +
+      '<option value="0.8" selected>0.8 mm (DIN Coarse)<\/option>' +
+      '<option value="1.0">1.0 mm (DIN Extra Coarse)<\/option>';
+    document.getElementById('blankDia').value = '20.000';
+    document.getElementById('knurlLen').value = '15.000';
+    document.getElementById('wheelDia').value = '12.000';
+  } else {
+    pitchSel.innerHTML =
+      '<option value="64">64 TPI (Fine)<\/option>' +
+      '<option value="96">96 TPI (Medium Fine)<\/option>' +
+      '<option value="128" selected>128 TPI (Medium)<\/option>' +
+      '<option value="160">160 TPI (Medium Coarse)<\/option>' +
+      '<option value="192">192 TPI (Coarse)<\/option>';
+    document.getElementById('blankDia').value = '0.750';
+    document.getElementById('knurlLen').value = '0.500';
+    document.getElementById('wheelDia').value = '0.500';
+  }
+  _calcAll();
+}
+
+/* ── Print ── */
+function _printResults() {
+  var logoSrc   = document.getElementById('sbsLogoPrint').src;
+  var bd        = document.getElementById('blankDia').value;
+  var unit      = document.getElementById('unitSel').value;
+  var isM       = (unit === 'metric');
+  var uL        = isM ? 'mm' : 'in';
+  var typeLabel = _sbsKnurlType.charAt(0).toUpperCase() + _sbsKnurlType.slice(1);
+
+  var resultIds    = ['rPitch','rPitchMM','rToothDepth','rToothSpacing','rTeethCount','rWheelTeeth','rBlankDia','rFinishedDia'];
+  var resultLabels = ['Diametral Pitch (TPI)','Pitch (mm)','Tooth Depth','Tooth Spacing','Teeth on Part','Teeth on Wheel','Corrected Blank Dia','Finished Knurl Dia'];
+
+  var rows = '';
+  for (var i = 0; i < resultIds.length; i++) {
+    var el  = document.getElementById(resultIds[i]);
+    var val = el ? el.textContent : '';
+    rows += '<div class="result"><div class="rv">' + val + '<\/div><div class="rl">' + resultLabels[i] + '<\/div><\/div>';
+  }
+
+  var html =
+    '<!DOCTYPE html><html><head><title>SBS Knurling Results<\/title>' +
+    '<style>body{font-family:Arial,sans-serif;margin:24px;color:#333;}' +
+    'h2{font-size:18px;margin:0;}p{font-size:12px;color:#666;margin:2px 0;}' +
+    '.hdr{border-bottom:3px solid #E87722;padding-bottom:10px;margin-bottom:20px;display:flex;align-items:center;gap:16px;}' +
+    '.result{display:inline-block;min-width:160px;border:1px solid #ddd;border-radius:6px;padding:10px;margin:6px;text-align:center;}' +
+    '.rv{font-size:22px;font-weight:800;color:#1D3557;}.rl{font-size:11px;color:#666;}' +
+    '.ftr{margin-top:24px;border-top:1px solid #ddd;padding-top:8px;font-size:10px;color:#999;}<\/style>' +
+    '<\/head><body>' +
+    '<div class="hdr"><img src="' + logoSrc + '" style="height:44px;"><div>' +
+    '<h2>Knurling Design Results<\/h2><p>Specialty Bolt and Screw, Inc. | specialtybolt.com<\/p><\/div><\/div>' +
+    '<p><strong>Pattern:<\/strong> ' + typeLabel + ' | <strong>Blank Dia:<\/strong> ' + bd + ' ' + uL +
+    ' | <strong>Standard:<\/strong> ' + (isM ? 'DIN 82' : 'ASME B94.6') + '<\/p><br>' +
+    rows +
+    '<div class="ftr">Specialty Bolt and Screw, Inc. | specialtybolt.com | SBS Knurling Design Assistance Tool<\/div>' +
+    '<\/body><\/html>';
+
+  var w = window.open('', '_blank');
+  w.document.write(html);
+  w.document.close();
+  w.print();
+}
+
+/* ── Single delegated click listener ── */
+document.addEventListener('click', function(e) {
+  var action = _getAttr(e.target, 'data-sbs-action');
+  if (!action) return;
+
+  if (action === 'calculateAll') {
+    _calcAll();
+
+  } else if (action === 'dismissBeta') {
+    var overlay = document.getElementById('beta-overlay');
+    if (overlay) { overlay.style.display = 'none'; }
+
+  } else if (action === 'printResults') {
+    _printResults();
+
+  } else if (action === 'selectKnurlType') {
+    var type = _getAttr(e.target, 'data-type');
+    if (!type) return;
+    _sbsKnurlType = type;
+    var cards = document.querySelectorAll('.knurl-type-card');
+    for (var i = 0; i < cards.length; i++) {
+      if (cards[i].getAttribute('data-type') === type) {
+        cards[i].className = 'knurl-type-card selected';
+      } else {
+        cards[i].className = 'knurl-type-card';
+      }
+    }
+    _calcAll();
+
+  } else if (action === 'tab') {
+    var tabId = _getAttr(e.target, 'data-tab');
+    if (!tabId) return;
+    var btns = document.querySelectorAll('.tab-btn');
+    for (var b = 0; b < btns.length; b++) {
+      btns[b].className = (btns[b].getAttribute('data-tab') === tabId)
+        ? 'tab-btn active' : 'tab-btn';
+    }
+    var panes = document.querySelectorAll('.tab-pane');
+    for (var p = 0; p < panes.length; p++) {
+      panes[p].className = (panes[p].id === 'tab-' + tabId)
+        ? 'tab-pane active' : 'tab-pane';
+    }
+  }
+});
+
+/* ── Change listeners for inputs ── */
+document.getElementById('unitSel').addEventListener('change', _updateUnits);
+var _inputIds = ['blankDia','knurlLen','wheelDia','pitchSel','toothAngle','materialSel','appType','finishGoal'];
+for (var _i = 0; _i < _inputIds.length; _i++) {
+  (function(id) {
+    var el = document.getElementById(id);
+    if (el) el.addEventListener('change', _calcAll);
+  })(_inputIds[_i]);
+}
+
+/* ── Run on load ── */
+_calcAll();
+</script>
+</body>
+</html>
