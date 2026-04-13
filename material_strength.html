@@ -172,10 +172,73 @@ select.ctrl-select:focus{border-color:var(--navy);}
 .disclaimer-footer p{font-family:"Inter",sans-serif;font-size:11.5px;color:var(--gray-500);max-width:900px;margin:0 auto;}
 .disclaimer-footer strong{color:var(--navy);}
 
+/* MAIN TAB NAV */
+.main-tab-nav{background:var(--white);border-bottom:2px solid var(--gray-200);padding:0 1.5rem;display:flex;align-items:flex-end;gap:0;}
+.main-tab-btn{font-family:"Barlow Condensed",sans-serif;font-size:13px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--gray-500);background:none;border:none;border-bottom:3px solid transparent;padding:10px 18px 9px;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:7px;}
+.main-tab-btn:hover{color:var(--navy);}
+.main-tab-btn.active{color:var(--navy);border-bottom-color:var(--orange);}
+.main-tab-btn svg{flex-shrink:0;}
+.tab-panel{display:none;}
+.tab-panel.active{display:flex;flex-direction:column;}
+
+/* INFO TAB */
+.info-wrap{flex:1;overflow-y:auto;padding:24px 28px;max-width:1100px;}
+.info-section{margin-bottom:32px;}
+.info-section-title{font-family:"Barlow Condensed",sans-serif;font-size:18px;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:12px;padding-bottom:7px;border-bottom:2px solid var(--orange);display:flex;align-items:center;gap:9px;}
+.info-section-title svg{flex-shrink:0;color:var(--orange);}
+.info-def-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-bottom:8px;}
+.info-def-card{background:var(--white);border:1.5px solid var(--gray-200);border-radius:8px;border-top:3px solid var(--navy);padding:14px;}
+.info-def-card.orange-top{border-top-color:var(--orange);}
+.info-def-card.green-top{border-top-color:var(--active-green);}
+.info-def-card.purple-top{border-top-color:#7B2D8B;}
+.info-def-name{font-family:"Barlow Condensed",sans-serif;font-size:15px;font-weight:800;color:var(--navy);margin-bottom:4px;}
+.info-def-sub{font-family:"Barlow",sans-serif;font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;}
+.info-def-body{font-family:"Inter",sans-serif;font-size:11.5px;color:var(--gray-600);line-height:1.6;}
+.info-def-body strong{color:var(--navy);font-weight:600;}
+.mat-info-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;}
+.mat-info-card{background:var(--white);border:1.5px solid var(--gray-200);border-radius:8px;overflow:hidden;}
+.mat-info-header{padding:10px 14px;display:flex;align-items:center;gap:10px;}
+.mat-info-swatch{width:10px;height:36px;border-radius:3px;flex-shrink:0;}
+.mat-info-hname{font-family:"Barlow Condensed",sans-serif;font-size:15px;font-weight:800;color:var(--white);}
+.mat-info-hsub{font-family:"Inter",sans-serif;font-size:9px;color:rgba(255,255,255,0.7);margin-top:1px;}
+.mat-info-body{padding:12px 14px;}
+.pro-con-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.pro-col,.con-col{font-family:"Inter",sans-serif;font-size:10.5px;line-height:1.6;}
+.pro-col-title{font-family:"Barlow",sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--active-green);margin-bottom:4px;}
+.con-col-title{font-family:"Barlow",sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--c-freemach,#C0392B);margin-bottom:4px;}
+.pro-col ul,.con-col ul{list-style:none;padding:0;}
+.pro-col li::before{content:"+ ";color:var(--active-green);font-weight:700;}
+.con-col li::before{content:"- ";color:var(--c-freemach,#C0392B);font-weight:700;}
+.mat-info-note{font-family:"Inter",sans-serif;font-size:10.5px;color:var(--gray-500);border-top:1px solid var(--gray-100);padding-top:8px;line-height:1.6;}
+.mat-info-note strong{color:var(--gray-700);}
+.consider-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;}
+.consider-card{background:var(--white);border:1.5px solid var(--gray-200);border-radius:8px;padding:12px;}
+.consider-num{font-family:"Barlow Condensed",sans-serif;font-size:28px;font-weight:800;color:var(--orange);line-height:1;margin-bottom:4px;}
+.consider-title{font-family:"Barlow",sans-serif;font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;}
+.consider-body{font-family:"Inter",sans-serif;font-size:10.5px;color:var(--gray-500);line-height:1.6;}
+
+/* BETA MODAL */
+.beta-overlay{position:fixed;inset:0;background:rgba(18,36,58,0.82);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;}
+.beta-modal{background:var(--white);border-radius:10px;max-width:540px;width:100%;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,0.4);}
+.beta-modal-header{background:var(--navy);border-bottom:3px solid var(--orange);padding:18px 22px;display:flex;align-items:center;gap:12px;}
+.beta-modal-header svg{flex-shrink:0;color:var(--orange);}
+.beta-modal-title{font-family:"Barlow Condensed",sans-serif;font-size:18px;font-weight:800;color:var(--white);letter-spacing:0.03em;}
+.beta-modal-subtitle{font-family:"Inter",sans-serif;font-size:11px;color:rgba(255,255,255,0.6);margin-top:2px;}
+.beta-pill{background:var(--orange);color:var(--white);font-family:"Barlow Condensed",sans-serif;font-size:11px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;padding:3px 10px;border-radius:20px;margin-left:auto;flex-shrink:0;}
+.beta-modal-body{padding:22px 24px;}
+.beta-modal-body p{font-family:"Inter",sans-serif;font-size:13px;color:var(--gray-600);line-height:1.7;margin-bottom:14px;}
+.beta-modal-body p:last-child{margin-bottom:0;}
+.beta-modal-body strong{color:var(--navy);}
+.beta-modal-footer{padding:16px 24px 20px;border-top:1px solid var(--gray-200);}
+.beta-modal-footer .btn-primary{width:100%;justify-content:center;font-size:13px;padding:11px 20px;}
+
 @media(max-width:768px){
   .sbs-layout{grid-template-columns:1fr;}
   .sbs-sidebar{display:none;}
   .chart-grid{grid-template-columns:1fr 60px 1fr;padding:8px;}
+  .info-wrap{padding:16px;}
+  .info-def-grid{grid-template-columns:1fr;}
+  .mat-info-grid{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -202,6 +265,44 @@ select.ctrl-select:focus{border-color:var(--navy);}
   </div>
 </header>
 
+<!-- BETA MODAL -->
+<div class="beta-overlay" id="betaOverlay">
+  <div class="beta-modal" role="dialog" aria-modal="true" aria-labelledby="betaTitle">
+    <div class="beta-modal-header">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <div>
+        <div class="beta-modal-title" id="betaTitle">Specialty Bolt and Screw</div>
+        <div class="beta-modal-subtitle">Material Strength Comparison Tool</div>
+      </div>
+      <span class="beta-pill">Beta</span>
+    </div>
+    <div class="beta-modal-body">
+      <p>This tool is currently in <strong>beta</strong>. While the data and calculations are based on published industry standards, some values, features, and reference links are still being reviewed and refined by our engineering team.</p>
+      <p>We encourage you to <strong>use the tool, explore the grades, and share your feedback</strong>. If you spot an error, a missing grade, or have a suggestion, please reach out to us at <strong>engineering@specialtybolt.com</strong>. Your input helps us improve this resource for everyone in the industry.</p>
+      <p>Thank you for being an early user and supporting SBS Technical Engineering resources.</p>
+    </div>
+    <div class="beta-modal-footer">
+      <button class="btn-primary" data-sbs-action="dismissBeta">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg>
+        I Understand - Continue to Tool
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN TAB NAV -->
+<div class="main-tab-nav" id="mainTabNav">
+  <button class="main-tab-btn active" data-sbs-action="switchTab" data-tab="chart">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    Strength Comparison
+  </button>
+  <button class="main-tab-btn" data-sbs-action="switchTab" data-tab="info">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    Engineering Reference
+  </button>
+</div>
+
+<div class="tab-panel active" id="tabChart">
 <div class="controls-bar" id="controlsBar">
   <div class="ctrl-group">
     <span class="ctrl-label">Metric</span>
@@ -260,6 +361,252 @@ select.ctrl-select:focus{border-color:var(--navy);}
     </div>
   </main>
 </div>
+</div><!-- /tabChart -->
+
+<!-- INFO TAB -->
+<div class="tab-panel" id="tabInfo">
+  <div class="info-wrap">
+
+    <div class="info-section">
+      <div class="info-section-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M2 20h20M6 20V10l6-6 6 6v10M10 20v-5h4v5"/></svg>
+        Strength Metric Definitions
+      </div>
+      <div class="info-def-grid">
+        <div class="info-def-card">
+          <div class="info-def-name">Ultimate Tensile Strength</div>
+          <div class="info-def-sub">UTS / Tensile Strength</div>
+          <div class="info-def-body">The <strong>maximum stress a material can withstand</strong> before fracturing under a sustained tensile load. This is the peak of the stress-strain curve. UTS is the most commonly cited fastener strength value and is used to compare grades across standards. Values are expressed in PSI (imperial) or MPa (metric). <strong>Note:</strong> a fastener should never be loaded to its UTS in service.</div>
+        </div>
+        <div class="info-def-card orange-top">
+          <div class="info-def-name">Yield Strength</div>
+          <div class="info-def-sub">0.2% Offset Proof Strength</div>
+          <div class="info-def-body">The stress at which a material begins to <strong>permanently deform</strong> (plastically). Below the yield point, deformation is elastic and reversible. Above it, the fastener takes a permanent set and will not return to its original length. Yield strength is typically <strong>70 to 90% of UTS</strong> for steel fasteners. Properly designed joints keep working loads below the yield point.</div>
+        </div>
+        <div class="info-def-card green-top">
+          <div class="info-def-name">Proof Load</div>
+          <div class="info-def-sub">Proof Stress / Proof Strength</div>
+          <div class="info-def-body">The <strong>maximum tensile force a fastener must withstand without permanent deformation</strong>, as defined by the governing standard. Proof load is the specified load used during production testing. It is typically <strong>85 to 95% of yield strength</strong>. When a fastener passes proof load testing it is guaranteed not to take a permanent set. This is the practical design limit for preloaded joints.</div>
+        </div>
+        <div class="info-def-card purple-top">
+          <div class="info-def-name">Hardness</div>
+          <div class="info-def-sub">HRC / HRB (Rockwell Scale)</div>
+          <div class="info-def-body">A measure of a material's <strong>resistance to localized plastic deformation</strong> (indentation). For fasteners, hardness correlates strongly with tensile strength. The <strong>Rockwell C scale (HRC)</strong> is used for hardened steels (grades 8.8 and above). <strong>Rockwell B (HRB)</strong> is used for softer materials. Standards define both minimum and maximum hardness to prevent brittleness in high-strength grades. Hardness testing is a quick production quality check.</div>
+        </div>
+      </div>
+      <div class="info-def-body" style="background:var(--gray-50);border:1px solid var(--gray-200);border-radius:6px;padding:10px 14px;margin-top:4px;">
+        <strong>Relationship summary:</strong> Proof Load is less than Yield Strength, which is less than UTS. In a properly preloaded joint, the installed clamp force (preload) targets approximately 70 to 75% of the proof load. This hierarchy ensures the joint remains elastic under service loads with an appropriate safety margin.
+      </div>
+    </div>
+
+    <div class="info-section">
+      <div class="info-section-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        Material Profiles: Pros, Cons, and Typical Applications
+      </div>
+      <div class="mat-info-grid">
+
+        <div class="mat-info-card">
+          <div class="mat-info-header" style="background:#1D3557">
+            <div class="mat-info-swatch" style="background:rgba(255,255,255,0.25)"></div>
+            <div>
+              <div class="mat-info-hname">Carbon / Alloy Steel</div>
+              <div class="mat-info-hsub">SAE Gr2 to Gr8 / ISO 4.6 to 12.9</div>
+            </div>
+          </div>
+          <div class="mat-info-body">
+            <div class="pro-con-row">
+              <div class="pro-col">
+                <div class="pro-col-title">Advantages</div>
+                <ul><li>Highest strength-to-cost ratio</li><li>Wide range of grades available</li><li>Excellent machinability</li><li>Well-established standards</li><li>Easy to plate and coat</li></ul>
+              </div>
+              <div class="con-col">
+                <div class="con-col-title">Limitations</div>
+                <ul><li>Susceptible to corrosion without coating</li><li>High-strength grades prone to hydrogen embrittlement</li><li>Magnetic (can be a constraint)</li><li>Coating adds lead time and cost</li></ul>
+              </div>
+            </div>
+            <div class="mat-info-note"><strong>Best for:</strong> General structural, automotive, and industrial applications where coating is acceptable. Grade 8 / 10.9 and 12.9 for high-load bolted joints.</div>
+          </div>
+        </div>
+
+        <div class="mat-info-card">
+          <div class="mat-info-header" style="background:#1A8A4A">
+            <div class="mat-info-swatch" style="background:rgba(255,255,255,0.25)"></div>
+            <div>
+              <div class="mat-info-hname">Stainless Steel</div>
+              <div class="mat-info-hsub">ASTM F593 / A193 / ISO 3506</div>
+            </div>
+          </div>
+          <div class="mat-info-body">
+            <div class="pro-con-row">
+              <div class="pro-col">
+                <div class="pro-col-title">Advantages</div>
+                <ul><li>Excellent corrosion resistance</li><li>Non-magnetic (austenitic grades)</li><li>Good appearance, no plating needed</li><li>Food-safe (316 grade)</li><li>Wide chemical resistance</li></ul>
+              </div>
+              <div class="con-col">
+                <div class="con-col-title">Limitations</div>
+                <ul><li>Lower strength than alloy steel (most grades)</li><li>Prone to galling under torque</li><li>Higher cost than carbon steel</li><li>Chloride stress corrosion in 304</li></ul>
+              </div>
+            </div>
+            <div class="mat-info-note"><strong>Best for:</strong> Marine, chemical, food processing, and outdoor applications. Use anti-galling compound during installation. Specify 316 for chloride environments.</div>
+          </div>
+        </div>
+
+        <div class="mat-info-card">
+          <div class="mat-info-header" style="background:#7B2D8B">
+            <div class="mat-info-swatch" style="background:rgba(255,255,255,0.25)"></div>
+            <div>
+              <div class="mat-info-hname">Titanium</div>
+              <div class="mat-info-hsub">ASTM F467 / Grade 2 and Grade 5</div>
+            </div>
+          </div>
+          <div class="mat-info-body">
+            <div class="pro-con-row">
+              <div class="pro-col">
+                <div class="pro-col-title">Advantages</div>
+                <ul><li>Exceptional strength-to-weight</li><li>Superior corrosion resistance</li><li>Non-magnetic</li><li>Biocompatible (medical use)</li><li>Excellent fatigue resistance</li></ul>
+              </div>
+              <div class="con-col">
+                <div class="con-col-title">Limitations</div>
+                <ul><li>Very high cost</li><li>Difficult to machine</li><li>Galling risk under torque</li><li>Limited availability of sizes</li><li>Lower modulus than steel</li></ul>
+              </div>
+            </div>
+            <div class="mat-info-note"><strong>Best for:</strong> Aerospace, motorsport, medical implants, and high-performance marine where weight savings and corrosion immunity justify premium cost. Always use lubricant to prevent galling.</div>
+          </div>
+        </div>
+
+        <div class="mat-info-card">
+          <div class="mat-info-header" style="background:#E87722">
+            <div class="mat-info-swatch" style="background:rgba(255,255,255,0.25)"></div>
+            <div>
+              <div class="mat-info-hname">Aluminum</div>
+              <div class="mat-info-hsub">ASTM B211 / 6061-T6 and 7075-T6</div>
+            </div>
+          </div>
+          <div class="mat-info-body">
+            <div class="pro-con-row">
+              <div class="pro-col">
+                <div class="pro-col-title">Advantages</div>
+                <ul><li>Very lightweight (1/3 density of steel)</li><li>Natural oxide corrosion protection</li><li>Non-magnetic</li><li>Good thermal conductivity</li><li>No hydrogen embrittlement risk</li></ul>
+              </div>
+              <div class="con-col">
+                <div class="con-col-title">Limitations</div>
+                <ul><li>Low strength vs steel</li><li>Soft head can strip easily</li><li>Galvanic corrosion with steel</li><li>Not suitable for high-temp</li><li>Creep under sustained load</li></ul>
+              </div>
+            </div>
+            <div class="mat-info-note"><strong>Best for:</strong> Aerospace brackets, electronics enclosures, bicycle and motorsport components where weight is critical. Avoid contact with dissimilar metals without isolation. Use low torque values.</div>
+          </div>
+        </div>
+
+        <div class="mat-info-card">
+          <div class="mat-info-header" style="background:#B8860B">
+            <div class="mat-info-swatch" style="background:rgba(255,255,255,0.25)"></div>
+            <div>
+              <div class="mat-info-hname">Brass</div>
+              <div class="mat-info-hsub">ASTM B16 / CuZn37 and CuZn36Pb3</div>
+            </div>
+          </div>
+          <div class="mat-info-body">
+            <div class="pro-con-row">
+              <div class="pro-col">
+                <div class="pro-col-title">Advantages</div>
+                <ul><li>Excellent corrosion resistance</li><li>Non-magnetic and non-sparking</li><li>Good electrical conductivity</li><li>Easy to machine (Pb grade)</li><li>Attractive appearance</li></ul>
+              </div>
+              <div class="con-col">
+                <div class="con-col-title">Limitations</div>
+                <ul><li>Low strength vs steel</li><li>Dezincification in some environments</li><li>Stress corrosion cracking risk</li><li>High cost vs steel</li><li>Not suitable for high loads</li></ul>
+              </div>
+            </div>
+            <div class="mat-info-note"><strong>Best for:</strong> Electrical connections, plumbing fittings, decorative hardware, marine instruments, and explosive atmospheres where non-sparking is required.</div>
+          </div>
+        </div>
+
+        <div class="mat-info-card">
+          <div class="mat-info-header" style="background:#C0392B">
+            <div class="mat-info-swatch" style="background:rgba(255,255,255,0.25)"></div>
+            <div>
+              <div class="mat-info-hname">Free-Machining Steel</div>
+              <div class="mat-info-hsub">ASTM A108 / AISI 12L14</div>
+            </div>
+          </div>
+          <div class="mat-info-body">
+            <div class="pro-con-row">
+              <div class="pro-col">
+                <div class="pro-col-title">Advantages</div>
+                <ul><li>Excellent machinability</li><li>High-volume turned part efficiency</li><li>Good surface finish</li><li>Moderate strength</li><li>Tight dimensional tolerances</li></ul>
+              </div>
+              <div class="con-col">
+                <div class="con-col-title">Limitations</div>
+                <ul><li>Not weldable (Pb content)</li><li>Corrosion protection required</li><li>Lower ductility than plain steel</li><li>RoHS concerns (Pb)</li><li>Not for structural use</li></ul>
+              </div>
+            </div>
+            <div class="mat-info-note"><strong>Best for:</strong> Precision machined components, instrumentation fittings, bushings, and standoffs where dimensional accuracy and surface finish are priorities and structural loading is low.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="info-section">
+      <div class="info-section-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        Key Engineering Considerations When Selecting Fastener Material
+      </div>
+      <div class="consider-grid">
+        <div class="consider-card">
+          <div class="consider-num">01</div>
+          <div class="consider-title">Load Type and Magnitude</div>
+          <div class="consider-body">Define whether loads are static, dynamic (fatigue), or impact. High-strength grades (Gr8, 10.9, 12.9) resist static loads well but may be susceptible to hydrogen embrittlement or stress corrosion cracking. Fatigue-critical joints may benefit from lower preload and finer thread pitch.</div>
+        </div>
+        <div class="consider-card">
+          <div class="consider-num">02</div>
+          <div class="consider-title">Operating Environment</div>
+          <div class="consider-body">Consider temperature range, humidity, chemical exposure, and UV. Carbon steel requires coating in wet environments. Stainless 316 outperforms 304 in chloride environments. Titanium and certain nickel alloys are preferred for extreme chemical duty. Elevated temperature reduces strength in most materials.</div>
+        </div>
+        <div class="consider-card">
+          <div class="consider-num">03</div>
+          <div class="consider-title">Galvanic Compatibility</div>
+          <div class="consider-body">When two dissimilar metals are in contact in an electrolyte, the less noble metal corrodes accelerated. Avoid aluminum fasteners with carbon steel structures. Stainless fasteners in carbon steel structures can accelerate steel corrosion. Use isolation washers or select compatible material pairs.</div>
+        </div>
+        <div class="consider-card">
+          <div class="consider-num">04</div>
+          <div class="consider-title">Hydrogen Embrittlement Risk</div>
+          <div class="consider-body">High-strength steel fasteners (above 1040 MPa / Grade 8 and above) are susceptible to hydrogen embrittlement, particularly after electroplating. Risk increases with hardness. Consider mechanical zinc plating, hot-dip galvanizing, or alternate materials for critical high-strength applications.</div>
+        </div>
+        <div class="consider-card">
+          <div class="consider-num">05</div>
+          <div class="consider-title">Galling in Stainless and Titanium</div>
+          <div class="consider-body">Austenitic stainless and titanium are prone to galling (cold welding under torque) which can seize threads irreversibly. Always use a suitable anti-galling lubricant (nickel-based for SS, molybdenum disulfide for Ti). Consider a nut of different alloy grade to reduce galling risk.</div>
+        </div>
+        <div class="consider-card">
+          <div class="consider-num">06</div>
+          <div class="consider-title">Nut and Mating Thread Compatibility</div>
+          <div class="consider-body">Always match nut grade to bolt grade. Using an understrength nut causes thread stripping before bolt fracture. The joint must fail in the intended mode. Hardened washers are required under bolt heads and nuts for Grade 8, 10.9, and 12.9 to prevent embedment and maintain preload.</div>
+        </div>
+        <div class="consider-card">
+          <div class="consider-num">07</div>
+          <div class="consider-title">Weight Constraints</div>
+          <div class="consider-body">When mass is critical (aerospace, motorsport, portable equipment), compare specific strength: UTS divided by density. Titanium Grade 5 and high-strength aluminum approach the specific strength of alloy steel at a fraction of the weight. Always verify absolute load capacity still meets requirements.</div>
+        </div>
+        <div class="consider-card">
+          <div class="consider-num">08</div>
+          <div class="consider-title">Regulatory and Standards Compliance</div>
+          <div class="consider-body">Pressure vessel, aerospace, food, and medical applications require certified fasteners from traceable sources with full material certifications (certs). Verify that your selected grade and standard are acceptable to the governing code (ASME, AS/NZS, EN, MIL-SPEC). Never substitute grades without engineering review.</div>
+        </div>
+        <div class="consider-card">
+          <div class="consider-num">09</div>
+          <div class="consider-title">Cost and Availability</div>
+          <div class="consider-body">Balance performance requirements against total cost including material, coating, installation time, and maintenance. Carbon steel Grade 5 or 8 with hot-dip galvanizing often gives better total lifecycle value than stainless in many outdoor structural applications. Titanium costs 10 to 30 times more than alloy steel per fastener.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="disclaimer-footer" style="margin-top:8px;">
+      <p><strong>Disclaimer:</strong> This engineering reference is provided for general educational purposes. All strength values and material descriptions are based on published industry standards. Always consult current editions of applicable standards and a qualified engineer for safety-critical or structural applications. SBS makes no warranty as to accuracy or fitness for any particular purpose.</p>
+    </div>
+
+  </div>
+</div><!-- /tabInfo -->
 
 <div class="tip" id="tip"></div>
 
@@ -998,7 +1345,49 @@ function measureHeader(){
 }
 window.addEventListener("resize",measureHeader);
 
-populateThreads();buildSidebar();render();measureHeader();
+/* ---- BETA MODAL ---- */
+(function(){
+  var overlay=document.getElementById("betaOverlay");
+  if(overlay){
+    document.addEventListener("click",function(e){
+      var el=e.target;
+      for(var i=0;i<6;i++){
+        if(!el||el===document.body)break;
+        if(el.getAttribute&&el.getAttribute("data-sbs-action")==="dismissBeta"){
+          overlay.style.display="none";
+          return;
+        }
+        el=el.parentNode;
+      }
+    });
+  }
+})();
+
+/* ---- TABS ---- */
+document.addEventListener("click",function(e){
+  var el=e.target,action=null,tab=null;
+  for(var i=0;i<6;i++){
+    if(!el||el===document.body)break;
+    if(el.getAttribute){
+      if(!action)action=el.getAttribute("data-sbs-action");
+      if(!tab)tab=el.getAttribute("data-tab");
+    }
+    el=el.parentNode;
+  }
+  if(action==="switchTab"&&tab){
+    var panels=["tabChart","tabInfo"];
+    var tabBtns=document.querySelectorAll(".main-tab-btn");
+    for(var i=0;i<panels.length;i++){
+      var p=document.getElementById(panels[i]);
+      if(p)p.classList.remove("active");
+    }
+    for(var i=0;i<tabBtns.length;i++)tabBtns[i].classList.remove("active");
+    var targetPanel=document.getElementById("tab"+tab.charAt(0).toUpperCase()+tab.slice(1));
+    if(targetPanel)targetPanel.classList.add("active");
+    var targetBtn=document.querySelector("[data-tab='"+tab+"']");
+    if(targetBtn)targetBtn.classList.add("active");
+  }
+});
 </script>
 </body>
 </html>
