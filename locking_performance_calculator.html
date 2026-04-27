@@ -1,0 +1,975 @@
+<!--
+  SBS Locking and Prevailing Torque Guide | Copyright (c) 2024 Specialty Bolt & Screw, Inc.
+  Fingerprint: SBS-LOCK-PERF-v2 | https://shop.specialtybolt.com/
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SBS Locking and Prevailing Torque Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#1D3557;--navy-dark:#12243a;--orange:#E87722;--orange-light:#F0913A;--orange-pale:#FDF0E5;--white:#fff;--gray-50:#F8F9FA;--gray-100:#F0F2F5;--gray-200:#E2E6EA;--gray-300:#CED4DA;--gray-400:#ADB5BD;--gray-500:#6C757D;--gray-600:#495057;--gray-700:#343A40;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-700);min-height:100vh;}
+#pLogo{display:none;}
+#hdr{position:sticky;top:0;z-index:200;background:#fff;border-bottom:3px solid var(--orange);box-shadow:0 2px 8px rgba(0,0,0,.1);padding:.65rem 1.5rem;}
+.hi{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+.hl img{height:48px;display:block;}
+.hdiv{width:1px;height:36px;background:var(--gray-200);flex-shrink:0;}
+.ht{flex:1;}
+.ht h1{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:var(--navy);line-height:1.1;}
+.ht p{font-size:10.5px;color:var(--gray-500);margin-top:3px;line-height:1.4;}
+.ha{display:flex;gap:8px;margin-left:auto;}
+.bOrg{background:var(--orange);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 2px 6px rgba(232,119,34,.3);transition:background .15s;}
+.bOrg:hover{background:var(--orange-light);}
+.bNvy{background:var(--navy);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;transition:background .15s;}
+.bNvy:hover{background:var(--navy-dark);}
+#fltBar{position:sticky;top:var(--hh,75px);z-index:199;background:#fff;border-bottom:1px solid var(--gray-200);padding:.75rem 1.5rem;}
+.frow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.fg{display:flex;align-items:center;gap:5px;}
+.flbl{font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;color:var(--gray-500);text-transform:uppercase;white-space:nowrap;}
+.sw{position:relative;flex:1;min-width:180px;max-width:280px;}
+.sw .sico{position:absolute;left:9px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--gray-400);pointer-events:none;}
+#srch{width:100%;padding:7px 30px 7px 30px;border:2px solid var(--navy);border-radius:6px;font-family:'Inter',sans-serif;font-size:13px;outline:none;transition:border-color .15s;}
+#srch:focus{border-color:var(--orange);}
+#srch::placeholder{color:var(--gray-400);font-style:italic;}
+#clrS{position:absolute;right:7px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--gray-400);display:none;padding:2px;}
+#clrS:hover{color:var(--gray-600);}
+.dw{position:relative;display:flex;align-items:center;gap:4px;}
+.dw select{appearance:none;-webkit-appearance:none;background:#fff;border:1.5px solid var(--gray-200);border-radius:6px;padding:7px 28px 7px 10px;font-family:'Inter',sans-serif;font-size:12px;color:var(--gray-700);cursor:pointer;outline:none;min-width:150px;transition:border-color .15s,background .15s;}
+.dw select:focus,.dw select.on{border-color:var(--orange);background:var(--orange-pale);color:var(--navy);}
+.chev{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:13px;height:13px;pointer-events:none;color:var(--gray-500);}
+.rcnt{font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;color:var(--orange);white-space:nowrap;margin-left:auto;}
+/* INFO BTN + TOOLTIP */
+.ib{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;background:var(--gray-200);border:none;cursor:pointer;color:var(--gray-500);font-size:10px;font-weight:800;font-family:'Barlow',sans-serif;flex-shrink:0;transition:background .15s,color .15s;padding:0;line-height:1;}
+.ib:hover{background:var(--navy);color:#fff;}
+#gTip{position:fixed;z-index:9999;background:var(--navy);color:#fff;border-radius:8px;padding:10px 13px;font-family:'Inter',sans-serif;font-size:12px;line-height:1.55;max-width:260px;box-shadow:0 4px 16px rgba(0,0,0,.2);pointer-events:none;visibility:hidden;opacity:0;transition:opacity .15s,visibility .15s;}
+#gTip.vis{opacity:1;visibility:visible;}
+#gTip strong{color:#F0913A;}
+/* TABLE */
+#tWrap{padding:1.25rem 1.5rem 2rem;}
+.tbox{background:#fff;border-radius:10px;border:1.5px solid var(--gray-200);overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+table{width:100%;border-collapse:collapse;}
+thead tr{background:var(--gray-50);}
+thead th{font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--gray-500);padding:10px 12px;border-bottom:1.5px solid var(--gray-200);text-align:left;}
+.thi{display:flex;align-items:center;gap:5px;}
+thead th.srt{cursor:pointer;user-select:none;}
+thead th.srt:hover{color:var(--navy);}
+.sic{opacity:.35;font-size:10px;}
+thead th.sa .sic,thead th.sd .sic{opacity:1;color:var(--orange);}
+tbody tr{border-bottom:1px solid var(--gray-100);transition:background .1s;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:var(--gray-50);}
+tbody td{font-family:'Inter',sans-serif;font-size:13px;color:var(--gray-700);padding:11px 12px;vertical-align:top;}
+.thC{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--navy);white-space:nowrap;}
+.sysBdg{display:inline-block;border-radius:4px;padding:2px 7px;font-family:'Barlow',sans-serif;font-size:10px;font-weight:700;margin-bottom:4px;}
+.sM{background:#E3EEF8;color:#1a5276;}
+.sI{background:#E8F5EE;color:#1A8A4A;}
+.mBdg{display:inline-block;border-radius:4px;padding:2px 8px;font-family:'Barlow',sans-serif;font-size:10px;font-weight:700;margin-bottom:5px;}
+.mN{background:#FDF0E5;color:#B35B0A;}
+.mA{background:#EEF3FD;color:#1a5276;}
+.mL{background:#F0FAF4;color:#1A8A4A;}
+.stdBdg{display:inline-block;background:var(--orange);color:#fff;border-radius:5px;padding:4px 9px;font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;text-decoration:none;transition:background .15s;}
+.stdBdg:hover{background:var(--orange-light);}
+.pLine{font-size:12.5px;line-height:1.6;}
+.pNote{margin-top:6px;padding:6px 8px 6px 10px;border-left:3px solid var(--orange);background:var(--gray-50);font-size:11.5px;color:var(--gray-500);border-radius:0 4px 4px 0;line-height:1.5;}
+.imgW{text-align:center;}
+.imgW img{max-width:130px;max-height:90px;object-fit:contain;border-radius:4px;}
+.imgPH{width:110px;height:70px;background:var(--gray-100);border:1.5px dashed var(--gray-300);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--gray-400);text-align:center;line-height:1.4;padding:8px;margin:0 auto;}
+.locT{font-size:11.5px;color:var(--gray-600);line-height:1.6;}
+#emSt{display:none;text-align:center;padding:60px 20px 40px;}
+#emSt p{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:var(--gray-400);margin-top:14px;}
+#emSt span{font-size:13px;color:var(--gray-400);}
+#sentinel{height:1px;}
+/* DISCLAIMER */
+#disc{background:var(--gray-50);border-top:1px solid var(--gray-200);padding:12px 1.5rem;}
+#disc p{font-size:11.5px;color:var(--gray-500);max-width:900px;margin:0 auto;text-align:center;}
+#disc strong{color:var(--navy);}
+.printHdr{display:none;}
+@media(max-width:768px){.hi{flex-direction:column;align-items:flex-start;gap:8px;}.ha{margin-left:0;}.frow{flex-direction:column;align-items:stretch;}.sw{max-width:100%;}.rcnt{margin-left:0;}#tWrap{padding:.75rem;overflow-x:auto;}table{min-width:680px;}}
+@media print{#hdr,#fltBar,#disc,.bOrg,.bNvy{display:none!important;}.printHdr{display:block!important;}body{background:white;}#tWrap{padding:0;}.tbox{border:none;box-shadow:none;}}
+
+/* ── TABS ── */
+#tabBar{background:#fff;border-bottom:1px solid var(--gray-200);padding:0 1.5rem;display:flex;position:sticky;top:var(--hh,75px);z-index:198;}
+.tbtn{font-family:'Barlow',sans-serif;font-size:13px;font-weight:700;color:var(--gray-500);padding:10px 20px;border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-1px;display:flex;align-items:center;gap:7px;transition:color .15s,border-color .15s;white-space:nowrap;}
+.tbtn:hover{color:var(--navy);}
+.tbtn.on{color:var(--navy);border-bottom-color:var(--orange);}
+/* shift fltBar + tWrap down when tabs shown */
+#fltBar{top:var(--tth,115px);}
+/* ── BEST PRACTICE SECTION ── */
+#secBP{display:none;padding:1.5rem;background:var(--gray-100);}
+.bpWrap{max-width:1200px;}
+.bpGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:1.25rem;margin-bottom:1.5rem;}
+.bpCard{background:#fff;border-radius:12px;border:1.5px solid var(--gray-200);overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.bpHead{padding:14px 18px;display:flex;align-items:center;gap:12px;}
+.bpHead.ny{background:linear-gradient(135deg,#FDF0E5,#fce4cc);border-bottom:2px solid #E87722;}
+.bpHead.ad{background:linear-gradient(135deg,#EEF3FD,#d5e6fa);border-bottom:2px solid #3a7bd5;}
+.bpHead.lq{background:linear-gradient(135deg,#F0FAF4,#cef0da);border-bottom:2px solid #1A8A4A;}
+.bpIcon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.bpIcon.ny{background:#E87722;}.bpIcon.ad{background:#3a7bd5;}.bpIcon.lq{background:#1A8A4A;}
+.bpTitle{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;color:var(--navy);}
+.bpSub{font-size:11px;color:var(--gray-500);margin-top:2px;}
+.bpBody{padding:16px 18px;}
+.bpLbl{font-family:'Barlow',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--gray-400);margin:14px 0 6px;}
+.bpLbl:first-child{margin-top:0;}
+.bpTxt{font-size:13px;color:var(--gray-600);line-height:1.65;}
+.bpTxt strong{color:var(--navy);}
+.bpList{list-style:none;padding:0;margin:0;}
+.bpList li{font-size:13px;color:var(--gray-600);line-height:1.5;padding:5px 0 5px 20px;position:relative;border-bottom:1px solid var(--gray-100);}
+.bpList li:last-child{border-bottom:none;}
+.bpList li::before{content:'';position:absolute;left:5px;top:12px;width:5px;height:5px;border-radius:50%;background:var(--orange);}
+.bpList li.ck::before{background:none;width:7px;height:5px;border-left:2px solid #1A8A4A;border-bottom:2px solid #1A8A4A;border-radius:0;transform:rotate(-45deg);top:10px;left:4px;}
+.bpList li.xx::before{background:#C0392B;}
+.ratingRow{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--gray-100);font-size:12px;}
+.ratingRow:last-child{border-bottom:none;}
+.ratingLbl{color:var(--gray-600);flex:1;}
+.ratingDots{display:flex;gap:3px;}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--gray-200);}
+.dot.f.ny{background:#E87722;}.dot.f.ad{background:#3a7bd5;}.dot.f.lq{background:#1A8A4A;}
+/* comparison table */
+.bpCmpWrap{margin-bottom:1.5rem;}
+.bpCmpTitle{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;color:var(--navy);margin-bottom:10px;}
+.bpCmp{background:#fff;border-radius:12px;border:1.5px solid var(--gray-200);overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.bpCmp table{width:100%;border-collapse:collapse;}
+.bpCmp thead th{background:var(--navy);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;padding:11px 14px;text-align:left;}
+.bpCmp thead th:first-child{background:var(--navy-dark);min-width:160px;}
+.bpCmp tbody td{padding:9px 14px;font-size:12.5px;border-bottom:1px solid var(--gray-100);vertical-align:middle;}
+.bpCmp tbody tr:last-child td{border-bottom:none;}
+.bpCmp tbody td:first-child{font-weight:600;color:var(--navy);background:var(--gray-50);font-size:12px;}
+.bpCmp tbody tr:hover td{background:var(--gray-50);}
+.bpCmp tbody tr:hover td:first-child{background:var(--gray-100);}
+.cGn{color:#1A8A4A;}.cAm{color:#B7610A;}.cRd{color:#C0392B;}
+/* decision guide */
+.bpGuide{background:#fff;border-radius:12px;border:1.5px solid var(--gray-200);padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.bpGuideTitle{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;color:var(--navy);margin-bottom:4px;}
+.bpGuideSub{font-size:12px;color:var(--gray-500);margin-bottom:14px;}
+.bpGuideGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;}
+.bpGuideItem{border-radius:8px;padding:12px 14px;border:1.5px solid;}
+.bpGuideItem.ny{border-color:#E87722;background:#FDF9F5;}
+.bpGuideItem.ad{border-color:#3a7bd5;background:#F4F8FE;}
+.bpGuideItem.lq{border-color:#1A8A4A;background:#F4FAF6;}
+.bpGuideItem h4{font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;margin-bottom:6px;}
+.bpGuideItem.ny h4{color:#E87722;}.bpGuideItem.ad h4{color:#3a7bd5;}.bpGuideItem.lq h4{color:#1A8A4A;}
+.bpGuideItem p{font-size:12px;color:var(--gray-600);line-height:1.55;}
+@media(max-width:768px){.bpGrid{grid-template-columns:1fr;}.bpCmp table{min-width:580px;}.bpCmpWrap{overflow-x:auto;}.bpGuideGrid{grid-template-columns:1fr;}}
+
+/* ── COMPARE ── */
+.cbCol{width:36px;text-align:center;padding:8px 4px!important;}
+.cbCol input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--orange);}
+thead th.cbCol{background:var(--gray-50);}
+tbody tr.selRow{background:#FFF8F2!important;outline:2px solid var(--orange);outline-offset:-2px;}
+tbody tr.selRow:hover{background:#FFF0E0!important;}
+#cmpBar{display:none;position:sticky;bottom:0;z-index:197;background:var(--navy);color:#fff;padding:10px 1.5rem;box-shadow:0 -2px 12px rgba(0,0,0,.2);}
+#cmpBar .cbi{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+#cmpBar .cbt{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;flex:1;}
+#cmpBar .cbc{font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,.7);}
+.bCmp{background:var(--orange);color:#fff;border:none;border-radius:6px;padding:7px 16px;font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;transition:background .15s;box-shadow:0 2px 6px rgba(232,119,34,.4);}
+.bCmp:hover{background:var(--orange-light);}
+.bCmpClr{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:6px;padding:7px 14px;font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:background .15s;}
+.bCmpClr:hover{background:rgba(255,255,255,.25);}
+/* Modal */
+#cmpModal{display:none;position:fixed;inset:0;z-index:2000;background:rgba(18,36,58,.8);backdrop-filter:blur(4px);overflow-y:auto;padding:24px 16px;}
+#cmpModalBox{background:#fff;border-radius:14px;max-width:1100px;margin:0 auto;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.3);}
+#cmpModalHdr{background:#fff;border-bottom:4px solid var(--orange);padding:14px 20px;display:flex;align-items:center;gap:14px;}
+#cmpModalHdr img{height:40px;}
+#cmpModalHdr h2{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;color:var(--navy);flex:1;}
+.bCmpClose{background:var(--gray-100);border:none;border-radius:6px;width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--gray-600);transition:background .15s;}
+.bCmpClose:hover{background:var(--orange);color:#fff;}
+#cmpModalBody{padding:20px;overflow-x:auto;}
+.cmpTable{width:100%;border-collapse:collapse;min-width:500px;}
+.cmpTable thead th{background:var(--navy);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;padding:10px 14px;text-align:left;white-space:nowrap;}
+.cmpTable thead th:first-child{background:var(--navy-dark);min-width:160px;font-size:12px;}
+.cmpTable tbody td{padding:10px 14px;font-family:'Inter',sans-serif;font-size:12.5px;border-bottom:1px solid var(--gray-100);vertical-align:top;}
+.cmpTable tbody tr:last-child td{border-bottom:none;}
+.cmpTable tbody td:first-child{font-weight:600;color:var(--navy);background:var(--gray-50);font-size:12px;white-space:nowrap;}
+.cmpTable tbody tr:hover td{background:var(--gray-50);}
+.cmpTable tbody tr:hover td:first-child{background:var(--gray-100);}
+#cmpModalFtr{border-top:1px solid var(--gray-200);padding:14px 20px;display:flex;justify-content:flex-end;gap:10px;background:#fff;}
+</style>
+</head>
+<body><img id="pLogo" src="data:image/png;base64,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" style="display:none;" alt="">
+<div class="printHdr" style="padding:16px 24px;border-bottom:3px solid #E87722;margin-bottom:16px;"><table width="100%"><tr><td><img src="data:image/png;base64,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" height="48" alt="SBS"></td><td style="text-align:right;font-family:Arial,sans-serif;font-size:13px;color:#1D3557;"><strong>Locking and Prevailing Torque Guide</strong><br><span style="font-size:11px;color:#6C757D;">Specialty Bolt and Screw, Inc. specialtybolt.com</span></td></tr></table></div>
+<header id="hdr"><div class="hi">
+<div class="hl"><a href="https://shop.specialtybolt.com/" target="_blank"><img src="data:image/png;base64,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" alt="SBS Specialty Bolt &amp; Screw" style="height:48px;display:block;"></a></div>
+<div class="hdiv"></div>
+<div class="ht"><h1>Locking and Prevailing Torque Guide</h1><p>Pre-Applied, Adhesive Coated, Non-Metallic Resistant &nbsp;|&nbsp; Thread locking mechanism selection and torque performance data per IFI standards (124, 125, 524 &amp; 525)</p></div>
+<div class="ha">
+<button class="bNvy" data-a="reset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="14" height="14"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Reset</button>
+<button class="bOrg" data-a="print"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="14" height="14"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Print</button>
+</div></div></header>
+
+<div id="tabBar">
+<button class="tbtn on" data-a="tab" data-t="table">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="15" height="15"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="9" x2="9" y2="21"/></svg>
+Performance Data
+</button>
+<button class="tbtn" data-a="tab" data-t="bp">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="15" height="15"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+Best Practices Guide
+</button>
+</div>
+<div id="fltBar"><div class="frow">
+<span class="flbl">Filter</span>
+<div class="fg">
+<div class="sw"><svg class="sico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+<input type="text" id="srch" placeholder="Search thread, mechanism...">
+<button id="clrS"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="13" height="13"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+<button class="ib" data-tip="search">i</button>
+</div>
+<div class="fg">
+<div class="dw"><select id="fSys"><option value="">All Measurement Systems</option><option value="Metric">Metric</option><option value="Inch">Inch</option></select><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg></div>
+<button class="ib" data-tip="system">i</button>
+</div>
+<div class="fg">
+<div class="dw"><select id="fThd"><option value="">All Thread Sizes</option></select><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg></div>
+<button class="ib" data-tip="thread">i</button>
+</div>
+<div class="fg">
+<div class="dw"><select id="fMech"><option value="">All Mechanisms</option></select><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg></div>
+<button class="ib" data-tip="mechanism">i</button>
+</div>
+<div class="fg">
+<div class="dw"><select id="fStd"><option value="">All Standards</option></select><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg></div>
+<button class="ib" data-tip="standard">i</button>
+</div>
+<span class="rcnt" id="rcnt"></span>
+</div></div>
+<div id="gTip"></div>
+<div id="tWrap"><div class="tbox">
+<div id="emSt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="44" height="44" style="margin:50px auto 0;display:block;opacity:.2;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><p>No results found</p><span>Adjust your filters or search terms</span></div>
+<table id="mTbl"><thead><tr>
+<th class="cbCol"></th>
+<th class="srt" data-col="sys"><div class="thi">Measurement System<span class="sic">&#8597;</span><button class="ib" data-tip="cSys">i</button></div></th>
+<th class="srt" data-col="thd"><div class="thi">Thread Size<span class="sic">&#8597;</span><button class="ib" data-tip="cThd">i</button></div></th>
+<th class="srt" data-col="mch"><div class="thi">Locking Mechanism<span class="sic">&#8597;</span><button class="ib" data-tip="cMch">i</button></div></th>
+<th><div class="thi">Standard<button class="ib" data-tip="cStd">i</button></div></th>
+<th><div class="thi">Locking Performance<button class="ib" data-tip="cPrf">i</button></div></th>
+<th><div class="thi">Patch Diagram<button class="ib" data-tip="cDig">i</button></div></th>
+<th><div class="thi">Patch Location Notes<button class="ib" data-tip="cLoc">i</button></div></th>
+</tr></thead><tbody id="tBdy"></tbody></table>
+<div id="sentinel"></div>
+</div></div>
+
+<div id="secBP">
+<div class="bpWrap">
+
+<!-- THREE MECHANISM CARDS -->
+<div class="bpGrid">
+
+<!-- NYLON PATCH CARD -->
+<div class="bpCard">
+<div class="bpHead ny">
+<div class="bpIcon ny" style="overflow:hidden;">
+<img src="https://raw.githubusercontent.com/sbstechnicalengineering/calculators/main/nylonpatch.png" alt="Nylon patch fastener" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">
+</div>
+<div><div class="bpTitle">Nylon Patch</div><div class="bpSub">Nonmetallic Resistant Element / NYLOK / ND Patch</div></div>
+</div>
+<div class="bpBody">
+<div class="bpLbl">How It Works</div>
+<p class="bpTxt">A nylon insert, patch, or pellet is factory-applied to a portion of the thread. During assembly the nylon deforms under compression and creates a <strong>mechanical interference fit on the thread directly opposite the patch</strong>. This asymmetric friction resists loosening without any chemical bonding. The locking zone is localized to approximately 120 degrees of arc.</p>
+<div style="text-align:center;margin:8px 0;"><img src="https://raw.githubusercontent.com/sbstechnicalengineering/calculators/main/IFI524.png" alt="Nylon patch location diagram" style="max-width:100%;max-height:110px;object-fit:contain;border-radius:6px;border:1px solid #E2E6EA;padding:4px;background:#fff;"></div>
+<div class="bpLbl">Key Facts</div>
+<ul class="bpList">
+<li><strong>Purely mechanical</strong> locking via deformed nylon squeezing opposing thread flanks</li>
+<li>Friction acts on the thread <strong>opposite</strong> the patch location, not beneath it</li>
+<li>Prevailing torque is measurable from the <strong>very first installation turn</strong></li>
+<li>No cure time required; locks immediately at assembly</li>
+<li class="ck">Suitable for reuse across multiple removal and reinstallation cycles</li>
+<li class="ck">Temperature rated typically up to 250 deg F (verify product spec)</li>
+<li class="xx">Prevailing-Off torque decreases progressively with each removal cycle</li>
+<li class="xx">Not suitable where chemical resistance to nylon solvents is critical</li>
+</ul>
+<div class="bpLbl">Reusability Detail</div>
+<p class="bpTxt">IFI-524 (Metric) and IFI-124 (Inch) both specify minimum prevailing-off torque values after 5 removal cycles. Torque typically drops 30 to 50 percent from first to fifth removal. Most manufacturers recommend replacing after 5 to 10 removals depending on application criticality.</p>
+<div class="bpLbl">Performance Ratings</div>
+<div class="ratingRow"><span class="ratingLbl">Initial Locking Strength</span><div class="ratingDots"><div class="dot f ny"></div><div class="dot f ny"></div><div class="dot f ny"></div><div class="dot"></div><div class="dot"></div></div></div>
+<div class="ratingRow"><span class="ratingLbl">Vibration Resistance</span><div class="ratingDots"><div class="dot f ny"></div><div class="dot f ny"></div><div class="dot f ny"></div><div class="dot"></div><div class="dot"></div></div></div>
+<div class="ratingRow"><span class="ratingLbl">Reusability</span><div class="ratingDots"><div class="dot f ny"></div><div class="dot f ny"></div><div class="dot f ny"></div><div class="dot f ny"></div><div class="dot"></div></div></div>
+<div class="ratingRow"><span class="ratingLbl">Ease of Assembly</span><div class="ratingDots"><div class="dot f ny"></div><div class="dot f ny"></div><div class="dot f ny"></div><div class="dot f ny"></div><div class="dot f ny"></div></div></div>
+<div class="ratingRow"><span class="ratingLbl">Temperature Range</span><div class="ratingDots"><div class="dot f ny"></div><div class="dot f ny"></div><div class="dot f ny"></div><div class="dot"></div><div class="dot"></div></div></div>
+</div></div>
+
+<!-- PREAPPLIED ADHESIVE CARD -->
+<div class="bpCard">
+<div class="bpHead ad">
+<div class="bpIcon ad" style="overflow:hidden;">
+<img src="https://raw.githubusercontent.com/sbstechnicalengineering/calculators/main/scotchgrip.png" alt="Preapplied adhesive fastener" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">
+</div>
+<div><div class="bpTitle">Preapplied Adhesive</div><div class="bpSub">3M Scotchgrip / Loctite 200 / ND Microspheres</div></div>
+</div>
+<div class="bpBody">
+<div class="bpLbl">How It Works</div>
+<p class="bpTxt">Microencapsulated adhesive beads are factory-applied around the <strong>full 360-degree thread circumference</strong>. During assembly, fastener engagement ruptures the microcapsules, releasing adhesive that <strong>chemically bonds to both mating thread surfaces</strong> as it cures. Locking is chemical adhesion, not friction. The 360-degree coverage provides uniform locking force across the entire thread contact area.</p>
+<div style="text-align:center;margin:8px 0;"><img src="https://raw.githubusercontent.com/sbstechnicalengineering/calculators/main/IFI525.png" alt="Adhesive location diagram" style="max-width:100%;max-height:110px;object-fit:contain;border-radius:6px;border:1px solid #E2E6EA;padding:4px;background:#fff;"></div>
+<div class="bpLbl">Key Facts</div>
+<ul class="bpList">
+<li><strong>Chemical adhesion</strong> via adhesive cure after microcapsule rupture during assembly</li>
+<li>360-degree coverage provides <strong>uniform locking force</strong> unlike the localized nylon patch</li>
+<li>Breakaway torque (initial break-loose) is typically <strong>higher</strong> than continuing prevailing-off torque</li>
+<li>Short cure time required for full bond strength after assembly</li>
+<li class="ck">Clean, no-mess application; capsules release only at assembly</li>
+<li class="ck">Consistent torque performance across the full thread engagement length</li>
+<li class="xx">Single-use only; capsules are consumed on first assembly</li>
+<li class="xx">Removal and reinstallation yield significantly reduced locking performance</li>
+<li class="xx">Shelf life considerations; store per manufacturer guidelines</li>
+</ul>
+<div class="bpLbl">Reusability Detail</div>
+<p class="bpTxt">Preapplied adhesive is a <strong>single-use system</strong>. Once microcapsules are ruptured and adhesive cures, reassembly without reapplication provides only residual friction. For applications requiring multiple removals, nylon patch is the preferred choice.</p>
+<div class="bpLbl">Performance Ratings</div>
+<div class="ratingRow"><span class="ratingLbl">Initial Locking Strength</span><div class="ratingDots"><div class="dot f ad"></div><div class="dot f ad"></div><div class="dot f ad"></div><div class="dot f ad"></div><div class="dot"></div></div></div>
+<div class="ratingRow"><span class="ratingLbl">Vibration Resistance</span><div class="ratingDots"><div class="dot f ad"></div><div class="dot f ad"></div><div class="dot f ad"></div><div class="dot f ad"></div><div class="dot"></div></div></div>
+<div class="ratingRow"><span class="ratingLbl">Reusability</span><div class="ratingDots"><div class="dot f ad"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>
+<div class="ratingRow"><span class="ratingLbl">Ease of Assembly</span><div class="ratingDots"><div class="dot f ad"></div><div class="dot f ad"></div><div class="dot f ad"></div><div class="dot f ad"></div><div class="dot"></div></div></div>
+<div class="ratingRow"><span class="ratingLbl">Temperature Range</span><div class="ratingDots"><div class="dot f ad"></div><div class="dot f ad"></div><div class="dot f ad"></div><div class="dot"></div><div class="dot"></div></div></div>
+</div></div>
+
+<!-- LIQUID THREAD LOCKER CARD -->
+<div class="bpCard">
+<div class="bpHead lq">
+<div class="bpIcon lq" style="overflow:hidden;">
+<img src="https://raw.githubusercontent.com/sbstechnicalengineering/calculators/main/liquidapplied.png" alt="Applied liquid thread locker" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">
+</div>
+<div><div class="bpTitle">Applied Liquid Coating</div><div class="bpSub">Loctite Threadlocker / Henkel / Applied at Assembly</div></div>
+</div>
+<div class="bpBody">
+<div class="bpLbl">How It Works</div>
+<p class="bpTxt">Anaerobic liquid adhesive is applied by the assembler directly to fastener threads immediately before installation. In the absence of air and presence of metal ions, the liquid undergoes <strong>anaerobic polymerization</strong>, forming a rigid thermoset plastic that fills thread voids and chemically locks both surfaces. Unlike factory-applied systems, the assembler controls grade and quantity at point of use.</p>
+<div class="bpLbl">Key Facts</div>
+<ul class="bpList">
+<li><strong>Anaerobic chemical cure</strong>; only polymerizes when air is excluded between metal surfaces</li>
+<li>Prevailing-On torque is near zero; full locking develops <strong>only after adhesive cures</strong></li>
+<li>Breakaway strength is entirely dependent on the <strong>product grade selected</strong></li>
+<li>Requires cure time (hours); varies by product, temperature, and substrate</li>
+<li class="ck">Locks and seals simultaneously; prevents corrosion and fluid ingress</li>
+<li class="ck">Grade selection controls removal difficulty at point of use</li>
+<li class="xx">Applied by assembler; process control and operator training required</li>
+<li class="xx">Performance highly dependent on surface cleanliness and substrate type</li>
+<li class="xx">Passive surfaces (stainless, plated) may require activator primer</li>
+</ul>
+<div class="bpLbl">Grade Selection Guide</div>
+<p class="bpTxt"><strong>Low strength (Blue 242):</strong> Removable with hand tools. Ideal for set screws, adjustment fasteners, and frequently serviced joints.<br><br><strong>High strength (Red 271):</strong> Permanent hold; requires heat (approx. 450 deg F) or special tooling for removal. Use only where disassembly is not anticipated.</p>
+<div class="bpLbl">Performance Ratings</div>
+<div class="ratingRow"><span class="ratingLbl">Initial Locking Strength</span><div class="ratingDots"><div class="dot f lq"></div><div class="dot f lq"></div><div class="dot f lq"></div><div class="dot f lq"></div><div class="dot f lq"></div></div></div>
+<div class="ratingRow"><span class="ratingLbl">Vibration Resistance</span><div class="ratingDots"><div class="dot f lq"></div><div class="dot f lq"></div><div class="dot f lq"></div><div class="dot f lq"></div><div class="dot f lq"></div></div></div>
+<div class="ratingRow"><span class="ratingLbl">Reusability</span><div class="ratingDots"><div class="dot f lq"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>
+<div class="ratingRow"><span class="ratingLbl">Ease of Assembly</span><div class="ratingDots"><div class="dot f lq"></div><div class="dot f lq"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>
+<div class="ratingRow"><span class="ratingLbl">Temperature Range</span><div class="ratingDots"><div class="dot f lq"></div><div class="dot f lq"></div><div class="dot f lq"></div><div class="dot f lq"></div><div class="dot"></div></div></div>
+</div></div>
+
+</div><!-- end bpGrid -->
+
+<!-- COMPARISON TABLE -->
+<div class="bpCmpWrap">
+<div class="bpCmpTitle">Side-by-Side Comparison</div>
+<div class="bpCmp">
+<table><thead><tr>
+<th>Attribute</th>
+<th>Nylon Patch (NYLOK)</th>
+<th>Preapplied Adhesive</th>
+<th>Applied Liquid Locker</th>
+</tr></thead><tbody>
+<tr><td>Locking Method</td><td>Mechanical interference (friction)</td><td>Chemical adhesion (encapsulated)</td><td>Chemical adhesion (anaerobic cure)</td></tr>
+<tr><td>Where Friction Acts</td><td>Thread <strong>opposite</strong> the patch location</td><td>Full 360-deg chemical bond on all threads</td><td>Full thread fill; rigid thermoset bond</td></tr>
+<tr><td>Applied By</td><td class="cGn">Fastener manufacturer</td><td class="cGn">Fastener manufacturer</td><td class="cAm">Assembler at point of use</td></tr>
+<tr><td>Lock Time</td><td class="cGn">Immediate on assembly</td><td class="cAm">Short cure time required</td><td class="cAm">Hours; grade and temperature dependent</td></tr>
+<tr><td>Prevailing-On Torque</td><td class="cAm">Moderate (from first turn)</td><td class="cAm">Moderate</td><td class="cGn">Near zero during installation</td></tr>
+<tr><td>Reusability</td><td class="cGn">Yes (torque degrades per cycle)</td><td class="cRd">No (single use only)</td><td class="cRd">No (re-apply required)</td></tr>
+<tr><td>Vibration Resistance</td><td class="cAm">Good</td><td class="cGn">Very Good</td><td class="cGn">Excellent</td></tr>
+<tr><td>Sealing Ability</td><td class="cRd">None</td><td class="cAm">Limited</td><td class="cGn">Yes (fills voids, resists corrosion)</td></tr>
+<tr><td>Process Control Risk</td><td class="cGn">Low (factory applied)</td><td class="cGn">Low (factory applied)</td><td class="cRd">Higher (assembler dependent)</td></tr>
+<tr><td>Temperature Limit (typical)</td><td>Up to 250 deg F</td><td>Up to 300 deg F</td><td>Up to 300+ deg F (grade dependent)</td></tr>
+<tr><td>IFI Standard (Metric)</td><td>IFI-524</td><td>IFI-525</td><td>IFI-525</td></tr>
+<tr><td>IFI Standard (Inch)</td><td>IFI-124</td><td>IFI-125</td><td>IFI-125</td></tr>
+</tbody></table>
+</div>
+</div>
+
+<!-- DECISION GUIDE -->
+<div class="bpGuide">
+<div class="bpGuideTitle">Quick Selection Guide</div>
+<div class="bpGuideSub">Match your application requirements to the right locking mechanism</div>
+<div class="bpGuideGrid">
+<div class="bpGuideItem ny">
+<h4>Choose NYLON PATCH when:</h4>
+<p>Disassembly and reassembly is needed. Maintenance access is required. No liquid application available at the assembly station. Simple drop-in fastener solution preferred. Measurable prevailing torque from the first installation turn is required.</p>
+</div>
+<div class="bpGuideItem ad">
+<h4>Choose PREAPPLIED ADHESIVE when:</h4>
+<p>Higher vibration resistance than nylon is required but assembly must stay clean and simple. No liquid application at the line. Joint is unlikely to require disassembly. Consistent torque performance across the production lot is critical.</p>
+</div>
+<div class="bpGuideItem lq">
+<h4>Choose LIQUID THREAD LOCKER when:</h4>
+<p>Maximum locking strength or joint sealing is required. Grade must be selected at point of use. Passive surfaces require activator. Engineer specifies permanent hold (Red 271) or serviceable (Blue 242) based on service life and maintenance requirements.</p>
+</div>
+</div>
+</div>
+
+</div><!-- end bpWrap -->
+</div><!-- end secBP -->
+
+<!-- COMPARE BAR -->
+<div id="cmpBar">
+<div class="cbi">
+<span class="cbt">Compare Selected</span>
+<span class="cbc" id="cmpCount">0 rows selected (max 4)</span>
+<button class="bCmpClr" data-a="clearCmp">Clear</button>
+<button class="bCmp" data-a="openCmp">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="14" height="14"><rect x="3" y="3" width="7" height="18" rx="1"/><rect x="14" y="3" width="7" height="18" rx="1"/></svg>
+Compare
+</button>
+</div>
+</div>
+<!-- COMPARE MODAL -->
+<div id="cmpModal">
+<div id="cmpModalBox">
+<div id="cmpModalHdr">
+<img id="cmpLogo" src="" alt="SBS">
+<h2>Locking and Prevailing Torque Guide &ndash; Comparison</h2>
+<button class="bCmpClose" data-a="closeCmp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+</div>
+<div id="cmpModalBody"></div>
+<div id="cmpModalFtr">
+<button class="bCmpClr" data-a="closeCmp">Close</button>
+<button class="bCmp" data-a="printCmp">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="14" height="14"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+Print Comparison
+</button>
+</div>
+</div>
+</div>
+<div id="disc"><p><strong>Disclaimer:</strong> This tool is for reference and specification guidance only. Torque values are per IFI standards as indicated. Actual performance may vary based on materials, coatings, and application conditions. Always consult the applicable IFI standard and a qualified engineer for critical applications. Specialty Bolt and Screw, Inc. assumes no liability for specification errors or misapplication of this data.</p></div>
+<script>
+var TIPS={
+  search:'<strong>Search</strong><br>Type a thread size (e.g. M8, 1/2-13), mechanism name (e.g. nylon, loctite), or any keyword. Searches all columns simultaneously. Tokenized: "M12 nylon" matches rows with both terms.',
+  system:'<strong>Measurement System</strong><br><strong>Metric:</strong> Thread sizes in mm (M-series). Standards IFI-524 and IFI-525 apply.<br><strong>Inch:</strong> Unified inch thread sizes. Standards IFI-124 and IFI-125 apply.<br><br>Selecting a system filters the Mechanism and Standard dropdowns to only show options available in that system.',
+  mechanism:'<strong>Locking Mechanism Type</strong><br>The method by which the fastener resists loosening.<br><br><strong>Nylon Patch:</strong> Mechanical interference friction.<br><strong>Preapplied Adhesive:</strong> Microencapsulated chemical bond.<br><strong>Liquid Coating:</strong> Anaerobic chemical bond applied at assembly.<br><br>Options update based on the selected system.',
+  standard:'<strong>IFI Standard</strong><br>The Industrial Fasteners Institute standard governing this torque performance data. Options update based on selected system and mechanism.<br><br>IFI-524 / IFI-124: Nylon patch (Metric / Inch)<br>IFI-525 / IFI-125: Adhesive and liquid (Metric / Inch)',
+  thread:'<strong>Thread Size</strong><br>Filter to a specific nominal thread size. Options update based on the selected measurement system.<br><br><strong>Metric:</strong> Diameter and pitch in mm (e.g. M8 x 1.25).<br><strong>Inch:</strong> Diameter and threads-per-inch (e.g. 1/2 - 13).',
+  cSys:'<strong>Measurement System</strong><br>Metric (M-series thread sizes, Nm torque) or Inch (unified thread sizes, lb.in. torque).',
+  cThd:'<strong>Thread Size</strong><br>Nominal diameter and pitch (Metric) or diameter and threads-per-inch (Inch). Sort ascending to go smallest to largest.',
+  cMch:'<strong>Locking Mechanism</strong><br>How the fastener resists loosening in service. Each mechanism works differently. Click the Best Practices tab for detailed explanations and a comparison table.',
+  cStd:'<strong>IFI Standard</strong><br>Click the orange badge to open the full IFI standard PDF in a new tab. These documents define the test methods and acceptance criteria for the torque values shown.',
+  cPrf:'<strong>Locking Performance</strong><br><strong>Prevailing-On Torque (Max):</strong> Maximum torque required to run the fastener down under the prevailing-torque locking feature.<br><strong>Breakaway Torque (Min):</strong> Minimum torque to initiate first movement when loosening.<br><strong>Prevailing-Off Torque (Min):</strong> Minimum torque sustained during removal after breakaway.',
+  cDig:'<strong>Patch Location Diagram</strong><br>Standard reference diagram showing default patch position on the thread. Nylon patch: partial arc coverage (120 deg TYP). Adhesive: full 360 deg coverage.<br><br>Images hosted on GitHub. Upload NylonPatchCoverage.png and AdhesiveCoating.png to /images/ in your repo.',
+  cLoc:'<strong>Patch Location Notes</strong><br>Default position specification from the applicable IFI standard.<br><br><strong>X:</strong> Axial location of coating start (in thread pitches from end).<br><strong>Y:</strong> Thread pitches without coating (lead-in).<br><strong>Z:</strong> Arc coverage for nylon patch (120 deg typical).<br><br>Liquid coatings have no factory-set location; they are defined by the end user at assembly.'
+};
+
+var IM='https://sbstechnicalengineering.github.io/calculators/images/';
+var NP='https://raw.githubusercontent.com/sbstechnicalengineering/calculators/main/IFI524.png', AC='https://raw.githubusercontent.com/sbstechnicalengineering/calculators/main/IFI525.png';
+var MPHOTOS={nylon:'https://raw.githubusercontent.com/sbstechnicalengineering/calculators/main/nylonpatch.png',adhesive:'https://raw.githubusercontent.com/sbstechnicalengineering/calculators/main/scotchgrip.png',liquid:'https://raw.githubusercontent.com/sbstechnicalengineering/calculators/main/liquidapplied.png'};
+var U524='https://drive.google.com/file/d/1_qTpGGoXUwdt1vESFJIPv3i93tjGBbXI/view?usp=drivesdk';
+var U525='https://drive.google.com/file/d/1H2UHEF2zOUDuJXa92spn4CzcAaSV4bSJ/view';
+var U124='https://drive.google.com/file/d/1gK5x8D9MGd_py8O6ZRJXh3x6NGxZQqB6/view?usp=drive_link';
+var U125='https://drive.google.com/file/d/1Hfd5rEGhm5APMGQZMH2odPlPJFDZ0Lv7/view?usp=drive_link';
+var NL="Unless specified otherwise a nylon patch will be located as follows :\nX : 5-7 Thread Pitches of Coating (TYP)\nY : 1-3 Thread Pitches wo/ Coating (TYP)\nZ : 120 DEG (TYP)";
+var AL="Unless specified otherwise the pre-applied adhesive patch will be located as follows :\nX : 5-7 Thread Pitches of Coating (TYP)\nY : 1-3 Thread Pitches wo/ Coating (TYP)\n360 DEG COVERAGE";
+var LL="Defined by End User";
+var LN="Higher breakaway values can be achieved with selection of different liquid coatings. Loctite ThreadLocker Red 271 is formulated for permanent hold and Loctite Threadlocket Blue 242 is formulated for ease of removal";
+var AN="Values are based on nut engagement in patch area of one nominal screw diameter. Higher values can be achieved by changing viscosity and thickness of preapplied patch application";
+function imgErr(el){
+  // Try to determine which diagram to show based on the row's data
+  var row=el;
+  while(row&&row.tagName!=='TR')row=row.parentNode;
+  var key=row?row.getAttribute('data-key'):'';
+  var mk=key?key.split('|')[2]:'';
+  if(mk==='nylon'){
+    el.parentNode.innerHTML='<div class="imgW" style="padding:4px;">'+SVG_NYLON+'</div>';
+  }else if(mk==='adhesive'){
+    el.parentNode.innerHTML='<div class="imgW" style="padding:4px;">'+SVG_ADHESIVE+'</div>';
+  }else{
+    el.parentNode.innerHTML='<div class="imgPH">Diagram pending upload</div>';
+  }
+}
+function mechImgErr(el,mk){
+  var colors={nylon:'#E87722',adhesive:'#3a7bd5',liquid:'#1A8A4A'};
+  var icons={
+    nylon:'<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="22" height="22"><path d="M12 22V12M12 12C12 12 8 9 8 5a4 4 0 0 1 8 0c0 4-4 7-4 7z"/><path d="M12 12c0 0-4 2.5-4 6"/><path d="M12 12c0 0 4 2.5 4 6"/></svg>',
+    adhesive:'<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="22" height="22"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/></svg>',
+    liquid:'<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="22" height="22"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>'
+  };
+  var c=colors[mk]||'#6C757D';
+  var ic=icons[mk]||'';
+  el.outerHTML='<div style="width:54px;height:54px;border-radius:6px;flex-shrink:0;background:'+c+';display:flex;align-items:center;justify-content:center;">'+ic+'</div>';
+}
+function R(sy,so,th,mk,me,ak,st,sb,ur,pf,no,im,lo){return{sy:sy,so:so,th:th,mk:mk,me:me,ak:ak,st:st,sb:sb,ur:ur,pf:pf,no:no,im:im,lo:lo};}
+var DATA=[
+R("Metric",1,"M1.6 x 0.35","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-524 (1996)","IFI-524",U524,"Prevailing-On Torque (Max) : 0.1 Nm|Prevailing-Off Torque - First Removal (Min) : 0.01 Nm|Prevailing-Off Torque - Fifth Removal (Min) : 0.004 Nm|Nylon patch, pellet or strip","",NP,NL),
+R("Metric",2,"M2 x 0.35","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-524 (1996)","IFI-524",U524,"Prevailing-On Torque (Max) : 0.2 Nm|Prevailing-Off Torque - First Removal (Min) : 0.02 Nm|Prevailing-Off Torque - Fifth Removal (Min) : 0.01 Nm|Nylon patch, pellet or strip","",NP,NL),
+R("Metric",3,"M2.5 x 0.45","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-524 (1996)","IFI-524",U524,"Prevailing-On Torque (Max) : 0.4 Nm|Prevailing-Off Torque - First Removal (Min) : 0.05 Nm|Prevailing-Off Torque - Fifth Removal (Min) : 0.03 Nm|Nylon patch, pellet or strip","",NP,NL),
+R("Metric",4,"M3 x 0.5","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-524 (1996)","IFI-524",U524,"Prevailing-On Torque (Max) : 0.6 Nm|Prevailing-Off Torque - First Removal (Min) : 0.14 Nm|Prevailing-Off Torque - Fifth Removal (Min) : 0.06 Nm|Nylon patch, pellet or strip","",NP,NL),
+R("Metric",4,"M3 x 0.5","adhesive","Preapplied Adhesive Coating","3M Scotchgrip, Loctite 200, ND Microspheres","IFI-525 (2007)","IFI-525",U525,"Prevailing-On Torque (Max) : 0.3 Nm|Breakaway Torque (Min) : 0.15 Nm|Prevailing-Off Torque (Min) : 0.07 Nm",AN,AC,AL),
+R("Metric",5,"M3.5 x 0.6","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-524 (1996)","IFI-524",U524,"Prevailing-On Torque (Max) : 0.9 Nm|Prevailing-Off Torque - First Removal (Min) : 0.22 Nm|Prevailing-Off Torque - Fifth Removal (Min) : 0.11 Nm|Nylon patch, pellet or strip","",NP,NL),
+R("Metric",5,"M3.5 x 0.6","adhesive","Preapplied Adhesive Coating","3M Scotchgrip, Loctite 200, ND Microspheres","IFI-525 (2007)","IFI-525",U525,"Prevailing-On Torque (Max) : 0.5 Nm|Breakaway Torque (Min) : 0.3 Nm|Prevailing-Off Torque (Min) : 0.15 Nm",AN,AC,AL),
+R("Metric",6,"M4 x 0.7","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-524 (1996)","IFI-524",U524,"Prevailing-On Torque (Max) : 1.2 Nm|Prevailing-Off Torque - First Removal (Min) : 0.26 Nm|Prevailing-Off Torque - Fifth Removal (Min) : 0.16 Nm|Nylon patch, pellet or strip","",NP,NL),
+R("Metric",6,"M4 x 0.7","adhesive","Preapplied Adhesive Coating","3M Scotchgrip, Loctite 200, ND Microspheres","IFI-525 (2007)","IFI-525",U525,"Prevailing-On Torque (Max) : 0.7 Nm|Breakaway Torque (Min) : 0.4 Nm|Prevailing-Off Torque (Min) : 0.3 Nm",AN,AC,AL),
+R("Metric",7,"M5 x 0.8","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-524 (1996)","IFI-524",U524,"Prevailing-On Torque (Max) : 2.3 Nm|Prevailing-Off Torque - First Removal (Min) : 0.36 Nm|Prevailing-Off Torque - Fifth Removal (Min) : 0.23 Nm|Nylon patch, pellet or strip","",NP,NL),
+R("Metric",7,"M5 x 0.8","adhesive","Preapplied Adhesive Coating","3M Scotchgrip, Loctite 200, ND Microspheres","IFI-525 (2007)","IFI-525",U525,"Prevailing-On Torque (Max) : 1.0 Nm|Breakaway Torque (Min) : 0.8 Nm|Prevailing-Off Torque (Min) : 0.5 Nm",AN,AC,AL),
+R("Metric",8,"M6 x 1","liquid","Applied Liquid Coating","Loctite Thread Locker, Henkel","IFI-525 (2007)","IFI-525",U525,"Prevailing-On Torque (Max) : Essential zero|Breakaway Torque (Min) : 0.56 Nm|Prevailing-Off Torque (Min) : 0.34 Nm",LN,"",LL),
+R("Metric",8,"M6 x 1","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-524 (1996)","IFI-524",U524,"Prevailing-On Torque (Max) : 3.0 Nm|Prevailing-Off Torque - First Removal (Min) : 0.45 Nm|Prevailing-Off Torque - Fifth Removal (Min) : 0.3 Nm|Nylon patch, pellet or strip","",NP,NL),
+R("Metric",8,"M6 x 1","adhesive","Preapplied Adhesive Coating","3M Scotchgrip, Loctite 200, ND Microspheres","IFI-525 (2007)","IFI-525",U525,"Prevailing-On Torque (Max) : 1.8 Nm|Breakaway Torque (Min) : 1.5 Nm|Prevailing-Off Torque (Min) : 0.8 Nm",AN,AC,AL),
+R("Metric",9,"M8 x 1.25","liquid","Applied Liquid Coating","Loctite Thread Locker, Henkel","IFI-525 (2007)","IFI-525",U525,"Prevailing-On Torque (Max) : Essential zero|Breakaway Torque (Min) : 2.0 Nm|Prevailing-Off Torque (Min) : 1.0 Nm",LN,"",LL),
+R("Metric",9,"M8 x 1.25","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-524 (1996)","IFI-524",U524,"Prevailing-On Torque (Max) : 10 Nm|Prevailing-Off Torque - First Removal (Min) : 0.90 Nm|Prevailing-Off Torque - Fifth Removal (Min) : 0.58 Nm|Nylon patch, pellet or strip","",NP,NL),
+R("Metric",9,"M8 x 1.25","adhesive","Preapplied Adhesive Coating","3M Scotchgrip, Loctite 200, ND Microspheres","IFI-525 (2007)","IFI-525",U525,"Prevailing-On Torque (Max) : 2.8 Nm|Breakaway Torque (Min) : 4.0 Nm|Prevailing-Off Torque (Min) : 2.0 Nm",AN,AC,AL),
+R("Metric",10,"M10 x 1.5","liquid","Applied Liquid Coating","Loctite Thread Locker, Henkel","IFI-525 (2007)","IFI-525",U525,"Prevailing-On Torque (Max) : Essential zero|Breakaway Torque (Min) : 3.4 Nm|Prevailing-Off Torque (Min) : 1.1 Nm",LN,"",LL),
+R("Metric",10,"M10 x 1.5","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-524 (1996)","IFI-524",U524,"Prevailing-On Torque (Max) : 14 Nm|Prevailing-Off Torque - First Removal (Min) : 1.8 Nm|Prevailing-Off Torque - Fifth Removal (Min) : 1.1 Nm|Nylon patch, pellet or strip","",NP,NL),
+R("Metric",10,"M10 x 1.5","adhesive","Preapplied Adhesive Coating","3M Scotchgrip, Loctite 200, ND Microspheres","IFI-525 (2007)","IFI-525",U525,"Prevailing-On Torque (Max) : 5.5 Nm|Breakaway Torque (Min) : 11 Nm|Prevailing-Off Torque (Min) : 4.0 Nm",AN,AC,AL),
+R("Metric",11,"M12 x 1.75","liquid","Applied Liquid Coating","Loctite Thread Locker, Henkel","IFI-525 (2007)","IFI-525",U525,"Prevailing-On Torque (Max) : Essential zero|Breakaway Torque (Min) : 4.8 Nm|Prevailing-Off Torque (Min) : 1.2 Nm",LN,"",LL),
+R("Metric",11,"M12 x 1.75","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-524 (1996)","IFI-524",U524,"Prevailing-On Torque (Max) : 21 Nm|Prevailing-Off Torque - First Removal (Min) : 2.6 Nm|Prevailing-Off Torque - Fifth Removal (Min) : 1.5 Nm|Nylon patch, pellet or strip","",NP,NL),
+R("Metric",11,"M12 x 1.75","adhesive","Preapplied Adhesive Coating","3M Scotchgrip, Loctite 200, ND Microspheres","IFI-525 (2007)","IFI-525",U525,"Prevailing-On Torque (Max) : 7.2 Nm|Breakaway Torque (Min) : 16 Nm|Prevailing-Off Torque (Min) : 7.0 Nm",AN,AC,AL),
+R("Metric",12,"M14 x 2","liquid","Applied Liquid Coating","Loctite Thread Locker, Henkel","IFI-525 (2007)","IFI-525",U525,"Prevailing-On Torque (Max) : Essential zero|Breakaway Torque (Min) : 6.0 Nm|Prevailing-Off Torque (Min) : 2.0 Nm",LN,"",LL),
+R("Metric",12,"M14 x 2","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-524 (1996)","IFI-524",U524,"Prevailing-On Torque (Max) : 30 Nm|Prevailing-Off Torque - First Removal (Min) : 3.6 Nm|Prevailing-Off Torque - Fifth Removal (Min) : 2.3 Nm|Nylon patch, pellet or strip","",NP,NL),
+R("Metric",12,"M14 x 2","adhesive","Preapplied Adhesive Coating","3M Scotchgrip, Loctite 200, ND Microspheres","IFI-525 (2007)","IFI-525",U525,"Prevailing-On Torque (Max) : 11 Nm|Breakaway Torque (Min) : 22 Nm|Prevailing-Off Torque (Min) : 10 Nm",AN,AC,AL),
+R("Metric",13,"M16 x 2","liquid","Applied Liquid Coating","Loctite Thread Locker, Henkel","IFI-525 (2007)","IFI-525",U525,"Prevailing-On Torque (Max) : Essential zero|Breakaway Torque (Min) : 6.8 Nm|Prevailing-Off Torque (Min) : 2.8 Nm",LN,"",LL),
+R("Metric",13,"M16 x 2","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-524 (1996)","IFI-524",U524,"Prevailing-On Torque (Max) : 40 Nm|Prevailing-Off Torque - First Removal (Min) : 5.0 Nm|Prevailing-Off Torque - Fifth Removal (Min) : 3.4 Nm|Nylon patch, pellet or strip","",NP,NL),
+R("Metric",13,"M16 x 2","adhesive","Preapplied Adhesive Coating","3M Scotchgrip, Loctite 200, ND Microspheres","IFI-525 (2007)","IFI-525",U525,"Prevailing-On Torque (Max) : 14 Nm|Breakaway Torque (Min) : 33 Nm|Prevailing-Off Torque (Min) : 16 Nm",AN,AC,AL),
+R("Metric",14,"M20 x 2.5","liquid","Applied Liquid Coating","Loctite Thread Locker, Henkel","IFI-525 (2007)","IFI-525",U525,"Prevailing-On Torque (Max) : Essential zero|Breakaway Torque (Min) : 13 Nm|Prevailing-Off Torque (Min) : 5.5 Nm",LN,"",LL),
+R("Metric",14,"M20 x 2.5","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-524 (1996)","IFI-524",U524,"Prevailing-On Torque (Max) : 60 Nm|Prevailing-Off Torque - First Removal (Min) : 8.0 Nm|Prevailing-Off Torque - Fifth Removal (Min) : 5.5 Nm|Nylon patch, pellet or strip","",NP,NL),
+R("Metric",14,"M20 x 2.5","adhesive","Preapplied Adhesive Coating","3M Scotchgrip, Loctite 200, ND Microspheres","IFI-525 (2007)","IFI-525",U525,"Prevailing-On Torque (Max) : 22 Nm|Breakaway Torque (Min) : 45 Nm|Prevailing-Off Torque (Min) : 22 Nm",AN,AC,AL),
+R("Metric",15,"M24 x 3","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-524 (1996)","IFI-524",U524,"Prevailing-On Torque (Max) : 90 Nm|Prevailing-Off Torque - First Removal (Min) : 13 Nm|Prevailing-Off Torque - Fifth Removal (Min) : 8.5 Nm|Nylon patch, pellet or strip","",NP,NL),
+R("Metric",16,"M30 x 3.5","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-524 (1996)","IFI-524",U524,"Prevailing-On Torque (Max) : 120 Nm|Prevailing-Off Torque - First Removal (Min) : 19 Nm|Prevailing-Off Torque - Fifth Removal (Min) : 13 Nm|Nylon patch, pellet or strip","",NP,NL),
+R("Metric",17,"M36 x 4","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-524 (1996)","IFI-524",U524,"Prevailing-On Torque (Max) : 150 Nm|Prevailing-Off Torque - First Removal (Min) : 28 Nm|Prevailing-Off Torque - Fifth Removal (Min) : 18 Nm|Nylon patch, pellet or strip","",NP,NL),
+R("Inch",30,"#0 - 80","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-124 (2002)","IFI-124",U124,"Prevailing-On Torque (Max) : 0.75 lb.in.|Prevailing-Off Torque - First Removal (Min) : 0.093 lb.in.|Prevailing-Off Torque - Fifth Removal (Min) : 0.03 lb.in|Nylon patch, pellet or strip","",NP,NL),
+R("Inch",31,"#2 - 56","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-124 (2002)","IFI-124",U124,"Prevailing-On Torque (Max) : 2 lb.in.|Prevailing-Off Torque - First Removal (Min) : 0.186 lb.in.|Prevailing-Off Torque - Fifth Removal (Min) : 0.093 lb.in|Nylon patch, pellet or strip","",NP,NL),
+R("Inch",32,"#2 - 64","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-124 (2002)","IFI-124",U124,"Prevailing-On Torque (Max) : 2 lb.in.|Prevailing-Off Torque - First Removal (Min) : 0.186 lb.in.|Prevailing-Off Torque - Fifth Removal (Min) : 0.093 lb.in|Nylon patch, pellet or strip","",NP,NL),
+R("Inch",33,"#4 - 40","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-124 (2002)","IFI-124",U124,"Prevailing-On Torque (Max) : 5 lb.in.|Prevailing-Off Torque - First Removal (Min) : 1 lb.in.|Prevailing-Off Torque - Fifth Removal (Min) : 0.5 lb.in|Nylon patch, pellet or strip","",NP,NL),
+R("Inch",34,"#4 - 48","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-124 (2002)","IFI-124",U124,"Prevailing-On Torque (Max) : 5 lb.in.|Prevailing-Off Torque - First Removal (Min) : 1 lb.in.|Prevailing-Off Torque - Fifth Removal (Min) : 0.5 lb.in|Nylon patch, pellet or strip","",NP,NL),
+R("Inch",35,"#6 - 32","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-124 (2002)","IFI-124",U124,"Prevailing-On Torque (Max) : 8 lb.in.|Prevailing-Off Torque - First Removal (Min) : 2 lb.in.|Prevailing-Off Torque - Fifth Removal (Min) : 1 lb.in|Nylon patch, pellet or strip","",NP,NL),
+R("Inch",36,"#6 - 40","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-124 (2002)","IFI-124",U124,"Prevailing-On Torque (Max) : 8 lb.in.|Prevailing-Off Torque - First Removal (Min) : 2 lb.in.|Prevailing-Off Torque - Fifth Removal (Min) : 1 lb.in|Nylon patch, pellet or strip","",NP,NL),
+R("Inch",37,"#8 - 32","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-124 (2002)","IFI-124",U124,"Prevailing-On Torque (Max) : 12 lb.in.|Prevailing-Off Torque - First Removal (Min) : 2.5 lb.in.|Prevailing-Off Torque - Fifth Removal (Min) : 1.5 lb.in|Nylon patch, pellet or strip","",NP,NL),
+R("Inch",38,"#8 - 36","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-124 (2002)","IFI-124",U124,"Prevailing-On Torque (Max) : 12 lb.in.|Prevailing-Off Torque - First Removal (Min) : 2.5 lb.in.|Prevailing-Off Torque - Fifth Removal (Min) : 1.5 lb.in|Nylon patch, pellet or strip","",NP,NL),
+R("Inch",39,"#10 - 24","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-124 (2002)","IFI-124",U124,"Prevailing-On Torque (Max) : 18 lb.in.|Prevailing-Off Torque - First Removal (Min) : 3 lb.in.|Prevailing-Off Torque - Fifth Removal (Min) : 2 lb.in|Nylon patch, pellet or strip","",NP,NL),
+R("Inch",40,"#10 - 32","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-124 (2002)","IFI-124",U124,"Prevailing-On Torque (Max) : 18 lb.in.|Prevailing-Off Torque - First Removal (Min) : 3 lb.in.|Prevailing-Off Torque - Fifth Removal (Min) : 2 lb.in|Nylon patch, pellet or strip","",NP,NL),
+R("Inch",41,"1/4 - 20","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-124 (2002)","IFI-124",U124,"Prevailing-On Torque (Max) : 40 lb.in.|Prevailing-Off Torque - First Removal (Min) : 5 lb.in.|Prevailing-Off Torque - Fifth Removal (Min) : 3 lb.in|Nylon patch, pellet or strip","",NP,NL),
+R("Inch",41,"1/4 - 20","adhesive","Preapplied Adhesive Coating","3M Scotchgrip, Loctite 200, ND Microspheres","IFI-125 (2002)","IFI-125",U125,"Prevailing-On Torque (Max) : 15 in.lbs|Breakaway Torque (Min) : 12 in.lbs|Prevailing-Off Torque (Min) : 9 in.lbs",AN,AC,AL),
+R("Inch",41,"1/4 - 20","liquid","Applied Liquid Coating","Loctite Thread Locker, Henkel","IFI-125 (2002)","IFI-125",U125,"Prevailing-On Torque (Max) : Essential zero|Breakaway Torque (Min) : 6 in.lbs|Prevailing-Off Torque (Min) : 3.5 in.lbs.",LN,"",LL),
+R("Inch",60,"3/8 - 16","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-124 (2002)","IFI-124",U124,"Prevailing-On Torque (Max) : 85 lb.in.|Prevailing-Off Torque - First Removal (Min) : 8 lb.in.|Prevailing-Off Torque - Fifth Removal (Min) : 5 lb.in|Nylon patch, pellet or strip","",NP,NL),
+R("Inch",60,"3/8 - 16","adhesive","Preapplied Adhesive Coating","3M Scotchgrip, Loctite 200, ND Microspheres","IFI-125 (2002)","IFI-125",U125,"Prevailing-On Torque (Max) : 24 in.lbs|Breakaway Torque (Min) : 24 in.lbs|Prevailing-Off Torque (Min) : 12 in.lbs",AN,AC,AL),
+R("Inch",60,"3/8 - 16","liquid","Applied Liquid Coating","Loctite Thread Locker, Henkel","IFI-125 (2002)","IFI-125",U125,"Prevailing-On Torque (Max) : Essential zero|Breakaway Torque (Min) : 18 in.lbs|Prevailing-Off Torque (Min) : 8.5 in.lbs.",LN,"",LL),
+R("Inch",70,"7/16 - 14","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-124 (2002)","IFI-124",U124,"Prevailing-On Torque (Max) : 110 lb.in.|Prevailing-Off Torque - First Removal (Min) : 14 lb.in.|Prevailing-Off Torque - Fifth Removal (Min) : 9 lb.in|Nylon patch, pellet or strip","",NP,NL),
+R("Inch",70,"7/16 - 14","adhesive","Preapplied Adhesive Coating","3M Scotchgrip, Loctite 200, ND Microspheres","IFI-125 (2002)","IFI-125",U125,"Prevailing-On Torque (Max) : 48 in.lbs|Breakaway Torque (Min) : 60 in.lbs|Prevailing-Off Torque (Min) : 36 in.lbs",AN,AC,AL),
+R("Inch",70,"7/16 - 14","liquid","Applied Liquid Coating","Loctite Thread Locker, Henkel","IFI-125 (2002)","IFI-125",U125,"Prevailing-On Torque (Max) : Essential zero|Breakaway Torque (Min) : 30 in.lbs|Prevailing-Off Torque (Min) : 18 in.lbs.",LN,"",LL),
+R("Inch",80,"1/2 - 13","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-124 (2002)","IFI-124",U124,"Prevailing-On Torque (Max) : 150 lb.in.|Prevailing-Off Torque - First Removal (Min) : 20 lb.in.|Prevailing-Off Torque - Fifth Removal (Min) : 12 lb.in|Nylon patch, pellet or strip","",NP,NL),
+R("Inch",80,"1/2 - 13","adhesive","Preapplied Adhesive Coating","3M Scotchgrip, Loctite 200, ND Microspheres","IFI-125 (2002)","IFI-125",U125,"Prevailing-On Torque (Max) : 60 in.lbs|Breakaway Torque (Min) : 96 in.lbs|Prevailing-Off Torque (Min) : 48 in.lbs",AN,AC,AL),
+R("Inch",80,"1/2 - 13","liquid","Applied Liquid Coating","Loctite Thread Locker, Henkel","IFI-125 (2002)","IFI-125",U125,"Prevailing-On Torque (Max) : Essential zero|Breakaway Torque (Min) : 36 in.lbs|Prevailing-Off Torque (Min) : 12 in.lbs.",LN,"",LL),
+R("Inch",84,"5/8 - 11","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-124 (2002)","IFI-124",U124,"Prevailing-On Torque (Max) : 270 lb.in.|Prevailing-Off Torque - First Removal (Min) : 35 lb.in.|Prevailing-Off Torque - Fifth Removal (Min) : 22 lb.in|Nylon patch, pellet or strip","",NP,NL),
+R("Inch",84,"5/8 - 11","adhesive","Preapplied Adhesive Coating","3M Scotchgrip, Loctite 200, ND Microspheres","IFI-125 (2002)","IFI-125",U125,"Prevailing-On Torque (Max) : 96 in.lbs|Breakaway Torque (Min) : 192 in.lbs|Prevailing-Off Torque (Min) : 120 in.lbs",AN,AC,AL),
+R("Inch",84,"5/8 - 11","liquid","Applied Liquid Coating","Loctite Thread Locker, Henkel","IFI-125 (2002)","IFI-125",U125,"Prevailing-On Torque (Max) : Essential zero|Breakaway Torque (Min) : 54 in.lbs|Prevailing-Off Torque (Min) : 18 in.lbs.",LN,"",LL),
+R("Inch",86,"3/4 - 10","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-124 (2002)","IFI-124",U124,"Prevailing-On Torque (Max) : 350 lb.in.|Prevailing-Off Torque - First Removal (Min) : 45 lb.in.|Prevailing-Off Torque - Fifth Removal (Min) : 30 lb.in|Nylon patch, pellet or strip","",NP,NL),
+R("Inch",86,"3/4 - 10","adhesive","Preapplied Adhesive Coating","3M Scotchgrip, Loctite 200, ND Microspheres","IFI-125 (2002)","IFI-125",U125,"Prevailing-On Torque (Max) : 120 in.lbs|Breakaway Torque (Min) : 252 in.lbs|Prevailing-Off Torque (Min) : 150 in.lbs",AN,AC,AL),
+R("Inch",86,"3/4 - 10","liquid","Applied Liquid Coating","Loctite Thread Locker, Henkel","IFI-125 (2002)","IFI-125",U125,"Prevailing-On Torque (Max) : Essential zero|Breakaway Torque (Min) : 60 in.lbs|Prevailing-Off Torque (Min) : 24 in.lbs.",LN,"",LL),
+R("Inch",88,"7/8 - 9","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-124 (2002)","IFI-124",U124,"Prevailing-On Torque (Max) : 460 lb.in.|Prevailing-Off Torque - First Removal (Min) : 60 lb.in.|Prevailing-Off Torque - Fifth Removal (Min) : 45 lb.in|Nylon patch, pellet or strip","",NP,NL),
+R("Inch",88,"7/8 - 9","adhesive","Preapplied Adhesive Coating","3M Scotchgrip, Loctite 200, ND Microspheres","IFI-125 (2002)","IFI-125",U125,"Prevailing-On Torque (Max) : 180 in.lbs|Breakaway Torque (Min) : 324 in.lbs|Prevailing-Off Torque (Min) : 200 in.lbs",AN,AC,AL),
+R("Inch",88,"7/8 - 9","liquid","Applied Liquid Coating","Loctite Thread Locker, Henkel","IFI-125 (2002)","IFI-125",U125,"Prevailing-On Torque (Max) : Essential zero|Breakaway Torque (Min) : 192 in.lbs|Prevailing-Off Torque (Min) : 48 in.lbs.",LN,"",LL),
+R("Inch",90,"1 - 8","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-124 (2002)","IFI-124",U124,"Prevailing-On Torque (Max) : 700 lb.in.|Prevailing-Off Torque - First Removal (Min) : 95 lb.in.|Prevailing-Off Torque - Fifth Removal (Min) : 65 lb.in|Nylon patch, pellet or strip","",NP,NL),
+R("Inch",112,"1-1/8 - 7","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-124 (2002)","IFI-124",U124,"Prevailing-On Torque (Max) : 1050 lb.in.|Prevailing-Off Torque - First Removal (Min) : 150 lb.in.|Prevailing-Off Torque - Fifth Removal (Min) : 110 lb.in|Nylon patch, pellet or strip","",NP,NL),
+R("Inch",113,"1-1/4 - 7","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-124 (2002)","IFI-124",U124,"Prevailing-On Torque (Max) : 1150 lb.in.|Prevailing-Off Torque - First Removal (Min) : 200 lb.in.|Prevailing-Off Torque - Fifth Removal (Min) : 140 lb.in|Nylon patch, pellet or strip","",NP,NL),
+R("Inch",115,"1-3/8 - 6","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-124 (2002)","IFI-124",U124,"Prevailing-On Torque (Max) : 1300 lb.in.|Prevailing-Off Torque - First Removal (Min) : 240 lb.in.|Prevailing-Off Torque - Fifth Removal (Min) : 150 lb.in|Nylon patch, pellet or strip","",NP,NL),
+R("Inch",117,"1-1/2 - 6","nylon","Nonmetallic Resistant Element","Nylon Patch, NYLOK, ND Patch","IFI-124 (2002)","IFI-124",U124,"Prevailing-On Torque (Max) : 1500 lb.in.|Prevailing-Off Torque - First Removal (Min) : 280 lb.in.|Prevailing-Off Torque - Fifth Removal (Min) : 185 lb.in|Nylon patch, pellet or strip","",NP,NL)
+];
+
+
+/* Inline SVG fallbacks for patch diagrams */
+var SVG_NYLON='<svg viewBox="0 0 160 80" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:80px;">'
+  +'<text x="4" y="12" font-size="8" fill="#6C757D" font-family="Arial">X</text>'
+  +'<text x="22" y="12" font-size="8" fill="#6C757D" font-family="Arial">Y</text>'
+  +'<text x="116" y="12" font-size="8" fill="#6C757D" font-family="Arial">Z</text>'
+  +'<line x1="8" y1="14" x2="8" y2="65" stroke="#ADB5BD" stroke-width="1"/>'
+  +'<line x1="26" y1="14" x2="26" y2="65" stroke="#ADB5BD" stroke-width="1"/>'
+  +'<line x1="8" y1="16" x2="26" y2="16" stroke="#ADB5BD" stroke-width="1" marker-end="url(#arr)"/>'
+  +'<rect x="8" y="30" width="18" height="20" fill="#E87722" rx="1"/>'
+  +'<line x1="0" y1="25" x2="80" y2="25" stroke="#CED4DA" stroke-width="1.5" stroke-dasharray="3,2"/>'
+  +'<line x1="0" y1="65" x2="80" y2="65" stroke="#CED4DA" stroke-width="1.5" stroke-dasharray="3,2"/>'
+  +'<circle cx="120" cy="40" r="28" fill="none" stroke="#CED4DA" stroke-width="2"/>'
+  +'<path d="M 120 12 A 28 28 0 0 1 148 40" fill="#E87722" opacity="0.8"/>'
+  +'<line x1="92" y1="40" x2="148" y2="40" stroke="#ADB5BD" stroke-width="1"/>'
+  +'<line x1="120" y1="12" x2="120" y2="68" stroke="#ADB5BD" stroke-width="1"/>'
+  +'<text x="55" y="46" font-size="7" fill="#6C757D" font-family="Arial">120 DEG</text>'
+  +'</svg>';
+var SVG_ADHESIVE='<svg viewBox="0 0 160 80" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:80px;">'
+  +'<text x="4" y="12" font-size="8" fill="#6C757D" font-family="Arial">X</text>'
+  +'<text x="22" y="12" font-size="8" fill="#6C757D" font-family="Arial">Y</text>'
+  +'<line x1="8" y1="14" x2="8" y2="65" stroke="#ADB5BD" stroke-width="1"/>'
+  +'<line x1="26" y1="14" x2="26" y2="65" stroke="#ADB5BD" stroke-width="1"/>'
+  +'<rect x="8" y="22" width="18" height="43" fill="#3a7bd5" opacity="0.85" rx="1"/>'
+  +'<line x1="0" y1="22" x2="80" y2="22" stroke="#CED4DA" stroke-width="1.5" stroke-dasharray="3,2"/>'
+  +'<line x1="0" y1="65" x2="80" y2="65" stroke="#CED4DA" stroke-width="1.5" stroke-dasharray="3,2"/>'
+  +'<circle cx="120" cy="40" r="28" fill="none" stroke="#CED4DA" stroke-width="2"/>'
+  +'<circle cx="120" cy="40" r="28" fill="#3a7bd5" opacity="0.2"/>'
+  +'<circle cx="120" cy="40" r="18" fill="none" stroke="#3a7bd5" stroke-width="1.5" stroke-dasharray="3,2"/>'
+  +'<line x1="92" y1="40" x2="148" y2="40" stroke="#ADB5BD" stroke-width="1"/>'
+  +'<line x1="120" y1="12" x2="120" y2="68" stroke="#ADB5BD" stroke-width="1"/>'
+  +'<text x="44" y="46" font-size="7" fill="#6C757D" font-family="Arial">360 DEG</text>'
+  +'</svg>';
+var MNAMES={nylon:"Nylon Patch",adhesive:"Preapplied Adhesive",liquid:"Applied Liquid Coating"};
+var MBDG={nylon:"mN",adhesive:"mA",liquid:"mL"};
+var filt=[],rendered=0,PAGE=25,sCol=null,sDir=1,cmpSel={};
+
+/* CASCADING FILTER ENGINE */
+function getAvail(sys,thd,mech){
+  var threads={},mechs={},stds={};
+  DATA.forEach(function(r){
+    if(sys&&r.sy!==sys)return;
+    threads[r.th]=r.so; // value=sort order
+    if(thd&&r.th!==thd)return;
+    mechs[r.mk]=1;
+    if(mech&&r.mk!==mech)return;
+    stds[r.sb]=1;
+  });
+  // sort threads by sort order
+  var tArr=Object.keys(threads).sort(function(a,b){return threads[a]-threads[b];});
+  return{threads:tArr,mechs:Object.keys(mechs).sort(),stds:Object.keys(stds).sort()};
+}
+function rebuildThd(){
+  var sys=document.getElementById('fSys').value;
+  var curT=document.getElementById('fThd').value;
+  var av=getAvail(sys,'','');
+  var sel=document.getElementById('fThd');
+  sel.innerHTML='<option value="">All Thread Sizes</option>';
+  av.threads.forEach(function(t){var o=document.createElement('option');o.value=t;o.textContent=t;if(t===curT)o.selected=true;sel.appendChild(o);});
+}
+function rebuildMech(){
+  var sys=document.getElementById('fSys').value;
+  var thd=document.getElementById('fThd').value;
+  var curM=document.getElementById('fMech').value;
+  var av=getAvail(sys,thd,'');
+  var sel=document.getElementById('fMech');
+  sel.innerHTML='<option value="">All Mechanisms</option>';
+  av.mechs.forEach(function(k){var o=document.createElement('option');o.value=k;o.textContent=MNAMES[k]||k;if(k===curM)o.selected=true;sel.appendChild(o);});
+}
+function rebuildStd(){
+  var sys=document.getElementById('fSys').value;
+  var thd=document.getElementById('fThd').value;
+  var mech=document.getElementById('fMech').value;
+  var curS=document.getElementById('fStd').value;
+  var av=getAvail(sys,thd,mech);
+  var sel=document.getElementById('fStd');
+  sel.innerHTML='<option value="">All Standards</option>';
+  av.stds.forEach(function(k){var o=document.createElement('option');o.value=k;o.textContent=k;if(k===curS)o.selected=true;sel.appendChild(o);});
+}
+function updStyles(){
+  ['fSys','fThd','fMech','fStd'].forEach(function(id){var el=document.getElementById(id);if(el)el.classList.toggle('on',!!el.value);});
+}
+
+/* FILTER + RENDER */
+function tok(s){return s.toLowerCase().replace(/[^a-z0-9\s]/g,' ').split(/\s+/).filter(function(t){return t.length>0;});}
+function applyFilters(){
+  var q=document.getElementById('srch').value.trim();
+  var sys=document.getElementById('fSys').value;
+  var mech=document.getElementById('fMech').value;
+  var std=document.getElementById('fStd').value;
+  var tks=tok(q);
+  var thd=document.getElementById('fThd').value;
+  filt=DATA.filter(function(r){
+    if(sys&&r.sy!==sys)return false;
+    if(thd&&r.th!==thd)return false;
+    if(mech&&r.mk!==mech)return false;
+    if(std&&r.sb!==std)return false;
+    if(tks.length>0){
+      var h=(r.th+' '+r.me+' '+r.ak+' '+r.st+' '+r.pf+' '+r.sy).toLowerCase();
+      for(var i=0;i<tks.length;i++){if(h.indexOf(tks[i])<0)return false;}
+    }
+    return true;
+  });
+  if(sCol){
+    filt.sort(function(a,b){
+      var av2=sCol==='sys'?a.sy:sCol==='thd'?String(a.so).padStart(4,'0')+a.th:a.me;
+      var bv2=sCol==='sys'?b.sy:sCol==='thd'?String(b.so).padStart(4,'0')+b.th:b.me;
+      return av2<bv2?-sDir:av2>bv2?sDir:0;
+    });
+  }
+  document.getElementById('rcnt').textContent=filt.length+' result'+(filt.length!==1?'s':'');
+  rendered=0;
+  document.getElementById('tBdy').innerHTML='';
+  var es=document.getElementById('emSt');
+  var mt=document.getElementById('mTbl');
+  es.style.display=filt.length===0?'block':'none';
+  mt.style.display=filt.length===0?'none':'table';
+  renderBatch();
+}
+function perfH(pf,no){
+  var lines=pf.split('|'),h='';
+  lines.forEach(function(l){if(l.trim())h+='<div class="pLine">'+l.trim()+'</div>';});
+  if(no&&no.trim())h+='<div class="pNote">'+no.trim()+'</div>';
+  return h;
+}
+function buildRow(r){
+  var sc=r.sy==='Metric'?'sM':'sI';
+  var key=rowKey(r);
+  var chk=cmpSel[key]?'checked':'';
+  var imgH=r.im?'<div class="imgW"><img src="'+r.im+'" alt="Patch diagram" loading="lazy" onerror="imgErr(this)"></div>':'<div class="imgPH">Location defined by end user</div>';
+  var selCls=cmpSel[key]?' selRow':'';
+  return'<tr class="dataRow'+selCls+'" data-key="'+key+'">'
+    +'<td class="cbCol"><input type="checkbox" class="cmpCb" data-key="'+key+'" '+chk+'></td>'
+    +'<td><span class="sysBdg '+sc+'">'+r.sy+'</span></td><td class="thC">'+r.th+'</td>'
+    +'<td>'
+    +'<div style="display:flex;align-items:flex-start;gap:9px;">'
+    +'<img src="'+MPHOTOS[r.mk]+'" alt="'+MNAMES[r.mk]+'" onerror="mechImgErr(this,\''+r.mk+'\')" style="width:54px;height:54px;object-fit:cover;border-radius:6px;flex-shrink:0;border:1px solid #E2E6EA;">'
+    +'<div><span class="mBdg '+MBDG[r.mk]+'">'+MNAMES[r.mk]+'</span><div style="font-weight:600;font-size:13px;margin-top:2px;">'+r.me+'</div><div style="font-size:11.5px;color:#6C757D;margin-top:2px;">a.k.a. '+r.ak+'</div></div>'
+    +'</div>'
+    +'</td>'
+    +'<td><a href="'+r.ur+'" target="_blank" rel="noopener" class="stdBdg">'+r.st+'</a></td>'
+    +'<td>'+perfH(r.pf,r.no)+'</td>'
+    +'<td>'+imgH+'</td>'
+    +'<td><div class="locT">'+r.lo.replace(/\n/g,'<br>')+'</div></td></tr>';
+}
+function renderBatch(){
+  var end=Math.min(rendered+PAGE,filt.length),h='';
+  for(var i=rendered;i<end;i++)h+=buildRow(filt[i]);
+  document.getElementById('tBdy').insertAdjacentHTML('beforeend',h);
+  rendered=end;
+}
+var obs=new IntersectionObserver(function(e){if(e[0].isIntersecting&&rendered<filt.length)renderBatch();},{rootMargin:'200px'});
+obs.observe(document.getElementById('sentinel'));
+
+/* STICKY HEIGHT */
+function measure(){
+  var hh=document.getElementById('hdr').offsetHeight;
+  document.documentElement.style.setProperty('--hh',hh+'px');
+}
+
+/* TOOLTIP - direct listeners on each .ib button, no delegation */
+var tip=document.getElementById('gTip');
+var tipEl=null;
+function positionTip(btn){
+  var br=btn.getBoundingClientRect();
+  var tw=Math.min(260,window.innerWidth-24);
+  tip.style.maxWidth=tw+'px';
+  var left=br.left;
+  if(left+tw>window.innerWidth-8)left=window.innerWidth-tw-8;
+  if(left<8)left=8;
+  tip.style.left=left+'px';
+  var topPos=br.bottom+6;
+  if(topPos+180>window.innerHeight&&br.top>180){
+    tip.style.top=(br.top-6)+'px';
+    tip.style.transform='translateY(-100%)';
+  }else{
+    tip.style.top=topPos+'px';
+    tip.style.transform='';
+  }
+}
+function showTip(btn,key){
+  if(!TIPS[key])return;
+  tip.innerHTML=TIPS[key];
+  positionTip(btn);
+  tip.classList.add('vis');
+  tipEl=btn;
+}
+function hideTip(){
+  tip.classList.remove('vis');
+  tipEl=null;
+}
+function bindInfoButtons(){
+  var btns=document.querySelectorAll('.ib[data-tip]');
+  btns.forEach(function(btn){
+    btn.addEventListener('click',function(e){
+      e.stopPropagation();
+      var key=btn.getAttribute('data-tip');
+      if(tipEl===btn){hideTip();}else{showTip(btn,key);}
+    });
+  });
+}
+
+
+/* ── COMPARE ── */
+var MAX_CMP=4;
+function rowKey(r){return r.sy+'|'+r.th+'|'+r.mk;}
+function updateCmpBar(){
+  var keys=Object.keys(cmpSel);
+  var n=keys.length;
+  document.getElementById('cmpBar').style.display=n>0?'block':'none';
+  document.getElementById('cmpCount').textContent=n+' row'+(n!==1?'s':'')+' selected (max '+MAX_CMP+')';
+}
+function toggleCmp(key,r){
+  if(cmpSel[key]){delete cmpSel[key];}
+  else{
+    if(Object.keys(cmpSel).length>=MAX_CMP)return false;
+    cmpSel[key]=r;
+  }
+  document.querySelectorAll('tr[data-key="'+key+'"]').forEach(function(row){row.classList.toggle('selRow',!!cmpSel[key]);});
+  document.querySelectorAll('input.cmpCb[data-key="'+key+'"]').forEach(function(cb){cb.checked=!!cmpSel[key];});
+  updateCmpBar();return true;
+}
+function clearCmp(){
+  Object.keys(cmpSel).forEach(function(k){delete cmpSel[k];});
+  document.querySelectorAll('tr.selRow').forEach(function(r){r.classList.remove('selRow');});
+  document.querySelectorAll('input.cmpCb').forEach(function(c){c.checked=false;});
+  updateCmpBar();
+}
+function buildCmpTable(){
+  var keys=Object.keys(cmpSel);
+  var rows=keys.map(function(k){return cmpSel[k];});
+  if(!rows.length)return'<p style="color:#6C757D;font-size:13px;">No rows selected.</p>';
+  var hdrs='<th>Attribute</th>';
+  rows.forEach(function(r){hdrs+='<th>'+r.th+'<br><span style="font-weight:400;font-size:11px;opacity:.85;">'+MNAMES[r.mk]+'</span></th>';});
+  function cell(fn){var s='';rows.forEach(function(r){s+='<td>'+fn(r)+'</td>';});return s;}
+  function perfLines(r){return r.pf.split('|').filter(function(l){return l.trim();}).map(function(l){return'<div style="margin-bottom:3px;">'+l.trim()+'</div>';}).join('');}
+  var t='<table class="cmpTable"><thead><tr>'+hdrs+'</tr></thead><tbody>';
+  t+='<tr><td>Measurement System</td>'+cell(function(r){return'<span class="sysBdg '+(r.sy==='Metric'?'sM':'sI')+'">'+r.sy+'</span>';})+'</tr>';
+  t+='<tr><td>Thread Size</td>'+cell(function(r){return'<strong>'+r.th+'</strong>';})+'</tr>';
+  t+='<tr><td>Locking Mechanism</td>'+cell(function(r){return'<span class="mBdg '+MBDG[r.mk]+'">'+MNAMES[r.mk]+'</span><br><span style="font-size:11px;">'+r.me+'</span>';})+'</tr>';
+  t+='<tr><td>Also Known As</td>'+cell(function(r){return'<span style="font-size:11.5px;color:#6C757D;">'+r.ak+'</span>';})+'</tr>';
+  t+='<tr><td>IFI Standard</td>'+cell(function(r){return'<a href="'+r.ur+'" target="_blank" class="stdBdg" style="font-size:11px;">'+r.st+'</a>';})+'</tr>';
+  t+='<tr><td>Locking Performance</td>'+cell(function(r){return perfLines(r)+(r.no?'<div style="margin-top:6px;padding:5px 8px;border-left:3px solid #E87722;background:#F8F9FA;font-size:11px;color:#6C757D;">'+r.no+'</div>':'');})+'</tr>';
+  t+='<tr><td>Patch Location</td>'+cell(function(r){return'<span style="font-size:11.5px;">'+r.lo.replace(/\n/g,'<br>')+'</span>';})+'</tr>';
+  t+='</tbody></table>';
+  return t;
+}
+function openCmp(){
+  if(!Object.keys(cmpSel).length)return;
+  document.getElementById('cmpModalBody').innerHTML=buildCmpTable();
+  document.getElementById('cmpLogo').src=document.getElementById('pLogo').src;
+  document.getElementById('cmpModal').style.display='block';
+  document.body.style.overflow='hidden';
+}
+function closeCmp(){
+  document.getElementById('cmpModal').style.display='none';
+  document.body.style.overflow='';
+}
+function printCmp(){
+  var logoSrc=document.getElementById('pLogo').src;
+  var tbl=buildCmpTable();
+  var w=window.open('','_blank');
+  w.document.write('<!DOCTYPE html><html><head><title>SBS Comparison</title>'
+    +'<style>body{font-family:Arial,sans-serif;font-size:11px;margin:.4in;}'
+    +'.cmpTable{width:100%;border-collapse:collapse;}'
+    +'.cmpTable thead th{background:#1D3557;color:#fff;padding:8px 10px;text-align:left;font-size:12px;}'
+    +'.cmpTable thead th:first-child{background:#12243a;min-width:130px;}'
+    +'.cmpTable tbody td{padding:8px 10px;border-bottom:1px solid #E2E6EA;vertical-align:top;font-size:11px;}'
+    +'.cmpTable tbody td:first-child{font-weight:700;color:#1D3557;background:#F8F9FA;}'
+    +'.sysBdg{display:inline-block;border-radius:3px;padding:1px 6px;font-size:10px;font-weight:700;}'
+    +'.sM{background:#E3EEF8;color:#1a5276;}.sI{background:#E8F5EE;color:#1A8A4A;}'
+    +'.mBdg{display:inline-block;border-radius:3px;padding:1px 6px;font-size:10px;font-weight:700;}'
+    +'.mN{background:#FDF0E5;color:#B35B0A;}.mA{background:#EEF3FD;color:#1a5276;}.mL{background:#F0FAF4;color:#1A8A4A;}'
+    +'.stdBdg{background:#E87722;color:#fff;border-radius:4px;padding:2px 7px;font-size:10px;font-weight:700;text-decoration:none;}'
+    +'.hdr{border-bottom:3px solid #E87722;padding-bottom:10px;margin-bottom:16px;}'
+    +'.ftr{margin-top:14px;font-size:10px;color:#999;text-align:center;border-top:1px solid #ddd;padding-top:8px;}'
+    +'</style></head><body>'
+    +'<div class="hdr"><table border="0" style="border:none;border-collapse:collapse;width:100%;"><tr>'
+    +'<td style="border:none;"><img src="'+logoSrc+'" height="40" alt="SBS"></td>'
+    +'<td style="border:none;text-align:right;font-size:13px;color:#1D3557;"><strong>Locking Performance Comparison</strong><br>'
+    +'<span style="font-size:10px;color:#6C757D;">Specialty Bolt and Screw, Inc. specialtybolt.com</span></td>'
+    +'</tr></table></div>'+tbl
+    +'<div class="ftr">Specialty Bolt and Screw, Inc. specialtybolt.com For reference only.</div>'
+    +'</body><\/html>');
+  w.document.close();w.print();
+}
+function bindCmpCheckboxes(){
+  document.getElementById('tBdy').addEventListener('click',function(e){
+    var cb=e.target;
+    if(cb.tagName==='INPUT'&&cb.classList.contains('cmpCb')){
+      var key=cb.getAttribute('data-key');
+      var r=null;
+      for(var i=0;i<filt.length;i++){if(rowKey(filt[i])===key){r=filt[i];break;}}
+      if(r){var ok=toggleCmp(key,r);if(!ok)cb.checked=false;}
+    }
+  });
+}
+
+/* EVENT DELEGATION - non-tooltip actions only */
+document.addEventListener('click',function(e){
+  hideTip();
+  var el=e.target,action=null,tabT=null,sortC=null;
+  for(var i=0;i<8;i++){
+    if(!el||el===document.body)break;
+    if(el.getAttribute){
+      var a=el.getAttribute('data-a');
+      var dt=el.getAttribute('data-t');
+      var dc=el.getAttribute('data-col');
+      if(a&&!action)action=a;
+      if(dt&&!tabT)tabT=dt;
+      if(dc&&!sortC)sortC=dc;
+    }
+    el=el.parentNode;
+  }
+  if(action==='tab'&&tabT){switchTab(tabT);return;}
+  if(action==='reset'){
+    document.getElementById('srch').value='';
+    document.getElementById('clrS').style.display='none';
+    document.getElementById('fSys').value='';
+    document.getElementById('fThd').value='';
+    rebuildThd();rebuildMech();rebuildStd();updStyles();applyFilters();return;
+  }
+  if(action==='print'){doPrint();return;}
+  if(action==='openCmp'){openCmp();return;}
+  if(action==='closeCmp'){closeCmp();return;}
+  if(action==='clearCmp'){clearCmp();return;}
+  if(action==='printCmp'){printCmp();return;}
+  if(sortC){
+    var th=e.target;
+    for(var j=0;j<6;j++){
+      if(!th||th===document.body)break;
+      if(th.classList&&th.classList.contains('srt')){
+        var c2=th.getAttribute('data-col');
+        if(sCol===c2)sDir*=-1;else{sCol=c2;sDir=1;}
+        document.querySelectorAll('th.srt').forEach(function(x){x.classList.remove('sa','sd');});
+        th.classList.add(sDir===1?'sa':'sd');
+        applyFilters();return;
+      }
+      th=th.parentNode;
+    }
+  }
+});
+document.addEventListener('input',function(e){
+  if(e.target&&e.target.id==='srch'){
+    document.getElementById('clrS').style.display=e.target.value?'inline':'none';
+    applyFilters();
+  }
+});
+document.getElementById('clrS').addEventListener('click',function(){
+  document.getElementById('srch').value='';
+  document.getElementById('clrS').style.display='none';
+  applyFilters();
+});
+document.addEventListener('change',function(e){
+  if(!e.target)return;
+  var id=e.target.id;
+  if(id==='fSys'){rebuildThd();rebuildMech();rebuildStd();updStyles();applyFilters();}
+  else if(id==='fThd'){rebuildMech();rebuildStd();updStyles();applyFilters();}
+  else if(id==='fMech'){rebuildStd();updStyles();applyFilters();}
+  else if(id==='fStd'){updStyles();applyFilters();}
+});
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){hideTip();closeCmp();}
+});
+document.getElementById('cmpModal').addEventListener('click',function(e){
+  if(e.target===this)closeCmp();
+});
+
+/* PRINT */
+function doPrint(){
+  var ls=document.getElementById('pLogo').src;
+  var rows='';
+  filt.forEach(function(r){
+    rows+='<tr><td>'+r.sy+'</td><td style="font-weight:700;color:#1D3557;">'+r.th+'</td><td>'+r.me+'<br><span style="font-size:10px;color:#888;">a.k.a. '+r.ak+'</span></td><td><strong>'+r.st+'</strong></td><td style="font-size:11px;">'+r.pf.replace(/\|/g,'<br>')+(r.no?'<br><em>'+r.no+'</em>':'')+'</td><td style="font-size:11px;">'+r.lo.replace(/\n/g,'<br>')+'</td></tr>';
+  });
+  var w=window.open('','_blank');
+  w.document.write('<!DOCTYPE html><html><head><title>SBS Locking Performance</title><style>body{font-family:Arial,sans-serif;font-size:11px;margin:.5in;}table{width:100%;border-collapse:collapse;}th{background:#F0F2F5;font-size:10px;text-transform:uppercase;padding:6px 8px;border:1px solid #ddd;text-align:left;}td{padding:6px 8px;border:1px solid #E2E6EA;vertical-align:top;}.hdr{border-bottom:3px solid #E87722;padding-bottom:10px;margin-bottom:16px;}.ftr{margin-top:12px;font-size:10px;color:#999;text-align:center;border-top:1px solid #ddd;padding-top:8px;}<\/style><\/head><body><div class="hdr"><table border="0" style="border:none;border-collapse:collapse;"><tr><td style="border:none;"><img src="'+ls+'" height="44" alt="SBS"></td><td style="border:none;padding-left:20px;text-align:right;"><strong style="font-size:14px;color:#1D3557;">Locking Performance Reference Table</strong><br><span style="font-size:10px;color:#6C757D;">Specialty Bolt and Screw, Inc. specialtybolt.com</span></td></tr></table></div><table><thead><tr><th>System</th><th>Thread Size</th><th>Locking Mechanism</th><th>Standard</th><th>Locking Performance</th><th>Patch Location</th></tr></thead><tbody>'+rows+'</tbody></table><div class="ftr">Specialty Bolt and Screw, Inc. specialtybolt.com For reference only. Consult applicable IFI standard for critical applications.</div><\/body><\/html>');
+  w.document.close();w.print();
+}
+
+
+/* ── TAB SWITCHING ── */
+function switchTab(t){
+  document.querySelectorAll('.tbtn').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-t')===t);});
+  document.getElementById('fltBar').style.display=t==='table'?'':'none';
+  document.getElementById('tWrap').style.display=t==='table'?'':'none';
+  document.getElementById('secBP').style.display=t==='bp'?'block':'none';
+  measureTabHeight();
+}
+function measureTabHeight(){
+  var hh=document.getElementById('hdr').offsetHeight;
+  var tb=document.getElementById('tabBar').offsetHeight;
+  document.documentElement.style.setProperty('--tth',(hh+tb)+'px');
+}
+measure();
+measureTabHeight();
+window.addEventListener('resize',function(){measure();measureTabHeight();});
+rebuildThd();rebuildMech();rebuildStd();
+applyFilters();
+bindInfoButtons();
+bindCmpCheckboxes();
+</script>
+</body>
+</html>
