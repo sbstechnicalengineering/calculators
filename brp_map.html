@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BRP Global Manufacturing Map</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #1a1a1a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .map-wrapper {
+      position: relative;
+      display: inline-block;
+      line-height: 0;
+    }
+
+    .map-wrapper img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    /* Invisible clickable overlay areas */
+    .zone {
+      position: absolute;
+      cursor: pointer;
+      background: transparent;
+      transition: background 0.15s ease;
+      border-radius: 4px;
+    }
+
+    .zone:hover {
+      background: rgba(255, 102, 0, 0.12);
+    }
+
+    /* Mexico diagonal split — upper zone (6) */
+    #zone-6 { clip-path: polygon(0% 0%, 100% 0%, 52% 100%, 0% 100%); }
+    /* Mexico diagonal split — lower zone (7) */
+    #zone-7 { clip-path: polygon(52% 0%, 100% 0%, 100% 100%, 0% 100%); }
+
+    /* Globe split — upper (9) and lower (10) */
+
+    /* Tooltip */
+    #tooltip {
+      position: fixed;
+      pointer-events: none;
+      background: #fff;
+      border: 2px solid #FF6600;
+      border-radius: 8px;
+      padding: 10px 15px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+      max-width: 260px;
+      z-index: 9999;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+
+    #tooltip.visible { opacity: 1; }
+
+    #tooltip .tt-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #FF6600;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    #tooltip .tt-body {
+      font-size: 12px;
+      color: #333;
+      line-height: 1.5;
+    }
+
+    #tooltip .tt-cta {
+      margin-top: 7px;
+      font-size: 11px;
+      color: #888;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+<div class="map-wrapper" id="mapWrapper">
+  <img
+    id="brpMap"
+    src="https://raw.githubusercontent.com/sbstechnicalengineering/calculators/main/BRP%20Map.png"
+    alt="BRP Global Manufacturing Locations"
+    draggable="false"
+  />
+
+  <!-- Zones are sized as percentages of the image for full responsiveness -->
+
+  <!-- Region 1: Canada -->
+  <div class="zone" id="zone-1"
+    data-title="BRP Valcourt, Canada"
+    data-body="Ski-Doo, Spyder, R&D, PAC and Aftermarket"
+    data-url="https://shop.specialtybolt.com/products/search/?Keyword=BRP_2026_VAL"
+    style="left:0%; top:0%; width:28%; height:50%;">
+  </div>
+
+  <!-- Region 3: USA — Sturtevant WI (upper dot) -->
+  <div class="zone" id="zone-3"
+    data-title="BRP US Inc — Sturtevant, WI"
+    data-body="Switch, Engines"
+    data-url="https://shop.specialtybolt.com/products/search/?Keyword=BRP_2026_STU"
+    style="left:28%; top:0%; width:25%; height:34%;">
+  </div>
+
+  <!-- Region 2: USA — Palm Bay FL (lower dot) -->
+  <div class="zone" id="zone-2"
+    data-title="BRP Palm Bay, Florida"
+    data-body="Palm Bay Operations"
+    data-url="https://shop.specialtybolt.com/products/search/?Keyword=BRP_2026_PAB"
+    style="left:28%; top:34%; width:25%; height:16%;">
+  </div>
+
+  <!-- Region 4: Finland -->
+  <div class="zone" id="zone-4"
+    data-title="BRP Rovaniemi, Finland"
+    data-body="Lynx"
+    data-url="https://shop.specialtybolt.com/products/search/?Keyword=BRP_2026_ROV"
+    style="left:53%; top:0%; width:22%; height:50%;">
+  </div>
+
+  <!-- Region 5: Vietnam -->
+  <div class="zone" id="zone-5"
+    data-title="BRP Ho Chi Minh City, Vietnam"
+    data-body="Ryker"
+    data-url="https://shop.specialtybolt.com/products/search/?Keyword=BRP_2026_VNM"
+    style="left:75%; top:0%; width:25%; height:50%;">
+  </div>
+
+  <!-- Region 6 & 7: Mexico — diagonal split container -->
+  <!-- We overlay two zones over the same Mexico panel, using clip-path for the diagonal -->
+  <div class="zone" id="zone-6"
+    data-title="BRP Ciudad Juárez, Mexico"
+    data-body="ATV, SSV"
+    data-url="https://shop.specialtybolt.com/products/search/?Keyword=BRP_2026_JRZ"
+    style="left:0%; top:50%; width:27%; height:50%;">
+  </div>
+
+  <div class="zone" id="zone-7"
+    data-title="BRP Santiago de Querétaro, Mexico"
+    data-body="Sea-Doo (PWC), Switch, EV"
+    data-url="https://shop.specialtybolt.com/products/search/?Keyword=BRP_2026_QRO"
+    style="left:0%; top:50%; width:27%; height:50%;">
+  </div>
+
+  <!-- Region 8: Austria -->
+  <div class="zone" id="zone-8"
+    data-title="BRP Gunskirchen, Austria"
+    data-body="Rotax Engines"
+    data-url="https://shop.specialtybolt.com/products/search/?Keyword=BRP_2026_GUN"
+    style="left:27%; top:50%; width:26%; height:50%;">
+  </div>
+
+  <!-- Region 9: Globe upper — All ACTIVE BRP Parts -->
+  <div class="zone" id="zone-9"
+    data-title="All ACTIVE BRP Parts"
+    data-body="Active parts — shipped in the last year"
+    data-url="https://shop.specialtybolt.com/products/search/?Keyword=BRP_2026_ACTIVE"
+    style="left:53%; top:50%; width:47%; height:25%;">
+  </div>
+
+  <!-- Region 10: Globe lower — All BRP Parts -->
+  <div class="zone" id="zone-10"
+    data-title="All BRP Parts"
+    data-body="Active and Inactive Parts"
+    data-url="https://shop.specialtybolt.com/products/search/?Keyword=BRP_2026_ALL"
+    style="left:53%; top:75%; width:47%; height:25%;">
+  </div>
+
+</div>
+
+<!-- Tooltip -->
+<div id="tooltip">
+  <div class="tt-title" id="tt-title"></div>
+  <div class="tt-body" id="tt-body"></div>
+  <div class="tt-cta">Click to browse parts →</div>
+</div>
+
+<script>
+  const tooltip = document.getElementById('tooltip');
+  const ttTitle = document.getElementById('tt-title');
+  const ttBody  = document.getElementById('tt-body');
+  const zones   = document.querySelectorAll('.zone');
+  const OFFSET  = 16;
+
+  function positionTooltip(e) {
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const tw = tooltip.offsetWidth  || 260;
+    const th = tooltip.offsetHeight || 80;
+    let x = e.clientX + OFFSET;
+    let y = e.clientY + OFFSET;
+    if (x + tw > vw - 10) x = e.clientX - tw - OFFSET;
+    if (y + th > vh - 10) y = e.clientY - th - OFFSET;
+    tooltip.style.left = x + 'px';
+    tooltip.style.top  = y + 'px';
+  }
+
+  zones.forEach(zone => {
+    zone.addEventListener('mouseenter', e => {
+      ttTitle.textContent = zone.dataset.title;
+      ttBody.textContent  = zone.dataset.body;
+      tooltip.classList.add('visible');
+      positionTooltip(e);
+    });
+
+    zone.addEventListener('mousemove', positionTooltip);
+
+    zone.addEventListener('mouseleave', () => {
+      tooltip.classList.remove('visible');
+    });
+
+    zone.addEventListener('click', () => {
+      window.open(zone.dataset.url, '_blank', 'noopener,noreferrer');
+    });
+  });
+</script>
+
+</body>
+</html>
