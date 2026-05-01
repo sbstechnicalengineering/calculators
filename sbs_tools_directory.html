@@ -78,9 +78,26 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);min-height:100vh;
 
 /* TOOLTIP WRAPPER */
 .tooltip-wrap{position:relative;display:inline-flex;align-items:center;gap:0.45rem;width:100%}
-.tooltip-bubble{display:none;position:absolute;left:calc(100% + 12px);top:0;width:300px;background:var(--white);border:1.5px solid var(--gray-200);border-top:3px solid var(--orange);border-radius:8px;padding:0.85rem 1rem;box-shadow:0 6px 24px rgba(0,0,0,0.13);z-index:999;pointer-events:auto}
+/* Bubble — opens right by default. Left padding creates an invisible hover bridge so
+   diagonal mouse movement from the link to the bubble does not close it. */
+.tooltip-bubble{
+  display:none;position:absolute;left:100%;top:0;
+  width:300px;
+  background:var(--white);border:1.5px solid var(--gray-200);
+  border-top:3px solid var(--orange);border-radius:8px;
+  padding:0.85rem 1rem;box-shadow:0 6px 24px rgba(0,0,0,0.13);
+  z-index:999;pointer-events:auto;
+  /* transparent left border acts as a hover bridge for diagonal mouse movement */
+  border-left:14px solid transparent;
+  background-clip:padding-box;
+  margin-left:-14px;}
+/* right-side caret */
 .tooltip-bubble::before{content:'';position:absolute;right:100%;top:12px;border:7px solid transparent;border-right-color:var(--gray-200)}
 .tooltip-bubble::after{content:'';position:absolute;right:calc(100% - 1px);top:12px;border:6px solid transparent;border-right-color:var(--white)}
+/* left-opening variant */
+.tooltip-left .tooltip-bubble{left:auto;right:100%;margin-left:0;margin-right:-14px;border-left:1.5px solid var(--gray-200);border-right:14px solid transparent}
+.tooltip-left .tooltip-bubble::before{right:auto;left:100%;border-right-color:transparent;border-left-color:var(--gray-200)}
+.tooltip-left .tooltip-bubble::after{right:auto;left:calc(100% - 1px);border-right-color:transparent;border-left-color:var(--white)}
 .tooltip-title{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--navy);letter-spacing:0.03em;margin-bottom:0.45rem}
 .tooltip-body{font-family:'Inter',sans-serif;font-size:11.5px;color:var(--gray-600);line-height:1.55}
 .tooltip-link{display:inline-flex;align-items:center;gap:4px;margin-top:0.55rem;font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;color:var(--orange);text-decoration:none;letter-spacing:0.2px}
@@ -732,6 +749,31 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);min-height:100vh;
   </div>
 </div>
 
-<script>document.addEventListener('click',function(e){var el=e.target;var action=null;for(var i=0;i<6;i++){if(!el||el===document.body)break;if(el.getAttribute&&el.getAttribute('data-sbs-action')){action=el.getAttribute('data-sbs-action');break;}el=el.parentNode;}});</script>
+<script>
+(function(){
+  function positionTooltips(){
+    var grid=document.querySelector('.tools-grid');
+    if(!grid)return;
+    var gridRect=grid.getBoundingClientRect();
+    var wraps=document.querySelectorAll('.tooltip-wrap');
+    for(var i=0;i<wraps.length;i++){
+      var wrap=wraps[i];
+      var rect=wrap.getBoundingClientRect();
+      var bubble=wrap.querySelector('.tooltip-bubble');
+      if(!bubble)continue;
+      var spaceRight=gridRect.right-rect.right;
+      // flip left if less than 320px to the right of the item
+      if(spaceRight<320){
+        wrap.classList.add('tooltip-left');
+      } else {
+        wrap.classList.remove('tooltip-left');
+      }
+    }
+  }
+  window.addEventListener('load',positionTooltips);
+  window.addEventListener('resize',positionTooltips);
+})();
+document.addEventListener('click',function(e){var el=e.target;var action=null;for(var i=0;i<6;i++){if(!el||el===document.body)break;if(el.getAttribute&&el.getAttribute('data-sbs-action')){action=el.getAttribute('data-sbs-action');break;}el=el.parentNode;}});
+</script>
 </body>
 </html>
