@@ -1,0 +1,713 @@
+<!--
+  SBS Drive and Socket Size Selector | Copyright (c) 2024 Specialty Bolt & Screw, Inc.
+  Fingerprint: SBS-DRIVE-SELECTOR-v2 | https://shop.specialtybolt.com/
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Drive and Socket Size Selector Tool</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy:           #1D3557;
+      --navy-dark:      #12243a;
+      --orange:         #E87722;
+      --orange-light:   #F0913A;
+      --orange-pale:    #FDF0E5;
+      --white:          #ffffff;
+      --gray-50:        #F8F9FA;
+      --gray-100:       #F0F2F5;
+      --gray-200:       #E2E6EA;
+      --gray-300:       #CED4DA;
+      --gray-400:       #ADB5BD;
+      --gray-500:       #6C757D;
+      --gray-600:       #495057;
+      --gray-700:       #343A40;
+      --success:        #1A8A4A;
+      --warning:        #B7610A;
+      --danger:         #C0392B;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', Arial, sans-serif;
+      color: var(--gray-700);
+      background: var(--gray-100);
+      line-height: 1.5;
+    }
+
+    /* ---- HEADER ---- */
+    .sbs-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--white);
+      border-bottom: 3px solid var(--orange);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+      padding: 0.65rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .sbs-header a img { height: 48px; display: block; }
+    .sbs-header-divider {
+      width: 1px;
+      height: 36px;
+      background: var(--gray-200);
+      flex-shrink: 0;
+    }
+    .sbs-header-text { flex: 1; min-width: 0; }
+    .sbs-header-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--navy);
+      margin: 0;
+      line-height: 1.1;
+    }
+    .sbs-header-sub {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      color: var(--gray-500);
+      margin: 2px 0 0;
+    }
+
+    /* ---- BETA MODAL ---- */
+    #betaOverlay {
+      position: fixed;
+      inset: 0;
+      z-index: 2147483647;
+      background: rgba(18, 36, 58, 0.82);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    #betaModal {
+      background: var(--white);
+      border-radius: 14px;
+      max-width: 520px;
+      width: 100%;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+      overflow: hidden;
+    }
+    .beta-modal-header {
+      background: var(--navy);
+      border-bottom: 4px solid var(--orange);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .beta-modal-icon {
+      width: 38px;
+      height: 38px;
+      background: var(--orange);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .beta-modal-icon svg { display: block; }
+    .beta-modal-header-text { flex: 1; }
+    .beta-modal-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--white);
+      margin: 0;
+      line-height: 1.1;
+    }
+    .beta-modal-subtitle {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      color: rgba(255,255,255,0.65);
+      margin: 3px 0 0;
+    }
+    .beta-pill {
+      background: var(--orange);
+      color: var(--white);
+      font-family: 'Barlow', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 999px;
+      flex-shrink: 0;
+    }
+    .beta-modal-body {
+      padding: 24px 28px 20px;
+    }
+    .beta-modal-body p {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: var(--gray-600);
+      margin: 0 0 14px;
+      line-height: 1.6;
+    }
+    .beta-modal-body p:last-of-type { margin-bottom: 0; }
+    .beta-modal-footer {
+      padding: 16px 28px 24px;
+      display: flex;
+      justify-content: flex-end;
+    }
+    #betaContinueBtn {
+      background: var(--orange);
+      color: var(--white);
+      font-family: 'Barlow', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      border: none;
+      border-radius: 6px;
+      padding: 12px 22px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(232,119,34,0.35);
+      transition: background 0.18s, transform 0.12s;
+    }
+    #betaContinueBtn:hover {
+      background: var(--orange-light);
+      transform: translateY(-1px);
+    }
+
+    /* ---- MAIN CONTAINER ---- */
+    .container {
+      max-width: 1200px;
+      margin: 22px auto;
+      padding: 0 16px 36px;
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .tab-btn {
+      border: 1px solid var(--gray-300);
+      background: white;
+      color: var(--navy);
+      padding: 10px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-family: 'Barlow', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .tab-btn.active {
+      background: var(--orange);
+      border-color: var(--orange);
+      color: var(--white);
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 16px;
+    }
+
+    .card {
+      background: white;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 16px;
+      box-shadow: 0 4px 14px rgba(29,53,87,0.07);
+      padding: 18px;
+    }
+
+    .span-4 { grid-column: span 4; }
+    .span-5 { grid-column: span 5; }
+    .span-7 { grid-column: span 7; }
+    .span-8 { grid-column: span 8; }
+    .span-12 { grid-column: span 12; }
+
+    @media (max-width: 850px) {
+      .span-4, .span-5, .span-7, .span-8, .span-12 { grid-column: span 12; }
+    }
+
+    label {
+      display: block;
+      font-family: 'Barlow', sans-serif;
+      font-weight: 700;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--gray-500);
+      margin: 14px 0 6px;
+    }
+
+    select, input[type="text"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 6px;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      background: white;
+      color: var(--gray-700);
+      transition: border-color 0.15s;
+    }
+    select:focus, input[type="text"]:focus {
+      outline: none;
+      border-color: var(--orange);
+    }
+
+    .info {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      margin-left: 5px;
+      border-radius: 50%;
+      background: #e6f0ff;
+      color: var(--navy);
+      font-size: 12px;
+      font-weight: 800;
+      cursor: help;
+      position: relative;
+    }
+    .info:hover::after {
+      content: attr(data-tip);
+      position: absolute;
+      left: 22px;
+      top: -8px;
+      z-index: 10;
+      width: 260px;
+      padding: 10px;
+      color: #102a43;
+      background: #ffffff;
+      border: 1px solid var(--gray-200);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+      border-radius: 10px;
+      font-weight: 400;
+      line-height: 1.35;
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    button, .button-link {
+      border: none;
+      border-radius: 6px;
+      padding: 11px 14px;
+      font-family: 'Barlow', sans-serif;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 13px;
+      letter-spacing: 0.3px;
+      transition: background 0.15s, transform 0.12s;
+    }
+
+    .primary { background: var(--orange); color: var(--white); box-shadow: 0 2px 6px rgba(232,119,34,0.3); }
+    .primary:hover { background: var(--orange-light); transform: translateY(-1px); }
+    .secondary { background: var(--navy); color: white; }
+    .secondary:hover { background: var(--navy-dark); }
+    .ghost { background: var(--gray-100); color: var(--gray-600); }
+    .ghost:hover { background: var(--gray-200); }
+    .danger { background: #fed7d7; color: #742a2a; }
+
+    .result-card {
+      border-left: 6px solid var(--orange);
+      background: var(--orange-pale);
+    }
+
+    .drive-image {
+      width: 100%;
+      min-height: 145px;
+      border: 2px dashed var(--gray-300);
+      border-radius: 14px;
+      background: var(--gray-50);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gray-500);
+      text-align: center;
+      padding: 14px;
+      margin-bottom: 12px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+    }
+
+    .meta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin: 12px 0;
+    }
+    .meta div {
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: 12px;
+      padding: 11px;
+    }
+    .meta strong {
+      display: block;
+      color: var(--gray-500);
+      font-family: 'Barlow', sans-serif;
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: var(--gray-100);
+      color: var(--gray-700);
+      font-family: 'Barlow', sans-serif;
+      font-weight: 700;
+      font-size: 0.82rem;
+      margin: 3px 4px 3px 0;
+    }
+
+    .warning-box {
+      background: #fff8e5;
+      border: 1px solid #f6c343;
+      border-left: 5px solid var(--warning);
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+    }
+    .good-box {
+      background: #f0fff4;
+      border: 1px solid #9ae6b4;
+      border-left: 5px solid var(--success);
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    th, td {
+      border-bottom: 1px solid var(--gray-200);
+      padding: 10px;
+      text-align: left;
+      vertical-align: top;
+      font-family: 'Inter', sans-serif;
+    }
+    th {
+      background: var(--gray-50);
+      font-family: 'Barlow', sans-serif;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--gray-500);
+    }
+
+    .small { font-size: 0.88rem; color: var(--gray-500); }
+    .muted { color: var(--gray-500); font-family: 'Inter', sans-serif; }
+    .section-title {
+      margin-top: 0;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--navy);
+    }
+
+    details {
+      background: white;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+    }
+    summary {
+      font-family: 'Barlow', sans-serif;
+      font-weight: 700;
+      color: var(--navy);
+      cursor: pointer;
+    }
+
+    /* ---- DISCLAIMER ---- */
+    .sbs-disclaimer {
+      background: var(--gray-50);
+      border-top: 1px solid var(--gray-200);
+      padding: 12px 16px;
+      margin-top: 32px;
+      text-align: center;
+      font-family: 'Inter', sans-serif;
+      font-size: 11.5px;
+      color: var(--gray-500);
+    }
+    .sbs-disclaimer strong { color: var(--navy); }
+
+    @media print {
+      .sbs-header, .tabs, .input-card, .btn-row .ghost, .btn-row .danger, .button-link, #bestPractice, #standards { display: none !important; }
+      body { background: white; }
+      .container { margin: 0; max-width: 100%; }
+      .card { box-shadow: none; border: 1px solid #ccc; }
+      .tab-panel { display: block; }
+      .no-print { display: none !important; }
+      #betaOverlay { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hidden logo for print -->
+  <img id="sbsLogoPrint" src="data:image/png;base64,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" style="display:none;" alt="SBS Logo">
+
+  <!-- ===== BETA MODAL ===== -->
+  <div id="betaOverlay" role="dialog" aria-modal="true" aria-labelledby="betaModalTitle">
+    <div id="betaModal">
+      <div class="beta-modal-header">
+        <div class="beta-modal-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+        </div>
+        <div class="beta-modal-header-text">
+          <h2 class="beta-modal-title" id="betaModalTitle">Specialty Bolt and Screw</h2>
+          <p class="beta-modal-subtitle">Drive and Socket Size Selector Tool</p>
+        </div>
+        <span class="beta-pill">Beta</span>
+      </div>
+      <div class="beta-modal-body">
+        <p>This tool is currently in <strong>beta</strong>. The drive size data and selection logic are based on common engineering guidance, but values may be incomplete, and some combinations may not yet have records in the database.</p>
+        <p>We encourage you to use the tool and share any feedback, corrections, or missing entries with our technical team. Your input helps us make this resource more accurate and complete for the entire SBS community.</p>
+        <p>Thank you for being an early user. Please always confirm critical drive size selections against the applicable print, standard, supplier data, and production tooling before release.</p>
+      </div>
+      <div class="beta-modal-footer">
+        <button id="betaContinueBtn">I Understand - Continue to Tool</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== HEADER ===== -->
+  <header class="sbs-header">
+    <a href="https://shop.specialtybolt.com/" target="_blank" rel="noopener">
+      <img src="data:image/png;base64,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" alt="SBS Specialty Bolt and Screw" style="height:48px;display:block;">
+    </a>
+    <div class="sbs-header-divider"></div>
+    <div class="sbs-header-text">
+      <p class="sbs-header-title">Drive and Socket Size Selector</p>
+      <p class="sbs-header-sub">Technical guide for engineers to identify recommended tool and drive sizes</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <nav class="tabs no-print">
+      <button class="tab-btn active" data-sbs-action="tab" data-tab="selector">Selector</button>
+      <button class="tab-btn" data-sbs-action="tab" data-tab="compare">Compare</button>
+      <button class="tab-btn" data-sbs-action="tab" data-tab="bestPractice">Best Practice Guide</button>
+      <button class="tab-btn" data-sbs-action="tab" data-tab="standards">Standards and Notes</button>
+    </nav>
+
+    <section id="selector" class="tab-panel active">
+      <div class="grid">
+        <div class="card span-4 input-card">
+          <h2 class="section-title">Inputs</h2>
+
+          <label for="system">Measurement System <span class="info" data-tip="Select Metric or Inch. Drive sizes can differ depending on dimensional standard, head style, and manufacturer.">i</span></label>
+          <select id="system"></select>
+
+          <label for="threadSize">Thread Size <span class="info" data-tip="Choose the nominal fastener thread size. The tool filters records using common drive-size relationships.">i</span></label>
+          <select id="threadSize"></select>
+
+          <label for="headStyle">Head Style <span class="info" data-tip="Head style is critical. The same thread size can use different drive sizes in socket head, button head, flat head, machine screw, tapping screw, or set screw designs.">i</span></label>
+          <select id="headStyle"></select>
+
+          <label for="driveType">Drive Type <span class="info" data-tip="Select the drive recess or wrenching feature, such as internal hex, hexalobular, Phillips, Pozidriv, slotted, square, or specialty tamper-resistant styles.">i</span></label>
+          <select id="driveType"></select>
+
+          <label for="standardFamily">Standard Family <span class="info" data-tip="Optional filter. Use this when a print references a known standard such as ISO, DIN, ASME, IFI, JIS, SAE, or manufacturer/proprietary data.">i</span></label>
+          <select id="standardFamily"></select>
+
+          <div class="btn-row">
+            <button class="primary" data-sbs-action="findMatches">Find Drive Size</button>
+            <button class="secondary" data-sbs-action="addCurrentToCompare">Add to Compare</button>
+            <button class="ghost" data-sbs-action="resetFilters">Reset</button>
+          </div>
+        </div>
+
+        <div class="card span-8">
+          <h2 class="section-title">Recommended Drive Size</h2>
+          <div id="resultArea" class="muted">Select inputs and click <strong>Find Drive Size</strong>.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="compare" class="tab-panel">
+      <div class="card">
+        <h2 class="section-title">Compare Selected Drive Options</h2>
+        <p class="small">Add options from the Selector tab. Use this when comparing drive systems, head styles, or standards for the same thread size.</p>
+        <div id="compareArea" class="muted">No comparison records added yet.</div>
+        <div class="btn-row no-print">
+          <button class="primary" data-sbs-action="printCompare">Print Comparison</button>
+          <button class="danger" data-sbs-action="clearCompare">Clear Comparison</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="bestPractice" class="tab-panel">
+      <div class="card">
+        <h2 class="section-title">Best Practice Guide</h2>
+        <details open>
+          <summary>Why drive size selection matters</summary>
+          <p>Correct drive engagement helps prevent cam-out, recess rounding, stripped tools, cosmetic damage, inconsistent torque, and poor serviceability. Drive size should be treated as part of the joint design, not only as a catalog detail.</p>
+        </details>
+        <details>
+          <summary>Do not assume one drive size for every screw size</summary>
+          <p>The same thread size may use different drives depending on head style, dimensional standard, recess depth, head diameter, strength class, manufacturer design, and customer print requirements. Always confirm against the drawing or controlling standard.</p>
+        </details>
+        <details>
+          <summary>Internal hex vs. hexalobular/Torx-style</summary>
+          <p>Internal hex drives are common and easy to service, but smaller sizes can round if tool fit is poor or torque is high. Hexalobular drives generally provide better torque transfer and lower cam-out tendency when the correct bit is used.</p>
+        </details>
+        <details>
+          <summary>Phillips, Pozidriv, and cross-recess drives</summary>
+          <p>Phillips and Pozidriv are not interchangeable. Pozidriv bits have additional ribs and are designed for different engagement. Using the wrong bit can damage the recess and increase cam-out risk.</p>
+        </details>
+        <details>
+          <summary>Slotted drives</summary>
+          <p>Slotted drives are simple and visually familiar, but they are not ideal for high-speed production assembly. Bit alignment, blade width, and blade thickness are important to avoid slipping and cosmetic damage.</p>
+        </details>
+        <details>
+          <summary>Square/Robertson drives</summary>
+          <p>Square drives offer positive engagement and are common in wood, sheet metal, and some regional applications. Confirm recess size carefully because close sizes may appear similar but fit differently.</p>
+        </details>
+        <details>
+          <summary>Tamper-resistant and specialty drives</summary>
+          <p>Pin-in hex, pin-in hexalobular, spanner, tri-wing, clutch, one-way, and other specialty drives should be selected only when service control or tamper resistance is required. Confirm tool availability before release.</p>
+        </details>
+        <details>
+          <summary>Assembly guidance</summary>
+          <ul>
+            <li>Use a clean, unworn tool bit with full engagement.</li>
+            <li>Keep the tool aligned with the drive axis.</li>
+            <li>Do not substitute close but incorrect sizes such as T25 for T27.</li>
+            <li>For powered assembly, validate bit life, recess damage, torque scatter, and removal performance.</li>
+            <li>For coated fasteners, consider coating buildup in recesses and wrenching features.</li>
+          </ul>
+        </details>
+      </div>
+    </section>
+
+    <section id="standards" class="tab-panel">
+      <div class="card">
+        <h2 class="section-title">Standards and Reference Notes</h2>
+        <p>This tool is a selection and training guide. It does not replace the controlling print, product standard, supplier drawing, or customer specification.</p>
+        <table>
+          <thead>
+            <tr><th>Drive / Feature</th><th>Common Reference Families</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Internal Hex / Socket</td><td>ISO, DIN, ASME, IFI</td><td>Common for socket head cap screws, low head, button head, flat head, shoulder screws, and set screws.</td></tr>
+            <tr><td>External Hex</td><td>ISO, DIN, ASME, SAE</td><td>Across-flats wrench size depends on metric vs. inch series and product standard.</td></tr>
+            <tr><td>Hexalobular / Torx-style</td><td>ISO 10664, proprietary Torx-style data</td><td>Common for improved torque transfer. Torx is a registered trademark; use generic terminology where appropriate.</td></tr>
+            <tr><td>Cross Recess / Phillips</td><td>ISO, DIN, ASME, JIS</td><td>Bit size depends on recess type and screw size. Phillips and JIS-style cross recesses should not be assumed identical.</td></tr>
+            <tr><td>Pozidriv</td><td>ISO, DIN, proprietary data</td><td>Not interchangeable with Phillips.</td></tr>
+            <tr><td>Slotted</td><td>ISO, DIN, ASME</td><td>Blade width and blade thickness both matter.</td></tr>
+            <tr><td>Square / Robertson</td><td>Manufacturer and regional standards</td><td>Often used in wood, sheet metal, and construction applications.</td></tr>
+            <tr><td>Specialty / Tamper-Resistant</td><td>Manufacturer data</td><td>Confirm tool availability, service strategy, and customer requirements.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="sbs-disclaimer">
+      <strong>Disclaimer:</strong> This tool is provided as a selection and engineering training guide only. Drive size values are based on common industry relationships and may vary by standard, head style, manufacturer, coating, and customer specification. Always confirm final drive size requirements against the applicable print, controlling standard, supplier catalog, and production tooling before release or assembly. Specialty Bolt and Screw, Inc. makes no warranty as to the accuracy or completeness of this data.
+    </div>
+  </main>
+
+  <script>
+    var driveData=[{system:'Metric',thread:'M1.6',head:'Socket Head Cap Screw',drive:'Internal Hex',standard:'ISO / DIN',tool:'1.5 mm hex key',image:'images/internal-hex-placeholder.png',confidence:'Typical',risk:'Low',compatibility:'Use metric hex key only.',notes:'Common relationship for small metric socket head screws. Confirm for low head or special head designs.'},{system:'Metric',thread:'M2',head:'Socket Head Cap Screw',drive:'Internal Hex',standard:'ISO / DIN',tool:'1.5 mm hex key',image:'images/internal-hex-placeholder.png',confidence:'Typical',risk:'Low',compatibility:'Use metric hex key only.',notes:'Confirm recess depth on miniature screws.'},{system:'Metric',thread:'M2.5',head:'Socket Head Cap Screw',drive:'Internal Hex',standard:'ISO / DIN',tool:'2.0 mm hex key',image:'images/internal-hex-placeholder.png',confidence:'Typical',risk:'Low',compatibility:'Use metric hex key only.',notes:'Do not substitute 5/64 inch unless specifically permitted.'},{system:'Metric',thread:'M3',head:'Socket Head Cap Screw',drive:'Internal Hex',standard:'ISO / DIN',tool:'2.5 mm hex key',image:'images/internal-hex-placeholder.png',confidence:'Typical',risk:'Low',compatibility:'Use metric hex key only.',notes:'Common for ISO 4762 / DIN 912 style socket head cap screws.'},{system:'Metric',thread:'M4',head:'Socket Head Cap Screw',drive:'Internal Hex',standard:'ISO / DIN',tool:'3.0 mm hex key',image:'images/internal-hex-placeholder.png',confidence:'Typical',risk:'Low',compatibility:'Use metric hex key only.',notes:'Common for ISO 4762 / DIN 912 style socket head cap screws.'},{system:'Metric',thread:'M5',head:'Socket Head Cap Screw',drive:'Internal Hex',standard:'ISO / DIN',tool:'4.0 mm hex key',image:'images/internal-hex-placeholder.png',confidence:'Typical',risk:'Low',compatibility:'Use metric hex key only.',notes:'Common for ISO 4762 / DIN 912 style socket head cap screws.'},{system:'Metric',thread:'M6',head:'Socket Head Cap Screw',drive:'Internal Hex',standard:'ISO / DIN',tool:'5.0 mm hex key',image:'images/internal-hex-placeholder.png',confidence:'Typical',risk:'Low',compatibility:'Use metric hex key only.',notes:'Common for ISO 4762 / DIN 912 style socket head cap screws.'},{system:'Metric',thread:'M8',head:'Socket Head Cap Screw',drive:'Internal Hex',standard:'ISO / DIN',tool:'6.0 mm hex key',image:'images/internal-hex-placeholder.png',confidence:'Typical',risk:'Low',compatibility:'Use metric hex key only.',notes:'Common for ISO 4762 / DIN 912 style socket head cap screws.'},{system:'Metric',thread:'M10',head:'Socket Head Cap Screw',drive:'Internal Hex',standard:'ISO / DIN',tool:'8.0 mm hex key',image:'images/internal-hex-placeholder.png',confidence:'Typical',risk:'Low',compatibility:'Use metric hex key only.',notes:'Common for ISO 4762 / DIN 912 style socket head cap screws.'},{system:'Metric',thread:'M12',head:'Socket Head Cap Screw',drive:'Internal Hex',standard:'ISO / DIN',tool:'10.0 mm hex key',image:'images/internal-hex-placeholder.png',confidence:'Typical',risk:'Low',compatibility:'Use metric hex key only.',notes:'Common for ISO 4762 / DIN 912 style socket head cap screws.'},{system:'Metric',thread:'M3',head:'Button Head Socket Screw',drive:'Internal Hex',standard:'ISO / DIN',tool:'2.0 mm hex key',image:'images/button-internal-hex-placeholder.png',confidence:'Typical',risk:'Medium',compatibility:'Use metric hex key only.',notes:'Button head drives are often smaller than socket head cap screw drives of the same thread size.'},{system:'Metric',thread:'M4',head:'Button Head Socket Screw',drive:'Internal Hex',standard:'ISO / DIN',tool:'2.5 mm hex key',image:'images/button-internal-hex-placeholder.png',confidence:'Typical',risk:'Medium',compatibility:'Use metric hex key only.',notes:'Confirm ISO 7380 variant and manufacturer data.'},{system:'Metric',thread:'M5',head:'Button Head Socket Screw',drive:'Internal Hex',standard:'ISO / DIN',tool:'3.0 mm hex key',image:'images/button-internal-hex-placeholder.png',confidence:'Typical',risk:'Medium',compatibility:'Use metric hex key only.',notes:'Common relationship for metric button socket screws.'},{system:'Metric',thread:'M6',head:'Button Head Socket Screw',drive:'Internal Hex',standard:'ISO / DIN',tool:'4.0 mm hex key',image:'images/button-internal-hex-placeholder.png',confidence:'Typical',risk:'Medium',compatibility:'Use metric hex key only.',notes:'Common relationship for metric button socket screws.'},{system:'Metric',thread:'M8',head:'Button Head Socket Screw',drive:'Internal Hex',standard:'ISO / DIN',tool:'5.0 mm hex key',image:'images/button-internal-hex-placeholder.png',confidence:'Typical',risk:'Medium',compatibility:'Use metric hex key only.',notes:'Common relationship for metric button socket screws.'},{system:'Metric',thread:'M3',head:'Flat Head Socket Screw',drive:'Internal Hex',standard:'ISO / DIN',tool:'2.0 mm hex key',image:'images/flat-internal-hex-placeholder.png',confidence:'Typical',risk:'Medium',compatibility:'Use metric hex key only.',notes:'Flat head recess size may differ from socket head cap screws.'},{system:'Metric',thread:'M4',head:'Flat Head Socket Screw',drive:'Internal Hex',standard:'ISO / DIN',tool:'2.5 mm hex key',image:'images/flat-internal-hex-placeholder.png',confidence:'Typical',risk:'Medium',compatibility:'Use metric hex key only.',notes:'Confirm included angle and standard family.'},{system:'Metric',thread:'M5',head:'Flat Head Socket Screw',drive:'Internal Hex',standard:'ISO / DIN',tool:'3.0 mm hex key',image:'images/flat-internal-hex-placeholder.png',confidence:'Typical',risk:'Medium',compatibility:'Use metric hex key only.',notes:'Common relationship for metric flat socket screws.'},{system:'Metric',thread:'M6',head:'Flat Head Socket Screw',drive:'Internal Hex',standard:'ISO / DIN',tool:'4.0 mm hex key',image:'images/flat-internal-hex-placeholder.png',confidence:'Typical',risk:'Medium',compatibility:'Use metric hex key only.',notes:'Common relationship for metric flat socket screws.'},{system:'Metric',thread:'M8',head:'Flat Head Socket Screw',drive:'Internal Hex',standard:'ISO / DIN',tool:'5.0 mm hex key',image:'images/flat-internal-hex-placeholder.png',confidence:'Typical',risk:'Medium',compatibility:'Use metric hex key only.',notes:'Common relationship for metric flat socket screws.'},{system:'Metric',thread:'M2',head:'Pan / Machine Screw',drive:'Hexalobular / Torx-style',standard:'ISO / Proprietary',tool:'T6 bit',image:'images/hexalobular-placeholder.png',confidence:'Typical',risk:'Medium',compatibility:'Use matching hexalobular bit. Do not use Allen key.',notes:'Common but can vary by head diameter and recess design.'},{system:'Metric',thread:'M2.5',head:'Pan / Machine Screw',drive:'Hexalobular / Torx-style',standard:'ISO / Proprietary',tool:'T8 bit',image:'images/hexalobular-placeholder.png',confidence:'Typical',risk:'Medium',compatibility:'Use matching hexalobular bit.',notes:'Confirm supplier recess callout.'},{system:'Metric',thread:'M3',head:'Pan / Machine Screw',drive:'Hexalobular / Torx-style',standard:'ISO / Proprietary',tool:'T10 bit',image:'images/hexalobular-placeholder.png',confidence:'Typical',risk:'Medium',compatibility:'Use matching hexalobular bit.',notes:'Frequently seen on M3 pan/button machine screws.'},{system:'Metric',thread:'M4',head:'Pan / Machine Screw',drive:'Hexalobular / Torx-style',standard:'ISO / Proprietary',tool:'T20 bit',image:'images/hexalobular-placeholder.png',confidence:'Typical',risk:'Medium',compatibility:'Use matching hexalobular bit.',notes:'T15 or T20 may be seen depending on head style; verify drawing.'},{system:'Metric',thread:'M5',head:'Pan / Machine Screw',drive:'Hexalobular / Torx-style',standard:'ISO / Proprietary',tool:'T25 bit',image:'images/hexalobular-placeholder.png',confidence:'Typical',risk:'Medium',compatibility:'Use matching hexalobular bit.',notes:'Common for M5 drive selection; confirm recess depth.'},{system:'Metric',thread:'M6',head:'Pan / Machine Screw',drive:'Hexalobular / Torx-style',standard:'ISO / Proprietary',tool:'T30 bit',image:'images/hexalobular-placeholder.png',confidence:'Typical',risk:'Medium',compatibility:'Use matching hexalobular bit.',notes:'T27 or T30 may be specified depending on product design.'},{system:'Metric',thread:'M2',head:'Pan / Machine Screw',drive:'Phillips',standard:'ISO / DIN / JIS',tool:'#1 Phillips bit',image:'images/phillips-placeholder.png',confidence:'Guide',risk:'Medium',compatibility:'Do not substitute Pozidriv unless print permits.',notes:'Cross recess sizing can vary by standard and supplier.'},{system:'Metric',thread:'M3',head:'Pan / Machine Screw',drive:'Phillips',standard:'ISO / DIN / JIS',tool:'#1 Phillips bit',image:'images/phillips-placeholder.png',confidence:'Guide',risk:'Medium',compatibility:'Use correct cross-recess style.',notes:'Common on M3 machine screws.'},{system:'Metric',thread:'M4',head:'Pan / Machine Screw',drive:'Phillips',standard:'ISO / DIN / JIS',tool:'#2 Phillips bit',image:'images/phillips-placeholder.png',confidence:'Guide',risk:'Medium',compatibility:'Use correct cross-recess style.',notes:'Common on M4 machine screws.'},{system:'Metric',thread:'M5',head:'Pan / Machine Screw',drive:'Phillips',standard:'ISO / DIN / JIS',tool:'#2 Phillips bit',image:'images/phillips-placeholder.png',confidence:'Guide',risk:'Medium',compatibility:'Use correct cross-recess style.',notes:'Common on M5 machine screws.'},{system:'Metric',thread:'M6',head:'Pan / Machine Screw',drive:'Phillips',standard:'ISO / DIN / JIS',tool:'#3 Phillips bit',image:'images/phillips-placeholder.png',confidence:'Guide',risk:'Medium',compatibility:'Use correct cross-recess style.',notes:'Common on larger cross-recess machine screws.'},{system:'Metric',thread:'M3',head:'Pan / Machine Screw',drive:'Pozidriv',standard:'ISO / DIN',tool:'PZ1 bit',image:'images/pozidriv-placeholder.png',confidence:'Guide',risk:'Medium',compatibility:'Do not use Phillips bit in Pozidriv recess.',notes:'Pozidriv has additional ribs and different engagement.'},{system:'Metric',thread:'M4',head:'Pan / Machine Screw',drive:'Pozidriv',standard:'ISO / DIN',tool:'PZ2 bit',image:'images/pozidriv-placeholder.png',confidence:'Guide',risk:'Medium',compatibility:'Do not use Phillips bit in Pozidriv recess.',notes:'Common on metric cross-recess screws depending on market.'},{system:'Metric',thread:'M5',head:'Pan / Machine Screw',drive:'Pozidriv',standard:'ISO / DIN',tool:'PZ2 bit',image:'images/pozidriv-placeholder.png',confidence:'Guide',risk:'Medium',compatibility:'Do not use Phillips bit in Pozidriv recess.',notes:'Confirm print callout.'},{system:'Metric',thread:'M6',head:'Pan / Machine Screw',drive:'Pozidriv',standard:'ISO / DIN',tool:'PZ3 bit',image:'images/pozidriv-placeholder.png',confidence:'Guide',risk:'Medium',compatibility:'Do not use Phillips bit in Pozidriv recess.',notes:'Confirm print callout.'},{system:'Inch',thread:'#0-80',head:'Socket Head Cap Screw',drive:'Internal Hex',standard:'ASME / IFI',tool:'0.050 in hex key',image:'images/internal-hex-placeholder.png',confidence:'Typical',risk:'Medium',compatibility:'Use inch hex key only.',notes:'Small inch socket screws are sensitive to worn tooling.'},{system:'Inch',thread:'#2-56',head:'Socket Head Cap Screw',drive:'Internal Hex',standard:'ASME / IFI',tool:'5/64 in hex key',image:'images/internal-hex-placeholder.png',confidence:'Typical',risk:'Low',compatibility:'Use inch hex key only.',notes:'Common ASME socket head cap screw relationship.'},{system:'Inch',thread:'#4-40',head:'Socket Head Cap Screw',drive:'Internal Hex',standard:'ASME / IFI',tool:'3/32 in hex key',image:'images/internal-hex-placeholder.png',confidence:'Typical',risk:'Low',compatibility:'Use inch hex key only.',notes:'Common ASME socket head cap screw relationship.'},{system:'Inch',thread:'#6-32',head:'Socket Head Cap Screw',drive:'Internal Hex',standard:'ASME / IFI',tool:'7/64 in hex key',image:'images/internal-hex-placeholder.png',confidence:'Typical',risk:'Low',compatibility:'Use inch hex key only.',notes:'Common ASME socket head cap screw relationship.'},{system:'Inch',thread:'#8-32',head:'Socket Head Cap Screw',drive:'Internal Hex',standard:'ASME / IFI',tool:'9/64 in hex key',image:'images/internal-hex-placeholder.png',confidence:'Typical',risk:'Low',compatibility:'Use inch hex key only.',notes:'Common ASME socket head cap screw relationship.'},{system:'Inch',thread:'#10-32',head:'Socket Head Cap Screw',drive:'Internal Hex',standard:'ASME / IFI',tool:'5/32 in hex key',image:'images/internal-hex-placeholder.png',confidence:'Typical',risk:'Low',compatibility:'Use inch hex key only.',notes:'Common ASME socket head cap screw relationship.'},{system:'Inch',thread:'1/4-20',head:'Socket Head Cap Screw',drive:'Internal Hex',standard:'ASME / IFI',tool:'3/16 in hex key',image:'images/internal-hex-placeholder.png',confidence:'Typical',risk:'Low',compatibility:'Use inch hex key only.',notes:'Common ASME socket head cap screw relationship.'},{system:'Inch',thread:'5/16-18',head:'Socket Head Cap Screw',drive:'Internal Hex',standard:'ASME / IFI',tool:'1/4 in hex key',image:'images/internal-hex-placeholder.png',confidence:'Typical',risk:'Low',compatibility:'Use inch hex key only.',notes:'Common ASME socket head cap screw relationship.'},{system:'Inch',thread:'3/8-16',head:'Socket Head Cap Screw',drive:'Internal Hex',standard:'ASME / IFI',tool:'5/16 in hex key',image:'images/internal-hex-placeholder.png',confidence:'Typical',risk:'Low',compatibility:'Use inch hex key only.',notes:'Common ASME socket head cap screw relationship.'},{system:'Inch',thread:'1/2-13',head:'Socket Head Cap Screw',drive:'Internal Hex',standard:'ASME / IFI',tool:'3/8 in hex key',image:'images/internal-hex-placeholder.png',confidence:'Typical',risk:'Low',compatibility:'Use inch hex key only.',notes:'Common ASME socket head cap screw relationship.'},{system:'Inch',thread:'#6-32',head:'Button Head Socket Screw',drive:'Internal Hex',standard:'ASME / IFI',tool:'5/64 in hex key',image:'images/button-internal-hex-placeholder.png',confidence:'Typical',risk:'Medium',compatibility:'Use inch hex key only.',notes:'Button head drives are often smaller than socket head cap screw drives.'},{system:'Inch',thread:'#8-32',head:'Button Head Socket Screw',drive:'Internal Hex',standard:'ASME / IFI',tool:'3/32 in hex key',image:'images/button-internal-hex-placeholder.png',confidence:'Typical',risk:'Medium',compatibility:'Use inch hex key only.',notes:'Confirm manufacturer data.'},{system:'Inch',thread:'#10-32',head:'Button Head Socket Screw',drive:'Internal Hex',standard:'ASME / IFI',tool:'1/8 in hex key',image:'images/button-internal-hex-placeholder.png',confidence:'Typical',risk:'Medium',compatibility:'Use inch hex key only.',notes:'Confirm manufacturer data.'},{system:'Inch',thread:'1/4-20',head:'Button Head Socket Screw',drive:'Internal Hex',standard:'ASME / IFI',tool:'5/32 in hex key',image:'images/button-internal-hex-placeholder.png',confidence:'Typical',risk:'Medium',compatibility:'Use inch hex key only.',notes:'Confirm manufacturer data.'},{system:'Inch',thread:'5/16-18',head:'Button Head Socket Screw',drive:'Internal Hex',standard:'ASME / IFI',tool:'3/16 in hex key',image:'images/button-internal-hex-placeholder.png',confidence:'Typical',risk:'Medium',compatibility:'Use inch hex key only.',notes:'Confirm manufacturer data.'},{system:'Metric',thread:'M6',head:'Hex Head / Hex Flange',drive:'External Hex',standard:'ISO / DIN',tool:'10 mm wrench/socket',image:'images/external-hex-placeholder.png',confidence:'Typical',risk:'Low',compatibility:'Use metric wrench/socket.',notes:'Across-flats may differ by standard and flange/head series.'},{system:'Metric',thread:'M8',head:'Hex Head / Hex Flange',drive:'External Hex',standard:'ISO / DIN',tool:'13 mm wrench/socket',image:'images/external-hex-placeholder.png',confidence:'Typical',risk:'Low',compatibility:'Use metric wrench/socket.',notes:'Some automotive flange screws may use reduced wrenching sizes.'},{system:'Metric',thread:'M10',head:'Hex Head / Hex Flange',drive:'External Hex',standard:'ISO / DIN',tool:'16 mm or 17 mm wrench/socket',image:'images/external-hex-placeholder.png',confidence:'Variable',risk:'Medium',compatibility:'Confirm standard and customer print.',notes:'M10 is a common example where wrench size can vary by series.'},{system:'Inch',thread:'1/4-20',head:'Hex Head / Hex Flange',drive:'External Hex',standard:'ASME / SAE',tool:'7/16 in wrench/socket',image:'images/external-hex-placeholder.png',confidence:'Typical',risk:'Low',compatibility:'Use inch wrench/socket.',notes:'Confirm heavy hex, flange, or reduced head variants.'},{system:'Inch',thread:'5/16-18',head:'Hex Head / Hex Flange',drive:'External Hex',standard:'ASME / SAE',tool:'1/2 in wrench/socket',image:'images/external-hex-placeholder.png',confidence:'Typical',risk:'Low',compatibility:'Use inch wrench/socket.',notes:'Confirm heavy hex, flange, or reduced head variants.'},{system:'Inch',thread:'3/8-16',head:'Hex Head / Hex Flange',drive:'External Hex',standard:'ASME / SAE',tool:'9/16 in wrench/socket',image:'images/external-hex-placeholder.png',confidence:'Typical',risk:'Low',compatibility:'Use inch wrench/socket.',notes:'Confirm heavy hex, flange, or reduced head variants.'},{system:'Metric',thread:'M4',head:'Security / Tamper-Resistant Screw',drive:'Pin-In Hexalobular',standard:'Manufacturer',tool:'T20H security bit',image:'images/security-hexalobular-placeholder.png',confidence:'Guide',risk:'Medium',compatibility:'Use matching security bit with center-hole clearance.',notes:'Confirm pin diameter and recess style.'},{system:'Metric',thread:'M5',head:'Security / Tamper-Resistant Screw',drive:'Pin-In Hexalobular',standard:'Manufacturer',tool:'T25H security bit',image:'images/security-hexalobular-placeholder.png',confidence:'Guide',risk:'Medium',compatibility:'Use matching security bit with center-hole clearance.',notes:'Confirm pin diameter and recess style.'},{system:'Inch',thread:'#10-32',head:'Security / Tamper-Resistant Screw',drive:'Spanner',standard:'Manufacturer',tool:'Spanner bit - verify slot spacing',image:'images/spanner-placeholder.png',confidence:'Variable',risk:'High',compatibility:'Tool must match slot spacing and pin geometry.',notes:'Spanner sizing is manufacturer-specific.'},{system:'Metric',thread:'M4',head:'Security / Tamper-Resistant Screw',drive:'Tri-Wing',standard:'Manufacturer',tool:'Tri-wing bit - verify size',image:'images/tri-wing-placeholder.png',confidence:'Variable',risk:'High',compatibility:'Use exact matching bit.',notes:'Specialty drive. Verify service tooling before release.'},{system:'Inch',thread:'#8-32',head:'Security / Tamper-Resistant Screw',drive:'Clutch',standard:'Manufacturer',tool:'Clutch bit - verify size',image:'images/clutch-placeholder.png',confidence:'Variable',risk:'High',compatibility:'Use exact matching bit.',notes:'Common in limited-service applications.'},{system:'Inch',thread:'#10-24',head:'Security / Tamper-Resistant Screw',drive:'One-Way',standard:'Manufacturer',tool:'One-way installation driver; removal difficult',image:'images/one-way-placeholder.png',confidence:'Variable',risk:'High',compatibility:'Usually not intended for normal removal.',notes:'Select only when intentional one-way installation is required.'}];
+
+    var lastMatches=[];
+    var compareItems=[];
+    var systems=['Any',...new Set(driveData.map(function(x){return x.system;}))];
+    var threads=['Any',...new Set(driveData.map(function(x){return x.thread;}))];
+    var heads=['Any',...new Set(driveData.map(function(x){return x.head;}))];
+    var drives=['Any',...new Set(driveData.map(function(x){return x.drive;}))];
+    var standards=['Any',...new Set(driveData.map(function(x){return x.standard;}))];
+
+    function populateSelect(id,values){var el=document.getElementById(id);el.innerHTML=values.map(function(v){return '<option value="'+escapeHtml(v)+'">'+escapeHtml(v)+'<\/option>';}).join('');}
+    function escapeHtml(v){return String(v).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');}
+
+    function init(){
+      populateSelect('system',systems);
+      populateSelect('threadSize',threads);
+      populateSelect('headStyle',heads);
+      populateSelect('driveType',drives);
+      populateSelect('standardFamily',standards);
+      document.getElementById('system').addEventListener('change',updateThreadOptions);
+
+      document.getElementById('betaContinueBtn').addEventListener('click',function(){
+        var overlay=document.getElementById('betaOverlay');
+        overlay.style.transition='opacity 0.25s';
+        overlay.style.opacity='0';
+        setTimeout(function(){overlay.style.display='none';},260);
+      });
+
+      document.addEventListener('click',function(e){
+        var el=e.target;
+        var action=null;
+        for(var i=0;i<6;i++){
+          if(!el||el===document.body)break;
+          if(el.getAttribute&&el.getAttribute('data-sbs-action')){action=el.getAttribute('data-sbs-action');break;}
+          el=el.parentNode;
+        }
+        if(action==='tab'){var tab=el.getAttribute('data-tab');switchToTab(tab);}
+        else if(action==='findMatches'){findMatches();}
+        else if(action==='addCurrentToCompare'){addCurrentToCompare();}
+        else if(action==='resetFilters'){resetFilters();}
+        else if(action==='printCompare'){printCompare();}
+        else if(action==='clearCompare'){clearCompare();}
+        else if(action==='addMatchToCompare'){var idx=parseInt(el.getAttribute('data-idx'),10);addMatchToCompare(idx);}
+        else if(action==='removeCompare'){var idx=parseInt(el.getAttribute('data-idx'),10);removeCompare(idx);}
+        else if(action==='printResult'){window.print();}
+      });
+    }
+
+    function updateThreadOptions(){var s=document.getElementById('system').value;var ft;if(s==='Metric'){ft=['Any',...new Set(driveData.filter(function(x){return x.system==='Metric';}).map(function(x){return x.thread;}))];}else if(s==='Inch'){ft=['Any',...new Set(driveData.filter(function(x){return x.system==='Inch';}).map(function(x){return x.thread;}))];}else{ft=threads;}populateSelect('threadSize',ft);}
+    function findMatches(){var system=document.getElementById('system').value;var thread=document.getElementById('threadSize').value;var head=document.getElementById('headStyle').value;var drive=document.getElementById('driveType').value;var standard=document.getElementById('standardFamily').value;lastMatches=driveData.filter(function(item){return(system==='Any'||item.system===system)&&(thread==='Any'||item.thread===thread)&&(head==='Any'||item.head===head)&&(drive==='Any'||item.drive===drive)&&(standard==='Any'||item.standard===standard);});renderResults(lastMatches);}
+    function renderResults(matches){var area=document.getElementById('resultArea');if(!matches.length){area.innerHTML='<div class="warning-box"><strong>No exact record found.<\/strong><br>Try relaxing one filter, such as standard family or drive type. If this is a customer-specific part, confirm the drive size on the print or supplier drawing.<\/div>';return;}area.innerHTML=matches.map(function(item,index){return resultCard(item,index);}).join('');}
+    function resultCard(item,index){return '<article class="card result-card" style="margin-bottom:14px;"><div class="grid"><div class="span-4"><div class="drive-image">Image placeholder<br><span class="small">'+escapeHtml(item.image)+'<\/span><\/div><span class="badge">'+escapeHtml(item.drive)+'<\/span><span class="badge">'+escapeHtml(item.standard)+'<\/span><\/div><div class="span-8"><h3 style="margin-top:0;font-family:'Barlow Condensed',sans-serif;color:var(--navy);">'+escapeHtml(item.thread)+' '+escapeHtml(item.head)+'<\/h3><div class="meta"><div><strong>Recommended Tool<\/strong>'+escapeHtml(item.tool)+'<\/div><div><strong>System<\/strong>'+escapeHtml(item.system)+'<\/div><div><strong>Confidence<\/strong>'+escapeHtml(item.confidence)+'<\/div><div><strong>Stripping / Fit Risk<\/strong>'+escapeHtml(item.risk)+'<\/div><\/div><p><strong>Compatibility:<\/strong> '+escapeHtml(item.compatibility)+'<\/p><p><strong>Notes:<\/strong> '+escapeHtml(item.notes)+'<\/p><div class="warning-box"><strong>Engineering caution:<\/strong> Drive size can vary by standard, head style, recess depth, supplier, coating, and customer print. Confirm before release or production assembly.<\/div><div class="btn-row no-print"><button class="secondary" data-sbs-action="addMatchToCompare" data-idx="'+index+'">Add to Compare<\/button><a class="button-link primary" href="https://shop.specialtybolt.com/search?q=PLACEHOLDER" target="_blank" rel="noopener">Search Parts<\/a><button class="ghost" data-sbs-action="printResult">Print Result<\/button><\/div><\/div><\/div><\/article>';}
+    function addCurrentToCompare(){if(!lastMatches.length)findMatches();if(!lastMatches.length)return;lastMatches.forEach(function(item){addUniqueCompare(item);});renderCompare();switchToTab('compare');}
+    function addMatchToCompare(index){if(!lastMatches[index])return;addUniqueCompare(lastMatches[index]);renderCompare();}
+    function addUniqueCompare(item){var key=JSON.stringify(item);if(!compareItems.some(function(x){return JSON.stringify(x)===key;}))compareItems.push(item);}
+    function renderCompare(){var area=document.getElementById('compareArea');if(!compareItems.length){area.innerHTML='No comparison records added yet.';return;}area.innerHTML='<table><thead><tr><th>Thread<\/th><th>Head Style<\/th><th>Drive Type<\/th><th>Recommended Tool<\/th><th>Standard<\/th><th>Risk<\/th><th>Notes<\/th><th class="no-print">Action<\/th><\/tr><\/thead><tbody>'+compareItems.map(function(item,i){return '<tr><td>'+escapeHtml(item.thread)+'<\/td><td>'+escapeHtml(item.head)+'<\/td><td>'+escapeHtml(item.drive)+'<\/td><td><strong>'+escapeHtml(item.tool)+'<\/strong><\/td><td>'+escapeHtml(item.standard)+'<\/td><td>'+escapeHtml(item.risk)+'<\/td><td>'+escapeHtml(item.notes)+'<\/td><td class="no-print"><button class="danger" data-sbs-action="removeCompare" data-idx="'+i+'">Remove<\/button><\/td><\/tr>';}).join('')+'<\/tbody><\/table><div class="good-box"><strong>Comparison reminder:<\/strong> A larger or more positive drive may improve torque transfer, but head geometry, customer standardization, field service tools, bit availability, cosmetic requirements, and tamper-resistance needs should all be considered.<\/div>';}
+    function removeCompare(index){compareItems.splice(index,1);renderCompare();}
+    function clearCompare(){compareItems=[];renderCompare();}
+    function printCompare(){switchToTab('compare');window.print();}
+    function resetFilters(){['system','threadSize','headStyle','driveType','standardFamily'].forEach(function(id){document.getElementById(id).value='Any';});lastMatches=[];document.getElementById('resultArea').innerHTML='Select inputs and click <strong>Find Drive Size<\/strong>.';}
+    function switchToTab(tabId){document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-tab')===tabId);});document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.toggle('active',p.id===tabId);});}
+
+    init();
+  <\/script>
+<\/body>
+<\/html>
