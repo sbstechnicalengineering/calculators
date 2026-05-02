@@ -658,6 +658,13 @@
     function populateSelect(id,values){var el=document.getElementById(id);el.innerHTML=values.map(function(v){return '<option value="'+escapeHtml(v)+'">'+escapeHtml(v)+'<\/option>';}).join('');}
     function escapeHtml(v){return String(v).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');}
 
+    document.getElementById('betaContinueBtn').addEventListener('click',function(){
+      var overlay=document.getElementById('betaOverlay');
+      overlay.style.transition='opacity 0.25s';
+      overlay.style.opacity='0';
+      setTimeout(function(){overlay.style.display='none';},260);
+    });
+
     function init(){
       populateSelect('system',systems);
       populateSelect('threadSize',threads);
@@ -665,13 +672,6 @@
       populateSelect('driveType',drives);
       populateSelect('standardFamily',standards);
       document.getElementById('system').addEventListener('change',updateThreadOptions);
-
-      document.getElementById('betaContinueBtn').addEventListener('click',function(){
-        var overlay=document.getElementById('betaOverlay');
-        overlay.style.transition='opacity 0.25s';
-        overlay.style.opacity='0';
-        setTimeout(function(){overlay.style.display='none';},260);
-      });
 
       document.addEventListener('click',function(e){
         var el=e.target;
@@ -696,7 +696,7 @@
     function updateThreadOptions(){var s=document.getElementById('system').value;var ft;if(s==='Metric'){ft=['Any',...new Set(driveData.filter(function(x){return x.system==='Metric';}).map(function(x){return x.thread;}))];}else if(s==='Inch'){ft=['Any',...new Set(driveData.filter(function(x){return x.system==='Inch';}).map(function(x){return x.thread;}))];}else{ft=threads;}populateSelect('threadSize',ft);}
     function findMatches(){var system=document.getElementById('system').value;var thread=document.getElementById('threadSize').value;var head=document.getElementById('headStyle').value;var drive=document.getElementById('driveType').value;var standard=document.getElementById('standardFamily').value;lastMatches=driveData.filter(function(item){return(system==='Any'||item.system===system)&&(thread==='Any'||item.thread===thread)&&(head==='Any'||item.head===head)&&(drive==='Any'||item.drive===drive)&&(standard==='Any'||item.standard===standard);});renderResults(lastMatches);}
     function renderResults(matches){var area=document.getElementById('resultArea');if(!matches.length){area.innerHTML='<div class="warning-box"><strong>No exact record found.<\/strong><br>Try relaxing one filter, such as standard family or drive type. If this is a customer-specific part, confirm the drive size on the print or supplier drawing.<\/div>';return;}area.innerHTML=matches.map(function(item,index){return resultCard(item,index);}).join('');}
-    function resultCard(item,index){return '<article class="card result-card" style="margin-bottom:14px;"><div class="grid"><div class="span-4"><div class="drive-image">Image placeholder<br><span class="small">'+escapeHtml(item.image)+'<\/span><\/div><span class="badge">'+escapeHtml(item.drive)+'<\/span><span class="badge">'+escapeHtml(item.standard)+'<\/span><\/div><div class="span-8"><h3 style="margin-top:0;font-family:'Barlow Condensed',sans-serif;color:var(--navy);">'+escapeHtml(item.thread)+' '+escapeHtml(item.head)+'<\/h3><div class="meta"><div><strong>Recommended Tool<\/strong>'+escapeHtml(item.tool)+'<\/div><div><strong>System<\/strong>'+escapeHtml(item.system)+'<\/div><div><strong>Confidence<\/strong>'+escapeHtml(item.confidence)+'<\/div><div><strong>Stripping / Fit Risk<\/strong>'+escapeHtml(item.risk)+'<\/div><\/div><p><strong>Compatibility:<\/strong> '+escapeHtml(item.compatibility)+'<\/p><p><strong>Notes:<\/strong> '+escapeHtml(item.notes)+'<\/p><div class="warning-box"><strong>Engineering caution:<\/strong> Drive size can vary by standard, head style, recess depth, supplier, coating, and customer print. Confirm before release or production assembly.<\/div><div class="btn-row no-print"><button class="secondary" data-sbs-action="addMatchToCompare" data-idx="'+index+'">Add to Compare<\/button><a class="button-link primary" href="https://shop.specialtybolt.com/search?q=PLACEHOLDER" target="_blank" rel="noopener">Search Parts<\/a><button class="ghost" data-sbs-action="printResult">Print Result<\/button><\/div><\/div><\/div><\/article>';}
+    function resultCard(item,index){return '<article class="card result-card" style="margin-bottom:14px;"><div class="grid"><div class="span-4"><div class="drive-image">Image placeholder<br><span class="small">'+escapeHtml(item.image)+'<\/span><\/div><span class="badge">'+escapeHtml(item.drive)+'<\/span><span class="badge">'+escapeHtml(item.standard)+'<\/span><\/div><div class="span-8"><h3 style="margin-top:0;font-family:Barlow Condensed,sans-serif;color:var(--navy);">'+escapeHtml(item.thread)+' '+escapeHtml(item.head)+'<\/h3><div class="meta"><div><strong>Recommended Tool<\/strong>'+escapeHtml(item.tool)+'<\/div><div><strong>System<\/strong>'+escapeHtml(item.system)+'<\/div><div><strong>Confidence<\/strong>'+escapeHtml(item.confidence)+'<\/div><div><strong>Stripping / Fit Risk<\/strong>'+escapeHtml(item.risk)+'<\/div><\/div><p><strong>Compatibility:<\/strong> '+escapeHtml(item.compatibility)+'<\/p><p><strong>Notes:<\/strong> '+escapeHtml(item.notes)+'<\/p><div class="warning-box"><strong>Engineering caution:<\/strong> Drive size can vary by standard, head style, recess depth, supplier, coating, and customer print. Confirm before release or production assembly.<\/div><div class="btn-row no-print"><button class="secondary" data-sbs-action="addMatchToCompare" data-idx="'+index+'">Add to Compare<\/button><a class="button-link primary" href="https://shop.specialtybolt.com/search?q=PLACEHOLDER" target="_blank" rel="noopener">Search Parts<\/a><button class="ghost" data-sbs-action="printResult">Print Result<\/button><\/div><\/div><\/div><\/article>';}
     function addCurrentToCompare(){if(!lastMatches.length)findMatches();if(!lastMatches.length)return;lastMatches.forEach(function(item){addUniqueCompare(item);});renderCompare();switchToTab('compare');}
     function addMatchToCompare(index){if(!lastMatches[index])return;addUniqueCompare(lastMatches[index]);renderCompare();}
     function addUniqueCompare(item){var key=JSON.stringify(item);if(!compareItems.some(function(x){return JSON.stringify(x)===key;}))compareItems.push(item);}
@@ -708,6 +708,6 @@
     function switchToTab(tabId){document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-tab')===tabId);});document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.toggle('active',p.id===tabId);});}
 
     init();
-  <\/script>
-<\/body>
-<\/html>
+  </script>
+</body>
+</html>
