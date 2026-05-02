@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RoHS / REACH / Prop 65 Compliance Screening Tool</title>
+  <style>
+    :root {
+      --sbs-orange: #ffae00;
+      --dark: #1f2937;
+      --mid: #4b5563;
+      --light: #f8fafc;
+      --line: #d1d5db;
+      --green: #0f766e;
+      --yellow: #b45309;
+      --red: #b91c1c;
+      --blue: #1d4ed8;
+      --card: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--dark);
+      background: #eef2f7;
+      line-height: 1.5;
+    }
+
+    header {
+      background: linear-gradient(135deg, #111827, #374151);
+      color: white;
+      padding: 28px 22px;
+    }
+
+    header h1 { margin: 0 0 8px; font-size: 28px; }
+    header p { margin: 0; max-width: 1050px; color: #e5e7eb; }
+
+    .container { max-width: 1220px; margin: 0 auto; padding: 20px; }
+
+    .disclaimer {
+      background: #fff7ed;
+      border-left: 6px solid var(--sbs-orange);
+      padding: 14px 16px;
+      margin-bottom: 18px;
+      border-radius: 10px;
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .tab-button {
+      border: 1px solid var(--line);
+      background: white;
+      padding: 10px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    .tab-button.active {
+      background: var(--sbs-orange);
+      border-color: var(--sbs-orange);
+      color: #111827;
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 18px;
+    }
+
+    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+      margin-bottom: 18px;
+    }
+
+    .card h2, .card h3 { margin-top: 0; }
+    .card h2 { font-size: 22px; }
+    .card h3 { font-size: 18px; }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    @media (max-width: 700px) { .form-row { grid-template-columns: 1fr; } }
+
+    label { display: block; font-weight: 700; margin-bottom: 5px; }
+
+    select, input[type="text"], input[type="number"], textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      font-size: 14px;
+      background: white;
+    }
+
+    textarea { min-height: 88px; resize: vertical; }
+
+    .info {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #dbeafe;
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: help;
+      margin-left: 5px;
+      position: relative;
+    }
+
+    .info:hover::after {
+      content: attr(data-tip);
+      position: absolute;
+      z-index: 5;
+      left: 22px;
+      top: -6px;
+      width: 280px;
+      background: #111827;
+      color: white;
+      padding: 10px;
+      border-radius: 8px;
+      font-weight: 400;
+      line-height: 1.35;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+    }
+
+    .button-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+
+    button.primary, button.secondary {
+      border: 0;
+      padding: 11px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    button.primary { background: var(--sbs-orange); color: #111827; }
+    button.secondary { background: #e5e7eb; color: #111827; }
+
+    .status-card {
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 12px;
+      border: 1px solid var(--line);
+    }
+
+    .status-low { background: #ecfdf5; border-color: #99f6e4; }
+    .status-medium { background: #fffbeb; border-color: #fde68a; }
+    .status-high { background: #fef2f2; border-color: #fecaca; }
+    .status-unknown { background: #f3f4f6; border-color: #d1d5db; }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      margin-right: 5px;
+      margin-bottom: 5px;
+    }
+
+    .badge-low { background: #ccfbf1; color: #115e59; }
+    .badge-medium { background: #fef3c7; color: #92400e; }
+    .badge-high { background: #fee2e2; color: #991b1b; }
+    .badge-unknown { background: #e5e7eb; color: #374151; }
+
+    ul { padding-left: 20px; }
+    li { margin-bottom: 6px; }
+
+    .decision-tree {
+      border-left: 4px solid var(--sbs-orange);
+      padding-left: 14px;
+      margin-top: 12px;
+    }
+
+    .tree-step {
+      background: #f9fafb;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 11px;
+      margin-bottom: 10px;
+    }
+
+    .small { font-size: 13px; color: var(--mid); }
+
+    table { width: 100%; border-collapse: collapse; background: white; }
+    th, td { border: 1px solid var(--line); padding: 10px; text-align: left; vertical-align: top; }
+    th { background: #f3f4f6; }
+
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 900px) { .compare-grid { grid-template-columns: 1fr; } }
+
+    .print-only { display: none; }
+
+    @media print {
+      body { background: white; }
+      .tabs, .button-row, .no-print { display: none !important; }
+      .tab-content { display: block !important; }
+      .card { box-shadow: none; page-break-inside: avoid; }
+      .print-only { display: block; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>RoHS / REACH / Prop 65 Compliance Screening Tool</h1>
+    <p>Decision-tree guide for SBS internal users and customers to screen common fastener materials and coatings for likely regulatory risk, documentation needs, and next-step compliance actions.</p>
+  </header>
+
+  <div class="container">
+    <div class="disclaimer">
+      <strong>Important:</strong> This tool provides a compliance screening recommendation only. It does not certify a part, coating, supplier, or lot. Final compliance depends on current law, product use, homogeneous material analysis, supplier declarations, customer requirements, and actual exposure conditions.
+    </div>
+
+    <nav class="tabs no-print">
+      <button class="tab-button active" data-tab="screen">Decision Tree</button>
+      <button class="tab-button" data-tab="compare">Compare Options</button>
+      <button class="tab-button" data-tab="best">Best Practice Guide</button>
+      <button class="tab-button" data-tab="refs">Reference Links</button>
+    </nav>
+
+    <section id="screen" class="tab-content active">
+      <div class="grid">
+        <div class="card">
+          <h2>Part Screening Inputs</h2>
+          <div class="form-row">
+            <div>
+              <label>Fastener / Part Family <span class="info" data-tip="Used only for context. The material and coating drive most compliance screening decisions.">i</span></label>
+              <select id="partFamily">
+                <option value="bolt">Bolt / Screw / Stud</option>
+                <option value="nut">Nut / Insert</option>
+                <option value="washer">Washer / Clip / Stamping</option>
+                <option value="rivet">Rivet / Rivet Nut</option>
+                <option value="plastic">Plastic / Non-metal Component</option>
+                <option value="assembly">Assembly / SEMS / Multi-material Part</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div>
+              <label>Base Material <span class="info" data-tip="Choose the closest material family. Use supplier documentation for exact alloy and restricted substance content.">i</span></label>
+              <select id="material"></select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div>
+              <label>Coating / Finish <span class="info" data-tip="Coatings can drive RoHS, REACH, and Prop 65 risk. Pay special attention to chromates, cadmium, nickel, PFAS/PTFE, and lead-containing finishes.">i</span></label>
+              <select id="coating"></select>
+            </div>
+            <div>
+              <label>Chromate Type <span class="info" data-tip="Trivalent chromium systems are generally lower RoHS risk. Hexavalent chromate should be treated as higher risk and requires specific confirmation.">i</span></label>
+              <select id="chromate">
+                <option value="not_applicable">Not applicable / No chromate</option>
+                <option value="trivalent">Trivalent chromate / Cr(III)</option>
+                <option value="hexavalent">Hexavalent chromate / Cr(VI)</option>
+                <option value="unknown">Unknown chromate chemistry</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div>
+              <label>Part Size / Surface Area Risk <span class="info" data-tip="Washers, clips, thin stampings, and small parts can have a higher coating-to-part-weight ratio.">i</span></label>
+              <select id="surfaceRisk">
+                <option value="normal">Normal fastener geometry</option>
+                <option value="high_surface">High surface area to weight, e.g., washer or thin stamping</option>
+                <option value="very_small">Very small part where coating mass may be proportionally higher</option>
+              </select>
+            </div>
+            <div>
+              <label>Destination / Use Context <span class="info" data-tip="Used for Prop 65 and overall risk context. California consumer or worker exposure increases review needs.">i</span></label>
+              <select id="market">
+                <option value="general">General industrial / unknown</option>
+                <option value="eu">EU / EEA market</option>
+                <option value="california">California market or possible California exposure</option>
+                <option value="global">Global / multiple regions</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div>
+              <label>Available Documentation <span class="info" data-tip="The more documentation available, the stronger the screening conclusion.">i</span></label>
+              <select id="docs">
+                <option value="none">No documentation available</option>
+                <option value="coc">CoC only</option>
+                <option value="declaration">Supplier RoHS / REACH / Prop 65 declaration</option>
+                <option value="fmd">Full material disclosure or test report</option>
+                <option value="imds">IMDS / CAMDS / CDX / SCIP-ready material record</option>
+              </select>
+            </div>
+            <div>
+              <label>Known Listed / Restricted Substance? <span class="info" data-tip="Use when supplier data identifies lead, cadmium, Cr(VI), nickel, DEHP, PFAS, or another regulated/listed substance.">i</span></label>
+              <select id="knownSubstance">
+                <option value="none">None known</option>
+                <option value="lead">Lead</option>
+                <option value="cadmium">Cadmium</option>
+                <option value="cr6">Hexavalent chromium</option>
+                <option value="nickel">Nickel</option>
+                <option value="phthalates">RoHS phthalates / plasticizers</option>
+                <option value="pfas">PFAS / PTFE / fluorinated chemistry</option>
+                <option value="unknown">Unknown / not yet reviewed</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div>
+              <label>Coating Thickness Estimate, if known <span class="info" data-tip="Optional. Used for educational notes only, not certification.">i</span></label>
+              <select id="thickness">
+                <option value="unknown">Unknown</option>
+                <option value="thin">Thin decorative/protective film, under 5 µm</option>
+                <option value="typical">Typical electroplated zinc / zinc-nickel, about 5–12 µm</option>
+                <option value="heavy">Heavy coating, HDG, thick dip-spin, or multiple layers</option>
+              </select>
+            </div>
+            <div>
+              <label>Part Weight vs Coating Concern <span class="info" data-tip="RoHS thresholds are evaluated by homogeneous material, not simply total part weight. This field records whether a coating mass concern exists.">i</span></label>
+              <select id="weightConcern">
+                <option value="none">No special concern</option>
+                <option value="washer_example">Washer / high surface-to-weight example</option>
+                <option value="customer_asks">Customer specifically questions coating % by total part weight</option>
+              </select>
+            </div>
+          </div>
+
+          <label>Notes / Part Description</label>
+          <textarea id="notes" placeholder="Example: M8 washer, zinc plated yellow chromate; customer asking if 8 µm zinc + chromate makes part non-RoHS."></textarea>
+
+          <div class="button-row">
+            <button class="primary" onclick="runScreening()">Run Compliance Screening</button>
+            <button class="secondary" onclick="resetForm()">Reset</button>
+            <button class="secondary" onclick="window.print()">Print Summary</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Screening Result</h2>
+          <div id="resultPanel" class="status-card status-unknown">
+            Complete the inputs and select <strong>Run Compliance Screening</strong>.
+          </div>
+          <div id="decisionTree" class="decision-tree"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="compare" class="tab-content">
+      <div class="card">
+        <h2>Compare Two Material / Coating Options</h2>
+        <p class="small">Use this section when engineering or sourcing is deciding between two finishes, such as zinc yellow hexavalent chromate vs. zinc clear trivalent chromate.</p>
+        <div class="compare-grid">
+          <div class="card">
+            <h3>Option A</h3>
+            <label>Material</label><select id="materialA"></select>
+            <label>Coating / Finish</label><select id="coatingA"></select>
+            <label>Chromate Type</label>
+            <select id="chromateA">
+              <option value="not_applicable">Not applicable / No chromate</option>
+              <option value="trivalent">Trivalent chromate / Cr(III)</option>
+              <option value="hexavalent">Hexavalent chromate / Cr(VI)</option>
+              <option value="unknown">Unknown</option>
+            </select>
+          </div>
+          <div class="card">
+            <h3>Option B</h3>
+            <label>Material</label><select id="materialB"></select>
+            <label>Coating / Finish</label><select id="coatingB"></select>
+            <label>Chromate Type</label>
+            <select id="chromateB">
+              <option value="not_applicable">Not applicable / No chromate</option>
+              <option value="trivalent">Trivalent chromate / Cr(III)</option>
+              <option value="hexavalent">Hexavalent chromate / Cr(VI)</option>
+              <option value="unknown">Unknown</option>
+            </select>
+          </div>
+        </div>
+        <div class="button-row">
+          <button class="primary" onclick="compareOptions()">Compare</button>
+        </div>
+        <div id="compareResult" style="margin-top: 16px;"></div>
+      </div>
+    </section>
+
+    <section id="best" class="tab-content">
+      <div class="card">
+        <h2>Best Practice Guide</h2>
+        <h3>1. Treat this as a screening tool, not a certificate</h3>
+        <p>Compliance cannot be determined absolutely from a generic material and finish description. A part described as “zinc plated” may be trivalent, hexavalent, sealed, dyed, topcoated, or supplied under different regional chemistries. The tool should guide the next question: what evidence is needed?</p>
+
+        <h3>2. RoHS: evaluate homogeneous materials</h3>
+        <p>RoHS is commonly misunderstood as a total-part-weight calculation. The practical screening question is whether each homogeneous material in the article exceeds the restricted substance threshold. For fasteners, the base metal, plating layer, chromate conversion coating, sealers, lubricants, plastic washers, and adhesives may need separate consideration.</p>
+        <p><strong>Important fastener note:</strong> A thin zinc layer plus hexavalent chromate conversion coating, for example 8 µm on a steel washer, does not automatically make the overall part non-RoHS simply because the washer has high surface area relative to weight. The concern is not only total coating weight divided by total part weight. The correct review should consider the restricted substance concentration in the relevant homogeneous material or coating layer, the chemistry used, any exemptions, and supplier evidence.</p>
+
+        <h3>3. Trivalent vs. hexavalent chromate</h3>
+        <ul>
+          <li><strong>Trivalent chromate / Cr(III):</strong> generally preferred for RoHS screening and modern automotive/industrial requirements.</li>
+          <li><strong>Hexavalent chromate / Cr(VI):</strong> higher regulatory and customer acceptance risk. Do not assume failure without documentation, but require specific supplier confirmation and, when needed, test evidence.</li>
+          <li><strong>Unknown yellow chromate:</strong> treat as higher risk until confirmed. “Yellow zinc” historically may imply hexavalent chemistry, but color alone is not enough proof.</li>
+        </ul>
+
+        <h3>4. REACH: check SVHC and restrictions</h3>
+        <p>For REACH, the screening should ask whether any SVHC is present above the reporting threshold in the article, and whether Annex XVII restrictions apply. Brass, leaded steel, plasticizers, PFAS-containing materials, adhesives, sealers, and coatings deserve extra attention.</p>
+
+        <h3>5. Prop 65: listed substance does not always equal warning</h3>
+        <p>This tool flags whether a material or coating may contain a Prop 65 listed substance. Prop 65 warning decisions depend on exposure, intended use, route of exposure, safe harbor levels when available, and whether the product can reach California consumers or workers.</p>
+
+        <h3>6. Manufacturer vs. distributor vs. end user responsibilities</h3>
+        <table>
+          <thead><tr><th>Role</th><th>Typical Responsibility</th><th>Recommended Evidence</th></tr></thead>
+          <tbody>
+            <tr><td>Manufacturer / Plater</td><td>Knows actual chemistry, process, coating, and material formulation.</td><td>RoHS declaration, REACH SVHC declaration, Prop 65 statement, SDS where applicable, test reports, full material disclosure.</td></tr>
+            <tr><td>Distributor</td><td>Collects and transmits evidence; avoids over-certifying beyond supplier data.</td><td>Supplier declarations, controlled part revision, lot traceability, customer-facing compliance statement with limitations.</td></tr>
+            <tr><td>End User / OEM</td><td>Defines market, application, exposure conditions, customer-specific thresholds, and final acceptability.</td><td>Approved supplier documentation, regulatory review, IMDS/CAMDS/CDX/SCIP submission where required.</td></tr>
+          </tbody>
+        </table>
+
+        <h3>7. High-risk fastener examples</h3>
+        <ul>
+          <li>Cadmium plated aerospace or legacy parts.</li>
+          <li>Yellow zinc with unknown chromate chemistry.</li>
+          <li>Leaded brass, free-machining brass, and some leaded steels.</li>
+          <li>PVC, soft plastics, rubber, or polymer washers with unknown plasticizers.</li>
+          <li>Nickel-plated parts with possible skin contact or California consumer exposure.</li>
+          <li>PFAS/PTFE-containing lubricants, fluoropolymer coatings, or sealers where customer policy restricts them.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="refs" class="tab-content">
+      <div class="card">
+        <h2>Reference Links</h2>
+        <p>Use these public references for education and verification. Always confirm the current version and customer-specific requirements before making a compliance statement.</p>
+        <ul>
+          <li><a href="https://environment.ec.europa.eu/topics/waste-and-recycling/rohs-directive_en" target="_blank" rel="noopener">European Commission - RoHS Directive</a></li>
+          <li><a href="https://echa.europa.eu/candidate-list-table" target="_blank" rel="noopener">ECHA - REACH Candidate List of SVHCs</a></li>
+          <li><a href="https://echa.europa.eu/substances-restricted-under-reach" target="_blank" rel="noopener">ECHA - Substances Restricted under REACH Annex XVII</a></li>
+          <li><a href="https://oehha.ca.gov/proposition-65/proposition-65-list" target="_blank" rel="noopener">California OEHHA - Proposition 65 List</a></li>
+          <li><a href="https://www.p65warnings.ca.gov/" target="_blank" rel="noopener">California Prop 65 Warnings Website</a></li>
+        </ul>
+      </div>
+    </section>
+  </div>
+
+<script>
+const materialData = {
+  carbon_steel: { label: "Carbon steel / alloy steel", risk: 1, flags: ["Generally low material risk if not leaded and no restricted coating is present."], docs: ["Supplier material declaration", "RoHS / REACH declaration"] },
+  leaded_steel: { label: "Leaded steel / free-machining steel", risk: 3, flags: ["Lead content may trigger RoHS, REACH, and Prop 65 review."], docs: ["Full material disclosure", "Lead content statement", "Customer approval if lead is intentionally added"] },
+  stainless_300: { label: "Stainless steel 300 series, e.g., 302/304/316", risk: 1, flags: ["Generally low RoHS risk as a base material; nickel content may be relevant for Prop 65/exposure screening."], docs: ["Material grade confirmation", "RoHS / REACH declaration"] },
+  stainless_400: { label: "Stainless steel 400 series", risk: 1, flags: ["Generally low RoHS risk as a base material; confirm alloy and coating/passivation details."], docs: ["Material grade confirmation", "RoHS / REACH declaration"] },
+  brass: { label: "Brass / copper alloy", risk: 3, flags: ["Many brass alloys contain lead for machinability; lead may trigger RoHS exemption review and Prop 65 evaluation."], docs: ["Alloy specification", "Lead content", "RoHS exemption basis if applicable", "Prop 65 review"] },
+  bronze: { label: "Bronze / phosphor bronze", risk: 2, flags: ["Generally moderate risk; verify lead and any surface treatment."], docs: ["Alloy specification", "RoHS / REACH declaration"] },
+  aluminum: { label: "Aluminum / aluminum alloy", risk: 1, flags: ["Generally low material risk; anodizing/sealers may need review."], docs: ["Alloy specification", "Finish declaration"] },
+  zinc_diecast: { label: "Zinc alloy / die cast zinc", risk: 2, flags: ["Confirm lead, cadmium, and plating chemistry."], docs: ["Alloy specification", "Full material disclosure if available"] },
+  nylon: { label: "Nylon / polyamide", risk: 2, flags: ["Generally acceptable, but additives, colorants, flame retardants, and plasticizers should be checked."], docs: ["Resin declaration", "SVHC statement", "RoHS phthalate statement"] },
+  pom: { label: "POM / acetal", risk: 2, flags: ["Generally acceptable, but additives, colorants, and processing aids should be checked."], docs: ["Resin declaration", "SVHC statement"] },
+  ptfe: { label: "PTFE / fluoropolymer", risk: 3, flags: ["PFAS/customer policy concern. Not automatically non-RoHS, but often needs customer-specific review."], docs: ["PFAS statement", "REACH SVHC statement", "Customer approval if restricted by policy"] },
+  rubber: { label: "Rubber / elastomer", risk: 3, flags: ["Plasticizers, PAHs, carbon black, curing agents, and additives can create REACH/Prop 65 risk."], docs: ["Compound disclosure", "SVHC declaration", "Prop 65 statement"] },
+  pvc: { label: "PVC / soft plastic", risk: 3, flags: ["Phthalates and stabilizers are common concerns for RoHS 3, REACH, and Prop 65."], docs: ["Phthalate statement", "Full material disclosure", "Prop 65 review"] },
+  unknown: { label: "Unknown material", risk: 3, flags: ["Cannot determine without material identification."], docs: ["Material specification", "Supplier declaration", "Full material disclosure"] }
+};
+
+const coatingData = {
+  none: { label: "None / plain", risk: 0, flags: ["No coating-specific risk identified."], docs: [] },
+  zinc_clear_tri: { label: "Zinc clear / blue trivalent chromate", risk: 1, flags: ["Generally preferred over hexavalent chromate systems."], docs: ["Trivalent chromate confirmation", "RoHS declaration"] },
+  zinc_yellow_unknown: { label: "Zinc yellow chromate, chemistry unknown", risk: 3, flags: ["Treat as high risk until confirmed. Yellow color may indicate legacy hexavalent chromate, but color alone is not proof."], docs: ["Chromate chemistry confirmation", "RoHS test/declaration", "REACH declaration"] },
+  zinc_yellow_hex: { label: "Zinc yellow hexavalent chromate", risk: 3, flags: ["Hexavalent chromium requires careful RoHS and REACH review. Do not assume customer acceptance without evidence."], docs: ["Cr(VI) content review", "RoHS declaration or test report", "Customer approval where needed"] },
+  zinc_nickel_tri: { label: "Zinc-nickel with trivalent passivate/sealer", risk: 1, flags: ["Generally modern lower-risk corrosion coating; confirm sealer and passivate chemistry."], docs: ["RoHS declaration", "REACH SVHC statement", "Sealer chemistry statement if needed"] },
+  zinc_nickel_black: { label: "Black zinc-nickel with sealer", risk: 2, flags: ["Confirm passivate/sealer chemistry, nickel exposure relevance, and SVHC status."], docs: ["Finish declaration", "Sealer/topcoat declaration", "Prop 65 review if California exposure"] },
+  black_oxide: { label: "Black oxide + oil", risk: 1, flags: ["Generally low RoHS risk; oil may need SDS/SVHC review."], docs: ["Oil/SDS review", "RoHS / REACH declaration"] },
+  phosphate_oil: { label: "Phosphate + oil", risk: 1, flags: ["Generally low RoHS risk; oil may need SDS/SVHC review."], docs: ["Oil/SDS review", "RoHS / REACH declaration"] },
+  nickel: { label: "Nickel plating", risk: 2, flags: ["Nickel is a Prop 65 listed substance concern where exposure is possible."], docs: ["Prop 65 exposure review", "RoHS / REACH declaration"] },
+  chrome_tri: { label: "Decorative chrome, trivalent process", risk: 2, flags: ["Confirm chromium chemistry and any nickel underlayer."], docs: ["Process declaration", "RoHS / REACH declaration"] },
+  chrome_hex: { label: "Chrome / conversion coating with possible Cr(VI)", risk: 3, flags: ["Hexavalent chromium risk. Requires supplier confirmation and customer review."], docs: ["Cr(VI) declaration", "RoHS test/declaration", "REACH review"] },
+  cadmium: { label: "Cadmium plating", risk: 4, flags: ["Very high regulatory risk. Cadmium is heavily restricted and generally not acceptable except under limited exemptions/special applications."], docs: ["Cadmium content", "Exemption/customer approval", "Regulatory review"] },
+  hdg: { label: "Hot dip galvanizing", risk: 1, flags: ["Generally low RoHS risk; confirm bath chemistry and post-treatment."], docs: ["RoHS / REACH declaration"] },
+  magni_geomet: { label: "Zinc flake, e.g., Magni / Geomet / Delta Protekt", risk: 2, flags: ["Often designed as Cr(VI)-free, but confirm exact product and topcoat."], docs: ["Manufacturer coating declaration", "REACH SVHC statement", "PFAS statement if topcoat/lubricant is fluorinated"] },
+  passivation: { label: "Stainless passivation", risk: 1, flags: ["Generally low residual coating risk; confirm process and no restricted residues."], docs: ["Passivation standard/process declaration"] },
+  electropolish: { label: "Electropolishing", risk: 1, flags: ["Generally low residual coating risk because it removes surface metal; cleaning/passivation chemistry still needs process control."], docs: ["Process declaration", "Cleanliness/passivation statement if applicable"] },
+  anodize: { label: "Anodize on aluminum", risk: 2, flags: ["Confirm dye/sealer chemistry and any nickel acetate or restricted colorant concerns."], docs: ["Anodize/sealer declaration", "RoHS / REACH declaration"] },
+  adhesive_patch: { label: "Nylon patch / adhesive patch / microcapsule", risk: 2, flags: ["Polymer, adhesive, colorant, and microencapsulated chemistry may need SVHC/Prop 65 review."], docs: ["Patch material declaration", "SDS where applicable", "RoHS / REACH declaration"] },
+  ptfe_lube: { label: "PTFE / fluoropolymer lubricant or coating", risk: 3, flags: ["PFAS/customer policy concern; requires specific review even when RoHS substances are not present."], docs: ["PFAS statement", "SDS", "REACH SVHC declaration"] },
+  unknown: { label: "Unknown coating / finish", risk: 3, flags: ["Cannot determine coating compliance without finish chemistry."], docs: ["Finish specification", "Supplier declaration", "Coating chemistry confirmation"] }
+};
+
+function populateSelect(id, data) {
+  const el = document.getElementById(id);
+  el.innerHTML = "";
+  Object.keys(data).forEach(key => {
+    const opt = document.createElement("option");
+    opt.value = key;
+    opt.textContent = data[key].label;
+    el.appendChild(opt);
+  });
+}
+
+function init() {
+  ["material", "materialA", "materialB"].forEach(id => populateSelect(id, materialData));
+  ["coating", "coatingA", "coatingB"].forEach(id => populateSelect(id, coatingData));
+  document.querySelectorAll(".tab-button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".tab-button").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
+      btn.classList.add("active");
+      document.getElementById(btn.dataset.tab).classList.add("active");
+    });
+  });
+}
+
+function scoreToStatus(score) {
+  if (score >= 8) return { text: "High risk / specialist review required", cls: "status-high", badge: "badge-high" };
+  if (score >= 5) return { text: "Medium risk / supplier evidence required", cls: "status-medium", badge: "badge-medium" };
+  if (score >= 2) return { text: "Low to medium risk / document and verify", cls: "status-medium", badge: "badge-medium" };
+  return { text: "Likely low risk based on selected inputs", cls: "status-low", badge: "badge-low" };
+}
+
+function evaluate(input) {
+  const mat = materialData[input.material];
+  const coat = coatingData[input.coating];
+  let score = mat.risk + coat.risk;
+  const flags = [...mat.flags, ...coat.flags];
+  const docs = new Set([...mat.docs, ...coat.docs]);
+  const rohs = [];
+  const reach = [];
+  const prop65 = [];
+  const actions = [];
+
+  if (input.chromate === "hexavalent") { score += 3; rohs.push("Hexavalent chromate selected: review Cr(VI) concentration, homogeneous material basis, and available exemptions before making a RoHS statement."); reach.push("Chromium(VI) chemistry may trigger REACH restriction/SVHC review depending on substance and use."); docs.add("Specific Cr(VI) / chromate chemistry declaration"); }
+  if (input.chromate === "unknown") { score += 2; rohs.push("Chromate chemistry unknown: treat as medium/high risk until trivalent vs hexavalent chemistry is confirmed."); docs.add("Chromate type confirmation from plater/supplier"); }
+  if (input.chromate === "trivalent") { rohs.push("Trivalent chromate selected: generally preferred for RoHS screening, but still verify the complete finish and sealer system."); }
+
+  if (input.surfaceRisk !== "normal") { score += 1; flags.push("High surface-area or very small parts can make coating questions more visible. Review by homogeneous material/coating layer, not only total part weight."); }
+  if (input.market === "california" || input.market === "global") { score += 1; prop65.push("California/global market selected: check whether any Prop 65 listed substance may create exposure requiring a warning."); docs.add("Prop 65 statement"); }
+  if (input.market === "eu" || input.market === "global") { reach.push("EU/global market selected: REACH SVHC and Annex XVII screening should be documented."); docs.add("REACH SVHC declaration"); }
+
+  if (input.docs === "none") { score += 2; actions.push("Obtain supplier declaration before communicating compliance externally."); }
+  if (input.docs === "coc") { score += 1; actions.push("CoC alone is usually not enough for RoHS/REACH/Prop 65 screening; request a regulatory declaration or material disclosure."); }
+  if (["declaration", "fmd", "imds"].includes(input.docs)) { score -= 1; actions.push("Review the declaration scope, date, part number coverage, finish coverage, and substance list revision."); }
+
+  const substance = input.knownSubstance;
+  if (substance === "lead") { score += 3; rohs.push("Lead identified: check RoHS threshold/exemption applicability and whether the lead is in steel, aluminum, copper alloy, coating, or polymer."); reach.push("Lead may trigger REACH SVHC communication if above applicable threshold."); prop65.push("Lead is commonly a Prop 65 listed substance concern; exposure review required for California use."); docs.add("Lead content / exemption statement"); }
+  if (substance === "cadmium") { score += 4; rohs.push("Cadmium identified: very high RoHS risk unless a specific exemption applies."); reach.push("Cadmium/cadmium compounds require strict REACH review."); prop65.push("Cadmium is a Prop 65 concern; exposure review required."); docs.add("Cadmium content and exemption/customer approval"); }
+  if (substance === "cr6") { score += 3; rohs.push("Cr(VI) identified: do not assume compliance without specific evidence and homogeneous material analysis."); reach.push("Cr(VI) chemistry requires REACH screening."); prop65.push("Hexavalent chromium compounds can be Prop 65 concerns depending on exposure."); docs.add("Cr(VI) test/declaration"); }
+  if (substance === "nickel") { score += 1; prop65.push("Nickel identified: Prop 65 exposure review may be needed, especially for handling or skin-contact applications."); docs.add("Prop 65 exposure assessment or statement"); }
+  if (substance === "phthalates") { score += 3; rohs.push("RoHS 3 phthalates identified: check DEHP, BBP, DBP, and DIBP concentration in homogeneous plasticized material."); reach.push("Phthalates may also appear on REACH SVHC/restriction lists."); docs.add("Phthalate content statement"); }
+  if (substance === "pfas") { score += 2; reach.push("PFAS/PTFE concern identified: not automatically non-RoHS, but customer-specific and REACH/SVHC policy review may be required."); docs.add("PFAS / fluorinated chemistry declaration"); }
+  if (substance === "unknown") { score += 2; actions.push("Substance status unknown: request material and finish disclosure before making any compliance claim."); docs.add("Full material disclosure"); }
+
+  if (input.weightConcern !== "none") {
+    flags.push("Weight concern noted: for RoHS, do not rely only on total part weight. Evaluate the restricted substance concentration in the homogeneous material or separable coating layer and obtain supplier evidence.");
+    actions.push("If customer questions zinc + chromate by total part weight, explain that total-part-weight screening is not the normal RoHS basis and request/perform homogeneous material review.");
+  }
+
+  rohs.push("RoHS screening should include Pb, Hg, Cd, Cr(VI), PBB, PBDE, DEHP, BBP, DBP, and DIBP.");
+  reach.push("REACH screening should check SVHC Candidate List communication needs and Annex XVII restrictions for the article, coating, lubricant, adhesive, and polymer components.");
+  prop65.push("Prop 65 screening here flags listed substances; warning decisions require exposure/use analysis.");
+  actions.push("Do not issue absolute certification from this tool alone. Use supplier declarations, test reports, or full material disclosure as supporting evidence.");
+
+  if (score < 0) score = 0;
+  return { score, status: scoreToStatus(score), flags, docs: Array.from(docs), rohs, reach, prop65, actions };
+}
+
+function runScreening() {
+  const input = {
+    material: document.getElementById("material").value,
+    coating: document.getElementById("coating").value,
+    chromate: document.getElementById("chromate").value,
+    surfaceRisk: document.getElementById("surfaceRisk").value,
+    market: document.getElementById("market").value,
+    docs: document.getElementById("docs").value,
+    knownSubstance: document.getElementById("knownSubstance").value,
+    thickness: document.getElementById("thickness").value,
+    weightConcern: document.getElementById("weightConcern").value
+  };
+  const result = evaluate(input);
+  const panel = document.getElementById("resultPanel");
+  panel.className = "status-card " + result.status.cls;
+  panel.innerHTML = `
+    <span class="badge ${result.status.badge}">${result.status.text}</span>
+    <p><strong>Risk score:</strong> ${result.score} / 12+ directional score</p>
+    <p><strong>Screening conclusion:</strong> This part/finish combination ${result.score >= 8 ? "should not be represented as compliant without specialist review and supplier evidence" : result.score >= 5 ? "requires supplier evidence before customer-facing compliance statements" : "appears lower risk, provided current supplier documentation supports the selected material and finish"}.</p>
+    <h3>Key Flags</h3>${list(result.flags)}
+    <h3>RoHS Guidance</h3>${list(result.rohs)}
+    <h3>REACH Guidance</h3>${list(result.reach)}
+    <h3>Prop 65 Guidance</h3>${list(result.prop65)}
+    <h3>Recommended Documentation</h3>${list(result.docs.length ? result.docs : ["Basic supplier regulatory declaration"])}
+    <h3>Next Actions</h3>${list(result.actions)}
+  `;
+
+  document.getElementById("decisionTree").innerHTML = `
+    <h3>Decision Tree Path</h3>
+    <div class="tree-step"><strong>1. Identify article construction:</strong> ${materialData[input.material].label} with ${coatingData[input.coating].label}.</div>
+    <div class="tree-step"><strong>2. Check coating chemistry:</strong> Chromate selected as ${document.getElementById("chromate").selectedOptions[0].textContent}.</div>
+    <div class="tree-step"><strong>3. Screen RoHS:</strong> Review restricted substances by homogeneous material, including base metal, coating, chromate, topcoat, lubricant, adhesive, and polymer components.</div>
+    <div class="tree-step"><strong>4. Screen REACH:</strong> Check Candidate List SVHC communication and Annex XVII restrictions.</div>
+    <div class="tree-step"><strong>5. Screen Prop 65:</strong> Identify listed substances and determine whether exposure/warning review is needed.</div>
+    <div class="tree-step"><strong>6. Evidence decision:</strong> ${input.docs === "none" ? "Evidence is missing; request supplier documentation." : "Review available documentation for correct part/finish/revision coverage."}</div>
+  `;
+}
+
+function list(items) {
+  return `<ul>${items.map(x => `<li>${x}</li>`).join("")}</ul>`;
+}
+
+function resetForm() {
+  document.querySelectorAll("select").forEach(s => s.selectedIndex = 0);
+  document.getElementById("notes").value = "";
+  document.getElementById("resultPanel").className = "status-card status-unknown";
+  document.getElementById("resultPanel").innerHTML = "Complete the inputs and select <strong>Run Compliance Screening</strong>.";
+  document.getElementById("decisionTree").innerHTML = "";
+}
+
+function compareOptions() {
+  const a = evaluate({ material: materialA.value, coating: coatingA.value, chromate: chromateA.value, surfaceRisk: "normal", market: "global", docs: "declaration", knownSubstance: "none", thickness: "unknown", weightConcern: "none" });
+  const b = evaluate({ material: materialB.value, coating: coatingB.value, chromate: chromateB.value, surfaceRisk: "normal", market: "global", docs: "declaration", knownSubstance: "none", thickness: "unknown", weightConcern: "none" });
+  const better = a.score < b.score ? "Option A appears lower risk based on selected inputs." : b.score < a.score ? "Option B appears lower risk based on selected inputs." : "Both options appear similar based on selected inputs.";
+  document.getElementById("compareResult").innerHTML = `
+    <table>
+      <thead><tr><th></th><th>Option A</th><th>Option B</th></tr></thead>
+      <tbody>
+        <tr><td>Material</td><td>${materialData[materialA.value].label}</td><td>${materialData[materialB.value].label}</td></tr>
+        <tr><td>Coating</td><td>${coatingData[coatingA.value].label}</td><td>${coatingData[coatingB.value].label}</td></tr>
+        <tr><td>Risk Score</td><td>${a.score}</td><td>${b.score}</td></tr>
+        <tr><td>Status</td><td>${a.status.text}</td><td>${b.status.text}</td></tr>
+        <tr><td>Key Flags</td><td>${list(a.flags)}</td><td>${list(b.flags)}</td></tr>
+      </tbody>
+    </table>
+    <div class="status-card ${a.score <= b.score ? a.status.cls : b.status.cls}" style="margin-top: 14px;"><strong>Comparison guidance:</strong> ${better}</div>
+  `;
+}
+
+init();
+</script>
+</body>
+</html>
