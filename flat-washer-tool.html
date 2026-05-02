@@ -1,0 +1,724 @@
+<!--
+  SBS Flat Washer Identifier and Design Tool | Copyright (c) 2024 Specialty Bolt & Screw, Inc.
+  Fingerprint: SBS-FLATWASHER-v2 | https://shop.specialtybolt.com/
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flat Washer Tool | SBS Specialty Bolt and Screw</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<img id="sbsLogoPrint" src="data:image/png;base64,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" style="display:none;">
+<style>
+:root{--navy:#1D3557;--navy-dark:#12243a;--orange:#E87722;--orange-light:#F0913A;--orange-pale:#FDF0E5;--white:#fff;--gray-50:#F8F9FA;--gray-100:#F0F2F5;--gray-200:#E2E6EA;--gray-300:#CED4DA;--gray-400:#ADB5BD;--gray-500:#6C757D;--gray-600:#495057;--gray-700:#343A40;--hdr-h:68px;--tabs-h:48px;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-700);}
+#sbs-header{position:sticky;top:0;z-index:100;background:#fff;border-bottom:3px solid var(--orange);box-shadow:0 2px 8px rgba(0,0,0,.10);padding:.65rem 1.5rem;display:flex;align-items:center;gap:1rem;min-height:var(--hdr-h);}
+#sbs-header .logo img{height:48px;display:block;}
+.hdr-div{width:1px;height:36px;background:var(--gray-200);flex-shrink:0;}
+.title-block{flex:1;}
+.tool-title{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;color:var(--navy);line-height:1.1;}
+.tool-sub{font-family:'Inter',sans-serif;font-size:11px;color:var(--gray-500);margin-top:2px;}
+#sticky-sub{position:sticky;top:var(--hdr-h);z-index:99;background:#fff;border-bottom:1px solid var(--gray-200);display:flex;align-items:center;padding:0 1.5rem;}
+.mode-tabs{display:flex;}
+.mode-tab{font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;padding:.75rem 1.1rem;border:none;background:none;cursor:pointer;color:var(--gray-500);border-bottom:3px solid transparent;display:flex;align-items:center;gap:.35rem;transition:all .15s;}
+.mode-tab.active{color:var(--navy);border-bottom-color:var(--orange);}
+.mode-tab:hover:not(.active){color:var(--navy);background:var(--gray-50);}
+.unit-toggle{margin-left:auto;display:flex;align-items:center;gap:.4rem;}
+.unit-lbl{font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--gray-500);}
+.unit-btn{font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;padding:.28rem .7rem;border:1.5px solid var(--gray-300);background:#fff;color:var(--gray-600);border-radius:5px;cursor:pointer;transition:all .15s;}
+.unit-btn.active{background:var(--navy);border-color:var(--navy);color:#fff;}
+#filters-bar{background:#fff;border-bottom:1px solid var(--gray-200);padding:.75rem 1.5rem;position:sticky;top:calc(var(--hdr-h) + var(--tabs-h));z-index:98;}
+.fg{display:flex;flex-direction:column;gap:.25rem;}
+.fl{font-family:'Barlow',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gray-500);}
+.fsel{font-family:'Inter',sans-serif;font-size:12px;color:var(--gray-700);border:1.5px solid var(--gray-200);border-radius:6px;padding:.35rem .5rem;background:#fff;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236C757D' stroke-width='2.2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .5rem center;padding-right:1.5rem;cursor:pointer;}
+.fsel:focus{outline:none;border-color:var(--orange);}
+.fsel.active{border-color:var(--orange);background-color:var(--orange-pale);color:var(--navy);}
+.filters-row{display:grid;grid-template-columns:140px 180px 150px 1fr 1fr 1fr;gap:.65rem;align-items:end;}
+.slider-wrap{display:flex;flex-direction:column;gap:.3rem;}
+.slider-range-wrap{position:relative;height:20px;display:flex;align-items:center;}
+.slider-range-wrap .sl{position:absolute;width:100%;height:4px;-webkit-appearance:none;appearance:none;background:transparent;outline:none;cursor:pointer;pointer-events:none;}
+.slider-range-wrap .sl::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--orange);cursor:pointer;border:2px solid #fff;box-shadow:0 0 0 1.5px var(--orange);pointer-events:all;}
+.slider-range-wrap .sl::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--orange);cursor:pointer;border:2px solid #fff;pointer-events:all;}
+.slider-track-bg{position:absolute;left:0;right:0;height:4px;background:var(--gray-200);border-radius:2px;}
+.slider-track-fill{position:absolute;height:4px;background:var(--orange);border-radius:2px;}
+.slider-labels{display:flex;justify-content:space-between;align-items:center;gap:.4rem;}
+.sv{font-family:'Barlow',sans-serif;font-size:10px;font-weight:700;color:var(--navy);cursor:pointer;white-space:nowrap;min-width:36px;}
+.sv-min{text-align:left;}
+.sv-max{text-align:right;}
+.si{font-family:'Barlow',sans-serif;font-size:10px;font-weight:700;color:var(--navy);width:52px;border:1.5px solid var(--orange);border-radius:4px;padding:1px 4px;text-align:center;display:none;}
+.si.show{display:block;}
+.sv-sep{font-size:10px;color:var(--gray-400);flex:1;text-align:center;}
+#design-panel{background:#fff;border-bottom:1px solid var(--gray-200);padding:.75rem 1.5rem;display:none;}
+.design-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.65rem;}
+.df{display:flex;flex-direction:column;gap:.25rem;}
+.dl{font-family:'Barlow',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gray-500);}
+.di{font-family:'Inter',sans-serif;font-size:13px;color:var(--gray-700);border:1.5px solid var(--gray-200);border-radius:6px;padding:.4rem .55rem;background:#fff;width:100%;}
+.di:focus{outline:none;border-color:var(--orange);}
+.dh{font-family:'Inter',sans-serif;font-size:10px;color:var(--gray-400);margin-top:1px;}
+#main-content{padding:1rem 1.5rem 2rem;}
+.results-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem;flex-wrap:wrap;gap:.5rem;}
+.rc{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--navy);}
+.rc span{color:var(--orange);}
+.table-wrap{background:#fff;border-radius:10px;border:1px solid var(--gray-200);overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+table{width:100%;border-collapse:collapse;}
+thead tr{background:var(--gray-50);}
+th{font-family:'Barlow',sans-serif;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--gray-500);padding:.6rem .85rem;text-align:left;border-bottom:1px solid var(--gray-200);white-space:nowrap;cursor:pointer;user-select:none;}
+th:hover{color:var(--navy);}
+.sa{display:inline-block;margin-left:3px;opacity:.4;font-size:9px;}
+th.sorted .sa{opacity:1;color:var(--orange);}
+tbody tr{border-bottom:1px solid var(--gray-100);cursor:pointer;transition:background .1s;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:var(--orange-pale);}
+td{font-family:'Inter',sans-serif;font-size:13px;color:var(--gray-700);padding:.6rem .85rem;}
+.td-std{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--navy);}
+.ms-badge{display:inline-block;font-size:10px;font-weight:700;padding:.13rem .42rem;border-radius:4px;font-family:'Barlow',sans-serif;letter-spacing:.3px;text-transform:uppercase;}
+.ms-metric{background:#E8F0FF;color:#1D3557;}
+.ms-inch{background:#FEF3E2;color:#B7610A;}
+.pagination{display:flex;align-items:center;justify-content:space-between;padding:.6rem .85rem;border-top:1px solid var(--gray-200);background:var(--gray-50);}
+.pg-info{font-family:'Inter',sans-serif;font-size:12px;color:var(--gray-500);}
+.pg-btns{display:flex;gap:.4rem;}
+.pg-btn{font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;padding:.28rem .65rem;border:1.5px solid var(--gray-300);background:#fff;color:var(--gray-600);border-radius:5px;cursor:pointer;transition:all .15s;}
+.pg-btn:hover:not(:disabled){border-color:var(--orange);color:var(--orange);}
+.pg-btn:disabled{opacity:.4;cursor:not-allowed;}
+.no-res{text-align:center;padding:3rem 1rem;color:var(--gray-400);}
+.no-res p{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;}
+.no-res small{font-family:'Inter',sans-serif;font-size:12px;}
+/* BEST PRACTICES */
+#bp-panel{display:none;padding:1.25rem 1.5rem 2rem;}
+.bp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1rem;margin-top:.75rem;}
+.bp-card{background:#fff;border-radius:10px;border:1px solid var(--gray-200);overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.bp-head{background:var(--navy);padding:.7rem 1rem;display:flex;align-items:center;gap:.6rem;}
+.bp-head-icon{color:var(--orange);flex-shrink:0;}
+.bp-head-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:#fff;}
+.bp-body{padding:1rem;}
+.bp-section{margin-bottom:.85rem;}
+.bp-section:last-child{margin-bottom:0;}
+.bp-sec-title{font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--orange);margin-bottom:.4rem;}
+.bp-body p,.bp-body li{font-family:'Inter',sans-serif;font-size:12.5px;color:var(--gray-700);line-height:1.55;}
+.bp-body ul{padding-left:1.1rem;}
+.bp-body li{margin-bottom:.25rem;}
+.bp-table{width:100%;border-collapse:collapse;margin-top:.4rem;}
+.bp-table th{font-family:'Barlow',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--gray-500);padding:.3rem .5rem;text-align:left;background:var(--gray-50);border-bottom:1px solid var(--gray-200);}
+.bp-table td{font-family:'Inter',sans-serif;font-size:11.5px;color:var(--gray-700);padding:.3rem .5rem;border-bottom:1px solid var(--gray-100);}
+.bp-table tr:last-child td{border-bottom:none;}
+.bp-badge{display:inline-block;font-size:10px;font-weight:700;padding:.12rem .4rem;border-radius:3px;font-family:'Barlow',sans-serif;}
+.bp-green{background:#E8F5EE;color:#1A8A4A;}
+.bp-amber{background:#FEF3E2;color:#B7610A;}
+.bp-red{background:#FDECEA;color:#C0392B;}
+.bp-blue{background:#E8F0FF;color:#1D3557;}
+.bp-intro{background:var(--orange-pale);border:1px solid var(--orange);border-radius:8px;padding:.75rem 1rem;margin-bottom:1rem;font-family:'Inter',sans-serif;font-size:12.5px;color:var(--navy);line-height:1.5;}
+/* MODAL */
+#modal-overlay{display:none;position:fixed;inset:0;background:rgba(18,36,58,.75);backdrop-filter:blur(4px);z-index:2147483647;align-items:center;justify-content:center;}
+#modal-overlay.open{display:flex;}
+#modal-box{background:#fff;border-radius:14px;width:92%;max-width:640px;max-height:88vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.25);}
+#modal-hdr{background:#fff;border-bottom:4px solid var(--orange);padding:.8rem 1.2rem;display:flex;align-items:center;gap:.7rem;flex-shrink:0;}
+#modal-hdr img{height:34px;}
+.mdiv{width:1px;height:26px;background:var(--gray-200);}
+#modal-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;color:var(--navy);flex:1;}
+#modal-close{width:32px;height:32px;border-radius:50%;background:var(--gray-100);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--gray-600);flex-shrink:0;transition:all .15s;}
+#modal-close:hover{background:var(--orange);color:#fff;}
+#modal-body{overflow-y:auto;padding:1.2rem;flex:1;}
+.m-sec{margin-bottom:1.1rem;}
+.m-sec-title{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--orange);margin-bottom:.5rem;padding-bottom:.3rem;border-bottom:1px solid var(--gray-100);}
+.m-grid{display:grid;grid-template-columns:1fr 1fr;gap:.45rem;}
+.m-row{display:flex;flex-direction:column;gap:.12rem;padding:.45rem .55rem;border-radius:6px;background:var(--gray-50);}
+.m-lbl{font-family:'Barlow',sans-serif;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--gray-400);}
+.m-val{font-family:'Inter',sans-serif;font-size:13.5px;font-weight:600;color:var(--gray-700);}
+.m-val.big{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;color:var(--navy);}
+.mat-list{display:flex;flex-direction:column;gap:.3rem;}
+.mat-item{font-family:'Inter',sans-serif;font-size:12px;padding:.28rem .6rem;background:var(--gray-50);border-left:3px solid var(--orange);border-radius:0 4px 4px 0;}
+.tol-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.45rem;}
+.incomplete-note{background:var(--orange-pale);border:1px solid var(--orange);border-radius:6px;padding:.45rem .7rem;font-family:'Inter',sans-serif;font-size:11px;color:#B7610A;margin-bottom:.7rem;}
+#modal-ftr{padding:.8rem 1.2rem;border-top:1px solid var(--gray-200);display:flex;justify-content:flex-end;gap:.5rem;flex-shrink:0;flex-wrap:wrap;}
+.btn-o{font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;padding:.45rem 1rem;background:var(--orange);color:#fff;border:none;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:.35rem;transition:all .15s;text-decoration:none;}
+.btn-o:hover{background:var(--orange-light);transform:translateY(-1px);box-shadow:0 2px 6px rgba(232,119,34,.3);}
+.btn-n{font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;padding:.45rem 1rem;background:var(--navy);color:#fff;border:none;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:.35rem;transition:all .15s;text-decoration:none;}
+.btn-n:hover{background:var(--navy-dark);}
+.btn-g{font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;padding:.45rem .9rem;background:var(--gray-100);color:var(--gray-600);border:none;border-radius:6px;cursor:pointer;transition:all .15s;}
+.btn-g:hover{background:var(--gray-200);}
+.reset-btn{font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;padding:.28rem .8rem;border:1.5px solid var(--navy);background:#fff;color:var(--navy);border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:.3rem;transition:all .15s;}
+.reset-btn:hover{background:var(--navy);color:#fff;}
+#disclaimer{background:var(--gray-50);border-top:1px solid var(--gray-200);padding:.6rem 1.5rem;text-align:center;}
+#disclaimer p{font-family:'Inter',sans-serif;font-size:11px;color:var(--gray-500);max-width:900px;margin:0 auto;}
+#disclaimer strong{color:var(--navy);}
+@media(max-width:700px){.filters-row{grid-template-columns:1fr 1fr;}.mode-tab{font-size:11px;padding:.6rem .7rem;}#main-content,#bp-panel{padding:.75rem;}td,th{padding:.5rem .55mm;font-size:12px;}.m-grid,.tol-grid{grid-template-columns:1fr;}}
+/* BETA MODAL */
+#beta-overlay{position:fixed;inset:0;z-index:2147483646;background:rgba(18,36,58,.82);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:1rem;}
+#beta-box{background:#fff;border-radius:14px;width:92%;max-width:520px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.35);}
+#beta-hdr{background:var(--navy);border-bottom:4px solid var(--orange);padding:1rem 1.4rem;display:flex;align-items:center;gap:.75rem;}
+#beta-hdr svg{color:var(--orange);flex-shrink:0;}
+#beta-hdr-text{flex:1;}
+#beta-hdr-org{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,.65);margin-bottom:.15rem;}
+#beta-hdr-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:#fff;line-height:1.1;}
+.beta-pill{display:inline-flex;align-items:center;gap:.3rem;background:var(--orange);color:#fff;font-family:'Barlow',sans-serif;font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:.22rem .65rem;border-radius:20px;margin-bottom:.85rem;}
+#beta-body{padding:1.4rem 1.5rem 1.2rem;}
+#beta-body p{font-family:'Inter',sans-serif;font-size:13px;color:var(--gray-700);line-height:1.6;margin-bottom:.75rem;}
+#beta-body p:last-of-type{margin-bottom:0;}
+#beta-ftr{padding:.9rem 1.5rem 1.3rem;display:flex;justify-content:center;}
+#btn-beta-continue{font-family:'Barlow',sans-serif;font-size:13px;font-weight:700;letter-spacing:.3px;padding:.65rem 1.75rem;background:var(--orange);color:#fff;border:none;border-radius:7px;cursor:pointer;display:flex;align-items:center;gap:.45rem;transition:all .15s;box-shadow:0 2px 8px rgba(232,119,34,.35);}
+#btn-beta-continue:hover{background:var(--orange-light);transform:translateY(-1px);box-shadow:0 4px 14px rgba(232,119,34,.4);}
+</style>
+</head>
+<body>
+<!-- BETA MODAL -->
+<div id="beta-overlay">
+  <div id="beta-box">
+    <div id="beta-hdr">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <div id="beta-hdr-text">
+        <div id="beta-hdr-org">Specialty Bolt and Screw</div>
+        <div id="beta-hdr-title">Flat Washer Reference Tool</div>
+      </div>
+    </div>
+    <div id="beta-body">
+      <div class="beta-pill">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Beta
+      </div>
+      <p>This tool is currently in beta. Dimensional data is drawn from published standards and has been carefully reviewed, but some entries are still being verified and additional standards will be added over time.</p>
+      <p>We invite you to use the tool and welcome your feedback. If you spot an error or a missing standard, please contact the SBS team so we can improve the data.</p>
+      <p>Thank you for helping us build a better resource for the fastener community.</p>
+    </div>
+    <div id="beta-ftr">
+      <button id="btn-beta-continue">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg>
+        I Understand — Continue to Tool
+      </button>
+    </div>
+  </div>
+</div>
+
+<header id="sbs-header">
+  <div class="logo"><a href="https://shop.specialtybolt.com/" target="_blank"><img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCABkAUQDASIAAhEBAxEB/8QAHQAAAQQDAQEAAAAAAAAAAAAAAAUGBwgBBAkDAv/EAFQQAAEDAwEDBggHDAcGBwEAAAECAwQABQYRBxIhCBMYMUFRVmFxgZGTlNIUIjI3obHRFRZCUlRVdYOVssHTFyN0kqLC4TNDU3KCsyU1OGJ2w+Lw/8QAGgEAAgMBAQAAAAAAAAAAAAAAAAQBAgMGBf/EADkRAAEDAgQBCgQFAwUAAAAAAAEAAgMEEQUSIVEUEzEyQVJhcYGRsSKh0fAVM2JywVPh8QYWIzSC/9oADAMBAAIRAxEAPwC5dFFJ98mT4Mbn4VtVP0+UhCwFeYHrqr3hjS4qzGF7soShRUZytqyYzymXrFIacSdCla9CPorwO11HZZVeu/0ryjjtADYyfI/RekMFrTqGfMfVSnRUVHa8eyyD1/8ApXwdrzvZZEe0f/mq/wC4MP7fyP0VvwOu7HzH1UsUVEp2vSOyyN+0H3a9o21C7ylhEbG+dUeoJcUf8tA/1BQE2D/kfog4HWgXLfmPqpUoplW+/wCbTeKcUbYT3vSNz6xTjt5viyDPRBZHaGlqWfpAp6GsZN0QfMEe6SlpXRdIj1B9kpUV8LdbbGrjiEjxnSk6bkNjhcJV1iNHuLo1ph8rGC7iAsWRvebNF0qUU0Zu0bFoxKRNW8of8NskHz9VIkva1bxqmHa5LquzfUEg+jWkJMXoo+lIPLX2TkeF1cnNGfPT3Uk0U3sTuV/u7YmXC3s2+KoaobKipxfj7NBThp2GYTMD2g2O+iUliMTsjufu1RRUe7X9rmL7NWGk3ZT0me+neZhxwC4od514AeWoSm8r18PEQ8KbU1rwLs4hXoCDTbKeR4u0JV88bDYlWvoqpPS9uXgRF9vV7lHS9uXgRF9vV7lX4ObZU4uLdW2oqpPS9uXgRF9vV7lfTfK9n745zCI+726Tzr+5Rwc2yOLi3VtKKhbZTyicSza7M2aVHkWa5PkJZQ+QptxX4qVDt8ulTTWL2OYbOC2Y9rxdpRRVYs45Uc/HcuuljbxCPIRBkKZDqppSV6dum5wpG6Xty8CIvt6vcrYUkpF7LI1UQNrq21FVJ6Xty8CIvt6vco6Xty8CIvt6vco4ObZRxcW6ttRVSel7cvAiL7er3KByvbjrxwiL7er3KODm2RxcW6ttRUBbNuU7i+SXRi1Xy3PWKQ+oIbdU4HGCo9QKuBHlI0qfdRprqNOvWsXxujNnBbMka8XaUUVBe07lK4nid3kWe2QpF7mx1FDqmlBDKFjrTvHrPkBqPlcr24bx3cIjadms8+5WraWVwuAs3VMTTYlW1oqpPS9uXgRF9vV7lHS9uXgRF9vV7lTwc2yrxcW6ttRVSel7cvAiL7er3K2bfyvHDISLhhaUs6/GLE3eUPICkD6aOEm2RxcW6tbRTH2TbUMY2k252RYnnG5MfT4REfG661r1EjqI8Y4U+KXc0tNimGuDhcIoooqFKKKKSskevkeLztlixpSwDvIdWUq83ZVJHiNpcRe22qvGzO4NB9VjIMctF9ZKLhEQtemgdSNFp89Rfkey65xXecs7qZjJPyVHdWn7a171n+ZMPuRZKUQVg/J5nRQ8hNNyblOQzE7si7ylDuC9Pqri8TxLDakkOjObfQH78Qutw6gxCnAyyDLtzj7804YmzW59dxuMCD4lugn6K3msWwW3qP3TyUSFpHFDagn7ajx+Q++dX33XT3rWT9dedeM2spY+hAD+4k/LQL1TS1MnTmt4AD6lSi1e9mtqSDEti5bie1bZOv8Ae4Vl7arEjt7lrsSW09ylBA9Cai2tyDa7lOUlMSDIeKuopbJHp6q3bjNX0YQG/taP7rJ2E03SmJd4lPCbtTyB1R+DsxI6e7cKj6aRJmbZRK3g5dnkpP4KAEj6BW/bNnGTTNFORm4qSePOr0I8wpxxNlkOMkLvF8Qjj1I0SD51VuIcYqtSXAd5sP4WJlwqn0AbfuF/qo1k3CfJGkmbIeHct0q+uvJiPIkK3WGHHT3ISTUvIt2zOylSX348hxPHRxwuHzacK+3do+KW5Glst7iz1aNtBv6ar+ERtN6moaPA3Kn8Ue7SngcfHQKPrZg2Tz9C3bHGkkahTx3B9NSVg2z2HZ9ybcwiVN6wnrQ35O803p+1uWoqEK1tISepTqySPRwpIRm2aXyUiFBf3XVnRKWGwD5zTVM/CaSQFmaR3Vp/GiXqGYnVMIfZjevX/KnOimzh+Oy7eBOvFwfm3BY47yzuN+IDq89Oau0gkfIwOe3L3LkZmNY/K11+9c9OU7dn7ttsyFTrhUmK/wDBmwT1JQNBUr7KuTdjeW7P7RkUu+XBh+dHDq220JKUk9gqFNvPzyZV+kXKu5yb/mSxf+xJr2p3ujhblNl40DGySuzC6jXol4n4R3T1afto6JeJ+Ed09Wn7asbRSXEy9pO8NF2VXLol4n4R3T1afto6JeJ+Ed09Wn7asbRRxMvaRw0XZXMTIon3tZzcYMN5ZFruLjTTh4KPNuEA+XhXSjEprlyxW0XF06uSoLLy/KpAJ+uo5icn3Z2MhnX26QX7rLmSnZLiZDh5sFayrQJHdrUqQ47EOIzEjNJaYZQlttCepKQNAB5BWlTO2UADqVKaB0RN+tc3Ns/zq5L+kHPrqYdhfJ/x/PtnkXJJ95nRX3nXEFtpCSkBJ0HXUPbZvnVyX9IOfXVxuRz8xtu/tL/71OVD3MhBadknAxr5SHBNTol4n4R3T1afto6JeJ+Ed09Wn7asbRXn8TL2k/w0XZVcuiXifhHdPVp+2kzJuSZa0WeS9Y8klmc20pTTb7SdxxQHAEg6jWrQV8PqShhxayEpSkkk9QGlSKqW/Og00Wy5WjVKu0KB9FdBrDkstHJpYyV1wqlM2AuFZ6ypCCnU+PhrXPt8gvuEdRUdPTV44Da0cjNxCgQr73HjofGFEU9WAEN8UjRkgu8FTDFLem/5bb7bKeWkTpSW3HBxV8Y8T5atkOSVienHI7of1aftqrey35xsf/t7X7wrpjVayV8ZGU2VqOJjwS4KuXRLxPwjunq0/bR0S8T8I7p6tP21Y2ikuJl7Sc4aLsquR5JeJ6cMjug/Vp+2mntc5OGPYbs6u+TQ79PkPwGkrQ042kJVqtKePH/3VbmkPPcaiZhiM/G57zrMaclKHFt/KAC0q4f3dKsyqkzC50VXU0eU2GqpDyRLtItm3SzMNOFLNwQ9FfSD8pJbUof4kJNX6qPMC2MbP8LmMz7RZt+ewoqalyHCtxBI0Oh7OBNSHUVMrZX3apponRMs5FFFFLphFFFYVrund0B04a0ISfe7JbLzHLFxiNvDsUR8ZPkNRhlOy2XHUp+xu/CG+vmXDoseQ9tKOd3faBaFrcTzHwLsejM6gDx66lNR1PyO+zhpKustwdxcOlcbjNbQvcWSwuzb8x9etdXhNHWMaHxSjLtz/LqS2xgMxHxrrdbbbkgakLeClDzVtN2jALeAqdfZFwWPlIjoIH/956Y61rWdVrUo95OtfNc8KuCPoQj/ANEn6D5L3jTTP6cp8gB9SpCbyrC7Wf8AwrGS+tPyXXyNfPrrXlK2o3go5uBChQ09m6jX66YVb9ust2uJAhW6U+D1KS2d309VatxSsd8EWnc0AewusnYdSN+KXXvcSfdKU/NsnmFXOXV5CVdaW/ij6KRJEuVI/wBvJed/51k08LZsyyWXuqkIYhpPXzi9VDzDX66cMXZfaISQ5er54yAUtJPprUYbiVV8TwbfqNvdZHEMPp9GEX/SPooorYhwZsxW7EiPvnq/q2yr6ql1pvZjZOtyE84njqSXjr9Ir6kbTcZho3IEKQ7p1BLaUJ9P+latweCP/sVDR3DVZnFZpPyIHHx0TFtWzzJpy078MRWyRqp5QHDyCpew/FrdjcINx0ByQof1r6h8ZR/gKYU7a5KUdIVpZQO91wq+rSkV/aHltweDEZ5LanDolDLQ3ie4dtP0lVhOHuzR3e7e3tzJKppsTrW5ZLMbtf351OtFNDCLDd2kouWR3GTJlkaoZU4Slr7TTvrrqeV8rA9zct+o8/muXnjbE/K12a3WOZUB5V+PSrHtlu0h1pSY9yUJTK9OCt4cQPIa2cM5Q+b4pjEHH7cxblRYTQaaLjWqtB3mrp51hOM5tbhAyS1MzW08W1Hgts96VDiKieZyVtnTzxWzKvMZB6kIfCgPOoE17DKmJzA2Qcy8l9NI15dGedQ50qNon5NafUUdKjaJ+TWn1FS70UcA/Ol89aj3aOijgH50vnrUe7U8rS7KOSqd1EXSo2ifk1p9RX03yqdoSVgqiWlQ7RzJGv01LfRRwD86Xz1qPdo6KOAfnS+etR7tHK0uyOSqd0h7M+VQzdLzHtmXWZmAiQsNplxVkpQTw1Uk9nkqzaFJWgLQoKSoagg8CK5iZzambBmt4s8RbimYE51hpSz8YpSsgE+PhXQ7YzcHbrsrxuc8oqccgNhRPbujd/hWVXC1gDm9a0pZnPJa7qVA9sYI2p5ID+cHPrpxYBtxznCMaax+xvQkwmlqWkOx0rVqo6niab+2f51cl/SDn11Ynkz7I8By7ZTEvV/saZc5yQ6hThdWnUJVoOANOyPY2IF4uEnG17pCGGxUbdJ/ah+UW32NNHSf2oflFt9jTVlej7sn8GEevc+2jo+7J/BhHr3PtpXl6fsprkKjtKtXSf2oflFt9jTSVlXKE2lZDZJFok3OPHjyUFt0xo6W1qSesbw4gEcKtV0fdk/gwj17n20l5PybdmlxtEhi3Wx22TC2eZkNPrO4rTgSknQjxVLZ6e/RUGCot0lWfYdsZuW0O4MyHbjBiWtCgp8CQlUgo7dGwdRr1amru5FjcaRs6m4rBbDUZVtVDZQPwU7m6kfVXOSy3a9YfkyZlsmOw7hBfI3m1afGSdCD3jhXR3ZxkKcswWzZEEhBnRUuLSOoL6lAeLeBqK0PBDr6Ioiwgttqub0R64YtlLbymean2yVqW3E/JWg9RHlFTJ0qNon5NafUVZnaFsYwDN5qp93tHNzlfKkxllpav+bTgrz0xFclLZ+VEi53wDu55HD/AA1c1MMgBeNVUU00Zsw6KIelRtE/JrT6ijpUbRPya0+oqXeijgH50vnrUe7R0UcA/Ol89aj3ajlaXZTyVTuoi6VG0T8mtPqK2IXKtzxl0Kk2y0SUdqS2pP0g1KvRRwD86Xz1qPdpsbVuThhmK7O71kNvuN3clQY3OtpdcQUk6gcdE+OpD6ZxtZQWVLRe6knYPtxtO0t9y0vw/uZe2mud5jf3kPJHWUHxa9R8tS9XObk83J217bMTkMrKS5cm4ytD1pdPNkehddGaWqoRG/4eYpmllMjPi50UUUUqmUUUUHiOvShCwpKVJKVAKB6wR10w8y2c2i4JXLt7jdtk9Z7GlHxjs8orGZ2PN3N960ZC8+118wN1lYHcCkAH6KiO9Ju7cpTV3MwPpPESCon6a5bGcRY0cnPTkjc6ehF10mE0L3HPDOAdh/INktJxFiOsi6ZNZoiQdCG3ueX/AHU1sNMbPYHGROul2WOxprm0H06H6aZ1Fck2qjZ0Ih53P82+S6c00j+nIfKw/v8ANPxrM8dt3/k+IRkrHyXZC95X1a/TXlM2nZI6N2MIcNPYGmdf3taaESDNlrCIsR99R6g22VfVTgt2AZVN0ItimEnteUEaeY8abjrMRmGWG9v0i3sEtJS0ERvLa/6jf3K0Z2WZJN15+8yyD1pS4Uj0DSkh1511RU46tZPapRNSPA2TTDoq43eMwO0NJKz9OlKzOC4PbAFXO6c6R1h2SltPoGh+mtfwfEJvimNu9zv8rL8VoYdIhf8AaFD9bkC1XOeQINvlSde1tpSh6QKmBq6bM7Np8HTbyodSkMl5X97Qn6axK2p46wN2NHmPgdW62Ej6SK0bg9LH+fUt8Br9+izditS/8mnPnp9+qYdu2cZVL0K4bcVJ7X3QPoGp+ipKwLB4mOo+EySiVcFDi5p8VA7k6/XTal7XesRLL5C6/wDwA/jSaNpeVXGSmNbocRLjh0QltpS1H0n+FPUsmD0bw5hL3dWntoAlKmPFatha8BrfH+5Uz0n5JdWrHYJ14faW63DYU8pCPlKCRroNaSsTt+SaJm5HdluOkapitJSlCP8AmIHE+KlLK7ebrjF0tqRqqVEdaT5SkgfTXX08plaHOaW36jzrlZ4xG4tDgfDmVZJXKvulyvcOBYsViRGX5LbRclvqdXopQBICd0A8fHVq2FlbDaz1qSCfRXL0okWDJQmQyeft8sFTavi6lCurxdVWNa5XdxbaQ395EU7qQNfugrs/V1689Je3JheVBVWvyhVuKKqT0vrl4Dxf2ir+XR0vrl4Dxf2ir+XS3BzbJji4t1baiqk9L65eA8X9oq/l0dL65eA8X9oq/l0cHNsji4t1BW2H51co/Ssj981e3k8a/wBCmLa9fwL/ADKrn7klyeybLZ91TG5p65TFvBlJ3t1S1E7oPb110c2XWh2xbO7DaX07rsaC2lxP4qiNSPMSaZrdI2hLUesjiufe2f51cl/SDn11cTkbfMbA/tT/AO9VPNtAI2rZKD+XufXUibH+UPJ2eYSxjLeKtXFLLq3OfVNLZO8ddN3cP11rPG6SEBvcs4JGxykuV46KqZ0v5ngIx+0z/Lo6X8zwEY/aZ/l0jwk2yd4uLdWzrCvknyVU3pfzPARj9pn+XSbkvKzyGfaH4lnxiHa5LqChMlcovFvUaapTupGvdrqPFUijlvzINXFuoDzBSV5beFpOqVT3yD4ucVVtsO2nRNl/Jlw27SrW/c1Si7HabbdDYCucdVqSQeHDuNU5YZfmSkMsoW8+8vdSlI1UpRP0mrX7cMCuFr5KWOW9bKjKsam5MlAGpRv72+P+kucfJT1QGnI126Qpy4ZnN2Tg2F7eL5tJ2jKsb9mgW63iM46AhSlu6jq1USB/hqwVc4NjG0F7ZtlpyBi2IuKiwpnmlvFsfG7dQDU09L65eA8X9oq/l0tPSOLv+MaJmCraG/GdVbaiqk9L65eA8X9oq/l0dL65eA8X9oq/l1jwc2y24uLdW2pg8on5ksq/sJ/eTUD9L65eA8X9oq/l0g7QOU3Py7DLpjbmIx4iLgzzReTOKyjiDrpuDXq76uyklDgSFV9VEWkAqKtjHzv4b+nYX/fRXSmueXJksci+7bccbZbUpuHJE15QHBCWhvgn/qCR5SK6G1evPxgKlCPgJRRRRSCeRRRWtcLhAt6ErnzY8VKjokvOBAJ8WtCFs1p3W1266xyxcIjUhHZvp4jyHrFeyZcVUP4YmSyY27v88Fjc3e/Xq0rxgXW2T1qRBuMSUtI1KWXkrIHmNQ5geCHC4UteWkFpsU0k7LsbEpTpVMLZOoa5waDz6a0uW7D8agaFi0RyofhODfP+LWlCddrVAdDU25Q4zhGoS68lBI79Ca2mHmn2UvMuocaUNUrQoFJHeDSkeG0sRu2MDyTUmIVMgs6Q+q8VxSG+bjOCKgdQaQBp/Ck2TYHpOodv92APY2tCPqTW41erO9LERq6wXJBO6GkvpKie7TXWtvn2fhHwfnW+e3d7m94b2736d1bvgY/Rw91gydzdQfZNORs+tknX4TdLy8D1hcvX+Fa39FuM9qpx/XD3aecqVGipQqVIaYStQQkuLCQpR6gNe2vVSglJUogADUk0q7C6NxuYwUyMSqm6CQpkjZfjA/LT+uH2V9DZji4/Aln9d/pTyYeakMoeYdQ60sbyVoVqlQ7wRWjIvtkjPrYkXiAy6g6KQuQhKknxgmgYTR/0h6IOJ1f9Q+qbo2Z4sP8AcyT+u/0pax3GLNYd9VuiBDi+txR3lad2vYK303K3qiolJnRlR3FbqHQ6ncUddNAddCda9nJDDbzbLjzaHXdebQpQCladeg7a0iw+midmZGAfBZyV1RK3K95I8V6UUVopvNoVL+BpukIyN7d5oPp39e7TXXWm7Ja6jvabsJwXOrg5dJceRb7k58uREUE84e9SSCCfRUcr5IthKiUZhPSnsBiJP+arLOuNtNqcdWlCEjVSlHQAeM1qwLra57im4NxiSlpGqksvJWR6DWzZ5WiwKxdBE43IVcTyRLL2ZnO9iT79Y6Ilm8M5vsSffqy632UPtsLebS64CUIKgFKA69B26aivmZKjQ2DIlyGo7KdAVurCUjXxmrcVNuq8NFsq1dESzeGc32JPv19p5ItiB+NmE8juERI/zVYiNfLLJfSxGu8B51Z0ShuQlSlHxAGlCjipt0Cmh2URbOeT5gWG3Jm6hqTdZ7J3m3JigUIV+MEAaa+XWpdrVcuNvbmphOToyJSvksqdSFnyJ11rarJ73PN3FbMY1os0KvWY8l605HlFxvruWTI65z6nlNJiJUEk9mu9xpJ6Ilm8M5vsSffqysyVGhsF+XIajtDrW6sJSPOaxBmRJzPPQpTMlrXTfaWFDXyitRUygaFZGmiJ5lWvoiWbwzm+xJ9+joiWbwzm+xJ9+rGzbzaIT/MTLpCju/iOvpSr0E17TJ0KHHEiXLYjsqIAcdcCUknq4mp4mbdRw0OyrZ0RLN4ZzfYk+/XtG5I2PIcBkZbcXU9oTGSknz7xqxsGbDntF2FLYktg6FTTgWAe7UVru3yytSVRnbtAQ+lW6W1SEhQV3aa661HEzbo4aHZMbZxsSwHBZaJ9stq5dwRxRKmL5xaD3pGgA8umvjqQ5sWNNiOw5bDb8d5BQ424nVK0nrBFfS5DCJCI6nm0vOAqQ2VDeUB1kDt0rDcqM44823IaWtkgOpSsEo1Go3h2cO+sXOc43JWzWtaLAKCsp5LWBXSU5Jtcy42crUSW21BxtPkB4j00gHkiWTszKd7Gn3qstHeZkMpeYdQ60rilaFApPkIr7rUVMo0zLI00R1sqydESzeGc32JPv0dESzeGc32JPv1ZcPsmQY4ebLwTvFveG8B36d1YbkxnZDkduQ0t5rTnG0rBUjXq1HZU8VNuo4aLZVr6Ilk8Mp3safer2h8kfG0PJVKyq5PNg8UojoQT59TVj2X2Xt/mXW3NxRQvdUDuqHWD3GtSbebRCf5iZdIUd38R19KVegmjiZj1o4aEdSbmzLZniWzuI6zjkBSHnwA9KeVvvOAdQKuweIAU8qwkhSQpJBB4gjtrNYOcXG5W7WhosEUUUVClFRttNxu8O5lbMvg2eHkcWFBdiv2mSoDTeUFc81vfFK9Bu6HsNSTTdyfFUXyciWL5ercoNBlaIUtTaFpBJ4gdvxjx66ux2U3VHi4TXv14tN+5PF5uljimLAds0pLccoCC0UpWlSNBwGigoU3dndmnXW+4derdia8ciWyABMlLCG1TQpkAJCU/KGuitTUnMYjZI+ELw6PHU1aVxVxi2lZ3ileu8d7r3iSST3mla2w2bfbo0COCGYzKGWwTqd1IAH0Cr8oACAq8mSQSojyyNKk7d5SYuLwMgULC2S1LcQgNjnflDeB49lLu2GbOtGycCI0m0qedYjPpjqGkZtawF7pHAaA9dLt+we33bIjfxcbtAnmOIynIUtTW82DqAdPHSs5Y4MjHVWK485cYi2i078KXzi3Afxies+OjOPh7lGQ69608ew/FbRFh/cyzQEmOApp8NJLhOnyt/rJPfr2033v/AFBM/wDx3/7lUo49gcaxy464d/v6okY6swnZylspHdoeseKltVhgKylOSFK/h6YnwQHeO7ze8VdXfqeuq5gCdbq2U2GllDXKGnwb3lLWLyFTdy221yahUVhbpTNV/sN7dHDTdJ/6qkfDchRlOyWPfBwckW5fPJ003HEpKVp8ygRS5Z8et1ru91usdLipd0dS7IWtW98lISlI7gAOqvKw4va7Jb7jAgIdRGnyHpDjZWSEqd4rCfxRqSdPHVi9paBsoDHBxO6RthXzO4n+imP3BTe2z2Cxrv2EyVWiCp6VlDCJCywkqdSWndQo6cRwHX3U58UwKFjRhIt15vpiQkbjMR2cpbITpoE7p7B/ClnILBb74/a3pyXFKtk1E6NuqI0dSlSRr3jRR4VGcB+YIyEssVo5XiFqvWGysbbjNQ47iCWOZQEBlwHeStIHUQrQ0y9jrVzyq6OZfk3NqmWnftEVCTqkLbO6895VkDyDWpXpKxiwW/HYciJbkrS3IlOy176t4844reV5tagPs0hWLLuBSrVX5keZ96+QTfvdhi3x8kcdk3pK0/CYyEuJ1KEgbx06uvtq0FMNeyvH3HJSHpt2cgypRlPQDLUI63CdSSntGo6qtE8N51WVhdzJN2uPon/eVZXJDgs14uCUTF7xTzqA3vIQo9yjpqO2tTatZrVjM7Er3jkKPbbmLzHhBMVARz7C9Q4hQHygBx1PVpUhZLjdoyGyfce5xt+KCkthB3VNKT8lSSOII7CKR7Ns/tcK8xrvMn3S7y4gKYip8lToY14EpB4A6dvXQ14AChzCSUm5h89WDf2O4/UzT5uMGFcoiolwiMyo6iCpp5AUk6HUcDSHl2HW/JLjbrjImXCHMt6XEx3ocgtKAc3d4ajr+SKVbBbBaLcmGJ02booq52W8XHDr2bx7KoSCBbqVwCCbqOdh1isrc7M5Ldpgpei5bMbjuBhO80kJb0CTpwA1PV31KiiEpKidABqaS8dsFvsKrmq3pcSblPcnyN5RVq64EhRHcPijhSqQCNDxBoe7MboY3KLKtsiW3Oz6Rfbi23Dxa4XlL8a8up1e52MAnmQr/doUpB0J6+PfU+Yhek5FjkO9IiOxW5aC4224dVbupCT5wAfPTWmbJsalsyYL0i5m0yX1SHLYJShGLijvEhPZx46d9PKw21mz2eLa47jzjEVsNNl1e8rdHAAnt0HCryPa4CypGxzSbpp7XcZuuQRbTKtTUSa5bJnwldvlq0ZljTTdUe8dY1rGE5FBmYpe1Wmwiy3C1qdRKt4bSAh8IKh8ngQeHEU4cosAvrTCRdbnbnGFFSXIUgtKOo0IOnWK+cRxi2YxBfjQOecXJdL0l99wuOPLPWpSj11XMMtirZTmuEytjON49eMCh365wYl2ud0QX50mU2HVlwk6p1VruhPVoOqscoVARaMTQ1bUTwnI4wTEOgS78Rz4vHh6aWTs1tUeZIfs92vVmakuF16NBmKbaUo9ZCfwdfFThvuO2+9N2xE8Or+5stuYwQsg84gEAnv+UatnGfNdVyHJlso/2LpS9neaTE2sY+pLkaO5Zhp/VqSgnnvi/F+OFDTTsTSLs8hS5GWZk43hVru7H33SgudIdQHGuDeoAUkk6Dj19tS3Ex+3xconZGwlxM6cw0xI+Od1aW97cOneN4jWkBOzm3M3S4T4N6v0A3CYubIajTlIbU6rTeVujv0HoqeUFz5KOTNgk3a8U2fJcMzAkJRAuZhyVngEsyUFsk+IL3Ki2DdpuNC+ZCXHA9m9sflREn/jB8oZA/VOJ9FWBzLHLZluOSrBeG1uQ5ITvhCilQKVBQII6iCBSfd8Cxy6Jx5MqKopx9xtcAJWQE7iQEg944Dge6hkjQLH7+yh8bibj7+wlLDLO3j+J2uytAAQ4rbR07VAfGPnOppWpMyWyx79b0wZL0hpoPIdJZWUFW4oEAkdh040p1iTfVbDTRR9bvn/ALt+gmf+4aYMwXKwbTsuz22h15u3T2mLnFTx52IppJKwO9BO95NampmwwGspfyNKXPhz8ZMVZ3vi7iTqOHfrWLfj1thTrtMbaKl3ZYXLSs7yVEJ3dNO7QVqJAPRZGMn1TE2TXIOY5ml3tZTJCrxOkRt3iHOtSfTwrOxfGsdu+z2BfrlCiXe53Zr4RPlSkB1anVE7ydVa6BJ1ToNNNKeOD4jZcNtb1tsbK2Yrshb5QpZVopR1OmvZ4qRv6NLVHlyHbNdr1ZWJLhdeiwZim2VKPWQn8HXxUF4N7aIDCLXCe6EpQkJSAlIGgA7BWaSrzYo91cta35Mts22UmU3zTxTzikpIAXp8pPHqNKtZLVFFFFQpRRRRQhFFFFCEUUUUIRRRRQhFFFFCEUUUUIRRRRQhFFFFCEUUUUIRRRRQhFFFFCEUUUUIRRRRQhFFFFCEUUUUIRRRRQhFFFFCEUUUUIRRRRQhFFFFCEUUUUIX/9k=" alt="SBS Specialty Bolt and Screw"></a></div>
+  <div class="hdr-div"></div>
+  <div class="title-block">
+    <div class="tool-title">Flat Washer Reference Tool</div>
+    <div class="tool-sub">Identify standards by measurement, find washers by design requirements, or review selection best practices</div>
+  </div>
+</header>
+
+<div id="sticky-sub">
+  <div class="mode-tabs">
+    <button class="mode-tab active" data-sbs-action="tab-identify">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Identify
+    </button>
+    <button class="mode-tab" data-sbs-action="tab-design">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Design Requirements
+    </button>
+    <button class="mode-tab" data-sbs-action="tab-bp">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>Best Practices
+    </button>
+  </div>
+  <div class="unit-toggle" id="unit-toggle-wrap">
+    <span class="unit-lbl">Units:</span>
+    <button class="unit-btn active" data-sbs-action="unit-mm">mm</button>
+    <button class="unit-btn" data-sbs-action="unit-inch">inch</button>
+  </div>
+</div>
+
+<!-- IDENTIFY FILTERS -->
+<div id="filters-bar">
+  <div class="filters-row">
+    <div class="fg">
+      <div class="fl">Meas. System</div>
+      <select class="fsel" id="f-ms">
+        <option value="">All Systems</option>
+        <option value="Metric">Metric</option>
+        <option value="Inch">Inch</option>
+      </select>
+    </div>
+    <div class="fg">
+      <div class="fl">Standard</div>
+      <select class="fsel" id="f-std"><option value="">All Standards</option></select>
+    </div>
+    <div class="fg">
+      <div class="fl">Screw / Bolt Size</div>
+      <select class="fsel" id="f-thread"><option value="">All Sizes</option></select>
+    </div>
+    <div class="fg slider-wrap">
+      <div class="fl" id="lbl-id">ID</div>
+      <div class="slider-range-wrap">
+        <div class="slider-track-bg"></div>
+        <div class="slider-track-fill" id="sf-id"></div>
+        <input type="range" class="sl" id="sl-id-lo">
+        <input type="range" class="sl" id="sl-id-hi">
+      </div>
+      <div class="slider-labels">
+        <span class="sv sv-min" id="sv-id-lo" data-sbs-action="edit-sv-id-lo">--</span>
+        <input type="number" class="si" id="si-id-lo" data-sbs-action="commit-si-id-lo">
+        <span class="sv-sep">to</span>
+        <span class="sv sv-max" id="sv-id-hi" data-sbs-action="edit-sv-id-hi">--</span>
+        <input type="number" class="si" id="si-id-hi" data-sbs-action="commit-si-id-hi">
+      </div>
+    </div>
+    <div class="fg slider-wrap">
+      <div class="fl" id="lbl-od">OD</div>
+      <div class="slider-range-wrap">
+        <div class="slider-track-bg"></div>
+        <div class="slider-track-fill" id="sf-od"></div>
+        <input type="range" class="sl" id="sl-od-lo">
+        <input type="range" class="sl" id="sl-od-hi">
+      </div>
+      <div class="slider-labels">
+        <span class="sv sv-min" id="sv-od-lo" data-sbs-action="edit-sv-od-lo">--</span>
+        <input type="number" class="si" id="si-od-lo" data-sbs-action="commit-si-od-lo">
+        <span class="sv-sep">to</span>
+        <span class="sv sv-max" id="sv-od-hi" data-sbs-action="edit-sv-od-hi">--</span>
+        <input type="number" class="si" id="si-od-hi" data-sbs-action="commit-si-od-hi">
+      </div>
+    </div>
+    <div class="fg slider-wrap">
+      <div class="fl" id="lbl-th">Thickness</div>
+      <div class="slider-range-wrap">
+        <div class="slider-track-bg"></div>
+        <div class="slider-track-fill" id="sf-th"></div>
+        <input type="range" class="sl" id="sl-th-lo">
+        <input type="range" class="sl" id="sl-th-hi">
+      </div>
+      <div class="slider-labels">
+        <span class="sv sv-min" id="sv-th-lo" data-sbs-action="edit-sv-th-lo">--</span>
+        <input type="number" class="si" id="si-th-lo" data-sbs-action="commit-si-th-lo">
+        <span class="sv-sep">to</span>
+        <span class="sv sv-max" id="sv-th-hi" data-sbs-action="edit-sv-th-hi">--</span>
+        <input type="number" class="si" id="si-th-hi" data-sbs-action="commit-si-th-hi">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DESIGN PANEL -->
+<div id="design-panel">
+  <div class="design-grid">
+    <div class="df">
+      <div class="dl">Meas. System</div>
+      <select class="fsel di" id="d-ms" style="padding:.4rem .5rem;">
+        <option value="">All Systems</option>
+        <option value="Metric">Metric</option>
+        <option value="Inch">Inch</option>
+      </select>
+    </div>
+    <div class="df">
+      <div class="dl" id="d-sz-label">Screw / Bolt Size</div>
+      <select class="fsel di" id="d-screw" style="padding:.4rem .5rem;"><option value="">Any size</option></select>
+    </div>
+    <div class="df">
+      <div class="dl" id="d-id-label">ID</div>
+      <input type="number" class="di" id="d-id" placeholder="e.g. 6.4" step="0.01">
+      <div class="dh">Inner diameter</div>
+    </div>
+    <div class="df">
+      <div class="dl" id="d-od-label">OD</div>
+      <input type="number" class="di" id="d-od" placeholder="e.g. 12" step="0.01">
+      <div class="dh">Outer diameter</div>
+    </div>
+    <div class="df">
+      <div class="dl" id="d-th-label">Thickness</div>
+      <input type="number" class="di" id="d-th" placeholder="e.g. 1.6" step="0.001">
+      <div class="dh">Nominal thickness</div>
+    </div>
+    <div class="df" style="align-self:end;">
+      <div class="dh" style="font-size:11px;color:var(--gray-500);">Fill any combination. Blank fields match all values. Numeric dims match within tolerance band.</div>
+    </div>
+  </div>
+</div>
+
+<!-- TABLE SECTION -->
+<div id="main-content">
+  <div class="results-bar">
+    <div class="rc">Showing <span id="rc-s">0</span> of <span id="rc-t">0</span> results</div>
+    <button class="reset-btn" data-sbs-action="reset">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>Reset
+    </button>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr>
+        <th data-col="ms">System <span class="sa">&#9650;</span></th>
+        <th data-col="std" class="sorted">Standard <span class="sa">&#9650;</span></th>
+        <th data-col="thread">Thread Size <span class="sa">&#9650;</span></th>
+        <th data-col="id" id="th-id">ID <span class="sa">&#9650;</span></th>
+        <th data-col="od" id="th-od">OD <span class="sa">&#9650;</span></th>
+        <th data-col="th" id="th-th">Thickness <span class="sa">&#9650;</span></th>
+        <th style="cursor:default;">Details</th>
+      </tr></thead>
+      <tbody id="tbl"></tbody>
+    </table>
+    <div class="pagination">
+      <div class="pg-info" id="pg-info">Page 1 of 1</div>
+      <div class="pg-btns">
+        <button class="pg-btn" data-sbs-action="pg-prev" disabled>&#8592; Prev</button>
+        <button class="pg-btn" data-sbs-action="pg-next" disabled>Next &#8594;</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BEST PRACTICES PANEL -->
+<div id="bp-panel">
+  <div class="bp-intro">
+    The information below covers key engineering considerations for selecting the correct flat washer. Always verify against applicable standards and consult a qualified engineer for safety-critical applications.
+  </div>
+  <div class="bp-grid">
+
+    <div class="bp-card">
+      <div class="bp-head"><span class="bp-head-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span><div class="bp-head-title">Washer Sizing</div></div>
+      <div class="bp-body">
+        <div class="bp-section">
+          <div class="bp-sec-title">Inner Diameter (ID) Selection</div>
+          <p>The ID should be slightly larger than the bolt shank to allow free assembly. Most standards specify an ID clearance of approximately 5 to 15% over the nominal bolt diameter. Oversized IDs reduce bearing area and can lead to pull-through under load.</p>
+        </div>
+        <div class="bp-section">
+          <div class="bp-sec-title">Outer Diameter (OD) Guidelines</div>
+          <p>Select OD based on the bearing area needed to distribute the clamp load without yielding the mating surface. For soft materials (aluminum, plastics, wood), use large-series washers (ISO 7093, fender) to spread load. For steel-to-steel joints with hardened surfaces, standard OD is generally sufficient.</p>
+        </div>
+        <div class="bp-section">
+          <div class="bp-sec-title">Series Comparison</div>
+          <table class="bp-table">
+            <tr><th>Series</th><th>OD vs Nominal</th><th>Typical Use</th></tr>
+            <tr><td>Small (ISO 7415)</td><td>1.5 to 2x</td><td>Cheese head, confined space</td></tr>
+            <tr><td>Normal (ISO 7089 / DIN 125A)</td><td>2 to 3x</td><td>General purpose</td></tr>
+            <tr><td>Large (ISO 7093)</td><td>4 to 5x</td><td>Soft substrates, load spreading</td></tr>
+            <tr><td>Fender</td><td>6 to 10x</td><td>Sheet metal, body panels</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="bp-card">
+      <div class="bp-head"><span class="bp-head-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span><div class="bp-head-title">Hardness Selection</div></div>
+      <div class="bp-body">
+        <div class="bp-section">
+          <div class="bp-sec-title">Why Hardness Matters</div>
+          <p>Washer hardness must be matched to the bolt grade and joint requirements. A washer that is too soft will embed under load (reducing clamp force). A washer that is too hard may damage coating or plating on mating surfaces.</p>
+        </div>
+        <div class="bp-section">
+          <div class="bp-sec-title">Hardness by Standard</div>
+          <table class="bp-table">
+            <tr><th>Standard</th><th>Hardness</th><th>Bolt Grade</th></tr>
+            <tr><td>DIN 125 A / ISO 7089</td><td>200 HV max</td><td>Up to 8.8 / Grade 5</td></tr>
+            <tr><td>ISO 7090</td><td>200 HV</td><td>Up to 8.8</td></tr>
+            <tr><td>ISO 7091</td><td>Grade C</td><td>General, non-critical</td></tr>
+            <tr><td>ISO 7093-1</td><td>100 HV</td><td>Low strength</td></tr>
+            <tr><td>ISO 7093-2</td><td>200 HV</td><td>Up to 8.8</td></tr>
+            <tr><td>ASTM F436</td><td>38 to 45 HRC</td><td>ASTM A325 / A490</td></tr>
+          </table>
+        </div>
+        <div class="bp-section">
+          <div class="bp-sec-title">Key Rules</div>
+          <ul>
+            <li>Never use unhardened washers (F844, ISO 7091) under high-strength bolts (Grade 10.9 / Grade 8 and above)</li>
+            <li>ASTM F436 hardened washers are required under the turned element (nut or bolt head) when tightening ASTM A325 and A490 structural bolts</li>
+            <li>For stainless steel bolts, match washer hardness to avoid galling</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="bp-card">
+      <div class="bp-head"><span class="bp-head-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></span><div class="bp-head-title">Material Selection</div></div>
+      <div class="bp-body">
+        <div class="bp-section">
+          <div class="bp-sec-title">Common Materials and Applications</div>
+          <table class="bp-table">
+            <tr><th>Material</th><th>Strength</th><th>Best For</th></tr>
+            <tr><td>Low Carbon Steel</td><td><span class="bp-badge bp-amber">Moderate</span></td><td>General, indoor use</td></tr>
+            <tr><td>Steel 140 HV</td><td><span class="bp-badge bp-amber">Medium</span></td><td>Standard mechanical joints</td></tr>
+            <tr><td>Steel 200 HV</td><td><span class="bp-badge bp-green">High</span></td><td>Bolts up to 8.8 / Grade 5</td></tr>
+            <tr><td>Hardened (F436)</td><td><span class="bp-badge bp-green">Very High</span></td><td>Structural, A325 / A490</td></tr>
+            <tr><td>304 Stainless</td><td><span class="bp-badge bp-blue">Corrosion</span></td><td>Outdoor, food, marine mild</td></tr>
+            <tr><td>316 Stainless</td><td><span class="bp-badge bp-blue">Corrosion+</span></td><td>Marine, chemical exposure</td></tr>
+            <tr><td>Brass / Bronze</td><td><span class="bp-badge bp-amber">Moderate</span></td><td>Electrical, decorative</td></tr>
+          </table>
+        </div>
+        <div class="bp-section">
+          <div class="bp-sec-title">Galvanic Corrosion Warning</div>
+          <p>Mixing dissimilar metals accelerates corrosion. Match washer material to bolt material where possible. When mixing is unavoidable, use an insulating washer or dielectric coating between dissimilar metals (e.g., steel bolts in aluminum structure).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bp-card">
+      <div class="bp-head"><span class="bp-head-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span><div class="bp-head-title">Standard Selection Guide</div></div>
+      <div class="bp-body">
+        <div class="bp-section">
+          <div class="bp-sec-title">Metric Standards Comparison</div>
+          <table class="bp-table">
+            <tr><th>Standard</th><th>Series</th><th>Grade</th><th>Notes</th></tr>
+            <tr><td>DIN 125 A</td><td>Normal</td><td>A</td><td>Most widely stocked; German origin</td></tr>
+            <tr><td>ISO 7089</td><td>Normal</td><td>A</td><td>Same dims as DIN 125A; international</td></tr>
+            <tr><td>ISO 7090</td><td>Normal</td><td>A</td><td>Chamfered bore; cleaner seating</td></tr>
+            <tr><td>ISO 7091</td><td>Normal</td><td>C</td><td>Coarser tolerance; lower grade use</td></tr>
+            <tr><td>ISO 7093-1</td><td>Large</td><td>A</td><td>100 HV; soft surface protection</td></tr>
+            <tr><td>ISO 7415</td><td>Small</td><td>A</td><td>For cheese head screws; compact</td></tr>
+          </table>
+        </div>
+        <div class="bp-section">
+          <div class="bp-sec-title">Inch Standards Comparison</div>
+          <table class="bp-table">
+            <tr><th>Standard</th><th>Type</th><th>Key Application</th></tr>
+            <tr><td>ASME B18.22.1</td><td>Plain flat</td><td>General mechanical assembly</td></tr>
+            <tr><td>ASTM F844</td><td>Unhardened</td><td>Light duty, general purpose</td></tr>
+            <tr><td>ASTM F436</td><td>Hardened</td><td>Structural bolting (A325 / A490)</td></tr>
+          </table>
+        </div>
+        <div class="bp-section">
+          <div class="bp-sec-title">Decision Checklist</div>
+          <ul>
+            <li>Is the joint structural or safety-critical? Use F436 or ISO 7089 / 7090 at minimum</li>
+            <li>Is the substrate soft (aluminum, plastic, wood)? Use large series (ISO 7093)</li>
+            <li>Is space constrained under a cheese head? Use ISO 7415</li>
+            <li>Is the environment corrosive? Select stainless or coated washers</li>
+            <li>Does the standard need to match a bolt spec? Confirm HV rating compatibility</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="bp-card">
+      <div class="bp-head"><span class="bp-head-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><div class="bp-head-title">Installation and Inspection</div></div>
+      <div class="bp-body">
+        <div class="bp-section">
+          <div class="bp-sec-title">Correct Orientation</div>
+          <ul>
+            <li>Chamfered washers (ISO 7090): chamfer faces toward the bolt head or nut (turned element)</li>
+            <li>Place the smooth face against the mating surface to avoid damage to coatings</li>
+            <li>Do not stack multiple washers as a substitute for correct thickness selection</li>
+          </ul>
+        </div>
+        <div class="bp-section">
+          <div class="bp-sec-title">Pre-Installation Checks</div>
+          <ul>
+            <li>Verify ID clears the bolt shank and thread runout</li>
+            <li>Confirm OD does not overlap adjacent fasteners or features</li>
+            <li>Check washer is flat and free of burrs or rolled edges that could affect seating</li>
+            <li>For structural joints, confirm F436 is required and verify heat number traceability if applicable</li>
+          </ul>
+        </div>
+        <div class="bp-section">
+          <div class="bp-sec-title">Reuse Policy</div>
+          <p>Hardened structural washers (F436) should generally not be reused after a full pretension cycle. Plain washers in non-structural applications may be reused if undamaged. Inspect for embedding, cracking, or deformation before reuse.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bp-card">
+      <div class="bp-head"><span class="bp-head-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></span><div class="bp-head-title">Tolerance and Fit</div></div>
+      <div class="bp-body">
+        <div class="bp-section">
+          <div class="bp-sec-title">Product Grade A vs C</div>
+          <p>Grade A (ISO 7089, 7090, 7093) specifies tighter tolerances on ID, OD, and flatness, making it suitable for precision and structural applications. Grade C (ISO 7091) has wider tolerances and is used in lower-precision or non-critical general assembly.</p>
+        </div>
+        <div class="bp-section">
+          <div class="bp-sec-title">Tolerance Interaction with Bolt Clearance</div>
+          <ul>
+            <li>The nominal ID in most standards already includes clearance over the bolt shank</li>
+            <li>The upper ID tolerance adds further clearance, which is acceptable for load bearing</li>
+            <li>The lower ID tolerance (typically 0) ensures the washer always clears the bolt shank without forcing</li>
+            <li>For high-vibration environments, smaller ID clearance helps maintain washer position</li>
+          </ul>
+        </div>
+        <div class="bp-section">
+          <div class="bp-sec-title">Thickness Tolerance Notes</div>
+          <p>Thickness tolerance affects joint preload consistency. Thicker-than-nominal washers can reduce effective bolt engagement. For precision joints, verify against the tolerance band in the applicable standard document.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="disclaimer">
+  <p><strong>Disclaimer:</strong> Dimensions are nominal reference values from published standards. Always verify against the official standard document before use in safety-critical applications. SBS provides this tool for reference only. Additional standards will be added as data is verified. Contact SBS for specific procurement requirements.</p>
+</div>
+
+<!-- MODAL -->
+<div id="modal-overlay">
+  <div id="modal-box">
+    <div id="modal-hdr">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCABkAUQDASIAAhEBAxEB/8QAHQAAAQQDAQEAAAAAAAAAAAAAAAUGBwgBBAkDAv/EAFQQAAEDAwEDBggHDAcGBwEAAAECAwQABQYRBxIhCBMYMUFRVmFxgZGTlNIUIjI3obHRFRZCUlRVdYOVssHTFyN0kqLC4TNDU3KCsyU1OGJ2w+Lw/8QAGgEAAgMBAQAAAAAAAAAAAAAAAAQBAgMGBf/EADkRAAEDAgQBCgQFAwUAAAAAAAEAAgMEEQUSIVEUEzEyQVJhcYGRsSKh0fAVM2JywVPh8QYWIzSC/9oADAMBAAIRAxEAPwC5dFFJ98mT4Mbn4VtVP0+UhCwFeYHrqr3hjS4qzGF7soShRUZytqyYzymXrFIacSdCla9CPorwO11HZZVeu/0ryjjtADYyfI/RekMFrTqGfMfVSnRUVHa8eyyD1/8ApXwdrzvZZEe0f/mq/wC4MP7fyP0VvwOu7HzH1UsUVEp2vSOyyN+0H3a9o21C7ylhEbG+dUeoJcUf8tA/1BQE2D/kfog4HWgXLfmPqpUoplW+/wCbTeKcUbYT3vSNz6xTjt5viyDPRBZHaGlqWfpAp6GsZN0QfMEe6SlpXRdIj1B9kpUV8LdbbGrjiEjxnSk6bkNjhcJV1iNHuLo1ph8rGC7iAsWRvebNF0qUU0Zu0bFoxKRNW8of8NskHz9VIkva1bxqmHa5LquzfUEg+jWkJMXoo+lIPLX2TkeF1cnNGfPT3Uk0U3sTuV/u7YmXC3s2+KoaobKipxfj7NBThp2GYTMD2g2O+iUliMTsjufu1RRUe7X9rmL7NWGk3ZT0me+neZhxwC4od514AeWoSm8r18PEQ8KbU1rwLs4hXoCDTbKeR4u0JV88bDYlWvoqpPS9uXgRF9vV7lHS9uXgRF9vV7lX4ObZU4uLdW2oqpPS9uXgRF9vV7lfTfK9n745zCI+726Tzr+5Rwc2yOLi3VtKKhbZTyicSza7M2aVHkWa5PkJZQ+QptxX4qVDt8ulTTWL2OYbOC2Y9rxdpRRVYs45Uc/HcuuljbxCPIRBkKZDqppSV6dum5wpG6Xty8CIvt6vcrYUkpF7LI1UQNrq21FVJ6Xty8CIvt6vco6Xty8CIvt6vco4ObZRxcW6ttRVSel7cvAiL7er3KByvbjrxwiL7er3KODm2RxcW6ttRUBbNuU7i+SXRi1Xy3PWKQ+oIbdU4HGCo9QKuBHlI0qfdRprqNOvWsXxujNnBbMka8XaUUVBe07lK4nid3kWe2QpF7mx1FDqmlBDKFjrTvHrPkBqPlcr24bx3cIjadms8+5WraWVwuAs3VMTTYlW1oqpPS9uXgRF9vV7lHS9uXgRF9vV7lTwc2yrxcW6ttRVSel7cvAiL7er3K2bfyvHDISLhhaUs6/GLE3eUPICkD6aOEm2RxcW6tbRTH2TbUMY2k252RYnnG5MfT4REfG661r1EjqI8Y4U+KXc0tNimGuDhcIoooqFKKKKSskevkeLztlixpSwDvIdWUq83ZVJHiNpcRe22qvGzO4NB9VjIMctF9ZKLhEQtemgdSNFp89Rfkey65xXecs7qZjJPyVHdWn7a171n+ZMPuRZKUQVg/J5nRQ8hNNyblOQzE7si7ylDuC9Pqri8TxLDakkOjObfQH78Qutw6gxCnAyyDLtzj7804YmzW59dxuMCD4lugn6K3msWwW3qP3TyUSFpHFDagn7ajx+Q++dX33XT3rWT9dedeM2spY+hAD+4k/LQL1TS1MnTmt4AD6lSi1e9mtqSDEti5bie1bZOv8Ae4Vl7arEjt7lrsSW09ylBA9Cai2tyDa7lOUlMSDIeKuopbJHp6q3bjNX0YQG/taP7rJ2E03SmJd4lPCbtTyB1R+DsxI6e7cKj6aRJmbZRK3g5dnkpP4KAEj6BW/bNnGTTNFORm4qSePOr0I8wpxxNlkOMkLvF8Qjj1I0SD51VuIcYqtSXAd5sP4WJlwqn0AbfuF/qo1k3CfJGkmbIeHct0q+uvJiPIkK3WGHHT3ISTUvIt2zOylSX348hxPHRxwuHzacK+3do+KW5Glst7iz1aNtBv6ar+ERtN6moaPA3Kn8Ue7SngcfHQKPrZg2Tz9C3bHGkkahTx3B9NSVg2z2HZ9ybcwiVN6wnrQ35O803p+1uWoqEK1tISepTqySPRwpIRm2aXyUiFBf3XVnRKWGwD5zTVM/CaSQFmaR3Vp/GiXqGYnVMIfZjevX/KnOimzh+Oy7eBOvFwfm3BY47yzuN+IDq89Oau0gkfIwOe3L3LkZmNY/K11+9c9OU7dn7ttsyFTrhUmK/wDBmwT1JQNBUr7KuTdjeW7P7RkUu+XBh+dHDq220JKUk9gqFNvPzyZV+kXKu5yb/mSxf+xJr2p3ujhblNl40DGySuzC6jXol4n4R3T1afto6JeJ+Ed09Wn7asbRSXEy9pO8NF2VXLol4n4R3T1afto6JeJ+Ed09Wn7asbRRxMvaRw0XZXMTIon3tZzcYMN5ZFruLjTTh4KPNuEA+XhXSjEprlyxW0XF06uSoLLy/KpAJ+uo5icn3Z2MhnX26QX7rLmSnZLiZDh5sFayrQJHdrUqQ47EOIzEjNJaYZQlttCepKQNAB5BWlTO2UADqVKaB0RN+tc3Ns/zq5L+kHPrqYdhfJ/x/PtnkXJJ95nRX3nXEFtpCSkBJ0HXUPbZvnVyX9IOfXVxuRz8xtu/tL/71OVD3MhBadknAxr5SHBNTol4n4R3T1afto6JeJ+Ed09Wn7asbRXn8TL2k/w0XZVcuiXifhHdPVp+2kzJuSZa0WeS9Y8klmc20pTTb7SdxxQHAEg6jWrQV8PqShhxayEpSkkk9QGlSKqW/Og00Wy5WjVKu0KB9FdBrDkstHJpYyV1wqlM2AuFZ6ypCCnU+PhrXPt8gvuEdRUdPTV44Da0cjNxCgQr73HjofGFEU9WAEN8UjRkgu8FTDFLem/5bb7bKeWkTpSW3HBxV8Y8T5atkOSVienHI7of1aftqrey35xsf/t7X7wrpjVayV8ZGU2VqOJjwS4KuXRLxPwjunq0/bR0S8T8I7p6tP21Y2ikuJl7Sc4aLsquR5JeJ6cMjug/Vp+2mntc5OGPYbs6u+TQ79PkPwGkrQ042kJVqtKePH/3VbmkPPcaiZhiM/G57zrMaclKHFt/KAC0q4f3dKsyqkzC50VXU0eU2GqpDyRLtItm3SzMNOFLNwQ9FfSD8pJbUof4kJNX6qPMC2MbP8LmMz7RZt+ewoqalyHCtxBI0Oh7OBNSHUVMrZX3apponRMs5FFFFLphFFFYVrund0B04a0ISfe7JbLzHLFxiNvDsUR8ZPkNRhlOy2XHUp+xu/CG+vmXDoseQ9tKOd3faBaFrcTzHwLsejM6gDx66lNR1PyO+zhpKustwdxcOlcbjNbQvcWSwuzb8x9etdXhNHWMaHxSjLtz/LqS2xgMxHxrrdbbbkgakLeClDzVtN2jALeAqdfZFwWPlIjoIH/956Y61rWdVrUo95OtfNc8KuCPoQj/ANEn6D5L3jTTP6cp8gB9SpCbyrC7Wf8AwrGS+tPyXXyNfPrrXlK2o3go5uBChQ09m6jX66YVb9ust2uJAhW6U+D1KS2d309VatxSsd8EWnc0AewusnYdSN+KXXvcSfdKU/NsnmFXOXV5CVdaW/ij6KRJEuVI/wBvJed/51k08LZsyyWXuqkIYhpPXzi9VDzDX66cMXZfaISQ5er54yAUtJPprUYbiVV8TwbfqNvdZHEMPp9GEX/SPooorYhwZsxW7EiPvnq/q2yr6ql1pvZjZOtyE84njqSXjr9Ir6kbTcZho3IEKQ7p1BLaUJ9P+latweCP/sVDR3DVZnFZpPyIHHx0TFtWzzJpy078MRWyRqp5QHDyCpew/FrdjcINx0ByQof1r6h8ZR/gKYU7a5KUdIVpZQO91wq+rSkV/aHltweDEZ5LanDolDLQ3ie4dtP0lVhOHuzR3e7e3tzJKppsTrW5ZLMbtf351OtFNDCLDd2kouWR3GTJlkaoZU4Slr7TTvrrqeV8rA9zct+o8/muXnjbE/K12a3WOZUB5V+PSrHtlu0h1pSY9yUJTK9OCt4cQPIa2cM5Q+b4pjEHH7cxblRYTQaaLjWqtB3mrp51hOM5tbhAyS1MzW08W1Hgts96VDiKieZyVtnTzxWzKvMZB6kIfCgPOoE17DKmJzA2Qcy8l9NI15dGedQ50qNon5NafUUdKjaJ+TWn1FS70UcA/Ol89aj3aOijgH50vnrUe7U8rS7KOSqd1EXSo2ifk1p9RX03yqdoSVgqiWlQ7RzJGv01LfRRwD86Xz1qPdo6KOAfnS+etR7tHK0uyOSqd0h7M+VQzdLzHtmXWZmAiQsNplxVkpQTw1Uk9nkqzaFJWgLQoKSoagg8CK5iZzambBmt4s8RbimYE51hpSz8YpSsgE+PhXQ7YzcHbrsrxuc8oqccgNhRPbujd/hWVXC1gDm9a0pZnPJa7qVA9sYI2p5ID+cHPrpxYBtxznCMaax+xvQkwmlqWkOx0rVqo6niab+2f51cl/SDn11Ynkz7I8By7ZTEvV/saZc5yQ6hThdWnUJVoOANOyPY2IF4uEnG17pCGGxUbdJ/ah+UW32NNHSf2oflFt9jTVlej7sn8GEevc+2jo+7J/BhHr3PtpXl6fsprkKjtKtXSf2oflFt9jTSVlXKE2lZDZJFok3OPHjyUFt0xo6W1qSesbw4gEcKtV0fdk/gwj17n20l5PybdmlxtEhi3Wx22TC2eZkNPrO4rTgSknQjxVLZ6e/RUGCot0lWfYdsZuW0O4MyHbjBiWtCgp8CQlUgo7dGwdRr1amru5FjcaRs6m4rBbDUZVtVDZQPwU7m6kfVXOSy3a9YfkyZlsmOw7hBfI3m1afGSdCD3jhXR3ZxkKcswWzZEEhBnRUuLSOoL6lAeLeBqK0PBDr6Ioiwgttqub0R64YtlLbymean2yVqW3E/JWg9RHlFTJ0qNon5NafUVZnaFsYwDN5qp93tHNzlfKkxllpav+bTgrz0xFclLZ+VEi53wDu55HD/AA1c1MMgBeNVUU00Zsw6KIelRtE/JrT6ijpUbRPya0+oqXeijgH50vnrUe7R0UcA/Ol89aj3ajlaXZTyVTuoi6VG0T8mtPqK2IXKtzxl0Kk2y0SUdqS2pP0g1KvRRwD86Xz1qPdpsbVuThhmK7O71kNvuN3clQY3OtpdcQUk6gcdE+OpD6ZxtZQWVLRe6knYPtxtO0t9y0vw/uZe2mud5jf3kPJHWUHxa9R8tS9XObk83J217bMTkMrKS5cm4ytD1pdPNkehddGaWqoRG/4eYpmllMjPi50UUUUqmUUUUHiOvShCwpKVJKVAKB6wR10w8y2c2i4JXLt7jdtk9Z7GlHxjs8orGZ2PN3N960ZC8+118wN1lYHcCkAH6KiO9Ju7cpTV3MwPpPESCon6a5bGcRY0cnPTkjc6ehF10mE0L3HPDOAdh/INktJxFiOsi6ZNZoiQdCG3ueX/AHU1sNMbPYHGROul2WOxprm0H06H6aZ1Fck2qjZ0Ih53P82+S6c00j+nIfKw/v8ANPxrM8dt3/k+IRkrHyXZC95X1a/TXlM2nZI6N2MIcNPYGmdf3taaESDNlrCIsR99R6g22VfVTgt2AZVN0ItimEnteUEaeY8abjrMRmGWG9v0i3sEtJS0ERvLa/6jf3K0Z2WZJN15+8yyD1pS4Uj0DSkh1511RU46tZPapRNSPA2TTDoq43eMwO0NJKz9OlKzOC4PbAFXO6c6R1h2SltPoGh+mtfwfEJvimNu9zv8rL8VoYdIhf8AaFD9bkC1XOeQINvlSde1tpSh6QKmBq6bM7Np8HTbyodSkMl5X97Qn6axK2p46wN2NHmPgdW62Ej6SK0bg9LH+fUt8Br9+izditS/8mnPnp9+qYdu2cZVL0K4bcVJ7X3QPoGp+ipKwLB4mOo+EySiVcFDi5p8VA7k6/XTal7XesRLL5C6/wDwA/jSaNpeVXGSmNbocRLjh0QltpS1H0n+FPUsmD0bw5hL3dWntoAlKmPFatha8BrfH+5Uz0n5JdWrHYJ14faW63DYU8pCPlKCRroNaSsTt+SaJm5HdluOkapitJSlCP8AmIHE+KlLK7ebrjF0tqRqqVEdaT5SkgfTXX08plaHOaW36jzrlZ4xG4tDgfDmVZJXKvulyvcOBYsViRGX5LbRclvqdXopQBICd0A8fHVq2FlbDaz1qSCfRXL0okWDJQmQyeft8sFTavi6lCurxdVWNa5XdxbaQ395EU7qQNfugrs/V1689Je3JheVBVWvyhVuKKqT0vrl4Dxf2ir+XR0vrl4Dxf2ir+XS3BzbJji4t1baiqk9L65eA8X9oq/l0dL65eA8X9oq/l0cHNsji4t1BW2H51co/Ssj981e3k8a/wBCmLa9fwL/ADKrn7klyeybLZ91TG5p65TFvBlJ3t1S1E7oPb110c2XWh2xbO7DaX07rsaC2lxP4qiNSPMSaZrdI2hLUesjiufe2f51cl/SDn11cTkbfMbA/tT/AO9VPNtAI2rZKD+XufXUibH+UPJ2eYSxjLeKtXFLLq3OfVNLZO8ddN3cP11rPG6SEBvcs4JGxykuV46KqZ0v5ngIx+0z/Lo6X8zwEY/aZ/l0jwk2yd4uLdWzrCvknyVU3pfzPARj9pn+XSbkvKzyGfaH4lnxiHa5LqChMlcovFvUaapTupGvdrqPFUijlvzINXFuoDzBSV5beFpOqVT3yD4ucVVtsO2nRNl/Jlw27SrW/c1Si7HabbdDYCucdVqSQeHDuNU5YZfmSkMsoW8+8vdSlI1UpRP0mrX7cMCuFr5KWOW9bKjKsam5MlAGpRv72+P+kucfJT1QGnI126Qpy4ZnN2Tg2F7eL5tJ2jKsb9mgW63iM46AhSlu6jq1USB/hqwVc4NjG0F7ZtlpyBi2IuKiwpnmlvFsfG7dQDU09L65eA8X9oq/l0tPSOLv+MaJmCraG/GdVbaiqk9L65eA8X9oq/l0dL65eA8X9oq/l1jwc2y24uLdW2pg8on5ksq/sJ/eTUD9L65eA8X9oq/l0g7QOU3Py7DLpjbmIx4iLgzzReTOKyjiDrpuDXq76uyklDgSFV9VEWkAqKtjHzv4b+nYX/fRXSmueXJksci+7bccbZbUpuHJE15QHBCWhvgn/qCR5SK6G1evPxgKlCPgJRRRRSCeRRRWtcLhAt6ErnzY8VKjokvOBAJ8WtCFs1p3W1266xyxcIjUhHZvp4jyHrFeyZcVUP4YmSyY27v88Fjc3e/Xq0rxgXW2T1qRBuMSUtI1KWXkrIHmNQ5geCHC4UteWkFpsU0k7LsbEpTpVMLZOoa5waDz6a0uW7D8agaFi0RyofhODfP+LWlCddrVAdDU25Q4zhGoS68lBI79Ca2mHmn2UvMuocaUNUrQoFJHeDSkeG0sRu2MDyTUmIVMgs6Q+q8VxSG+bjOCKgdQaQBp/Ck2TYHpOodv92APY2tCPqTW41erO9LERq6wXJBO6GkvpKie7TXWtvn2fhHwfnW+e3d7m94b2736d1bvgY/Rw91gydzdQfZNORs+tknX4TdLy8D1hcvX+Fa39FuM9qpx/XD3aecqVGipQqVIaYStQQkuLCQpR6gNe2vVSglJUogADUk0q7C6NxuYwUyMSqm6CQpkjZfjA/LT+uH2V9DZji4/Aln9d/pTyYeakMoeYdQ60sbyVoVqlQ7wRWjIvtkjPrYkXiAy6g6KQuQhKknxgmgYTR/0h6IOJ1f9Q+qbo2Z4sP8AcyT+u/0pax3GLNYd9VuiBDi+txR3lad2vYK303K3qiolJnRlR3FbqHQ6ncUddNAddCda9nJDDbzbLjzaHXdebQpQCladeg7a0iw+midmZGAfBZyV1RK3K95I8V6UUVopvNoVL+BpukIyN7d5oPp39e7TXXWm7Ja6jvabsJwXOrg5dJceRb7k58uREUE84e9SSCCfRUcr5IthKiUZhPSnsBiJP+arLOuNtNqcdWlCEjVSlHQAeM1qwLra57im4NxiSlpGqksvJWR6DWzZ5WiwKxdBE43IVcTyRLL2ZnO9iT79Y6Ilm8M5vsSffqy632UPtsLebS64CUIKgFKA69B26aivmZKjQ2DIlyGo7KdAVurCUjXxmrcVNuq8NFsq1dESzeGc32JPv19p5ItiB+NmE8juERI/zVYiNfLLJfSxGu8B51Z0ShuQlSlHxAGlCjipt0Cmh2URbOeT5gWG3Jm6hqTdZ7J3m3JigUIV+MEAaa+XWpdrVcuNvbmphOToyJSvksqdSFnyJ11rarJ73PN3FbMY1os0KvWY8l605HlFxvruWTI65z6nlNJiJUEk9mu9xpJ6Ilm8M5vsSffqysyVGhsF+XIajtDrW6sJSPOaxBmRJzPPQpTMlrXTfaWFDXyitRUygaFZGmiJ5lWvoiWbwzm+xJ9+joiWbwzm+xJ9+rGzbzaIT/MTLpCju/iOvpSr0E17TJ0KHHEiXLYjsqIAcdcCUknq4mp4mbdRw0OyrZ0RLN4ZzfYk+/XtG5I2PIcBkZbcXU9oTGSknz7xqxsGbDntF2FLYktg6FTTgWAe7UVru3yytSVRnbtAQ+lW6W1SEhQV3aa661HEzbo4aHZMbZxsSwHBZaJ9stq5dwRxRKmL5xaD3pGgA8umvjqQ5sWNNiOw5bDb8d5BQ424nVK0nrBFfS5DCJCI6nm0vOAqQ2VDeUB1kDt0rDcqM44823IaWtkgOpSsEo1Go3h2cO+sXOc43JWzWtaLAKCsp5LWBXSU5Jtcy42crUSW21BxtPkB4j00gHkiWTszKd7Gn3qstHeZkMpeYdQ60rilaFApPkIr7rUVMo0zLI00R1sqydESzeGc32JPv0dESzeGc32JPv1ZcPsmQY4ebLwTvFveG8B36d1YbkxnZDkduQ0t5rTnG0rBUjXq1HZU8VNuo4aLZVr6Ilk8Mp3safer2h8kfG0PJVKyq5PNg8UojoQT59TVj2X2Xt/mXW3NxRQvdUDuqHWD3GtSbebRCf5iZdIUd38R19KVegmjiZj1o4aEdSbmzLZniWzuI6zjkBSHnwA9KeVvvOAdQKuweIAU8qwkhSQpJBB4gjtrNYOcXG5W7WhosEUUUVClFRttNxu8O5lbMvg2eHkcWFBdiv2mSoDTeUFc81vfFK9Bu6HsNSTTdyfFUXyciWL5ercoNBlaIUtTaFpBJ4gdvxjx66ux2U3VHi4TXv14tN+5PF5uljimLAds0pLccoCC0UpWlSNBwGigoU3dndmnXW+4derdia8ciWyABMlLCG1TQpkAJCU/KGuitTUnMYjZI+ELw6PHU1aVxVxi2lZ3ileu8d7r3iSST3mla2w2bfbo0COCGYzKGWwTqd1IAH0Cr8oACAq8mSQSojyyNKk7d5SYuLwMgULC2S1LcQgNjnflDeB49lLu2GbOtGycCI0m0qedYjPpjqGkZtawF7pHAaA9dLt+we33bIjfxcbtAnmOIynIUtTW82DqAdPHSs5Y4MjHVWK485cYi2i078KXzi3Afxies+OjOPh7lGQ69608ew/FbRFh/cyzQEmOApp8NJLhOnyt/rJPfr2033v/AFBM/wDx3/7lUo49gcaxy464d/v6okY6swnZylspHdoeseKltVhgKylOSFK/h6YnwQHeO7ze8VdXfqeuq5gCdbq2U2GllDXKGnwb3lLWLyFTdy221yahUVhbpTNV/sN7dHDTdJ/6qkfDchRlOyWPfBwckW5fPJ003HEpKVp8ygRS5Z8et1ru91usdLipd0dS7IWtW98lISlI7gAOqvKw4va7Jb7jAgIdRGnyHpDjZWSEqd4rCfxRqSdPHVi9paBsoDHBxO6RthXzO4n+imP3BTe2z2Cxrv2EyVWiCp6VlDCJCywkqdSWndQo6cRwHX3U58UwKFjRhIt15vpiQkbjMR2cpbITpoE7p7B/ClnILBb74/a3pyXFKtk1E6NuqI0dSlSRr3jRR4VGcB+YIyEssVo5XiFqvWGysbbjNQ47iCWOZQEBlwHeStIHUQrQ0y9jrVzyq6OZfk3NqmWnftEVCTqkLbO6895VkDyDWpXpKxiwW/HYciJbkrS3IlOy176t4844reV5tagPs0hWLLuBSrVX5keZ96+QTfvdhi3x8kcdk3pK0/CYyEuJ1KEgbx06uvtq0FMNeyvH3HJSHpt2cgypRlPQDLUI63CdSSntGo6qtE8N51WVhdzJN2uPon/eVZXJDgs14uCUTF7xTzqA3vIQo9yjpqO2tTatZrVjM7Er3jkKPbbmLzHhBMVARz7C9Q4hQHygBx1PVpUhZLjdoyGyfce5xt+KCkthB3VNKT8lSSOII7CKR7Ns/tcK8xrvMn3S7y4gKYip8lToY14EpB4A6dvXQ14AChzCSUm5h89WDf2O4/UzT5uMGFcoiolwiMyo6iCpp5AUk6HUcDSHl2HW/JLjbrjImXCHMt6XEx3ocgtKAc3d4ajr+SKVbBbBaLcmGJ02booq52W8XHDr2bx7KoSCBbqVwCCbqOdh1isrc7M5Ldpgpei5bMbjuBhO80kJb0CTpwA1PV31KiiEpKidABqaS8dsFvsKrmq3pcSblPcnyN5RVq64EhRHcPijhSqQCNDxBoe7MboY3KLKtsiW3Oz6Rfbi23Dxa4XlL8a8up1e52MAnmQr/doUpB0J6+PfU+Yhek5FjkO9IiOxW5aC4224dVbupCT5wAfPTWmbJsalsyYL0i5m0yX1SHLYJShGLijvEhPZx46d9PKw21mz2eLa47jzjEVsNNl1e8rdHAAnt0HCryPa4CypGxzSbpp7XcZuuQRbTKtTUSa5bJnwldvlq0ZljTTdUe8dY1rGE5FBmYpe1Wmwiy3C1qdRKt4bSAh8IKh8ngQeHEU4cosAvrTCRdbnbnGFFSXIUgtKOo0IOnWK+cRxi2YxBfjQOecXJdL0l99wuOPLPWpSj11XMMtirZTmuEytjON49eMCh365wYl2ud0QX50mU2HVlwk6p1VruhPVoOqscoVARaMTQ1bUTwnI4wTEOgS78Rz4vHh6aWTs1tUeZIfs92vVmakuF16NBmKbaUo9ZCfwdfFThvuO2+9N2xE8Or+5stuYwQsg84gEAnv+UatnGfNdVyHJlso/2LpS9neaTE2sY+pLkaO5Zhp/VqSgnnvi/F+OFDTTsTSLs8hS5GWZk43hVru7H33SgudIdQHGuDeoAUkk6Dj19tS3Ex+3xconZGwlxM6cw0xI+Od1aW97cOneN4jWkBOzm3M3S4T4N6v0A3CYubIajTlIbU6rTeVujv0HoqeUFz5KOTNgk3a8U2fJcMzAkJRAuZhyVngEsyUFsk+IL3Ki2DdpuNC+ZCXHA9m9sflREn/jB8oZA/VOJ9FWBzLHLZluOSrBeG1uQ5ITvhCilQKVBQII6iCBSfd8Cxy6Jx5MqKopx9xtcAJWQE7iQEg944Dge6hkjQLH7+yh8bibj7+wlLDLO3j+J2uytAAQ4rbR07VAfGPnOppWpMyWyx79b0wZL0hpoPIdJZWUFW4oEAkdh040p1iTfVbDTRR9bvn/ALt+gmf+4aYMwXKwbTsuz22h15u3T2mLnFTx52IppJKwO9BO95NampmwwGspfyNKXPhz8ZMVZ3vi7iTqOHfrWLfj1thTrtMbaKl3ZYXLSs7yVEJ3dNO7QVqJAPRZGMn1TE2TXIOY5ml3tZTJCrxOkRt3iHOtSfTwrOxfGsdu+z2BfrlCiXe53Zr4RPlSkB1anVE7ydVa6BJ1ToNNNKeOD4jZcNtb1tsbK2Yrshb5QpZVopR1OmvZ4qRv6NLVHlyHbNdr1ZWJLhdeiwZim2VKPWQn8HXxUF4N7aIDCLXCe6EpQkJSAlIGgA7BWaSrzYo91cta35Mts22UmU3zTxTzikpIAXp8pPHqNKtZLVFFFFQpRRRRQhFFFFCEUUUUIRRRRQhFFFFCEUUUUIRRRRQhFFFFCEUUUUIRRRRQhFFFFCEUUUUIRRRRQhFFFFCEUUUUIRRRRQhFFFFCEUUUUIRRRRQhFFFFCEUUUUIX/9k=" alt="SBS">
+      <div class="mdiv"></div>
+      <div id="modal-title">Washer Detail</div>
+      <button id="modal-close" data-sbs-action="close-modal"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div id="modal-body"></div>
+    <div id="modal-ftr">
+      <a id="btn-search" href="#" target="_blank" class="btn-o"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Search Part</a>
+      <a href="https://shop.specialtybolt.com/sourcing/rfq" target="_blank" class="btn-n"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Request Quote</a>
+      <button class="btn-g" data-sbs-action="close-modal">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var W=[
+{ms:"Metric",std:"DIN 125 A",thread:"M1.6",id_mm:1.7,id_in:null,od_mm:4.0,od_in:null,t_mm:0.3,t_in:null,id_tol:"-0 / +0.14",od_tol:"-0.3 / 0.0",t_tol:"-0.05 / +0.05",mats:["Steel 140HV","Steel 200HV","Stainless Steel 140HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"DIN 125 A",thread:"M1.7",id_mm:1.8,id_in:null,od_mm:4.5,od_in:null,t_mm:0.3,t_in:null,id_tol:"-0 / +0.14",od_tol:"-0.3 / 0.0",t_tol:"-0.05 / +0.06",mats:["Steel 140HV","Steel 200HV","Stainless Steel 140HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"DIN 125 A",thread:"M2",id_mm:2.2,id_in:null,od_mm:5.0,od_in:null,t_mm:0.3,t_in:null,id_tol:"-0 / +0.14",od_tol:"-0.3 / 0.0",t_tol:"-0.05 / +0.07",mats:["Steel 140HV","Steel 200HV","Stainless Steel 140HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"DIN 125 A",thread:"M2.3",id_mm:2.5,id_in:null,od_mm:6.0,od_in:null,t_mm:0.5,t_in:null,id_tol:"-0 / +0.14",od_tol:"-0.3 / 0.0",t_tol:"-0.05 / +0.08",mats:["Steel 140HV","Steel 200HV","Stainless Steel 140HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"DIN 125 A",thread:"M2.5",id_mm:2.7,id_in:null,od_mm:6.0,od_in:null,t_mm:0.5,t_in:null,id_tol:"-0 / +0.14",od_tol:"-0.3 / 0.0",t_tol:"-0.05 / +0.09",mats:["Steel 140HV","Steel 200HV","Stainless Steel 140HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"DIN 125 A",thread:"M2.6",id_mm:2.8,id_in:null,od_mm:7.0,od_in:null,t_mm:0.5,t_in:null,id_tol:"-0 / +0.14",od_tol:"-0.3 / 0.0",t_tol:"-0.05 / +0.10",mats:["Steel 140HV","Steel 200HV","Stainless Steel 140HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"DIN 125 A",thread:"M3",id_mm:3.2,id_in:null,od_mm:7.0,od_in:null,t_mm:0.5,t_in:null,id_tol:"-0 / +0.14",od_tol:"-0.3 / 0.0",t_tol:"-0.05 / +0.10",mats:["Steel 140HV","Steel 200HV","Stainless Steel 140HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"DIN 125 A",thread:"M3.5",id_mm:3.7,id_in:null,od_mm:8.0,od_in:null,t_mm:0.5,t_in:null,id_tol:"-0 / +0.14",od_tol:"-0.3 / 0.0",t_tol:"-0.05 / +0.11",mats:["Steel 140HV","Steel 200HV","Stainless Steel 140HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"DIN 125 A",thread:"M4",id_mm:4.3,id_in:null,od_mm:9.0,od_in:null,t_mm:0.8,t_in:null,id_tol:"-0 / +0.18",od_tol:"-0.3 / 0.0",t_tol:"-0.06 / +0.14",mats:["Steel 140HV","Steel 200HV","Stainless Steel 140HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"DIN 125 A",thread:"M5",id_mm:5.3,id_in:null,od_mm:10.0,od_in:null,t_mm:1.0,t_in:null,id_tol:"-0 / +0.18",od_tol:"-0.36 / 0.0",t_tol:"-0.06 / +0.14",mats:["Steel 140HV","Steel 200HV","Stainless Steel 140HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"DIN 125 A",thread:"M6",id_mm:6.4,id_in:null,od_mm:12.0,od_in:null,t_mm:1.6,t_in:null,id_tol:"-0 / +0.18",od_tol:"-0.36 / 0.0",t_tol:"-0.08 / +0.17",mats:["Steel 140HV","Steel 200HV","Stainless Steel 140HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"DIN 125 A",thread:"M7",id_mm:7.4,id_in:null,od_mm:14.0,od_in:null,t_mm:1.6,t_in:null,id_tol:"-0 / +0.18",od_tol:"-0.36 / 0.0",t_tol:"-0.08 / +0.17",mats:["Steel 140HV","Steel 200HV","Stainless Steel 140HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"ISO 7089",thread:"M1.6",id_mm:1.7,id_in:null,od_mm:4.0,od_in:null,t_mm:0.3,t_in:null,id_tol:"-0 / +0.14",od_tol:"-0.3 / 0.0",t_tol:"-0.05 / +0.05",mats:["Steel 200HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"ISO 7089",thread:"M2",id_mm:2.2,id_in:null,od_mm:5.0,od_in:null,t_mm:0.3,t_in:null,id_tol:"-0 / +0.14",od_tol:"-0.3 / 0.0",t_tol:"-0.05 / +0.07",mats:["Steel 200HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"ISO 7089",thread:"M2.5",id_mm:2.7,id_in:null,od_mm:6.0,od_in:null,t_mm:0.5,t_in:null,id_tol:"-0 / +0.14",od_tol:"-0.3 / 0.0",t_tol:"-0.05 / +0.09",mats:["Steel 200HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"ISO 7089",thread:"M3",id_mm:3.2,id_in:null,od_mm:7.0,od_in:null,t_mm:0.5,t_in:null,id_tol:"-0 / +0.14",od_tol:"-0.3 / 0.0",t_tol:"-0.05 / +0.10",mats:["Steel 200HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"ISO 7089",thread:"M3.5",id_mm:3.7,id_in:null,od_mm:8.0,od_in:null,t_mm:0.5,t_in:null,id_tol:"-0 / +0.14",od_tol:"-0.3 / 0.0",t_tol:"-0.05 / +0.11",mats:["Steel 200HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"ISO 7089",thread:"M4",id_mm:4.3,id_in:null,od_mm:9.0,od_in:null,t_mm:0.8,t_in:null,id_tol:"-0 / +0.18",od_tol:"-0.3 / 0.0",t_tol:"-0.06 / +0.14",mats:["Steel 200HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"ISO 7089",thread:"M5",id_mm:5.3,id_in:null,od_mm:10.0,od_in:null,t_mm:1.0,t_in:null,id_tol:"-0 / +0.18",od_tol:"-0.36 / 0.0",t_tol:"-0.06 / +0.14",mats:["Steel 200HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"ISO 7089",thread:"M6",id_mm:6.4,id_in:null,od_mm:12.0,od_in:null,t_mm:1.6,t_in:null,id_tol:"-0 / +0.18",od_tol:"-0.36 / 0.0",t_tol:"-0.08 / +0.17",mats:["Steel 200HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"ISO 7089",thread:"M8",id_mm:8.4,id_in:null,od_mm:16.0,od_in:null,t_mm:1.6,t_in:null,id_tol:"-0 / +0.22",od_tol:"-0.43 / 0.0",t_tol:"-0.08 / +0.17",mats:["Steel 200HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"ISO 7089",thread:"M10",id_mm:10.5,id_in:null,od_mm:20.0,od_in:null,t_mm:2.0,t_in:null,id_tol:"-0 / +0.27",od_tol:"-0.52 / 0.0",t_tol:"-0.10 / +0.21",mats:["Steel 200HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"ISO 7089",thread:"M12",id_mm:13.0,id_in:null,od_mm:24.0,od_in:null,t_mm:2.5,t_in:null,id_tol:"-0 / +0.27",od_tol:"-0.52 / 0.0",t_tol:"-0.10 / +0.21",mats:["Steel 200HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"ISO 7089",thread:"M14",id_mm:15.0,id_in:null,od_mm:28.0,od_in:null,t_mm:2.5,t_in:null,id_tol:"-0 / +0.27",od_tol:"-0.52 / 0.0",t_tol:"-0.10 / +0.21",mats:["Steel 200HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"ISO 7089",thread:"M16",id_mm:17.0,id_in:null,od_mm:30.0,od_in:null,t_mm:3.0,t_in:null,id_tol:"-0 / +0.33",od_tol:"-0.62 / 0.0",t_tol:"-0.12 / +0.26",mats:["Steel 200HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"ISO 7089",thread:"M20",id_mm:21.0,id_in:null,od_mm:37.0,od_in:null,t_mm:3.0,t_in:null,id_tol:"-0 / +0.33",od_tol:"-0.62 / 0.0",t_tol:"-0.12 / +0.26",mats:["Steel 200HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"ISO 7089",thread:"M24",id_mm:25.0,id_in:null,od_mm:44.0,od_in:null,t_mm:4.0,t_in:null,id_tol:"-0 / +0.33",od_tol:"-0.74 / 0.0",t_tol:"-0.15 / +0.30",mats:["Steel 200HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"ISO 7089",thread:"M30",id_mm:31.0,id_in:null,od_mm:56.0,od_in:null,t_mm:4.0,t_in:null,id_tol:"-0 / +0.39",od_tol:"-0.87 / 0.0",t_tol:"-0.15 / +0.30",mats:["Steel 200HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"ISO 7089",thread:"M36",id_mm:37.0,id_in:null,od_mm:66.0,od_in:null,t_mm:5.0,t_in:null,id_tol:"-0 / +0.39",od_tol:"-0.87 / 0.0",t_tol:"-0.18 / +0.36",mats:["Steel 200HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"ISO 7090",thread:"M5",id_mm:5.3,id_in:null,od_mm:10.0,od_in:null,t_mm:1.0,t_in:null,id_tol:"-0 / +0.18",od_tol:"-0.36 / 0.0",t_tol:"-0.06 / +0.14",mats:["Steel 200HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"ISO 7090",thread:"M6",id_mm:6.4,id_in:null,od_mm:12.0,od_in:null,t_mm:1.6,t_in:null,id_tol:"-0 / +0.18",od_tol:"-0.36 / 0.0",t_tol:"-0.08 / +0.17",mats:["Steel 200HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"ISO 7090",thread:"M8",id_mm:8.4,id_in:null,od_mm:16.0,od_in:null,t_mm:1.6,t_in:null,id_tol:"-0 / +0.22",od_tol:"-0.43 / 0.0",t_tol:"-0.08 / +0.17",mats:["Steel 200HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"ISO 7090",thread:"M10",id_mm:10.5,id_in:null,od_mm:20.0,od_in:null,t_mm:2.0,t_in:null,id_tol:"-0 / +0.27",od_tol:"-0.52 / 0.0",t_tol:"-0.10 / +0.21",mats:["Steel 200HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"ISO 7090",thread:"M12",id_mm:13.0,id_in:null,od_mm:24.0,od_in:null,t_mm:2.5,t_in:null,id_tol:"-0 / +0.27",od_tol:"-0.52 / 0.0",t_tol:"-0.10 / +0.21",mats:["Steel 200HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"ISO 7090",thread:"M16",id_mm:17.0,id_in:null,od_mm:30.0,od_in:null,t_mm:3.0,t_in:null,id_tol:"-0 / +0.33",od_tol:"-0.62 / 0.0",t_tol:"-0.12 / +0.26",mats:["Steel 200HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"ISO 7090",thread:"M20",id_mm:21.0,id_in:null,od_mm:37.0,od_in:null,t_mm:3.0,t_in:null,id_tol:"-0 / +0.33",od_tol:"-0.62 / 0.0",t_tol:"-0.12 / +0.26",mats:["Steel 200HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"ISO 7090",thread:"M24",id_mm:25.0,id_in:null,od_mm:44.0,od_in:null,t_mm:4.0,t_in:null,id_tol:"-0 / +0.33",od_tol:"-0.74 / 0.0",t_tol:"-0.15 / +0.30",mats:["Steel 200HV","Stainless Steel 200HV"]},
+{ms:"Metric",std:"ISO 7091",thread:"M5",id_mm:5.5,id_in:null,od_mm:11.0,od_in:null,t_mm:1.0,t_in:null,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Stainless Steel A2"]},
+{ms:"Metric",std:"ISO 7091",thread:"M6",id_mm:6.6,id_in:null,od_mm:13.0,od_in:null,t_mm:1.6,t_in:null,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Stainless Steel A2"]},
+{ms:"Metric",std:"ISO 7091",thread:"M8",id_mm:9.0,id_in:null,od_mm:18.0,od_in:null,t_mm:1.6,t_in:null,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Stainless Steel A2"]},
+{ms:"Metric",std:"ISO 7091",thread:"M10",id_mm:11.0,id_in:null,od_mm:22.0,od_in:null,t_mm:2.0,t_in:null,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Stainless Steel A2"]},
+{ms:"Metric",std:"ISO 7091",thread:"M12",id_mm:13.5,id_in:null,od_mm:26.0,od_in:null,t_mm:2.5,t_in:null,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Stainless Steel A2"]},
+{ms:"Metric",std:"ISO 7091",thread:"M14",id_mm:15.5,id_in:null,od_mm:30.0,od_in:null,t_mm:2.5,t_in:null,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Stainless Steel A2"]},
+{ms:"Metric",std:"ISO 7091",thread:"M16",id_mm:17.5,id_in:null,od_mm:34.0,od_in:null,t_mm:3.0,t_in:null,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Stainless Steel A2"]},
+{ms:"Metric",std:"ISO 7091",thread:"M20",id_mm:22.0,id_in:null,od_mm:40.0,od_in:null,t_mm:3.0,t_in:null,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Stainless Steel A2"]},
+{ms:"Metric",std:"ISO 7091",thread:"M24",id_mm:26.0,id_in:null,od_mm:50.0,od_in:null,t_mm:4.0,t_in:null,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Stainless Steel A2"]},
+{ms:"Metric",std:"ISO 7091",thread:"M30",id_mm:33.0,id_in:null,od_mm:60.0,od_in:null,t_mm:4.0,t_in:null,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Stainless Steel A2"]},
+{ms:"Metric",std:"ISO 7091",thread:"M36",id_mm:39.0,id_in:null,od_mm:72.0,od_in:null,t_mm:5.0,t_in:null,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Stainless Steel A2"]},
+{ms:"Metric",std:"ISO 7093-1",thread:"M5",id_mm:5.3,id_in:null,od_mm:15.0,od_in:null,t_mm:1.2,t_in:null,id_tol:"-0 / +0.18",od_tol:"-0.43 / 0.0",t_tol:"-0.08 / +0.17",mats:["Steel 100HV","Stainless Steel A2 100HV"]},
+{ms:"Metric",std:"ISO 7093-1",thread:"M6",id_mm:6.4,id_in:null,od_mm:18.0,od_in:null,t_mm:1.6,t_in:null,id_tol:"-0 / +0.18",od_tol:"-0.43 / 0.0",t_tol:"-0.08 / +0.17",mats:["Steel 100HV","Stainless Steel A2 100HV"]},
+{ms:"Metric",std:"ISO 7093-1",thread:"M8",id_mm:8.4,id_in:null,od_mm:24.0,od_in:null,t_mm:2.0,t_in:null,id_tol:"-0 / +0.22",od_tol:"-0.52 / 0.0",t_tol:"-0.10 / +0.21",mats:["Steel 100HV","Stainless Steel A2 100HV"]},
+{ms:"Metric",std:"ISO 7093-1",thread:"M10",id_mm:10.5,id_in:null,od_mm:30.0,od_in:null,t_mm:2.5,t_in:null,id_tol:"-0 / +0.27",od_tol:"-0.62 / 0.0",t_tol:"-0.10 / +0.21",mats:["Steel 100HV","Stainless Steel A2 100HV"]},
+{ms:"Metric",std:"ISO 7093-1",thread:"M12",id_mm:13.0,id_in:null,od_mm:37.0,od_in:null,t_mm:3.0,t_in:null,id_tol:"-0 / +0.27",od_tol:"-0.74 / 0.0",t_tol:"-0.12 / +0.26",mats:["Steel 100HV","Stainless Steel A2 100HV"]},
+{ms:"Metric",std:"ISO 7093-1",thread:"M14",id_mm:15.0,id_in:null,od_mm:44.0,od_in:null,t_mm:3.0,t_in:null,id_tol:"-0 / +0.27",od_tol:"-0.87 / 0.0",t_tol:"-0.12 / +0.26",mats:["Steel 100HV","Stainless Steel A2 100HV"]},
+{ms:"Metric",std:"ISO 7093-1",thread:"M16",id_mm:17.0,id_in:null,od_mm:50.0,od_in:null,t_mm:3.0,t_in:null,id_tol:"-0 / +0.33",od_tol:"-0.87 / 0.0",t_tol:"-0.12 / +0.26",mats:["Steel 100HV","Stainless Steel A2 100HV"]},
+{ms:"Metric",std:"ISO 7093-1",thread:"M20",id_mm:21.0,id_in:null,od_mm:60.0,od_in:null,t_mm:4.0,t_in:null,id_tol:"-0 / +0.33",od_tol:"-1.0 / 0.0",t_tol:"-0.15 / +0.30",mats:["Steel 100HV","Stainless Steel A2 100HV"]},
+{ms:"Metric",std:"ISO 7093-1",thread:"M24",id_mm:25.0,id_in:null,od_mm:72.0,od_in:null,t_mm:5.0,t_in:null,id_tol:"-0 / +0.33",od_tol:"-1.15 / 0.0",t_tol:"-0.18 / +0.36",mats:["Steel 100HV","Stainless Steel A2 100HV"]},
+{ms:"Metric",std:"ISO 7415",thread:"M1.6",id_mm:1.7,id_in:null,od_mm:3.5,od_in:null,t_mm:0.3,t_in:null,id_tol:"",od_tol:"",t_tol:"",mats:["Steel","Stainless Steel A2"]},
+{ms:"Metric",std:"ISO 7415",thread:"M2",id_mm:2.2,id_in:null,od_mm:4.5,od_in:null,t_mm:0.3,t_in:null,id_tol:"",od_tol:"",t_tol:"",mats:["Steel","Stainless Steel A2"]},
+{ms:"Metric",std:"ISO 7415",thread:"M2.5",id_mm:2.7,id_in:null,od_mm:5.5,od_in:null,t_mm:0.5,t_in:null,id_tol:"",od_tol:"",t_tol:"",mats:["Steel","Stainless Steel A2"]},
+{ms:"Metric",std:"ISO 7415",thread:"M3",id_mm:3.2,id_in:null,od_mm:6.0,od_in:null,t_mm:0.5,t_in:null,id_tol:"",od_tol:"",t_tol:"",mats:["Steel","Stainless Steel A2"]},
+{ms:"Metric",std:"ISO 7415",thread:"M3.5",id_mm:3.7,id_in:null,od_mm:7.0,od_in:null,t_mm:0.5,t_in:null,id_tol:"",od_tol:"",t_tol:"",mats:["Steel","Stainless Steel A2"]},
+{ms:"Metric",std:"ISO 7415",thread:"M4",id_mm:4.3,id_in:null,od_mm:8.0,od_in:null,t_mm:0.5,t_in:null,id_tol:"",od_tol:"",t_tol:"",mats:["Steel","Stainless Steel A2"]},
+{ms:"Metric",std:"ISO 7415",thread:"M5",id_mm:5.3,id_in:null,od_mm:9.0,od_in:null,t_mm:1.0,t_in:null,id_tol:"",od_tol:"",t_tol:"",mats:["Steel","Stainless Steel A2"]},
+{ms:"Metric",std:"ISO 7415",thread:"M6",id_mm:6.4,id_in:null,od_mm:11.0,od_in:null,t_mm:1.6,t_in:null,id_tol:"",od_tol:"",t_tol:"",mats:["Steel","Stainless Steel A2"]},
+{ms:"Metric",std:"ISO 7415",thread:"M8",id_mm:8.4,id_in:null,od_mm:15.0,od_in:null,t_mm:1.6,t_in:null,id_tol:"",od_tol:"",t_tol:"",mats:["Steel","Stainless Steel A2"]},
+{ms:"Metric",std:"ISO 7415",thread:"M10",id_mm:10.5,id_in:null,od_mm:18.0,od_in:null,t_mm:2.0,t_in:null,id_tol:"",od_tol:"",t_tol:"",mats:["Steel","Stainless Steel A2"]},
+{ms:"Metric",std:"ISO 7415",thread:"M12",id_mm:13.0,id_in:null,od_mm:20.0,od_in:null,t_mm:2.5,t_in:null,id_tol:"",od_tol:"",t_tol:"",mats:["Steel","Stainless Steel A2"]},
+{ms:"Inch",std:"ASME B18.22.1",thread:"#4",id_mm:3.175,id_in:0.125,od_mm:7.925,od_in:0.312,t_mm:0.813,t_in:0.032,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Zinc Plated Steel"]},
+{ms:"Inch",std:"ASME B18.22.1",thread:"#6",id_mm:3.759,id_in:0.148,od_mm:9.525,od_in:0.375,t_mm:1.245,t_in:0.049,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Zinc Plated Steel"]},
+{ms:"Inch",std:"ASME B18.22.1",thread:"#8",id_mm:4.166,id_in:0.164,od_mm:11.125,od_in:0.438,t_mm:1.245,t_in:0.049,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Zinc Plated Steel"]},
+{ms:"Inch",std:"ASME B18.22.1",thread:"#10",id_mm:4.826,id_in:0.190,od_mm:12.7,od_in:0.500,t_mm:1.245,t_in:0.049,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Zinc Plated Steel"]},
+{ms:"Inch",std:"ASME B18.22.1",thread:"#12",id_mm:5.486,id_in:0.216,od_mm:14.275,od_in:0.562,t_mm:1.651,t_in:0.065,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Zinc Plated Steel"]},
+{ms:"Inch",std:"ASME B18.22.1",thread:"1/4\"",id_mm:7.137,id_in:0.281,od_mm:15.875,od_in:0.625,t_mm:1.651,t_in:0.065,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Zinc Plated Steel"]},
+{ms:"Inch",std:"ASME B18.22.1",thread:"5/16\"",id_mm:8.738,id_in:0.344,od_mm:17.475,od_in:0.688,t_mm:1.651,t_in:0.065,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Zinc Plated Steel"]},
+{ms:"Inch",std:"ASME B18.22.1",thread:"3/8\"",id_mm:10.312,id_in:0.406,od_mm:20.625,od_in:0.812,t_mm:1.651,t_in:0.065,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Zinc Plated Steel"]},
+{ms:"Inch",std:"ASME B18.22.1",thread:"7/16\"",id_mm:11.913,id_in:0.469,od_mm:23.419,od_in:0.922,t_mm:1.651,t_in:0.065,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Zinc Plated Steel"]},
+{ms:"Inch",std:"ASME B18.22.1",thread:"1/2\"",id_mm:13.487,id_in:0.531,od_mm:26.975,od_in:1.062,t_mm:2.413,t_in:0.095,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Zinc Plated Steel"]},
+{ms:"Inch",std:"ASME B18.22.1",thread:"9/16\"",id_mm:15.088,id_in:0.594,od_mm:29.362,od_in:1.156,t_mm:2.413,t_in:0.095,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Zinc Plated Steel"]},
+{ms:"Inch",std:"ASME B18.22.1",thread:"5/8\"",id_mm:16.662,id_in:0.656,od_mm:33.325,od_in:1.312,t_mm:2.413,t_in:0.095,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Zinc Plated Steel"]},
+{ms:"Inch",std:"ASME B18.22.1",thread:"3/4\"",id_mm:20.625,id_in:0.812,od_mm:37.325,od_in:1.469,t_mm:3.404,t_in:0.134,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Zinc Plated Steel"]},
+{ms:"Inch",std:"ASME B18.22.1",thread:"7/8\"",id_mm:23.825,id_in:0.938,od_mm:44.45,od_in:1.750,t_mm:3.404,t_in:0.134,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Zinc Plated Steel"]},
+{ms:"Inch",std:"ASME B18.22.1",thread:"1\"",id_mm:26.975,id_in:1.062,od_mm:50.8,od_in:2.000,t_mm:3.404,t_in:0.134,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Zinc Plated Steel"]},
+{ms:"Inch",std:"ASME B18.22.1",thread:"1-1/4\"",id_mm:34.925,id_in:1.375,od_mm:63.5,od_in:2.500,t_mm:4.191,t_in:0.165,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Zinc Plated Steel"]},
+{ms:"Inch",std:"ASME B18.22.1",thread:"1-1/2\"",id_mm:41.275,id_in:1.625,od_mm:76.2,od_in:3.000,t_mm:4.191,t_in:0.165,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Zinc Plated Steel"]},
+{ms:"Inch",std:"ASTM F844",thread:"1/4\"",id_mm:7.137,id_in:0.281,od_mm:18.644,od_in:0.734,t_mm:1.651,t_in:0.065,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Zinc Plated Steel"]},
+{ms:"Inch",std:"ASTM F844",thread:"5/16\"",id_mm:8.738,id_in:0.344,od_mm:22.225,od_in:0.875,t_mm:1.651,t_in:0.065,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Zinc Plated Steel"]},
+{ms:"Inch",std:"ASTM F844",thread:"3/8\"",id_mm:10.312,id_in:0.406,od_mm:25.4,od_in:1.000,t_mm:2.108,t_in:0.083,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Zinc Plated Steel"]},
+{ms:"Inch",std:"ASTM F844",thread:"7/16\"",id_mm:11.913,id_in:0.469,od_mm:31.75,od_in:1.250,t_mm:2.108,t_in:0.083,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Zinc Plated Steel"]},
+{ms:"Inch",std:"ASTM F844",thread:"1/2\"",id_mm:13.487,id_in:0.531,od_mm:34.925,od_in:1.375,t_mm:2.769,t_in:0.109,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Zinc Plated Steel"]},
+{ms:"Inch",std:"ASTM F844",thread:"9/16\"",id_mm:15.088,id_in:0.594,od_mm:37.325,od_in:1.469,t_mm:2.769,t_in:0.109,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Zinc Plated Steel"]},
+{ms:"Inch",std:"ASTM F844",thread:"5/8\"",id_mm:16.662,id_in:0.656,od_mm:44.45,od_in:1.750,t_mm:2.769,t_in:0.109,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Zinc Plated Steel"]},
+{ms:"Inch",std:"ASTM F844",thread:"3/4\"",id_mm:20.625,id_in:0.812,od_mm:50.8,od_in:2.000,t_mm:3.759,t_in:0.148,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Zinc Plated Steel"]},
+{ms:"Inch",std:"ASTM F844",thread:"7/8\"",id_mm:23.825,id_in:0.938,od_mm:57.15,od_in:2.250,t_mm:4.191,t_in:0.165,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Zinc Plated Steel"]},
+{ms:"Inch",std:"ASTM F844",thread:"1\"",id_mm:26.975,id_in:1.062,od_mm:63.5,od_in:2.500,t_mm:4.191,t_in:0.165,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Zinc Plated Steel"]},
+{ms:"Inch",std:"ASTM F844",thread:"1-1/4\"",id_mm:34.925,id_in:1.375,od_mm:76.2,od_in:3.000,t_mm:4.191,t_in:0.165,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Zinc Plated Steel"]},
+{ms:"Inch",std:"ASTM F844",thread:"1-1/2\"",id_mm:41.275,id_in:1.625,od_mm:88.9,od_in:3.500,t_mm:4.572,t_in:0.180,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Zinc Plated Steel"]},
+{ms:"Inch",std:"ASTM F844",thread:"1-3/4\"",id_mm:47.625,id_in:1.875,od_mm:101.6,od_in:4.000,t_mm:4.572,t_in:0.180,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Zinc Plated Steel"]},
+{ms:"Inch",std:"ASTM F844",thread:"2\"",id_mm:53.975,id_in:2.125,od_mm:114.3,od_in:4.500,t_mm:4.572,t_in:0.180,id_tol:"",od_tol:"",t_tol:"",mats:["Low Carbon Steel","Zinc Plated Steel"]},
+{ms:"Inch",std:"ASTM F436",thread:"1/2\"",id_mm:13.487,id_in:0.531,od_mm:29.362,od_in:1.156,t_mm:3.099,t_in:0.122,id_tol:"",od_tol:"",t_tol:"",mats:["Medium Carbon Steel (Hardened 38-45 HRC)"]},
+{ms:"Inch",std:"ASTM F436",thread:"5/8\"",id_mm:17.475,id_in:0.688,od_mm:33.325,od_in:1.312,t_mm:3.962,t_in:0.156,id_tol:"",od_tol:"",t_tol:"",mats:["Medium Carbon Steel (Hardened 38-45 HRC)"]},
+{ms:"Inch",std:"ASTM F436",thread:"3/4\"",id_mm:20.650,id_in:0.813,od_mm:37.325,od_in:1.469,t_mm:4.496,t_in:0.177,id_tol:"",od_tol:"",t_tol:"",mats:["Medium Carbon Steel (Hardened 38-45 HRC)"]},
+{ms:"Inch",std:"ASTM F436",thread:"7/8\"",id_mm:23.825,id_in:0.938,od_mm:44.45,od_in:1.750,t_mm:4.496,t_in:0.177,id_tol:"",od_tol:"",t_tol:"",mats:["Medium Carbon Steel (Hardened 38-45 HRC)"]},
+{ms:"Inch",std:"ASTM F436",thread:"1\"",id_mm:27.0,id_in:1.063,od_mm:50.8,od_in:2.000,t_mm:4.496,t_in:0.177,id_tol:"",od_tol:"",t_tol:"",mats:["Medium Carbon Steel (Hardened 38-45 HRC)"]},
+{ms:"Inch",std:"ASTM F436",thread:"1-1/8\"",id_mm:31.75,id_in:1.250,od_mm:60.325,od_in:2.375,t_mm:3.886,t_in:0.153,id_tol:"",od_tol:"",t_tol:"",mats:["Medium Carbon Steel (Hardened 38-45 HRC)"]},
+{ms:"Inch",std:"ASTM F436",thread:"1-1/4\"",id_mm:34.925,id_in:1.375,od_mm:69.85,od_in:2.750,t_mm:3.886,t_in:0.153,id_tol:"",od_tol:"",t_tol:"",mats:["Medium Carbon Steel (Hardened 38-45 HRC)"]},
+{ms:"Inch",std:"ASTM F436",thread:"1-3/8\"",id_mm:38.1,id_in:1.500,od_mm:76.2,od_in:3.000,t_mm:3.886,t_in:0.153,id_tol:"",od_tol:"",t_tol:"",mats:["Medium Carbon Steel (Hardened 38-45 HRC)"]},
+{ms:"Inch",std:"ASTM F436",thread:"1-1/2\"",id_mm:41.275,id_in:1.625,od_mm:82.55,od_in:3.250,t_mm:3.886,t_in:0.153,id_tol:"",od_tol:"",t_tol:"",mats:["Medium Carbon Steel (Hardened 38-45 HRC)"]}
+];
+
+var S={mode:'identify',unit:'mm',msF:'',stdF:'',threadF:'',idLo:null,idHi:null,odLo:null,odHi:null,thLo:null,thHi:null,dMs:'',dScrew:'',dId:'',dOd:'',dTh:'',sortCol:'std',sortDir:1,page:1,pageSize:12,filtered:[]};
+
+function nv(w,f){return S.unit==='mm'?w[f+'_mm']:w[f+'_in'];}
+function dp(){return S.unit==='mm'?2:4;}
+function u(){return S.unit==='mm'?' mm':'"';}
+function fmt(v){if(v===null||v===undefined)return 'N/A';return parseFloat(v).toFixed(dp())+u();}
+
+function getSliderRange(field){var vals=W.filter(function(w){return S.msF?w.ms===S.msF:true;}).filter(function(w){return S.stdF?w.std===S.stdF:true;}).map(function(w){return nv(w,field);}).filter(function(v){return v!==null&&v!==undefined;});if(!vals.length)return{mn:0,mx:1,step:0.001};return{mn:parseFloat(Math.min.apply(null,vals).toFixed(4)),mx:parseFloat(Math.max.apply(null,vals).toFixed(4)),step:S.unit==='mm'?0.1:0.0001};}
+
+function initSliders(){['id','od','th'].forEach(function(f){var r=getSliderRange(f);var lo=document.getElementById('sl-'+f+'-lo'),hi=document.getElementById('sl-'+f+'-hi');lo.min=r.mn;lo.max=r.mx;lo.step=r.step;lo.value=r.mn;hi.min=r.mn;hi.max=r.mx;hi.step=r.step;hi.value=r.mx;S[f+'Lo']=null;S[f+'Hi']=null;updateSliderDisplay(f);updateSliderFill(f);});}
+
+function updateSliderDisplay(f){var lo=document.getElementById('sl-'+f+'-lo'),hi=document.getElementById('sl-'+f+'-hi');var svlo=document.getElementById('sv-'+f+'-lo'),svhi=document.getElementById('sv-'+f+'-hi');var d=S.unit==='mm'?2:4;svlo.textContent=parseFloat(lo.value).toFixed(d)+u();svhi.textContent=parseFloat(hi.value).toFixed(d)+u();}
+
+function updateSliderFill(f){var lo=document.getElementById('sl-'+f+'-lo'),hi=document.getElementById('sl-'+f+'-hi'),fill=document.getElementById('sf-'+f);if(!lo||!hi||!fill)return;var mn=parseFloat(lo.min),mx=parseFloat(lo.max);var left=100*(parseFloat(lo.value)-mn)/(mx-mn);var right=100*(mx-parseFloat(hi.value))/(mx-mn);fill.style.left=left+'%';fill.style.right=right+'%';}
+
+function updateColHeaders(){var uu=S.unit==='mm'?'(mm)':'(in)';document.getElementById('th-id').childNodes[0].nodeValue='ID '+uu+' ';document.getElementById('th-od').childNodes[0].nodeValue='OD '+uu+' ';document.getElementById('th-th').childNodes[0].nodeValue='Thickness '+uu+' ';document.getElementById('lbl-id').textContent='ID '+uu;document.getElementById('lbl-od').textContent='OD '+uu;document.getElementById('lbl-th').textContent='Thickness '+uu;document.getElementById('d-id-label').textContent='ID '+uu;document.getElementById('d-od-label').textContent='OD '+uu;document.getElementById('d-th-label').textContent='Thickness '+uu;}
+
+function populateStdSelect(){var ms=S.msF;var sel=document.getElementById('f-std');var cur=sel.value;sel.innerHTML='<option value="">All Standards</option>';var stds=[...new Set(W.filter(function(w){return ms?w.ms===ms:true;}).map(function(w){return w.std;}))];stds.sort().forEach(function(s){var o=document.createElement('option');o.value=s;o.textContent=s;sel.appendChild(o);});if(stds.indexOf(cur)>-1){sel.value=cur;}else{sel.value='';S.stdF='';}}
+function populateIdentifyThreadSelect(){var ms=S.msF,std=S.stdF;var sel=document.getElementById('f-thread');var cur=sel.value;sel.innerHTML='<option value="">All Sizes</option>';var threads=[...new Set(W.filter(function(w){return(ms?w.ms===ms:true)&&(std?w.std===std:true);}).map(function(w){return w.thread;}))];threads.sort(function(a,b){var na=parseFloat(a.replace(/[^0-9.]/g,''));var nb=parseFloat(b.replace(/[^0-9.]/g,''));return na-nb;}).forEach(function(t){var o=document.createElement('option');o.value=t;o.textContent=t;sel.appendChild(o);});if(threads.indexOf(cur)>-1){sel.value=cur;}else{sel.value='';S.threadF='';}}
+
+function populateScrewSelect(){var ms=document.getElementById('d-ms').value;var sel=document.getElementById('d-screw');var cur=sel.value;sel.innerHTML='<option value="">Any size</option>';var threads=[...new Set(W.filter(function(w){return ms?w.ms===ms:true;}).map(function(w){return w.thread;}))];threads.sort(function(a,b){var na=parseFloat(a.replace(/[^0-9.]/g,''));var nb=parseFloat(b.replace(/[^0-9.]/g,''));return na-nb;}).forEach(function(t){var o=document.createElement('option');o.value=t;o.textContent=t;sel.appendChild(o);});if(threads.indexOf(cur)>-1){sel.value=cur;}}
+
+function applyFilters(){var res=W.slice();var msF=S.mode==='identify'?S.msF:document.getElementById('d-ms').value;if(msF)res=res.filter(function(w){return w.ms===msF;});if(S.mode==='identify'){if(S.stdF)res=res.filter(function(w){return w.std===S.stdF;});if(S.threadF)res=res.filter(function(w){return w.thread===S.threadF;});if(S.idLo!==null)res=res.filter(function(w){var v=nv(w,'id');return v!==null&&v>=S.idLo;});if(S.idHi!==null)res=res.filter(function(w){var v=nv(w,'id');return v!==null&&v<=S.idHi;});if(S.odLo!==null)res=res.filter(function(w){var v=nv(w,'od');return v!==null&&v>=S.odLo;});if(S.odHi!==null)res=res.filter(function(w){var v=nv(w,'od');return v!==null&&v<=S.odHi;});if(S.thLo!==null)res=res.filter(function(w){var v=nv(w,'t');return v!==null&&v>=S.thLo;});if(S.thHi!==null)res=res.filter(function(w){var v=nv(w,'t');return v!==null&&v<=S.thHi;});}else{var screw=document.getElementById('d-screw').value;if(screw)res=res.filter(function(w){return w.thread===screw;});var tol=S.unit==='mm'?0.15:0.006;var dId=parseFloat(document.getElementById('d-id').value);var dOd=parseFloat(document.getElementById('d-od').value);var dTh=parseFloat(document.getElementById('d-th').value);if(!isNaN(dId))res=res.filter(function(w){var v=nv(w,'id');return v!==null&&Math.abs(v-dId)<=Math.max(tol,dId*0.05);});if(!isNaN(dOd))res=res.filter(function(w){var v=nv(w,'od');return v!==null&&Math.abs(v-dOd)<=Math.max(tol,dOd*0.05);});if(!isNaN(dTh))res=res.filter(function(w){var v=nv(w,'t');return v!==null&&Math.abs(v-dTh)<=Math.max(tol*0.5,dTh*0.05);});}
+res.sort(function(a,b){var av,bv;if(S.sortCol==='id'){av=nv(a,'id')||0;bv=nv(b,'id')||0;}else if(S.sortCol==='od'){av=nv(a,'od')||0;bv=nv(b,'od')||0;}else if(S.sortCol==='th'){av=nv(a,'t')||0;bv=nv(b,'t')||0;}else{av=(a[S.sortCol]||'').toLowerCase();bv=(b[S.sortCol]||'').toLowerCase();}if(av<bv)return -1*S.sortDir;if(av>bv)return 1*S.sortDir;return 0;});S.filtered=res;S.page=1;renderTable();}
+
+function renderTable(){var f=S.filtered;var total=f.length;var pages=Math.max(1,Math.ceil(total/S.pageSize));var p=Math.min(S.page,pages);var start=(p-1)*S.pageSize;var end=Math.min(start+S.pageSize,total);var slice=f.slice(start,end);document.getElementById('rc-s').textContent=total===0?0:(start+1)+' to '+end;document.getElementById('rc-t').textContent=total;document.getElementById('pg-info').textContent='Page '+p+' of '+pages;document.querySelector('[data-sbs-action="pg-prev"]').disabled=p<=1;document.querySelector('[data-sbs-action="pg-next"]').disabled=p>=pages;var tbody=document.getElementById('tbl');tbody.innerHTML='';if(!slice.length){var tr=document.createElement('tr');var td=document.createElement('td');td.colSpan=7;td.innerHTML='<div class="no-res"><p>No matching washers</p><small>Adjust sliders or switch modes</small></div>';tr.appendChild(td);tbody.appendChild(tr);return;}slice.forEach(function(w){var tr=document.createElement('tr');tr.setAttribute('data-sbs-action','open-modal');tr.setAttribute('data-idx',S.filtered.indexOf(w));var id=nv(w,'id'),od=nv(w,'od'),th=nv(w,'t');tr.innerHTML='<td><span class="ms-badge ms-'+(w.ms==='Metric'?'metric':'inch')+'">'+w.ms+'</span></td><td class="td-std">'+w.std+'</td><td>'+w.thread+'</td><td>'+(id!==null?id.toFixed(dp())+u():'N/A')+'</td><td>'+(od!==null?od.toFixed(dp())+u():'N/A')+'</td><td>'+(th!==null?th.toFixed(dp())+u():'N/A')+'</td><td style="text-align:center;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></td>';tbody.appendChild(tr);});}
+
+function openModal(idx){var w=S.filtered[idx];if(!w)return;document.getElementById('modal-title').textContent=w.std+' '+w.thread;var id=nv(w,'id'),od=nv(w,'od'),th=nv(w,'t');var d=dp(),uu=u();var body='';var inc=!w.id_tol&&!w.od_tol&&!w.t_tol;if(inc)body+='<div class="incomplete-note">Tolerance data for this standard is pending verification and will be added when confirmed.</div>';body+='<div class="m-sec"><div class="m-sec-title">Identification</div><div class="m-grid"><div class="m-row"><div class="m-lbl">Standard</div><div class="m-val big">'+w.std+'</div></div><div class="m-row"><div class="m-lbl">Thread / Bolt Size</div><div class="m-val big">'+w.thread+'</div></div><div class="m-row"><div class="m-lbl">Measurement System</div><div class="m-val">'+w.ms+'</div></div></div></div>';body+='<div class="m-sec"><div class="m-sec-title">Dimensions</div><div class="m-grid"><div class="m-row"><div class="m-lbl">Inner Diameter (ID)</div><div class="m-val big">'+(id!==null?id.toFixed(d)+uu:'N/A')+'</div></div><div class="m-row"><div class="m-lbl">Outer Diameter (OD)</div><div class="m-val big">'+(od!==null?od.toFixed(d)+uu:'N/A')+'</div></div><div class="m-row"><div class="m-lbl">Thickness</div><div class="m-val big">'+(th!==null?th.toFixed(d)+uu:'N/A')+'</div></div></div>';var alt=S.unit==='mm'?'Inch equiv: ID '+(id!==null?(id/25.4).toFixed(5)+'"':'')+' / OD '+(od!==null?(od/25.4).toFixed(5)+'"':'')+' / T '+(th!==null?(th/25.4).toFixed(5)+'"':''):'mm equiv: ID '+(id!==null?(id*25.4).toFixed(3)+' mm':'')+' / OD '+(od!==null?(od*25.4).toFixed(3)+' mm':'')+' / T '+(th!==null?(th*25.4).toFixed(3)+' mm':'');body+='<div style="margin-top:.35rem;font-family:Inter,sans-serif;font-size:11px;color:var(--gray-400);">'+alt+'</div></div>';if(w.id_tol||w.od_tol||w.t_tol)body+='<div class="m-sec"><div class="m-sec-title">Tolerances</div><div class="tol-grid"><div class="m-row"><div class="m-lbl">ID Tolerance</div><div class="m-val">'+(w.id_tol||'Refer to standard')+'</div></div><div class="m-row"><div class="m-lbl">OD Tolerance</div><div class="m-val">'+(w.od_tol||'Refer to standard')+'</div></div><div class="m-row"><div class="m-lbl">Thickness Tol.</div><div class="m-val">'+(w.t_tol||'Refer to standard')+'</div></div></div></div>';if(w.mats&&w.mats.length)body+='<div class="m-sec"><div class="m-sec-title">Common Materials</div><div class="mat-list">'+w.mats.map(function(m){return '<div class="mat-item">'+m+'</div>';}).join('')+'</div></div>';document.getElementById('modal-body').innerHTML=body;var kw=encodeURIComponent(w.std.replace(/\s*\(.*\)/,'')+' '+w.thread);document.getElementById('btn-search').href='https://shop.specialtybolt.com/products/search/?Keyword='+kw;document.getElementById('modal-overlay').classList.add('open');}
+function closeModal(){document.getElementById('modal-overlay').classList.remove('open');}
+
+function resetAll(){document.getElementById('f-ms').value='';document.getElementById('f-std').value='';var ft=document.getElementById('f-thread');if(ft)ft.value='';S.msF='';S.stdF='';S.threadF='';S.idLo=null;S.idHi=null;S.odLo=null;S.odHi=null;S.thLo=null;S.thHi=null;populateStdSelect();populateIdentifyThreadSelect();initSliders();['d-id','d-od','d-th'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});document.getElementById('d-ms').value='';document.getElementById('d-screw').value='';applyFilters();}
+
+document.addEventListener('change',function(e){var t=e.target;if(t.id==='f-ms'){S.msF=t.value;t.classList.toggle('active',t.value!=='');populateStdSelect();populateIdentifyThreadSelect();initSliders();applyFilters();}else if(t.id==='f-std'){S.stdF=t.value;t.classList.toggle('active',t.value!=='');populateIdentifyThreadSelect();applyFilters();}else if(t.id==='f-thread'){S.threadF=t.value;t.classList.toggle('active',t.value!=='');applyFilters();}else if(t.id==='d-ms'){populateScrewSelect();applyFilters();}else if(t.id==='d-screw'||t.id==='d-id'||t.id==='d-od'||t.id==='d-th'){applyFilters();}});
+document.addEventListener('input',function(e){var t=e.target,id=t.id;var fmap={'sl-id-lo':['id','Lo'],'sl-id-hi':['id','Hi'],'sl-od-lo':['od','Lo'],'sl-od-hi':['od','Hi'],'sl-th-lo':['th','Lo'],'sl-th-hi':['th','Hi']};if(fmap[id]){var ff=fmap[id][0],side=fmap[id][1];var lo=document.getElementById('sl-'+ff+'-lo'),hi=document.getElementById('sl-'+ff+'-hi');var vlo=parseFloat(lo.value),vhi=parseFloat(hi.value);if(vlo>vhi){if(side==='Lo')lo.value=vhi;else hi.value=vlo;}S[ff+'Lo']=parseFloat(document.getElementById('sl-'+ff+'-lo').value);S[ff+'Hi']=parseFloat(document.getElementById('sl-'+ff+'-hi').value);updateSliderDisplay(ff);updateSliderFill(ff);applyFilters();}});
+document.addEventListener('blur',function(e){var t=e.target;if(t.classList&&t.classList.contains('si')){commitSI(t.id.replace('si-',''));}},true);
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal();if(e.key==='Enter'){var a=document.activeElement;if(a&&a.classList.contains('si')){commitSI(a.id.replace('si-',''));}}});
+function commitSI(fid){var si=document.getElementById('si-'+fid);var sv=document.getElementById('sv-'+fid);var parts=fid.split('-');var f=parts[0],side=parts[1];var lo=document.getElementById('sl-'+f+'-lo'),hi=document.getElementById('sl-'+f+'-hi');if(!lo)return;var v=parseFloat(si.value);if(!isNaN(v)){var mn=parseFloat(lo.min),mx=parseFloat(lo.max);v=Math.max(mn,Math.min(mx,v));if(side==='lo'){var hv=parseFloat(hi.value);if(v>hv)v=hv;lo.value=v;S[f+'Lo']=v;}else{var lv=parseFloat(lo.value);if(v<lv)v=lv;hi.value=v;S[f+'Hi']=v;}updateSliderDisplay(f);updateSliderFill(f);applyFilters();}if(si)si.classList.remove('show');if(sv)sv.style.display='';}
+
+document.addEventListener('click',function(e){var el=e.target,action=null;for(var i=0;i<6;i++){if(!el||el===document.body)break;if(el.getAttribute&&el.getAttribute('data-sbs-action')){action=el.getAttribute('data-sbs-action');break;}el=el.parentNode;}if(!action)return;
+if(action==='tab-identify'){S.mode='identify';document.querySelectorAll('.mode-tab').forEach(function(b){b.classList.remove('active');});document.querySelector('[data-sbs-action="tab-identify"]').classList.add('active');document.getElementById('filters-bar').style.display='';document.getElementById('design-panel').style.display='none';document.getElementById('main-content').style.display='';document.getElementById('bp-panel').style.display='none';document.getElementById('unit-toggle-wrap').style.display='';applyFilters();}
+else if(action==='tab-design'){S.mode='design';document.querySelectorAll('.mode-tab').forEach(function(b){b.classList.remove('active');});document.querySelector('[data-sbs-action="tab-design"]').classList.add('active');document.getElementById('filters-bar').style.display='none';document.getElementById('design-panel').style.display='';document.getElementById('main-content').style.display='';document.getElementById('bp-panel').style.display='none';document.getElementById('unit-toggle-wrap').style.display='';applyFilters();}
+else if(action==='tab-bp'){document.querySelectorAll('.mode-tab').forEach(function(b){b.classList.remove('active');});document.querySelector('[data-sbs-action="tab-bp"]').classList.add('active');document.getElementById('filters-bar').style.display='none';document.getElementById('design-panel').style.display='none';document.getElementById('main-content').style.display='none';document.getElementById('bp-panel').style.display='';document.getElementById('unit-toggle-wrap').style.display='none';}
+else if(action==='unit-mm'){S.unit='mm';document.querySelectorAll('.unit-btn').forEach(function(b){b.classList.remove('active');});document.querySelector('[data-sbs-action="unit-mm"]').classList.add('active');updateColHeaders();initSliders();applyFilters();}
+else if(action==='unit-inch'){S.unit='inch';document.querySelectorAll('.unit-btn').forEach(function(b){b.classList.remove('active');});document.querySelector('[data-sbs-action="unit-inch"]').classList.add('active');updateColHeaders();initSliders();applyFilters();}
+else if(action==='reset')resetAll();
+else if(action==='pg-prev'){if(S.page>1){S.page--;renderTable();}}
+else if(action==='pg-next'){var pages=Math.ceil(S.filtered.length/S.pageSize);if(S.page<pages){S.page++;renderTable();}}
+else if(action==='open-modal'){openModal(parseInt(el.getAttribute('data-idx')));}
+else if(action==='close-modal')closeModal();
+else if(action.indexOf('edit-sv-')===0){var fid=action.replace('edit-sv-','');var parts2=fid.split('-');var ff=parts2[0],side2=parts2[1];var sv2=document.getElementById('sv-'+fid);var si2=document.getElementById('si-'+fid);var sl2=document.getElementById('sl-'+ff+'-'+side2);if(si2&&sv2&&sl2){si2.value=parseFloat(sl2.value).toFixed(S.unit==='mm'?2:4);sv2.style.display='none';si2.classList.add('show');si2.focus();si2.select();}}});
+
+document.getElementById('modal-overlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
+document.querySelectorAll('th[data-col]').forEach(function(th){th.addEventListener('click',function(){var col=this.getAttribute('data-col');if(S.sortCol===col)S.sortDir*=-1;else{S.sortCol=col;S.sortDir=1;}document.querySelectorAll('th').forEach(function(t){t.classList.remove('sorted');});this.classList.add('sorted');applyFilters();});});
+
+populateStdSelect();populateIdentifyThreadSelect();populateScrewSelect();updateColHeaders();initSliders();applyFilters();
+document.getElementById('btn-beta-continue').addEventListener('click',function(){var o=document.getElementById('beta-overlay');o.style.opacity='0';o.style.transition='opacity .3s ease';setTimeout(function(){o.style.display='none';},300);});
+</script>
+</body>
+</html>
