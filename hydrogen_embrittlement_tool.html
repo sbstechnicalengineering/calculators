@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<!--
+  SBS Hydrogen Embrittlement Risk Assessor | Copyright (c) 2024 Specialty Bolt & Screw, Inc.
+  Fingerprint: SBS-HERA-001-v3 | https://shop.specialtybolt.com/
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hydrogen Embrittlement Risk Assessor | SBS Specialty Bolt and Screw</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#1D3557;--navy-dark:#12243a;--orange:#E87722;--orange-light:#F0913A;--orange-pale:#FDF0E5;--white:#ffffff;--gray-50:#F8F9FA;--gray-100:#F0F2F5;--gray-200:#E2E6EA;--gray-300:#CED4DA;--gray-400:#ADB5BD;--gray-500:#6C757D;--gray-600:#495057;--gray-700:#343A40;--ag:#1A8A4A;--agb:#E8F5EE;--ar:#C0392B;--arb:#FDECEA;--aa:#B7610A;--aab:#FEF3E2;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--gray-100);color:var(--gray-700);font-family:Inter,sans-serif;font-size:14px;line-height:1.5;}
+/* BETA MODAL */
+.modal-overlay{position:fixed;inset:0;z-index:9000;background:rgba(18,36,58,0.82);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:20px;}
+.modal-box{background:var(--white);border-radius:14px;max-width:520px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.4);overflow:hidden;}
+.modal-hdr{background:var(--white);border-bottom:4px solid var(--orange);padding:18px 24px;display:flex;align-items:center;gap:14px;}
+.modal-hdr-icon{width:40px;height:40px;background:var(--orange-pale);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.modal-hdr-icon svg{width:22px;height:22px;stroke:var(--orange);}
+.modal-hdr-txt{flex:1;}
+.modal-hdr-title{font-family:"Barlow Condensed",sans-serif;font-size:19px;font-weight:800;color:var(--navy);letter-spacing:0.3px;}
+.modal-hdr-sub{font-size:11px;color:var(--gray-500);font-family:Inter,sans-serif;margin-top:1px;}
+.beta-pill{display:inline-block;background:var(--orange);color:var(--white);font-family:Barlow,sans-serif;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;padding:2px 9px;border-radius:20px;}
+.modal-body{padding:24px;}
+.modal-body p{font-size:13.5px;color:var(--gray-600);font-family:Inter,sans-serif;line-height:1.7;margin-bottom:14px;}
+.modal-body p:last-child{margin-bottom:0;}
+.modal-body strong{color:var(--navy);}
+.modal-footer{padding:16px 24px 20px;display:flex;justify-content:flex-end;}
+.btn-modal{font-family:Barlow,sans-serif;font-size:13px;font-weight:700;letter-spacing:0.4px;background:var(--orange);color:var(--white);border:none;border-radius:6px;padding:11px 26px;cursor:pointer;box-shadow:0 2px 8px rgba(232,119,34,0.35);transition:background .15s,transform .1s;}
+.btn-modal:hover{background:var(--orange-light);transform:translateY(-1px);}
+/* HEADER */
+.hdr{position:sticky;top:0;z-index:100;background:var(--white);border-bottom:3px solid var(--orange);box-shadow:0 2px 8px rgba(0,0,0,.10);padding:0 1.5rem;display:flex;align-items:center;gap:1rem;height:64px;}
+.hdr a img{height:48px;display:block;}
+.hdiv{width:1px;height:36px;background:var(--gray-200);flex-shrink:0;}
+.htxt{flex:1;}
+.htitle{font-family:"Barlow Condensed",sans-serif;font-size:22px;font-weight:800;color:var(--navy);letter-spacing:.3px;line-height:1.1;}
+.hsub{font-size:11px;color:var(--gray-500);margin-top:1px;font-family:Inter,sans-serif;}
+/* TABS */
+.tabs{position:sticky;top:64px;z-index:99;background:var(--white);border-bottom:1px solid var(--gray-200);display:flex;padding:0 1.5rem;}
+.tbtn{font-family:Barlow,sans-serif;font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:0 18px;height:44px;background:none;border:none;border-bottom:3px solid transparent;color:var(--gray-500);cursor:pointer;transition:color .15s,border-color .15s;white-space:nowrap;}
+.tbtn:hover{color:var(--navy);}
+.tbtn.active{color:var(--orange);border-bottom-color:var(--orange);}
+/* PANES */
+.pane{display:none;padding:28px 1.5rem 48px;}
+.pane.active{display:block;}
+/* SECTION LABELS */
+.slabel{font-family:"Barlow Condensed",sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--white);background:var(--orange);padding:6px 14px;display:flex;align-items:center;gap:8px;border-radius:4px 4px 0 0;margin-bottom:0;}
+.slabel::before{content:"";width:6px;height:6px;background:rgba(255,255,255,.6);border-radius:50%;flex-shrink:0;}
+/* FORM CARD */
+.fcard{background:var(--white);border:1.5px solid var(--gray-200);border-radius:0 0 8px 8px;padding:24px;margin-bottom:20px;}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.fg{display:flex;flex-direction:column;gap:5px;}
+.fg.full{grid-column:1/-1;}
+.flrow{display:flex;align-items:center;gap:6px;}
+.flbl{font-family:Barlow,sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gray-500);}
+.flbl-opt{font-weight:400;text-transform:none;font-size:10px;}
+/* TOOLTIP */
+.iw{position:relative;display:inline-flex;}
+.ibtn{width:17px;height:17px;border-radius:50%;background:var(--gray-200);border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;padding:0;transition:background .15s;}
+.ibtn:hover{background:var(--orange);}
+.ibtn svg{width:10px;height:10px;stroke:var(--gray-600);pointer-events:none;}
+.ibtn:hover svg{stroke:var(--white);}
+.itip{display:none;position:absolute;left:0;top:calc(100% + 7px);z-index:300;background:var(--navy);color:var(--white);font-size:12px;line-height:1.5;padding:10px 14px;border-radius:6px;min-width:230px;max-width:310px;box-shadow:0 4px 18px rgba(0,0,0,.28);font-family:Inter,sans-serif;pointer-events:none;}
+.itip::before{content:"";position:absolute;top:-5px;left:10px;width:10px;height:10px;background:var(--navy);transform:rotate(45deg);}
+.iw.open .itip{display:block;}
+/* INPUTS */
+select{background:var(--white);border:1.5px solid var(--gray-200);border-radius:6px;color:var(--gray-700);padding:9px 30px 9px 11px;font-size:13px;font-family:Inter,sans-serif;width:100%;transition:border-color .15s;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236C757D' stroke-width='2.2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;}
+select:focus{outline:none;border-color:var(--orange);}
+select:disabled{background:var(--gray-100);color:var(--gray-400);cursor:not-allowed;}
+.hint{font-size:11px;color:var(--gray-400);font-family:Inter,sans-serif;}
+/* BUTTONS */
+.btn-primary{font-family:Barlow,sans-serif;font-size:14px;font-weight:700;letter-spacing:.5px;background:var(--orange);color:var(--white);border:none;border-radius:6px;padding:11px 32px;cursor:pointer;box-shadow:0 2px 6px rgba(232,119,34,.3);transition:background .15s,transform .1s;}
+.btn-primary:hover{background:var(--orange-light);transform:translateY(-1px);}
+.btn-navy{font-family:Barlow,sans-serif;font-size:13px;font-weight:600;background:var(--navy);color:var(--white);border:none;border-radius:6px;padding:11px 22px;cursor:pointer;transition:background .15s;}
+.btn-navy:hover{background:var(--navy-dark);}
+/* RESULT */
+#rpanel{margin-top:24px;display:none;}
+.rcard{background:var(--white);border:1.5px solid var(--gray-200);border-radius:8px;padding:18px;}
+.rcard.wide{grid-column:1/-1;}
+.rcard h3{font-family:"Barlow Condensed",sans-serif;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gray-500);margin-bottom:10px;}
+.rcard p,.rcard li{font-size:13px;color:var(--gray-700);line-height:1.65;font-family:Inter,sans-serif;}
+.rcard ul{padding-left:16px;}
+.rcard li{margin-bottom:4px;}
+.rcard a,.bpc a,.reflist a{color:var(--navy);font-weight:600;text-decoration:underline;}
+.rcard a:hover,.bpc a:hover,.reflist a:hover{color:var(--orange);}
+/* RISK BANNER */
+.rbanner{border-radius:6px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:14px;}
+.rbanner.low{background:var(--agb);border:1.5px solid var(--ag);}
+.rbanner.moderate{background:#FEF9E7;border:1.5px solid #D4AC0D;}
+.rbanner.elevated{background:var(--aab);border:1.5px solid var(--aa);}
+.rbanner.high,.rbanner.critical{background:var(--arb);border:1.5px solid var(--ar);}
+.rbanner.critical{border-width:2px;animation:pb 1.4s infinite;}
+@keyframes pb{0%,100%{box-shadow:0 0 0 0 rgba(192,57,43,.3)}50%{box-shadow:0 0 0 5px rgba(192,57,43,0)}}
+.rico{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.rbanner.low .rico{background:var(--ag);}
+.rbanner.moderate .rico{background:#D4AC0D;}
+.rbanner.elevated .rico{background:var(--aa);}
+.rbanner.high .rico,.rbanner.critical .rico{background:var(--ar);}
+.rlbl{font-family:"Barlow Condensed",sans-serif;font-size:22px;font-weight:800;}
+.rbanner.low .rlbl{color:var(--ag);}
+.rbanner.moderate .rlbl{color:#B7A009;}
+.rbanner.elevated .rlbl{color:var(--aa);}
+.rbanner.high .rlbl,.rbanner.critical .rlbl{color:var(--ar);}
+.rsub{font-size:12px;color:var(--gray-500);margin-top:2px;font-family:Inter,sans-serif;}
+/* METER */
+.mwrap{max-width:480px;margin-bottom:20px;}
+.mtrack{height:7px;border-radius:4px;background:var(--gray-200);overflow:hidden;}
+.mfill{height:100%;border-radius:4px;transition:width .7s cubic-bezier(.4,0,.2,1);}
+.mlbls{display:flex;justify-content:space-between;margin-top:5px;}
+.mlbls span{font-size:10px;color:var(--gray-400);font-family:Barlow,sans-serif;font-weight:600;letter-spacing:.3px;text-transform:uppercase;}
+/* RESULT GRID */
+.rgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+/* FACTORS */
+.flist{display:flex;flex-direction:column;gap:7px;}
+.fi{display:flex;align-items:flex-start;gap:9px;font-size:13px;color:var(--gray-700);line-height:1.5;font-family:Inter,sans-serif;}
+.fdot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.fdot.low{background:var(--ag);}
+.fdot.moderate{background:#D4AC0D;}
+.fdot.elevated{background:var(--aa);}
+.fdot.high{background:var(--ar);}
+/* REC BOXES */
+.rec{border-left:3px solid var(--orange);background:var(--orange-pale);border-radius:0 6px 6px 0;padding:12px 16px;margin-bottom:10px;}
+.rec.green{border-left-color:var(--ag);background:var(--agb);}
+.rec.blue{border-left-color:#1A6FA8;background:#EBF4FB;}
+.rec.purple{border-left-color:#6B3FA0;background:#F3EEFB;}
+.rec.amber{border-left-color:var(--aa);background:var(--aab);}
+.rec h4{font-family:Barlow,sans-serif;font-size:12px;font-weight:700;color:var(--navy);margin-bottom:5px;}
+.rec p{font-size:12.5px;color:var(--gray-700);line-height:1.6;font-family:Inter,sans-serif;}
+/* SUMMARY */
+.slist{list-style:none;padding:0;}
+.slist li{display:flex;align-items:baseline;gap:8px;padding:5px 0;border-bottom:1px solid var(--gray-100);font-size:13px;}
+.slist li:last-child{border-bottom:none;}
+.sk{font-family:Barlow,sans-serif;font-weight:600;color:var(--gray-500);font-size:11px;text-transform:uppercase;letter-spacing:.5px;min-width:128px;flex-shrink:0;}
+.sv{color:var(--gray-700);font-family:Inter,sans-serif;}
+/* BEST PRACTICE */
+.bpintro{background:var(--white);border:1.5px solid var(--gray-200);border-radius:8px;padding:24px 28px;margin-bottom:20px;}
+.bpintro h2{font-family:"Barlow Condensed",sans-serif;font-size:20px;font-weight:800;color:var(--navy);margin-bottom:8px;}
+.bpintro p{font-size:13.5px;color:var(--gray-600);line-height:1.7;max-width:700px;font-family:Inter,sans-serif;}
+.bpgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
+.bpc{background:var(--white);border:1.5px solid var(--gray-200);border-radius:8px;padding:22px;}
+.bpc.wide{grid-column:1/-1;}
+.bpc h3{font-family:"Barlow Condensed",sans-serif;font-size:16px;font-weight:800;color:var(--navy);margin-bottom:10px;}
+.bpc p,.bpc li{font-size:13px;color:var(--gray-600);line-height:1.7;font-family:Inter,sans-serif;}
+.bpc ul{padding-left:16px;margin-top:8px;}
+.bpc li{margin-bottom:5px;}
+.hbadge{display:inline-block;padding:2px 8px;border-radius:3px;font-family:Barlow,sans-serif;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;}
+.hbadge.ihe{background:var(--arb);color:var(--ar);border:1px solid rgba(192,57,43,.3);}
+.hbadge.ehe{background:#EBF4FB;color:#1A6FA8;border:1px solid rgba(26,111,168,.3);}
+/* TABLE */
+.twrap{overflow-x:auto;margin-top:12px;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{background:var(--gray-50);padding:9px 12px;text-align:left;font-family:Barlow,sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--gray-500);border-bottom:1px solid var(--gray-200);}
+td{padding:8px 12px;border-bottom:1px solid var(--gray-100);color:var(--gray-700);font-family:Inter,sans-serif;}
+tr:hover td{background:var(--gray-50);}
+.cl{color:var(--ag);font-weight:600;}
+.cm{color:#B7A009;font-weight:600;}
+.ce{color:var(--aa);font-weight:600;}
+.ch{color:var(--ar);font-weight:600;}
+/* STEP FLOW */
+.sflow{display:flex;flex-direction:column;margin-top:10px;}
+.srow{display:flex;gap:14px;align-items:flex-start;padding:10px 0 10px 18px;border-left:2px solid var(--gray-200);position:relative;}
+.srow::before{content:"";position:absolute;left:-5px;top:16px;width:8px;height:8px;border-radius:50%;background:var(--orange);border:2px solid var(--gray-100);}
+.snum{font-family:"Barlow Condensed",sans-serif;font-size:11px;font-weight:700;color:var(--orange);min-width:20px;padding-top:2px;}
+.sc h4{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:2px;font-family:Barlow,sans-serif;}
+.sc p{font-size:12.5px;color:var(--gray-600);font-family:Inter,sans-serif;}
+.nbox{background:var(--orange-pale);border:1px solid rgba(232,119,34,.25);border-radius:6px;padding:12px 16px;margin-top:14px;font-size:12.5px;color:var(--gray-600);font-family:Inter,sans-serif;}
+.nbox strong{color:var(--orange);}
+.reflist{font-size:12.5px;color:var(--gray-600);line-height:1.9;font-family:Inter,sans-serif;}
+.disc{background:var(--gray-50);border-top:1px solid var(--gray-200);padding:12px 1.5rem;font-size:11.5px;color:var(--gray-500);text-align:center;margin-top:32px;font-family:Inter,sans-serif;}
+.disc strong{color:var(--navy);}
+.btnrow{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px;}
+@media(max-width:700px){.fgrid,.rgrid,.bpgrid{grid-template-columns:1fr;}.fg.full,.rcard.wide,.bpc.wide{grid-column:1;}.pane{padding:16px 1rem 40px;}.hdr,.tabs{padding-left:1rem;padding-right:1rem;}}
+</style>
+</head>
+<body>
+
+<img id="sbsLogoPrint" src="data:image/png;base64,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" style="display:none;" alt="">
+
+<!-- BETA MODAL -->
+<div class="modal-overlay" id="beta-modal">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <div class="modal-hdr-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="8"/><polyline points="12 12 12 16"/></svg>
+      </div>
+      <div class="modal-hdr-txt">
+        <div class="modal-hdr-title">Specialty Bolt and Screw</div>
+        <div class="modal-hdr-sub">Hydrogen Embrittlement Risk Assessor</div>
+      </div>
+      <span class="beta-pill">Beta</span>
+    </div>
+    <div class="modal-body">
+      <p>This tool is currently in <strong>Beta</strong>. While it is based on established industry standards including ASTM F1941 and IFI-142, the assessment logic and recommendations are being actively reviewed and refined.</p>
+      <p>We encourage you to use the tool and welcome your feedback. If you notice anything that does not look right, or have suggestions for improvement, please reach out to the SBS technical team.</p>
+      <p>Thank you for helping us build better technical resources for the fastener industry.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal" data-sbs-action="close-modal">I Understand - Continue to Tool</button>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header class="hdr">
+  <a href="https://shop.specialtybolt.com/" target="_blank" rel="noopener">
+    <img src="data:image/png;base64,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" alt="SBS Specialty Bolt and Screw" style="height:48px;display:block;">
+  </a>
+  <div class="hdiv"></div>
+  <div class="htxt">
+    <div class="htitle">Hydrogen Embrittlement Risk Assessor</div>
+    <div class="hsub">IHE (Internal Hydrogen Embrittlement) and EHE (Environmental Hydrogen Embrittlement) risk evaluation for coated steel fasteners and parts &middot; Based on ASTM F1941 and IFI-142</div>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button class="tbtn active" data-sbs-action="tab-assess">Risk Assessment</button>
+  <button class="tbtn" data-sbs-action="tab-guide">Best Practice Guide</button>
+</nav>
+
+<!-- TAB 1 -->
+<div class="pane active" id="pane-assess">
+<div class="slabel">Part and Material Details</div>
+<div class="fcard">
+<div class="fgrid">
+
+<div class="fg">
+  <div class="flrow">
+    <span class="flbl">Part Type</span>
+    <div class="iw" id="iw-pt">
+      <button class="ibtn" data-sbs-action="tip-pt" aria-label="Part type info"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="8"/><polyline points="12 12 12 16"/></svg></button>
+      <div class="itip">Select the type of fastener or part. SEM screws (with captive hardened washers) and self-tapping screws trigger mandatory baking requirements under ASTM F1941 Section 6.4.1 regardless of other factors. Changing part type also updates available grade options.</div>
+    </div>
+  </div>
+  <select id="sel-pt" data-sbs-action="sel-change">
+    <option value="">Select part type</option>
+    <option value="bolt">Bolt and Cap Screw</option>
+    <option value="stud">Stud</option>
+    <option value="screw">Machine Screw</option>
+    <option value="nut">Nut</option>
+    <option value="washer">Hardened Washer</option>
+    <option value="sem">SEM Screw (captive washer)</option>
+    <option value="self_tap">Self-Tapping or Thread Forming Screw</option>
+    <option value="spring">Spring or Clip</option>
+    <option value="pin">Pin or Dowel</option>
+    <option value="structural">Structural Member or Bracket</option>
+    <option value="other">Other Threaded Part</option>
+  </select>
+  <span class="hint">SEM screws and self-tapping screws trigger mandatory baking</span>
+</div>
+
+<div class="fg">
+  <div class="flrow">
+    <span class="flbl">Grade System</span>
+    <div class="iw" id="iw-sys">
+      <button class="ibtn" data-sbs-action="tip-sys" aria-label="Grade system info"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="8"/><polyline points="12 12 12 16"/></svg></button>
+      <div class="itip">SAE Grade is used for inch (imperial) fasteners per SAE J429. Property Class is the ISO metric equivalent per ISO 898-1. Select HRC if you know the Rockwell C hardness of the part directly. Your selection filters the Grade or Class options below.</div>
+    </div>
+  </div>
+  <select id="sel-sys" data-sbs-action="sel-change">
+    <option value="sae">SAE Grade (Inch System)</option>
+    <option value="metric">Property Class (Metric ISO)</option>
+    <option value="hrc">HRC Hardness (direct)</option>
+  </select>
+  <span class="hint">Filters available grade or class options</span>
+</div>
+
+<div class="fg">
+  <div class="flrow">
+    <span class="flbl" id="lbl-grade">SAE Grade</span>
+    <div class="iw" id="iw-grade">
+      <button class="ibtn" data-sbs-action="tip-grade" aria-label="Grade info"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="8"/><polyline points="12 12 12 16"/></svg></button>
+      <div class="itip" id="tip-grade-txt">Higher SAE grades indicate higher strength and hardness. Grade 8 and above approach the hardness threshold where baking becomes strongly recommended. ASTM F1941 mandates baking at HRC 40 and above.</div>
+    </div>
+  </div>
+  <select id="sel-grade" data-sbs-action="sel-change"></select>
+  <span class="hint" id="hint-grade">Inch fastener grade per SAE J429</span>
+</div>
+
+<div class="fg">
+  <div class="flrow">
+    <span class="flbl">Base Material <span class="flbl-opt">(optional)</span></span>
+    <div class="iw" id="iw-mat">
+      <button class="ibtn" data-sbs-action="tip-mat" aria-label="Material info"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="8"/><polyline points="12 12 12 16"/></svg></button>
+      <div class="itip">Base material affects susceptibility and filters available grade options. Austenitic stainless (300 series) and brass have very low IHE risk. PH stainless and titanium can be susceptible at high hardness. Selecting a material updates the Grade or Class list.</div>
+    </div>
+  </div>
+  <select id="sel-mat" data-sbs-action="sel-change">
+    <option value="carbon_alloy">Carbon and Alloy Steel (default)</option>
+    <option value="case_hardened">Case Hardened Steel</option>
+    <option value="stainless_ph">Stainless Steel PH (17-4, 15-5)</option>
+    <option value="stainless_300">Stainless Steel Austenitic (300 series)</option>
+    <option value="stainless_400">Stainless Steel Martensitic (400 series)</option>
+    <option value="titanium">Titanium Alloy</option>
+    <option value="aluminum">Aluminum Alloy</option>
+    <option value="brass">Brass or Bronze</option>
+  </select>
+  <span class="hint">Filters the Grade or Class list to compatible options</span>
+</div>
+
+<div class="fg full">
+  <div class="flrow">
+    <span class="flbl">Coating and Finish</span>
+    <div class="iw" id="iw-coat">
+      <button class="ibtn" data-sbs-action="tip-coat" aria-label="Coating info"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="8"/><polyline points="12 12 12 16"/></svg></button>
+      <div class="itip">Electroplated coatings introduce hydrogen during acid cleaning and deposition, then trap it in a dense layer. Dip-spin and mechanical coatings use abrasive blast (no acid) and leave a porous layer that permits natural outgassing. Coating is the second largest IHE risk factor after hardness.</div>
+    </div>
+  </div>
+  <select id="sel-coat" data-sbs-action="sel-change">
+    <option value="">Select coating or finish</option>
+    <optgroup label="Electroplated (Higher IHE Risk)">
+      <option value="zn_clear">Zinc Electroplate, Clear or Trivalent Passivate (Fe/Zn 5A, 8A)</option>
+      <option value="zn_blue">Zinc Electroplate, Blue-Bright Passivate (Fe/Zn 5B, 8B)</option>
+      <option value="zn_yellow">Zinc Electroplate, Yellow Chromate (Fe/Zn 5C, 8C)</option>
+      <option value="zn_olive">Zinc Electroplate, Olive or Opaque Chromate (Fe/Zn 5D, 8D)</option>
+      <option value="zn_black">Zinc Electroplate, Black Chromate (Fe/Zn 5E, 8E)</option>
+      <option value="zn_cobalt">Zinc-Cobalt Alloy Electroplate (Fe/Zn-Co)</option>
+      <option value="zn_nickel">Zinc-Nickel Alloy Electroplate (Fe/Zn-Ni)</option>
+      <option value="zn_iron">Zinc-Iron Alloy Electroplate (Fe/Zn-Fe)</option>
+      <option value="cadmium">Cadmium Electroplate (Fe/Cd)</option>
+      <option value="nickel_ep">Nickel Electroplate</option>
+      <option value="chrome_ep">Chrome Electroplate (Hard or Decorative)</option>
+    </optgroup>
+    <optgroup label="Dip-Spin and Mechanical (Lower IHE Risk)">
+      <option value="geomet321">Geomet 321 (Inorganic Zinc Flake, Dip-Spin, no acid)</option>
+      <option value="geomet500">Geomet 500 or Dacromet (Zinc-Aluminum Flake, Dip-Spin)</option>
+      <option value="delta">Delta Protekt KL100 or VH300 (Zinc Flake, Dip-Spin)</option>
+      <option value="mech_zn">Mechanical Zinc (ASTM B695, Peen or Shaker Plate)</option>
+      <option value="zn_flake">Zinc Flake, Generic Dip-Spin</option>
+    </optgroup>
+    <optgroup label="Hot-Dip and Thermal Diffusion">
+      <option value="hdg">Hot-Dip Galvanize (HDG)</option>
+      <option value="sherardize">Sherardizing (Thermal Diffusion Zinc)</option>
+    </optgroup>
+    <optgroup label="Conversion Coatings">
+      <option value="phosphate">Phosphate and Oil (Zinc or Manganese)</option>
+      <option value="black_ox">Black Oxide</option>
+    </optgroup>
+    <optgroup label="Uncoated">
+      <option value="plain">Plain or Uncoated (Oiled or Dry)</option>
+    </optgroup>
+  </select>
+  <span class="hint">Geomet 321 is the preferred alternative for high-strength parts where electroplating poses IHE risk</span>
+</div>
+
+<div class="fg">
+  <div class="flrow">
+    <span class="flbl">Service Environment</span>
+    <div class="iw" id="iw-env">
+      <button class="ibtn" data-sbs-action="tip-env" aria-label="Environment info"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="8"/><polyline points="12 12 12 16"/></svg></button>
+      <div class="itip">The service environment determines Environmental Hydrogen Embrittlement (EHE) risk. Cathodic galvanic couples, sour H2S, and caustic environments are most aggressive. Even parts below HRC 35 can fail under cathodic or sour conditions.</div>
+    </div>
+  </div>
+  <select id="sel-env" data-sbs-action="sel-change">
+    <option value="indoor_dry">Indoor or Dry</option>
+    <option value="indoor_humid">Indoor or Humid</option>
+    <option value="outdoor">Outdoor or Atmospheric</option>
+    <option value="salt">Marine or Salt Spray</option>
+    <option value="corrosive">Chemical or Corrosive</option>
+    <option value="cathodic">Cathodic Galvanic Couple</option>
+    <option value="caustic">Caustic or Sour (H2S)</option>
+    <option value="steam">High-Pressure Steam</option>
+  </select>
+  <span class="hint">Drives Environmental Hydrogen Embrittlement (EHE) risk</span>
+</div>
+
+<div class="fg">
+  <div class="flrow">
+    <span class="flbl">Applied Stress</span>
+    <div class="iw" id="iw-str">
+      <button class="ibtn" data-sbs-action="tip-str" aria-label="Stress level info"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="8"/><polyline points="12 12 12 16"/></svg></button>
+      <div class="itip">Tensile stress must be present for hydrogen embrittlement failure to occur. Hydrogen migrates to high-stress zones such as the first engaged thread and under the bolt head. Cyclic loading accelerates crack growth once hydrogen-induced cracking begins.</div>
+    </div>
+  </div>
+  <select id="sel-str" data-sbs-action="sel-change">
+    <option value="low">Low: light duty or non-critical</option>
+    <option value="med">Medium: normal structural load</option>
+    <option value="high">High: fully loaded or preloaded joint</option>
+    <option value="cyclic">Cyclic or Fatigue Loading</option>
+  </select>
+  <span class="hint">Tensile stress must be present for HE failure to occur</span>
+</div>
+
+</div>
+<div class="btnrow">
+  <button class="btn-primary" data-sbs-action="run">Run Assessment</button>
+  <button class="btn-navy" data-sbs-action="reset">Reset</button>
+</div>
+</div>
+
+<div id="rpanel">
+<div class="slabel">Assessment Result</div>
+<div class="fcard" style="border-radius:0 0 8px 8px;">
+  <div id="rbanner-el"></div>
+  <div class="mwrap">
+    <div class="mtrack"><div class="mfill" id="mfill" style="width:0%"></div></div>
+    <div class="mlbls"><span>Low</span><span>Moderate</span><span>Elevated</span><span>High</span><span>Critical</span></div>
+  </div>
+  <div class="rgrid" id="rcards"></div>
+</div>
+</div>
+</div>
+
+<!-- TAB 2 -->
+<div class="pane" id="pane-guide">
+<div class="bpintro">
+  <h2>Understanding Hydrogen Embrittlement in Fasteners</h2>
+  <p>Hydrogen embrittlement (HE) causes unexpected brittle fracture in high-strength steels without visible warning. It is driven by three overlapping conditions: tensile stress, a hydrogen source, and a susceptible material. This guide explains IHE and EHE, how to identify risk, and how to eliminate it. Key references: <a href="https://drive.google.com/file/d/1QsJbDeZkWo2IeCySc8IC3ymdiw27S_An/view" target="_blank" rel="noopener">ASTM F1941</a> and <a href="https://drive.google.com/file/d/1tv6-0E-rNZxat8PR6AVp8sDeS-L5in4V/view" target="_blank" rel="noopener">IFI-142</a>.</p>
+</div>
+<div class="slabel">Types of Hydrogen Embrittlement</div>
+<div class="bpgrid" style="margin-top:0;">
+<div class="bpc" style="border-radius:0 8px 8px 8px;">
+  <div class="hbadge ihe">IHE: Internal Hydrogen Embrittlement</div>
+  <h3>Internal Hydrogen Embrittlement</h3>
+  <p>IHE occurs when atomic hydrogen is absorbed into the metal <strong>before or during manufacturing</strong>, then trapped by a dense coating layer.</p>
+  <ul>
+    <li><strong>Acid pickling and descaling:</strong> HCl or H2SO4 reacts with steel; atomic hydrogen diffuses into the part</li>
+    <li><strong>Electroplating:</strong> both the acid clean and the plating bath introduce hydrogen</li>
+    <li><strong>Welding:</strong> moisture or flux dissociation introduces hydrogen in the heat-affected zone</li>
+    <li><strong>Steel melting:</strong> hydrogen can be trapped during solidification at the mill</li>
+  </ul>
+  <p style="margin-top:10px">Under tensile stress hydrogen migrates to stress concentration points (first engaged thread, underhead fillet) and initiates cracking. Failure can be sudden and without visible deformation or warning.</p>
+</div>
+<div class="bpc">
+  <div class="hbadge ehe">EHE: Environmental Hydrogen Embrittlement</div>
+  <h3>Environmental Hydrogen Embrittlement</h3>
+  <p>EHE occurs when hydrogen is introduced <strong>after installation from the service environment</strong>. Also called Stress Corrosion Cracking (SCC) when corrosion drives the mechanism.</p>
+  <ul>
+    <li><strong>Galvanic coupling:</strong> fastener acting as cathode; cathodic reaction generates H+</li>
+    <li><strong>General corrosion:</strong> moisture and steel react; hydrogen released at the surface</li>
+    <li><strong>Sour or H2S service:</strong> sulfide ions inhibit recombination, forcing atomic H into the lattice</li>
+    <li><strong>High-pressure steam:</strong> 4Fe plus 6H2O produces significant H2</li>
+    <li><strong>Caustic solutions:</strong> accelerated hydrogen uptake at elevated pH</li>
+  </ul>
+  <p style="margin-top:10px">EHE is time-dependent. Parts may survive installation but fail weeks or months later. It is often the least understood and most dangerous corrosion-related failure mode.</p>
+</div>
+<div class="bpc wide">
+  <h3>Hardness Susceptibility Thresholds</h3>
+  <p>Hardness is the single most important indicator of IHE susceptibility. Higher hardness means higher residual stress and greater hydrogen affinity at grain boundaries.</p>
+  <div class="twrap">
+    <table>
+      <thead><tr><th>HRC</th><th>SAE Grade</th><th>Metric PC</th><th>Approx UTS</th><th>IHE Risk</th><th>Baking Requirement (if electroplated)</th></tr></thead>
+      <tbody>
+        <tr><td>Below 22</td><td>Grade 2</td><td>4.6 to 6.8</td><td>Below 770 MPa</td><td class="cl">LOW</td><td class="cl">Not Required (ASTM F1941 Note 2)</td></tr>
+        <tr><td>22 to 34</td><td>Grade 5</td><td>8.8</td><td>770 to 1,050 MPa</td><td class="cl">LOW</td><td class="cl">Not Required (ASTM F1941 Note 2)</td></tr>
+        <tr><td>35 to 39</td><td>Grade 8 upper</td><td>10.9</td><td>1,050 to 1,250 MPa</td><td class="cm">MODERATE</td><td class="cm">Recommended (good practice)</td></tr>
+        <tr><td>40 to 43</td><td>Grade 9 or Specialty</td><td>12.9</td><td>1,250 to 1,410 MPa</td><td class="ch">HIGH</td><td class="ch">MANDATORY (ASTM F1941 Section 6.4.1)</td></tr>
+        <tr><td>Above 43</td><td>Socket or Self-Tap</td><td>Custom</td><td>Above 1,410 MPa</td><td class="ch">CRITICAL</td><td class="ch">MANDATORY plus Avoid Electroplate</td></tr>
+        <tr><td>Case Hardened</td><td>Self-Tapping Screws</td><td>n/a</td><td>Variable</td><td class="ch">HIGH</td><td class="ch">MANDATORY (ASTM F1941 Section 6.4.1)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="nbox"><strong>ASTM F1941 Section 6.4.1:</strong> Baking is mandatory for steel fasteners heat treated to a specified hardness of 40 HRC or above, case-hardened steel fasteners, and SEM screws with hardened captive washers. Fasteners at or below 34 HRC have very low susceptibility and do not require baking (ASTM F1941 Note 2).</div>
+</div>
+</div>
+
+<div class="slabel">Coating Selection and IHE Risk</div>
+<div class="bpgrid" style="margin-top:0;">
+<div class="bpc wide" style="border-radius:0 8px 8px 8px;">
+  <h3>How Coating Process Affects Hydrogen Embrittlement</h3>
+  <div class="twrap">
+    <table>
+      <thead><tr><th>Coating or Finish</th><th>Surface Prep</th><th>H2 Introduced</th><th>H2 Trapped</th><th>IHE Risk</th><th>Outgassing Possible</th></tr></thead>
+      <tbody>
+        <tr><td>Zinc Electroplate (all passivates)</td><td>Acid clean</td><td class="ch">Yes: acid and bath</td><td class="ch">Yes: dense layer</td><td class="ch">HIGH</td><td>Only via baking within 4 hours of plating</td></tr>
+        <tr><td>Cadmium Electroplate</td><td>Acid clean</td><td class="ch">Yes</td><td class="ch">Yes</td><td class="ch">HIGH</td><td>Baking max 375 deg F (Cd mp 610 deg F)</td></tr>
+        <tr><td>Chrome or Nickel Electroplate</td><td>Acid clean</td><td class="ch">Yes</td><td class="ch">Yes: very dense</td><td class="ch">VERY HIGH</td><td>Difficult; long bake times required</td></tr>
+        <tr><td>Geomet 321</td><td>Abrasive blast</td><td class="cl">No</td><td class="cm">Porous layer</td><td class="cl">VERY LOW</td><td class="cl">Yes: naturally permits outgassing</td></tr>
+        <tr><td>Geomet 500 or Dacromet</td><td>Abrasive blast</td><td class="cl">No</td><td class="cm">Porous</td><td class="cl">VERY LOW</td><td class="cl">Yes</td></tr>
+        <tr><td>Delta Protekt KL100 or VH300</td><td>Abrasive blast</td><td class="cl">No</td><td class="cm">Porous</td><td class="cl">VERY LOW</td><td class="cl">Yes</td></tr>
+        <tr><td>Mechanical Zinc (ASTM B695)</td><td>Abrasive blast</td><td class="cl">Minimal</td><td class="cm">Porous</td><td class="cl">LOW</td><td class="cl">Yes: porous coating</td></tr>
+        <tr><td>Hot-Dip Galvanize (HDG)</td><td>Acid flux</td><td class="cm">Flux acid plus up-quench</td><td class="cm">Thick Zn layer</td><td class="cm">MODERATE</td><td>High temp drives some H2 out but thermal up-quench risk exists</td></tr>
+        <tr><td>Sherardizing</td><td>Abrasive blast</td><td class="cl">No</td><td class="cm">Porous</td><td class="cl">LOW</td><td class="cl">Yes</td></tr>
+        <tr><td>Phosphate and Oil</td><td>Mild acid conversion</td><td class="cm">Minor</td><td class="cl">No dense layer</td><td class="cl">LOW</td><td class="cl">Yes</td></tr>
+        <tr><td>Black Oxide</td><td>Alkaline oxidation</td><td class="cl">Minimal</td><td class="cl">No dense layer</td><td class="cl">LOW</td><td class="cl">Yes</td></tr>
+        <tr><td>Plain or Uncoated</td><td>n/a</td><td class="cl">None from finish</td><td class="cl">None</td><td class="cl">NEGLIGIBLE</td><td>n/a</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+
+<div class="slabel">Elimination and Mitigation</div>
+<div class="bpgrid" style="margin-top:0;">
+<div class="bpc" style="border-radius:0 8px 8px 8px;">
+  <div class="hbadge ihe">IHE Control: Baking</div>
+  <h3>Post-Plate Baking for Hydrogen Relief</h3>
+  <p>Baking after electroplating drives trapped hydrogen out by thermal diffusion. Per <a href="https://drive.google.com/file/d/1QsJbDeZkWo2IeCySc8IC3ymdiw27S_An/view" target="_blank" rel="noopener">ASTM F1941</a> and <a href="https://drive.google.com/file/d/1tv6-0E-rNZxat8PR6AVp8sDeS-L5in4V/view" target="_blank" rel="noopener">IFI-142</a>:</p>
+  <div class="sflow">
+    <div class="srow"><div class="snum">01</div><div class="sc"><h4>Complete electroplating</h4><p>Finish plating per specification.</p></div></div>
+    <div class="srow"><div class="snum">02</div><div class="sc"><h4>Bake within 4 hours (preferably 1 hour) of plating</h4><p>Delay allows hydrogen to migrate to stress zones before removal (ASTM F1941 Section 6.4.2.2).</p></div></div>
+    <div class="srow"><div class="snum">03</div><div class="sc"><h4>Bake 375 to 450 deg F (190 to 232 deg C) for 2 to 24 hours</h4><p>Typical: 8 hours at 400 deg F. Higher hardness requires longer baking. Duration agreed between purchaser and manufacturer.</p></div></div>
+    <div class="srow"><div class="snum">04</div><div class="sc"><h4>Bake BEFORE applying chromate passivate</h4><p>Temperatures above 150 deg F damage chromate film, negating corrosion protection (ASTM F1941 Section 6.4.2.2).</p></div></div>
+    <div class="srow"><div class="snum">05</div><div class="sc"><h4>Verify via ASTM F1940 process control test</h4><p>Sustained-load test confirms process does not introduce embrittlement for the product class.</p></div></div>
+  </div>
+  <div class="nbox"><strong>Note:</strong> Even correct baking does not guarantee complete hydrogen removal. For HRC above 40, electroplating should be avoided where possible. Specify Geomet 321 or equivalent dip-spin finish instead.</div>
+</div>
+<div class="bpc">
+  <div class="hbadge ihe">IHE Prevention: Alternate Finishes</div>
+  <h3>Outgassing-Friendly Alternate Finishes</h3>
+  <p>These finishes use abrasive blast (not acid) and a porous zinc-flake layer that does not introduce or trap hydrogen:</p>
+  <ul>
+    <li><strong>Geomet 321:</strong> inorganic zinc flake; no acid; porous layer permits outgassing; 720 plus hour salt spray; RoHS and REACH compliant; no hexavalent chromium. Preferred recommendation for high-strength fasteners.</li>
+    <li><strong>Geomet 500 or Dacromet:</strong> higher build; zinc-aluminum flake; suitable for Grade 10.9 and 12.9 metric and Grade 8 and 9 SAE.</li>
+    <li><strong>Delta Protekt KL100 or VH300:</strong> dip-spin zinc flake; no acid; suitable for HRC above 40.</li>
+    <li><strong>Mechanical Zinc (ASTM B695):</strong> impact plating; no acid clean; porous coating allows natural outgassing.</li>
+    <li><strong>Sherardizing:</strong> thermal diffusion zinc; no liquid acid; suitable for high-strength parts including springs and pins.</li>
+  </ul>
+  <div class="nbox"><strong>Geomet 321</strong> is the preferred drop-in alternative to zinc electroplate for high-strength fasteners where IHE risk exists and corrosion performance requirements can be met.</div>
+</div>
+<div class="bpc">
+  <div class="hbadge ehe">EHE Control</div>
+  <h3>Reducing Environmental HE and Stress Corrosion</h3>
+  <ul>
+    <li><strong>Reduce hardness:</strong> below HRC 35 where design permits. Below HRC 22 there is negligible susceptibility for most environments.</li>
+    <li><strong>Avoid cathodic coupling:</strong> do not use steel fasteners as cathode in a dissimilar-metal assembly without insulating washers or sleeves.</li>
+    <li><strong>Barrier coatings:</strong> Geomet, zinc flake, or HDG reduce corrosion-driven hydrogen generation at the surface.</li>
+    <li><strong>Remove stress raisers:</strong> generous fillet radii, smooth thread runout, no sharp notches.</li>
+    <li><strong>Sour service (H2S):</strong> consult a materials engineer; hardness limits are much stricter than standard grades for H2S environments.</li>
+    <li><strong>Cathodic protection:</strong> impressed-current CP systems can drive hydrogen into connected fasteners if current density is not managed.</li>
+  </ul>
+</div>
+<div class="bpc">
+  <h3>Testing Standards and Process Verification</h3>
+  <div class="twrap">
+    <table>
+      <thead><tr><th>Standard</th><th>Purpose</th><th>When to Use</th></tr></thead>
+      <tbody>
+        <tr><td><a href="https://drive.google.com/file/d/1yBCwTCWJAdAP6VJpveOEm_tIYWY6k1Pz/view" target="_blank" rel="noopener">ASTM F1940</a></td><td>Process control verification via sustained-load test</td><td>Production process qualification</td></tr>
+        <tr><td>ASTM F1624</td><td>ISL threshold measurement</td><td>Material and process development</td></tr>
+        <tr><td><a href="https://drive.google.com/file/d/12V41rFiO_DEJ41rLW2dRTpUXrudlnsJh/view" target="_blank" rel="noopener">ASTM F606</a></td><td>Proof load or wedge tensile after coating</td><td>Lot acceptance</td></tr>
+        <tr><td>NASM-1312-5</td><td>Sustained-load embrittlement test</td><td>Aerospace or critical applications</td></tr>
+        <tr><td>ISO 15330</td><td>Preload-induced HE test</td><td>Metric fastener qualification</td></tr>
+        <tr><td>ASTM B117</td><td>Salt spray corrosion resistance</td><td>Coating qualification</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="bpc wide">
+  <h3>Key References</h3>
+  <div class="reflist">
+    <a href="https://drive.google.com/file/d/1QsJbDeZkWo2IeCySc8IC3ymdiw27S_An/view" target="_blank" rel="noopener">ASTM F1941</a> - Standard Specification for Electrodeposited Coatings on Threaded Fasteners (baking requirements Section 6.4)<br>
+    <a href="https://drive.google.com/file/d/1tv6-0E-rNZxat8PR6AVp8sDeS-L5in4V/view" target="_blank" rel="noopener">IFI-142</a> - Hydrogen Embrittlement Risks in Electroplated Fasteners and Process Management Guidelines<br>
+    <a href="https://drive.google.com/file/d/1yBCwTCWJAdAP6VJpveOEm_tIYWY6k1Pz/view" target="_blank" rel="noopener">ASTM F1940</a> - Process Control Verification to Prevent Hydrogen Embrittlement in Plated Fasteners<br>
+    <a href="https://drive.google.com/file/d/12V41rFiO_DEJ41rLW2dRTpUXrudlnsJh/view" target="_blank" rel="noopener">ASTM F606</a> - Mechanical Properties of Externally and Internally Threaded Fasteners<br>
+    <a href="https://www.boltcouncil.org/files/HydrogenEmbrittlementInSteelFasteners-Brahimi.pdf" target="_blank" rel="noopener">Brahimi, S. (2014)</a> - Fundamentals of Hydrogen Embrittlement in Steel Fasteners, IBECA Technologies Corp.
+  </div>
+</div>
+</div>
+</div>
+
+<div class="disc"><strong>Disclaimer:</strong> This tool provides general guidance based on ASTM F1941, IFI-142, and industry best practice. Results are indicative only and do not constitute engineering advice. Always consult a qualified engineer and the applicable standards for safety-critical applications. Specialty Bolt and Screw, Inc. accepts no liability for decisions made on the basis of this tool.</div>
+
+<script>
+var EP=['zn_clear','zn_blue','zn_yellow','zn_olive','zn_black','zn_cobalt','zn_nickel','zn_iron','cadmium','nickel_ep','chrome_ep'];
+var MECH=['geomet321','geomet500','delta','mech_zn','zn_flake'];
+var GRADES={
+  sae:{label:'SAE Grade',hint:'Inch fastener grade per SAE J429',tip:'Higher SAE grades indicate higher strength and hardness. Grade 8 and above approach the hardness threshold where baking becomes strongly recommended. ASTM F1941 mandates baking at HRC 40 and above.',
+    all:[{v:'sae2',l:'Grade 2 (below HRC 22, min 74 ksi)',hrc:14,risk:'low'},{v:'sae5',l:'Grade 5 (HRC 25 to 34, min 120 ksi)',hrc:30,risk:'moderate'},{v:'sae8',l:'Grade 8 (HRC 33 to 39, min 150 ksi)',hrc:36,risk:'elevated'},{v:'sae9',l:'Grade 9 (approx HRC 39 to 43, min 180 ksi)',hrc:41,risk:'high'},{v:'sae_cs',l:'Case Hardened or Self-Tap (HRC 45 to 55+)',hrc:50,risk:'critical'}],
+    mat:{carbon_alloy:['sae2','sae5','sae8','sae9','sae_cs'],case_hardened:['sae_cs'],stainless_ph:['sae5','sae8','sae9'],stainless_300:['sae2','sae5'],stainless_400:['sae5','sae8'],titanium:['sae5','sae8'],aluminum:['sae2','sae5'],brass:['sae2','sae5']}},
+  metric:{label:'Property Class',hint:'ISO 898-1 metric fastener property class',tip:'Metric property class per ISO 898-1. Class 10.9 is common in automotive and structural applications. Class 12.9 (approx HRC 39 to 44) has mandatory baking requirements when electroplated per ASTM F1941. Material selection filters which classes are shown.',
+    all:[{v:'pc46',l:'Class 4.6 (below HRC 22, min 240 MPa)',hrc:10,risk:'low'},{v:'pc68',l:'Class 6.8 (below HRC 22, min 480 MPa)',hrc:18,risk:'low'},{v:'pc88',l:'Class 8.8 (HRC 22 to 32, min 800 MPa)',hrc:27,risk:'moderate'},{v:'pc109',l:'Class 10.9 (HRC 32 to 39, min 1040 MPa)',hrc:35,risk:'elevated'},{v:'pc129',l:'Class 12.9 (HRC 39 to 44, min 1220 MPa)',hrc:41,risk:'high'},{v:'pc_cs',l:'Case Hardened or Self-Tap (HRC 45+)',hrc:48,risk:'critical'}],
+    mat:{carbon_alloy:['pc46','pc68','pc88','pc109','pc129','pc_cs'],case_hardened:['pc_cs'],stainless_ph:['pc88','pc109','pc129'],stainless_300:['pc46','pc68','pc88'],stainless_400:['pc46','pc68','pc88','pc109'],titanium:['pc88','pc109'],aluminum:['pc46','pc68'],brass:['pc46','pc68']}},
+  hrc:{label:'HRC Hardness',hint:'Rockwell C hardness of the finished part',tip:'HRC is the most direct measure of IHE susceptibility. ASTM F1941 sets the mandatory baking threshold at HRC 40. Above HRC 43, electroplating is strongly discouraged. Case-hardened parts require baking regardless of HRC value.',
+    all:[{v:'hlt22',l:'Below 22 HRC (low strength)',hrc:18,risk:'low'},{v:'h2234',l:'22 to 34 HRC',hrc:28,risk:'moderate'},{v:'h3539',l:'35 to 39 HRC',hrc:37,risk:'elevated'},{v:'h4043',l:'40 to 43 HRC (ASTM F1941 baking mandatory)',hrc:41,risk:'high'},{v:'hgt43',l:'Above 43 HRC (avoid electroplating)',hrc:46,risk:'critical'}],
+    mat:{carbon_alloy:['hlt22','h2234','h3539','h4043','hgt43'],case_hardened:['h3539','h4043','hgt43'],stainless_ph:['hlt22','h2234','h3539','h4043'],stainless_300:['hlt22','h2234'],stainless_400:['hlt22','h2234','h3539'],titanium:['hlt22','h2234','h3539'],aluminum:['hlt22','h2234'],brass:['hlt22']}}
+};
+function buildGrades(){var s=document.getElementById('sel-sys').value;var m=document.getElementById('sel-mat').value;var pt=document.getElementById('sel-pt').value;var d=GRADES[s];var allowed=d.mat[m]||d.all.map(function(o){return o.v;});var opts=d.all.filter(function(o){return allowed.indexOf(o.v)>=0;});var sel=document.getElementById('sel-grade');var prev=sel.value;sel.innerHTML=opts.map(function(o){return '<option value="'+o.v+'">'+o.l+'</option>';}).join('');if(prev&&sel.querySelector('option[value="'+prev+'"]')){sel.value=prev;}document.getElementById('lbl-grade').textContent=d.label;document.getElementById('hint-grade').textContent=d.hint;document.getElementById('tip-grade-txt').textContent=d.tip;}
+function closeTooltips(){document.querySelectorAll('.iw.open').forEach(function(el){el.classList.remove('open');});}
+document.addEventListener('click',function(e){var el=e.target;var action=null;var inTip=false;for(var i=0;i<8;i++){if(!el||el===document.body)break;if(el.getAttribute&&el.getAttribute('data-sbs-action')){action=el.getAttribute('data-sbs-action');}if(el.classList&&(el.classList.contains('iw')||el.classList.contains('ibtn'))){inTip=true;}el=el.parentNode;}if(!inTip&&!action){closeTooltips();return;}if(action==='tab-assess'||action==='tab-guide'){switchTab(action.replace('tab-',''));}else if(action==='sel-change'){buildGrades();}else if(action==='run'){runAssessment();}else if(action==='reset'){resetForm();}else if(action==='close-modal'){var m=document.getElementById('beta-modal');if(m){m.style.display='none';}}else if(action&&action.indexOf('tip-')===0){var id='iw-'+action.replace('tip-','');closeTooltips();var w=document.getElementById(id);if(w){w.classList.add('open');}}});
+function switchTab(n){document.querySelectorAll('.pane').forEach(function(p){p.classList.remove('active');});document.querySelectorAll('.tbtn').forEach(function(b){b.classList.remove('active');});var p=document.getElementById('pane-'+n);if(p)p.classList.add('active');var b=document.querySelector('[data-sbs-action="tab-'+n+'"]');if(b)b.classList.add('active');}
+function resetForm(){document.getElementById('sel-pt').value='';document.getElementById('sel-sys').value='sae';document.getElementById('sel-mat').value='carbon_alloy';document.getElementById('sel-coat').value='';document.getElementById('sel-env').value='indoor_dry';document.getElementById('sel-str').value='low';buildGrades();document.getElementById('rpanel').style.display='none';}
+function runAssessment(){
+var pt=document.getElementById('sel-pt').value;var mat=document.getElementById('sel-mat').value;var sys=document.getElementById('sel-sys').value;var gv=document.getElementById('sel-grade').value;var coat=document.getElementById('sel-coat').value;var env=document.getElementById('sel-env').value;var str=document.getElementById('sel-str').value;
+if(!pt||!coat){alert('Please select Part Type and Coating or Finish before running the assessment.');return;}
+var d=GRADES[sys];var go=d.all.filter(function(o){return o.v===gv;})[0]||{hrc:0,risk:'low'};var hrc=go.hrc;
+var ihe=0,ehe=0,factors=[],recs=[];
+var isCH=(mat==='case_hardened')||(pt==='self_tap')||(gv==='sae_cs')||(gv==='pc_cs');
+if(isCH&&mat!=='case_hardened'){ihe+=28;factors.push({l:'high',t:'Case hardened steel (self-tapping or thread forming screw): mandatory baking required per ASTM F1941 Section 6.4.1 regardless of HRC reading. Very high susceptibility to IHE.'});}
+else if(mat==='case_hardened'){ihe+=28;factors.push({l:'high',t:'Case hardened steel: mandatory baking required per ASTM F1941 Section 6.4.1 regardless of HRC. Very high susceptibility to IHE.'});}
+else if(mat==='stainless_ph'){ihe+=14;factors.push({l:'elevated',t:'Precipitation-hardened stainless: can be susceptible at high hardness levels (e.g. H900 condition is approx HRC 44). Verify heat treatment condition.'});}
+else if(mat==='stainless_300'){factors.push({l:'low',t:'Austenitic stainless steel (300 series): inherently very low IHE susceptibility due to face-centered cubic crystal structure.'});}
+else if(mat==='brass'){factors.push({l:'low',t:'Brass or Bronze: very low IHE susceptibility. Dezincification may be a separate concern in aggressive environments.'});}
+if(!isCH){
+if(hrc>=43){ihe+=35;factors.push({l:'high',t:'Hardness above 43 HRC: critical risk zone. ASTM F1941 introduction states electrodeposition is not recommended at this hardness level. Switch to an alternate finish.'});}
+else if(hrc>=40){ihe+=28;factors.push({l:'high',t:'Hardness 40 to 43 HRC: ASTM F1941 Section 6.4.1 mandates post-plate baking. HE testing is also mandatory (Section 6.4.3) unless process is qualified per ASTM F1940.'});}
+else if(hrc>=35){ihe+=14;factors.push({l:'elevated',t:'Hardness 35 to 39 HRC: elevated susceptibility. Baking is recommended as good practice. Good process control per ASTM F1940 verification is advisable.'});}
+else if(hrc>=22){ihe+=3;factors.push({l:'low',t:'Hardness 22 to 34 HRC: low susceptibility. Baking is NOT required per ASTM F1941 Note 2 at this hardness range. Standard electroplating process control is sufficient.'});}
+else{factors.push({l:'low',t:'Hardness below 22 HRC: very low susceptibility to IHE per ASTM F1941 Note 2. Standard electroplating processes are generally acceptable.'});}}
+if(pt==='sem'){ihe+=12;factors.push({l:'high',t:'SEM screw with hardened captive washer: ASTM F1941 Section 6.4.1 explicitly requires baking for SEM screws regardless of bolt hardness because the captive washer is hardened steel.'});}
+var isEP=EP.indexOf(coat)>=0;var isMECH=MECH.indexOf(coat)>=0;
+if(isEP){ihe+=24;var cm='Electroplated coating: acid cleaning and plating both introduce hydrogen; the dense coating layer traps it inside. This is the primary IHE mechanism for coated fasteners.';if(coat==='chrome_ep')cm='Chrome electroplating: very dense layer traps hydrogen extremely effectively. Highest IHE risk among all coating options. Strongly recommend switching to an alternate finish.';if(coat==='cadmium')cm='Cadmium electroplating: high IHE risk. Baking temperature is limited to 375 deg F because cadmium melts at 610 deg F, limiting hydrogen removal effectiveness.';factors.push({l:'high',t:cm});}
+else if(isMECH){ihe=Math.max(0,ihe-8);var mm='Dip-spin or mechanical coating: abrasive blast preparation (no acid); porous zinc-flake layer allows natural outgassing. IHE risk from the coating process is greatly reduced.';if(coat==='geomet321')mm='Geomet 321: preferred alternative to zinc electroplate. No acid clean. Porous inorganic zinc-flake permits natural outgassing. 720 plus hours NSS performance. RoHS compliant.';factors.push({l:'low',t:mm});}
+else if(coat==='hdg'){ihe+=10;factors.push({l:'elevated',t:'Hot-dip galvanizing: acid flux introduces hydrogen but the 450 deg C bath drives much out. However thermal up-quench when immersed can release trapped residual hydrogen which accumulates under the thick zinc layer.'});}
+else if(coat==='sherardize'){factors.push({l:'low',t:'Sherardizing: thermal diffusion zinc; no liquid acid; porous coating allows outgassing. Low IHE risk from coating process.'});}
+else if(coat==='phosphate'||coat==='black_ox'){factors.push({l:'low',t:'Conversion coating: minimal hydrogen introduction. No dense trapping layer. IHE risk from the coating process is low.'});}
+else if(coat==='plain'){factors.push({l:'low',t:'Plain or uncoated: no hydrogen introduced by the coating process. IHE risk from coating is negligible.'});}
+var es={indoor_dry:0,indoor_humid:4,outdoor:10,salt:18,corrosive:20,cathodic:26,caustic:30,steam:24};ehe+=es[env]||0;
+var em={cathodic:'Cathodic galvanic couple: fastener acting as cathode accelerates EHE significantly. Even parts below HRC 35 can fail. Use electrical isolation or select compatible metals.',caustic:'Caustic or sour H2S service: hardness limits for H2S environments are much stricter than for standard service. Consult a qualified materials engineer for H2S applications.',steam:'High-pressure steam: 4Fe plus 6H2O produces H2 at the metal surface. EHE risk is significant for unprotected high-strength parts.',corrosive:'Corrosive chemical environment: general corrosion produces atomic hydrogen as a by-product at the metal surface, driving EHE over time.',salt:'Marine or salt spray: elevated corrosion risk. EHE from corrosion by-products is a concern for unprotected or insufficiently coated high-strength parts.'};
+if(em[env])factors.push({l:ehe>=24?'high':'elevated',t:em[env]});
+if(str==='cyclic'){ihe+=8;ehe+=8;factors.push({l:'high',t:'Cyclic or fatigue loading: hydrogen migrates under stress cycling to stress concentration points. Cracks grow progressively until sudden brittle fracture. Worst-case loading for HE.'});}
+else if(str==='high'){ihe+=4;ehe+=4;factors.push({l:'elevated',t:'High applied stress: hydrogen concentration at stress raisers (first engaged thread, underhead fillet) is directly proportional to applied stress. Elevated HE failure probability.'});}
+var tot=Math.round(ihe*0.65+ehe*0.35);var rl,ll,mp,mc;
+if(tot<=12){rl='low';ll='LOW RISK';mp=Math.min(100,tot*5);mc='linear-gradient(90deg,#1A8A4A,#27ae60)';}
+else if(tot<=28){rl='moderate';ll='MODERATE RISK';mp=Math.min(100,20+tot*2);mc='linear-gradient(90deg,#1A8A4A,#D4AC0D)';}
+else if(tot<=48){rl='elevated';ll='ELEVATED RISK';mp=Math.min(100,40+tot);mc='linear-gradient(90deg,#1A8A4A,#D4AC0D,#B7610A)';}
+else if(tot<=68){rl='high';ll='HIGH RISK';mp=Math.min(100,65+tot/3);mc='linear-gradient(90deg,#1A8A4A,#D4AC0D,#B7610A,#C0392B)';}
+else{rl='critical';ll='CRITICAL RISK';mp=100;mc='linear-gradient(90deg,#1A8A4A,#D4AC0D,#C0392B)';}
+var icons={low:'<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" width="18" height="18"><polyline points="20 6 9 17 4 12"/><\/svg>',moderate:'<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" width="18" height="18"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="8"/><polyline points="12 12 12 16"/><\/svg>',elevated:'<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" width="18" height="18"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/><\/svg>',high:'<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" width="18" height="18"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/><\/svg>',critical:'<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" width="18" height="18"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="8"/><polyline points="12 12 12 16"/><\/svg>'};
+document.getElementById('rbanner-el').innerHTML='<div class="rbanner '+rl+'"><div class="rico">'+icons[rl]+'<\/div><div><div class="rlbl">'+ll+'<\/div><div class="rsub">IHE Score: '+Math.round(ihe)+' of 100 | EHE Score: '+Math.round(ehe)+' of 100 | Combined: '+tot+' of 100<\/div><\/div><\/div>';
+var mf=document.getElementById('mfill');mf.style.background=mc;setTimeout(function(){mf.style.width=mp+'%';},50);
+if(isEP&&hrc>=35){recs.push({c:'green',t:'Recommended: Switch to Non-Electrolytic Coating',b:'<strong>Geomet 321<\/strong> is the preferred alternative. Inorganic zinc-flake dip-spin; abrasive blast preparation (no acid); porous layer permits natural outgassing; 720 plus hour NSS; RoHS and REACH compliant. Other options: <strong>Geomet 500 or Dacromet, Delta Protekt KL100 or VH300, Mechanical Zinc (ASTM B695), Sherardizing<\/strong>.'});}
+var bakingMandatory=isEP&&(hrc>=40||isCH||pt==='sem');var bakingRecommended=isEP&&hrc>=35&&!bakingMandatory;
+if(bakingMandatory){recs.push({c:'blue',t:'Mandatory: Post-Plate Baking (ASTM F1941 Section 6.4.1)',b:'Bake within <strong>4 hours<\/strong> (preferably 1 hour) of plating. Typical: <strong>8 hours at 400 deg F (205 deg C)<\/strong>. Range: 2 to 24 hours at 375 to 450 deg F. Perform <strong>before<\/strong> chromate passivate application. See <a href="https://drive.google.com/file/d/1QsJbDeZkWo2IeCySc8IC3ymdiw27S_An/view" target="_blank" rel="noopener">ASTM F1941<\/a> and <a href="https://drive.google.com/file/d/1tv6-0E-rNZxat8PR6AVp8sDeS-L5in4V/view" target="_blank" rel="noopener">IFI-142<\/a>.'+(hrc>=43?' At this hardness level, baking is mandatory but may not fully eliminate risk. Switching to Geomet 321 or equivalent is strongly preferred.':'')});}
+else if(bakingRecommended){recs.push({c:'blue',t:'Recommended: Post-Plate Baking (Good Practice)',b:'Not mandatory below HRC 40 per <a href="https://drive.google.com/file/d/1QsJbDeZkWo2IeCySc8IC3ymdiw27S_An/view" target="_blank" rel="noopener">ASTM F1941<\/a> Note 2, but recommended as good practice at this elevated hardness range (35 to 39 HRC). Specify: <strong>4 to 8 hours at 375 to 400 deg F<\/strong>, within 4 hours of plating, before chromate application.'});}
+if(isEP&&hrc>=40){recs.push({c:'purple',t:'Mandatory: Embrittlement Testing (ASTM F1941 Section 6.4.3)',b:'HE testing is mandatory at HRC 40 and above unless the process is qualified per <a href="https://drive.google.com/file/d/1yBCwTCWJAdAP6VJpveOEm_tIYWY6k1Pz/view" target="_blank" rel="noopener">ASTM F1940<\/a>. Options: <strong>ASTM F1940<\/strong> (sustained-load process verification); <strong>ASTM F1624<\/strong> (ISL threshold); <strong><a href="https://drive.google.com/file/d/12V41rFiO_DEJ41rLW2dRTpUXrudlnsJh/view" target="_blank" rel="noopener">ASTM F606<\/a> or NASM-1312-5<\/strong> (lot acceptance). See <a href="https://drive.google.com/file/d/1QsJbDeZkWo2IeCySc8IC3ymdiw27S_An/view" target="_blank" rel="noopener">ASTM F1941<\/a>.'});}
+else if(isEP&&hrc>=35){recs.push({c:'purple',t:'Recommended: Process Control Verification',b:'Run periodic <a href="https://drive.google.com/file/d/1yBCwTCWJAdAP6VJpveOEm_tIYWY6k1Pz/view" target="_blank" rel="noopener">ASTM F1940<\/a> sustained-load tests to verify the electroplating process does not introduce embrittlement. Document results and review with purchaser. See <a href="https://drive.google.com/file/d/1tv6-0E-rNZxat8PR6AVp8sDeS-L5in4V/view" target="_blank" rel="noopener">IFI-142<\/a> for detailed process management guidance.'});}
+if(['cathodic','caustic','steam'].indexOf(env)>=0){var eb={cathodic:'Cathodic galvanic couple: isolate the fastener using insulating bushings or sleeves. Select materials with similar electrochemical potential. Apply Geomet 321 or HDG barrier coating to reduce corrosion-driven hydrogen generation.',caustic:'Sour H2S service: hardness limits for H2S environments are much stricter than for standard structural grades. Consult a qualified materials engineer before specifying fasteners for this service.',steam:'High-pressure steam: verify material is suitable for the service temperature. Apply a barrier coating (Geomet 321 or HDG). Inspect joints regularly for hydrogen-assisted cracking.'};recs.push({c:'amber',t:'EHE Mitigation Required: Environment-Specific Action',b:eb[env]});}
+if(recs.length===0&&rl==='low'){recs.push({c:'green',t:'No Critical Actions Required',b:'IHE and EHE risk is low for the selected inputs. Maintain good process control during any surface treatment. Monitor acid concentration and exposure time. Confirm hardness does not change during processing. See <a href="https://drive.google.com/file/d/1QsJbDeZkWo2IeCySc8IC3ymdiw27S_An/view" target="_blank" rel="noopener">ASTM F1941<\/a> for applicable coating requirements.'});}
+var ps=document.getElementById('sel-pt');var ptxt=ps.options[ps.selectedIndex]?ps.options[ps.selectedIndex].text:'';
+var cs=document.getElementById('sel-coat');var ctxt=cs.options[cs.selectedIndex]?cs.options[cs.selectedIndex].text:'';
+var envs=document.getElementById('sel-env');var envtxt=envs.options[envs.selectedIndex]?envs.options[envs.selectedIndex].text:'';
+var ms=document.getElementById('sel-mat');var mtxt=ms.options[ms.selectedIndex]?ms.options[ms.selectedIndex].text:'';
+var gs=document.getElementById('sel-grade');var gtxt=gs.options[gs.selectedIndex]?gs.options[gs.selectedIndex].text:'';
+var strs=document.getElementById('sel-str');var strtxt=strs.options[strs.selectedIndex]?strs.options[strs.selectedIndex].text:'';
+var sum='<ul class="slist"><li><span class="sk">Part Type<\/span><span class="sv">'+ptxt+'<\/span><\/li><li><span class="sk">Material<\/span><span class="sv">'+mtxt+'<\/span><\/li><li><span class="sk">'+GRADES[sys].label+'<\/span><span class="sv">'+gtxt+'<\/span><\/li><li><span class="sk">Est HRC<\/span><span class="sv">'+(hrc>0?'approx '+hrc:'below 22')+'<\/span><\/li><li><span class="sk">Coating<\/span><span class="sv">'+ctxt+'<\/span><\/li><li><span class="sk">Environment<\/span><span class="sv">'+envtxt+'<\/span><\/li><li><span class="sk">Stress Level<\/span><span class="sv">'+strtxt+'<\/span><\/li><\/ul>';
+var fhtml='<div class="flist">'+(factors.length?factors.map(function(f){return '<div class="fi"><div class="fdot '+f.l+'"><\/div><span>'+f.t+'<\/span><\/div>';}).join(''):'<div class="fi"><div class="fdot low"><\/div><span>No significant risk factors identified for the selected inputs.<\/span><\/div>')+'<\/div>';
+var rhtml=recs.map(function(r){return '<div class="rec '+r.c+'"><h4>'+r.t+'<\/h4><p>'+r.b+'<\/p><\/div>';}).join('');
+var refhtml='<div class="reflist"><a href="https://drive.google.com/file/d/1QsJbDeZkWo2IeCySc8IC3ymdiw27S_An/view" target="_blank" rel="noopener">ASTM F1941<\/a> - Electrodeposited Coatings on Threaded Fasteners<br><a href="https://drive.google.com/file/d/1tv6-0E-rNZxat8PR6AVp8sDeS-L5in4V/view" target="_blank" rel="noopener">IFI-142<\/a> - Hydrogen Embrittlement Risk Management for Electroplated Fasteners<br><a href="https://drive.google.com/file/d/1yBCwTCWJAdAP6VJpveOEm_tIYWY6k1Pz/view" target="_blank" rel="noopener">ASTM F1940<\/a> - Process Control Verification to Prevent HE in Plated Fasteners<br><a href="https://drive.google.com/file/d/12V41rFiO_DEJ41rLW2dRTpUXrudlnsJh/view" target="_blank" rel="noopener">ASTM F606<\/a> - Mechanical Properties of Threaded Fasteners<\/div>';
+document.getElementById('rcards').innerHTML='<div class="rcard"><h3>Input Summary<\/h3>'+sum+'<\/div><div class="rcard"><h3>Risk Factors<\/h3>'+fhtml+'<\/div><div class="rcard wide"><h3>Recommendations<\/h3>'+rhtml+'<\/div><div class="rcard wide"><h3>Key References<\/h3>'+refhtml+'<\/div>';
+var rp=document.getElementById('rpanel');rp.style.display='block';rp.scrollIntoView({behavior:'smooth',block:'start'});}
+buildGrades();
+</script>
+</body>
+</html>
