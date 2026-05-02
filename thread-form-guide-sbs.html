@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thread Form Selection Guide &mdash; SBS Specialty Bolt &amp; Screw</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1D3557;--navy-dark:#12243a;
+  --orange:#E87722;--orange-light:#F0913A;--orange-pale:#FDF0E5;
+  --white:#ffffff;
+  --g50:#F8F9FA;--g100:#F0F2F5;--g200:#E2E6EA;--g300:#CED4DA;
+  --g400:#ADB5BD;--g500:#6C757D;--g600:#495057;--g700:#343A40;
+  --green:#1A8A4A;--green-bg:#E8F5EE;
+  --red:#C0392B;--red-bg:#FDECEA;
+  --amber:#B7610A;--amber-bg:#FEF3E2;
+  --teal:#0d7a6e;--teal-bg:#e6f4f2;
+  --hh:72px;--nh:44px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--g50);color:var(--g700);font-size:14px;line-height:1.6;}
+/* HEADER */
+.hdr{position:sticky;top:0;z-index:200;background:#fff;border-bottom:3px solid var(--orange);box-shadow:0 2px 8px rgba(0,0,0,.10);padding:.65rem 1.5rem;display:flex;align-items:center;gap:16px;height:var(--hh);}
+.hdr a img{height:48px;display:block;}
+.hdiv{width:1px;height:36px;background:var(--g200);flex-shrink:0;}
+.htitles{flex:1;}
+.htitle{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;color:var(--navy);line-height:1.1;}
+.hsub{font-size:11px;color:var(--g500);margin-top:2px;}
+.hacts{display:flex;gap:8px;}
+/* BUTTONS */
+.btn{font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;padding:7px 14px;border-radius:6px;border:none;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.btn-o{background:var(--orange);color:#fff;box-shadow:0 2px 6px rgba(232,119,34,.3);}
+.btn-o:hover{background:var(--orange-light);transform:translateY(-1px);}
+.btn-n{background:var(--navy);color:#fff;}
+.btn-n:hover{background:var(--navy-dark);}
+.btn-g{background:var(--g100);color:var(--g600);border:1px solid var(--g200);}
+.btn-g:hover{border-color:var(--g400);}
+/* TABS */
+.tabs{position:sticky;top:var(--hh);z-index:190;background:#fff;border-bottom:1px solid var(--g200);display:flex;padding:0 1.5rem;height:var(--nh);}
+.tab{font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;padding:0 16px;display:flex;align-items:center;cursor:pointer;color:var(--g500);border-bottom:3px solid transparent;margin-bottom:-1px;transition:all .15s;white-space:nowrap;}
+.tab:hover{color:var(--navy);}
+.tab.active{color:var(--orange);border-bottom-color:var(--orange);}
+.tab-n{font-size:10px;font-weight:700;background:var(--navy);color:#fff;padding:1px 6px;border-radius:10px;margin-left:6px;}
+.tab.active .tab-n{background:var(--orange);}
+/* LAYOUT */
+.main{display:flex;min-height:calc(100vh - var(--hh) - var(--nh));}
+.sidebar{width:252px;min-width:252px;background:#fff;border-right:1px solid var(--g200);padding:16px;display:flex;flex-direction:column;gap:14px;position:sticky;top:calc(var(--hh) + var(--nh));height:calc(100vh - var(--hh) - var(--nh));overflow-y:auto;}
+.content{flex:1;padding:20px 24px;}
+/* FILTERS */
+.fg{display:flex;flex-direction:column;gap:5px;}
+.fl{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--navy);padding-bottom:5px;border-bottom:2px solid var(--orange);margin-bottom:2px;}
+.sw{position:relative;}
+.sw svg{position:absolute;left:9px;top:50%;transform:translateY(-50%);pointer-events:none;}
+#search{width:100%;padding:8px 10px 8px 32px;border:2px solid var(--navy);border-radius:6px;font-family:'Inter',sans-serif;font-size:13px;outline:none;transition:border .15s;}
+#search::placeholder{color:var(--g400);font-style:italic;}
+#search:focus{border-color:var(--orange);}
+.fb{font-family:'Barlow',sans-serif;font-size:12px;font-weight:500;padding:6px 10px;border-radius:5px;border:1px solid var(--g200);background:#fff;color:var(--g600);cursor:pointer;text-align:left;transition:all .12s;}
+.fb:hover{background:var(--g50);border-color:var(--g300);color:var(--navy);}
+.fb.on{background:var(--orange-pale);border-color:var(--orange);color:var(--orange);font-weight:600;}
+.fb.on-t{background:var(--teal-bg);border-color:var(--teal);color:var(--teal);font-weight:600;}
+.clr{font-size:11px;color:var(--g400);background:none;border:none;cursor:pointer;text-align:left;padding:0;font-family:'Inter',sans-serif;}
+.clr:hover{color:var(--orange);}
+/* FILTER INFO ICONS + TOOLTIPS */
+.fl{display:flex;align-items:center;justify-content:space-between;}
+.fi{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:var(--orange-pale);border:1px solid var(--orange);cursor:pointer;flex-shrink:0;user-select:none;position:relative;z-index:10;}
+.fi svg{pointer-events:none;}
+#ftooltip{position:fixed;z-index:9999;width:240px;background:var(--navy);color:#fff;font-family:'Inter',sans-serif;font-size:11px;line-height:1.65;padding:11px 13px;border-radius:7px;border-left:3px solid var(--orange);box-shadow:0 6px 24px rgba(0,0,0,.4);pointer-events:none;opacity:0;visibility:hidden;transition:opacity .15s,visibility .15s;}
+#ftooltip.show{opacity:1;visibility:visible;}
+#ftooltip::before{content:'';position:absolute;right:100%;top:14px;border:5px solid transparent;border-right-color:var(--orange);}
+#ftooltip .tt-head{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--orange);margin-bottom:5px;}
+#ftooltip .tt-sub{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:rgba(255,255,255,.55);margin:6px 0 2px;}
+/* BETA MODAL */
+.beta-overlay{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);background:rgba(29,53,87,.72);}
+.beta-overlay.gone{display:none;}
+.beta-modal{background:#fff;border-radius:12px;max-width:500px;width:100%;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.4);animation:betaIn .3s ease;}
+@keyframes betaIn{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}
+.beta-hdr{background:var(--navy);border-bottom:3px solid var(--orange);padding:20px 24px;display:flex;align-items:center;gap:14px;}
+.beta-icon{width:40px;height:40px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.beta-hdr-text{flex:1;}
+.beta-hdr-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;color:#fff;line-height:1.1;}
+.beta-hdr-sub{font-size:11px;color:rgba(255,255,255,.6);margin-top:2px;}
+.beta-pill{background:var(--orange);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:20px;margin-top:5px;display:inline-block;}
+.beta-body{padding:22px 24px 24px;}
+.beta-body p{font-family:'Inter',sans-serif;font-size:13px;color:var(--g600);line-height:1.7;margin-bottom:12px;}
+.beta-body p:last-of-type{margin-bottom:0;}
+.beta-body strong{color:var(--navy);font-weight:600;}
+.beta-foot{padding:0 24px 22px;}
+.beta-btn{width:100%;font-family:'Barlow',sans-serif;font-size:14px;font-weight:700;padding:13px;border-radius:7px;border:none;cursor:pointer;background:var(--orange);color:#fff;box-shadow:0 2px 8px rgba(232,119,34,.4);transition:all .15s;}
+.beta-btn:hover{background:var(--orange-light);transform:translateY(-1px);}
+/* RESULTS */
+.rh{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.rc{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--navy);}
+.rc em{color:var(--orange);font-style:normal;}
+select.ss{font-family:'Barlow',sans-serif;font-size:12px;font-weight:600;padding:5px 10px;border:1px solid var(--g200);border-radius:6px;color:var(--navy);background:#fff;cursor:pointer;outline:none;}
+/* CARDS */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px;}
+.card{background:#fff;border:1px solid var(--g200);border-radius:10px;overflow:hidden;transition:all .18s;display:flex;flex-direction:column;}
+.card:hover{border-color:var(--orange);box-shadow:0 4px 20px rgba(232,119,34,.15);transform:translateY(-2px);}
+.card.sel{border-color:var(--navy);box-shadow:0 0 0 2px var(--navy);}
+.stripe{height:4px;}
+.stripe.forming{background:var(--orange);}
+.stripe.cutting{background:var(--teal);}
+.ci{padding:14px 16px;flex:1;display:flex;flex-direction:column;}
+.ctop{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px;}
+.cname{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:var(--navy);line-height:1.2;}
+.csub{font-size:11px;color:var(--g500);margin-top:2px;}
+.bdgs{display:flex;flex-direction:column;gap:4px;align-items:flex-end;}
+.badge{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.06em;padding:2px 7px;border-radius:20px;text-transform:uppercase;white-space:nowrap;}
+.forming-b{background:var(--orange-pale);color:var(--orange);border:1px solid var(--orange);}
+.cutting-b{background:var(--teal-bg);color:var(--teal);border:1px solid var(--teal);}
+.metal-b{background:#e8f0fb;color:#2a5ab7;}
+.plastic-b{background:var(--green-bg);color:var(--green);}
+.cvis{background:var(--g50);border:1px solid var(--g100);border-radius:6px;height:76px;margin-bottom:12px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.pills{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;}
+.pill{background:var(--g50);border:1px solid var(--g200);border-radius:5px;padding:5px 8px;}
+.pl{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--g500);}
+.pv{font-size:12px;font-weight:500;color:var(--navy);margin-top:1px;}
+.pv.g{color:var(--green);}
+.pv.a{color:var(--amber);}
+.ctags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px;}
+.tag{font-family:'Barlow',sans-serif;font-size:10px;font-weight:500;padding:2px 7px;border-radius:3px;background:var(--g100);color:var(--g500);border:1px solid var(--g200);}
+.cacts{display:flex;gap:6px;margin-top:auto;}
+.cb{flex:1;font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;padding:7px 6px;border-radius:5px;cursor:pointer;text-align:center;transition:all .13s;border:none;}
+.cb-d{background:var(--navy);color:#fff;}
+.cb-d:hover{background:var(--navy-dark);}
+.cb-c{background:#fff;color:var(--navy);border:1px solid var(--navy)!important;}
+.cb-c:hover{background:var(--g50);}
+.cb-c.on{background:var(--navy);color:#fff;}
+.cb-s{background:var(--orange);color:#fff;box-shadow:0 1px 4px rgba(232,119,34,.3);text-decoration:none;display:flex;align-items:center;justify-content:center;}
+.cb-s:hover{background:var(--orange-light);}
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;overflow-y:auto;padding:24px 16px;}
+.overlay.open{display:block;}
+.modal{background:#fff;border-radius:12px;max-width:740px;margin:0 auto;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.25);}
+.mhdr{background:var(--navy);padding:20px 24px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;}
+.mtitle{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:#fff;line-height:1.2;}
+.msub{font-size:12px;color:rgba(255,255,255,.65);margin-top:4px;}
+.mclose{background:rgba(255,255,255,.15);border:none;color:#fff;font-size:18px;width:32px;height:32px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.mclose:hover{background:rgba(255,255,255,.3);}
+.mbody{padding:20px 24px;}
+.msec{margin-bottom:20px;}
+.mst{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--orange);margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--orange-pale);}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.drow{background:var(--g50);border:1px solid var(--g200);border-radius:6px;padding:9px 12px;}
+.dk{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--g400);margin-bottom:3px;}
+.dv{font-size:12px;color:var(--g700);}
+.rbar{height:4px;background:var(--g200);border-radius:2px;margin-top:6px;}
+.rfill{height:100%;border-radius:2px;background:var(--orange);}
+.rfill.t{background:var(--teal);}
+.rfill.gr{background:var(--green);}
+.mats{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;}
+.mch{font-family:'Barlow',sans-serif;font-size:11px;padding:3px 8px;border-radius:4px;font-weight:500;}
+.mch.good{background:var(--green-bg);color:var(--green);border:1px solid rgba(26,138,74,.3);}
+.mch.ok{background:var(--amber-bg);color:var(--amber);border:1px solid rgba(183,97,10,.3);}
+.mch.bad{background:var(--red-bg);color:var(--red);border:1px solid rgba(192,57,43,.3);}
+/* COMPARE BAR */
+.cbar{position:fixed;bottom:0;left:0;right:0;background:var(--navy);border-top:3px solid var(--orange);padding:10px 24px;display:none;align-items:center;gap:12px;z-index:300;}
+.cbar.show{display:flex;}
+.cbarlbl{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:rgba(255,255,255,.7);white-space:nowrap;letter-spacing:.05em;text-transform:uppercase;}
+.cbaritems{display:flex;gap:8px;flex:1;flex-wrap:wrap;}
+.cbarchip{font-family:'Barlow',sans-serif;font-size:11px;font-weight:600;padding:5px 10px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.4);border-radius:20px;color:#fff;display:flex;align-items:center;gap:6px;}
+.cbchipx{cursor:pointer;opacity:.6;}
+.cbchipx:hover{opacity:1;}
+/* COMPARE TABLE */
+.ctblwrap{overflow-x:auto;border:1px solid var(--g200);border-radius:8px;}
+.ctbl{width:100%;border-collapse:collapse;font-size:13px;}
+.ctbl th{background:var(--navy);color:#fff;border:1px solid rgba(255,255,255,.1);padding:11px 14px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;position:sticky;top:0;z-index:2;}
+.ctbl th:first-child{font-size:10px;font-weight:700;letter-spacing:.08em;color:rgba(255,255,255,.55);background:var(--navy-dark);}
+.ctbl td{border:1px solid var(--g200);padding:9px 14px;vertical-align:top;color:var(--g600);}
+.ctbl td:first-child{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--g500);background:var(--g50);white-space:nowrap;}
+.ctbl tr:hover td:not(:first-child){background:var(--g50);}
+.diff{color:var(--amber)!important;font-weight:600;}
+/* BP */
+.bpgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;}
+.bpcard{background:#fff;border:1px solid var(--g200);border-radius:10px;padding:18px;}
+.bpcard.w{border-left:4px solid var(--red);}
+.bpcard.c{border-left:4px solid var(--amber);}
+.bptitle{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;color:var(--navy);margin-bottom:6px;}
+.bptxt{font-size:12px;color:var(--g600);line-height:1.7;}
+.bpsec{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#fff;background:var(--orange);padding:7px 14px;border-radius:5px;margin:24px 0 12px;display:flex;align-items:center;gap:8px;}
+.bpsec::before{content:'';width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.6);flex-shrink:0;}
+/* SELECTOR */
+.selwrap{max-width:660px;margin:0 auto;}
+.sdots{display:flex;gap:7px;margin-bottom:26px;}
+.sdot{width:9px;height:9px;border-radius:50%;background:var(--g200);border:2px solid var(--g300);transition:all .2s;}
+.sdot.done{background:var(--orange);border-color:var(--orange);}
+.sdot.cur{background:#fff;border-color:var(--orange);box-shadow:0 0 0 3px rgba(232,119,34,.25);}
+.sq{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:var(--navy);margin-bottom:5px;line-height:1.3;}
+.ssub{font-size:13px;color:var(--g500);margin-bottom:20px;}
+.optgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:8px;margin-bottom:20px;}
+.optbtn{padding:12px 14px;border-radius:8px;border:1px solid var(--g200);background:#fff;color:var(--g600);cursor:pointer;text-align:left;transition:all .14s;font-family:'Barlow',sans-serif;font-size:13px;}
+.optbtn:hover{border-color:var(--navy);background:var(--g50);color:var(--navy);}
+.optbtn.on{border-color:var(--orange);background:var(--orange-pale);color:var(--orange);font-weight:600;}
+.ol{font-weight:600;display:block;font-family:'Barlow Condensed',sans-serif;font-size:14px;}
+.os{font-size:11px;color:var(--g400);font-family:'Inter',sans-serif;}
+.optbtn.on .os{color:rgba(232,119,34,.7);}
+.snav{display:flex;gap:8px;}
+.rech{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--orange);margin:28px 0 12px;padding-bottom:6px;border-bottom:2px solid var(--orange-pale);}
+.reccard{background:#fff;border:1px solid var(--g200);border-radius:8px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:flex-start;gap:12px;}
+.rnk{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;padding:4px 9px;border-radius:4px;white-space:nowrap;}
+.rnk-b{background:var(--green-bg);color:var(--green);}
+.rnk-g{background:var(--amber-bg);color:var(--amber);}
+.rnk-c{background:var(--g100);color:var(--g500);}
+.rname{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;color:var(--navy);margin-bottom:3px;}
+.rreason{font-size:12px;color:var(--g500);}
+.rcaut{font-family:'Barlow',sans-serif;font-size:11px;font-weight:600;color:var(--amber);margin-top:4px;}
+.disc{font-size:11px;color:var(--g500);background:var(--g50);border:1px solid var(--g200);border-left:4px solid var(--orange);border-radius:6px;padding:10px 14px;line-height:1.6;margin-top:20px;}
+.page{display:none;}
+.page.active{display:block;}
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:var(--g50);}
+::-webkit-scrollbar-thumb{background:var(--g300);border-radius:3px;}
+</style>
+</head>
+<body>
+<!-- BETA MODAL -->
+<div class="beta-overlay" id="beta-overlay">
+  <div class="beta-modal" role="dialog" aria-modal="true" aria-labelledby="beta-title">
+    <div class="beta-hdr">
+      <div class="beta-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <div class="beta-hdr-text">
+        <div class="beta-hdr-title" id="beta-title">Specialty Bolt &amp; Screw</div>
+        <div class="beta-hdr-sub">Thread Form Selection Guide</div>
+        <span class="beta-pill">Beta</span>
+      </div>
+    </div>
+    <div class="beta-body">
+      <p>This tool is currently in <strong>beta</strong>. Thread form data, compatibility ratings, and recommendations reflect general engineering best practice and are provided as a starting point for selection — not as a substitute for application-specific validation or engineering review.</p>
+      <p>We invite you to <strong>use the tool, explore the library, and share your feedback</strong> with the SBS team. Your input directly shapes how this tool evolves — if something is missing, unclear, or incorrect, we want to know.</p>
+      <p>Thank you for being an early user. We&rsquo;re committed to making this the most useful fastener selection resource in the industry.</p>
+    </div>
+    <div class="beta-foot">
+      <button class="beta-btn" id="beta-continue">I Understand &mdash; Continue to Tool</button>
+    </div>
+  </div>
+</div>
+
+<img id="sbs-logo-print" src="data:image/png;base64,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" alt="SBS" style="display:none">
+<header class="hdr">
+  <a href="https://shop.specialtybolt.com/" target="_blank"><img src="data:image/png;base64,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" alt="SBS Specialty Bolt &amp; Screw"></a>
+  <div class="hdiv"></div>
+  <div class="htitles">
+    <div class="htitle">Thread Form Selection Guide</div>
+    <div class="hsub">Forming &amp; Cutting Screw Reference &mdash; Specialty Bolt &amp; Screw, Inc.</div>
+  </div>
+  <div class="hacts">
+    <button class="btn btn-g" id="btn-print">Print</button>
+  </div>
+</header>
+
+<div class="tabs">
+  <div class="tab active" data-page="library">Library</div>
+  <div class="tab" data-page="selector">Guided Selector</div>
+  <div class="tab" data-page="compare">Compare <span class="tab-n" id="cmp-cnt">0</span></div>
+  <div class="tab" data-page="bp">Best Practices</div>
+</div>
+
+<!-- LIBRARY -->
+<div class="page active" id="page-library">
+<div class="main">
+  <div class="sidebar">
+    <div class="sw">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="#ADB5BD" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input id="search" type="text" placeholder="Search thread forms&hellip;">
+    </div>
+    <div class="fg">
+      <div class="fl">Category
+        <span class="fi" data-tip="category">
+          <svg width="8" height="8" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4.5" stroke="#E87722"/><text x="5" y="8" text-anchor="middle" font-size="7" font-family="Barlow,sans-serif" font-weight="700" fill="#E87722">i</text></svg>
+        </span>
+      </div>
+      <button class="fb" data-f="category" data-v="forming">Thread Forming</button>
+      <button class="fb" data-f="category" data-v="cutting">Thread Cutting</button>
+    </div>
+    <div class="fg">
+      <div class="fl">Application
+        <span class="fi" data-tip="app">
+          <svg width="8" height="8" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4.5" stroke="#E87722"/><text x="5" y="8" text-anchor="middle" font-size="7" font-family="Barlow,sans-serif" font-weight="700" fill="#E87722">i</text></svg>
+        </span>
+      </div>
+      <button class="fb" data-f="app" data-v="metal">Metal</button>
+      <button class="fb" data-f="app" data-v="plastic">Plastic</button>
+    </div>
+    <div class="fg">
+      <div class="fl">Material
+        <span class="fi" data-tip="material">
+          <svg width="8" height="8" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4.5" stroke="#E87722"/><text x="5" y="8" text-anchor="middle" font-size="7" font-family="Barlow,sans-serif" font-weight="700" fill="#E87722">i</text></svg>
+        </span>
+      </div>
+      <button class="fb" data-f="mat" data-v="low carbon steel">Low Carbon Steel</button>
+      <button class="fb" data-f="mat" data-v="sheet metal">Sheet Metal</button>
+      <button class="fb" data-f="mat" data-v="aluminum">Aluminum</button>
+      <button class="fb" data-f="mat" data-v="stainless steel">Stainless Steel</button>
+      <button class="fb" data-f="mat" data-v="die cast zinc">Die Cast Zinc</button>
+      <button class="fb" data-f="mat" data-v="brass">Brass</button>
+      <button class="fb" data-f="mat" data-v="thermoplastic">Thermoplastic</button>
+      <button class="fb" data-f="mat" data-v="thermoset">Thermoset / FRP</button>
+    </div>
+    <div class="fg">
+      <div class="fl">Requirements
+        <span class="fi" data-tip="req">
+          <svg width="8" height="8" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4.5" stroke="#E87722"/><text x="5" y="8" text-anchor="middle" font-size="7" font-family="Barlow,sans-serif" font-weight="700" fill="#E87722">i</text></svg>
+        </span>
+      </div>
+      <button class="fb" data-f="req" data-v="chip-free">Chip-free preferred</button>
+      <button class="fb" data-f="req" data-v="reusable">Reusable joint</button>
+      <button class="fb" data-f="req" data-v="high-clamp">High clamp load</button>
+      <button class="fb" data-f="req" data-v="low-torque">Low drive torque</button>
+    </div>
+    <button class="clr" id="btn-clear">&times; Clear all filters</button>
+  </div>
+  <div class="content">
+    <div class="rh">
+      <div class="rc" id="res-count">Showing <em>0</em> of 12</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <label style="font-family:'Barlow',sans-serif;font-size:12px;font-weight:600;color:var(--g500)">Sort:</label>
+        <select id="sort-sel" class="ss">
+          <option value="name">Name A&ndash;Z</option>
+          <option value="cat">Category</option>
+          <option value="app">Metal / Plastic</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid" id="card-grid"></div>
+  </div>
+</div>
+</div>
+
+<!-- SELECTOR -->
+<div class="page" id="page-selector">
+<div class="content" style="max-width:820px;margin:0 auto;padding:32px 24px">
+  <div class="selwrap">
+    <div class="sdots" id="sdots"></div>
+    <div id="step-content"></div>
+  </div>
+</div>
+</div>
+
+<!-- COMPARE -->
+<div class="page" id="page-compare">
+<div class="content">
+  <div id="cmp-empty" style="text-align:center;padding:60px 20px">
+    <div style="font-size:40px;margin-bottom:12px;opacity:.2">&#8861;</div>
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;color:var(--navy);margin-bottom:6px">No thread forms selected</div>
+    <div style="font-size:13px;color:var(--g500)">Go to the Library and click <strong>Compare</strong> on up to 4 thread forms.</div>
+  </div>
+  <div id="cmp-content" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div class="rc">Side-by-side comparison</div>
+      <button class="btn btn-g" id="btn-clr-cmp">Clear all</button>
+    </div>
+    <div class="ctblwrap"><table class="ctbl" id="cmp-table"></table></div>
+    <div class="disc">Comparison is based on general engineering practice. Proprietary geometries vary by manufacturer. Validate all selections by testing in the actual substrate and production environment.</div>
+  </div>
+</div>
+</div>
+
+<!-- BEST PRACTICES -->
+<div class="page" id="page-bp">
+<div class="content" style="max-width:980px;margin:0 auto">
+  <div class="bpsec">Fundamentals</div>
+  <div class="bpgrid">
+    <div class="bpcard"><div class="bptitle">Thread forming vs thread cutting</div><div class="bptxt">Thread forming displaces substrate material to create mating threads &mdash; no material is removed, no chips generated. Thread cutting uses a fluted or slotted point to remove material, producing chips as the thread is tapped into the substrate.</div></div>
+    <div class="bpcard"><div class="bptitle">Chip generation impact</div><div class="bptxt">Chips from cutting screws must have somewhere to go. In blind holes or precision assemblies, trapped chips cause jamming, contamination, or false torque readings. Forming screws eliminate this risk entirely in suitable materials.</div></div>
+    <div class="bpcard"><div class="bptitle">Material displacement mechanics</div><div class="bptxt">Forming screws cold-work the substrate. The displaced material is compacted around the thread flanks, increasing local hardness and creating a thread that is often stronger than the parent hole.</div></div>
+    <div class="bpcard"><div class="bptitle">Effect on joint performance</div><div class="bptxt">Formed threads typically exhibit higher strip-out torque, better vibration resistance, and superior clamp load retention. However, they require controlled pilot hole size and ductile substrates &mdash; brittle materials crack rather than flow.</div></div>
+  </div>
+  <div class="bpsec">Material-Specific Guidance</div>
+  <div class="bpgrid">
+    <div class="bpcard"><div class="bptitle">Sheet metal</div><div class="bptxt">Use trilobular or TAPTITE-style forming screws for ductile sheet metal. Pilot hole diameter is critical. For thin gauges (&lt;1.5&nbsp;mm), consider extruded holes to increase engagement length.</div></div>
+    <div class="bpcard"><div class="bptitle">Thicker ductile metals</div><div class="bptxt">Forming screws work well in aluminum, low-carbon steel, and brass. Avoid forming in high-strength steel (&gt;HRC&nbsp;28) &mdash; drive torques become excessive. Switch to cutting (Type&nbsp;F, Type&nbsp;23) for harder metals.</div></div>
+    <div class="bpcard"><div class="bptitle">Thermoplastics</div><div class="bptxt">Use REMFORM-style, DELTA&nbsp;PT, or PT-style forming screws. Asymmetric thread profiles reduce radial hoop stress on the boss. Boss wall thickness and outer diameter are critical design inputs.</div></div>
+    <div class="bpcard"><div class="bptitle">Brittle / thermoset materials</div><div class="bptxt">Brittle substrates cannot accommodate the radial stress of forming. Use thread cutting screws (Type&nbsp;23, Type&nbsp;25) which remove material rather than displacing it. Test for cracking at the extremes of your hole tolerance range.</div></div>
+    <div class="bpcard"><div class="bptitle">Stainless steel</div><div class="bptxt">Thread cutting is generally preferred in stainless due to the material&rsquo;s work-hardening behavior. Forming screws generate high drive torques and risk galling. If forming is required, use dedicated forming grades with controlled lubrication.</div></div>
+    <div class="bpcard"><div class="bptitle">Die cast zinc / cast aluminum</div><div class="bptxt">Die castings have variable local hardness and porosity. Cutting screws are commonly used. If forming, use conservative pilot hole sizing toward the upper end of the range. Pre-testing for strip-out is strongly advised.</div></div>
+  </div>
+  <div class="bpsec">Hole Design Guidance</div>
+  <div class="bpgrid">
+    <div class="bpcard"><div class="bptitle">Pilot hole importance</div><div class="bptxt">Pilot hole diameter is the single most critical variable for forming screws. Too tight: excessive drive torque, potential strip-out or boss cracking. Too loose: insufficient thread engagement, reduced clamp load. Always test at both extremes.</div></div>
+    <div class="bpcard"><div class="bptitle">Molded vs drilled holes</div><div class="bptxt">Molded holes can have draft angle, surface skin differences, and tolerance variation. Drilled holes cut through any surface skin. Both work &mdash; pilot hole recommendations typically apply to molded holes unless otherwise specified.</div></div>
+    <div class="bpcard"><div class="bptitle">Punched vs drilled holes in metal</div><div class="bptxt">Punched holes have a work-hardened edge and slight taper. Insert from the punch-entry side where possible. Drilled holes provide more consistent geometry. Either is compatible with forming and cutting screws.</div></div>
+    <div class="bpcard"><div class="bptitle">Engagement length</div><div class="bptxt">Strip-out strength increases with engagement length. For metal, minimum engagement of 1&times; nominal diameter is common. For plastics, follow boss geometry guidelines. Thin sheet metal may require extruded holes to achieve sufficient engagement.</div></div>
+  </div>
+  <div class="bpsec">Common Failure Modes</div>
+  <div class="bpgrid">
+    <div class="bpcard w"><div class="bptitle">Excessive drive torque</div><div class="bptxt">Cause: pilot hole too small, material too hard, no lubrication. Result: bit cam-out, head failure, or cross-threading. Fix: verify pilot hole diameter, re-evaluate material compatibility, add lubrication.</div></div>
+    <div class="bpcard w"><div class="bptitle">Boss cracking (plastics)</div><div class="bptxt">Cause: pilot hole too small, boss OD insufficient, material too brittle. Fix: increase boss OD, increase pilot hole toward upper end of range, switch to lower-radial-stress form (REMFORM-style).</div></div>
+    <div class="bpcard c"><div class="bptitle">Strip-out on assembly</div><div class="bptxt">Cause: pilot hole too large, insufficient engagement depth, oversized screw tolerance. Fix: reduce pilot hole diameter, increase boss height or material thickness, verify incoming dimensions against spec.</div></div>
+    <div class="bpcard c"><div class="bptitle">Chips causing assembly issues</div><div class="bptxt">Cutting screws always generate chips. In blind holes, design chip relief volume below the screw tip. Consider chip contamination risk in electronics assemblies &mdash; forming screws are strongly preferred in such cases.</div></div>
+  </div>
+  <div class="bpsec">Validation Guidance</div>
+  <div class="bpgrid">
+    <div class="bpcard"><div class="bptitle">Drive torque testing</div><div class="bptxt">Measure drive torque across the full pilot hole and screw tolerance range. Document the torque window: prevailing torque on entry, seating torque, and strip-out torque. Ratio of strip-to-drive should be &gt;2&times; as a practical minimum.</div></div>
+    <div class="bpcard"><div class="bptitle">Strip-to-failure testing</div><div class="bptxt">Apply monotonic torque to failure. Record peak torque and failure mode. Test at minimum pilot hole and maximum screw size for worst-case. Repeat with aged/heat-cycled substrates for plastics.</div></div>
+    <div class="bpcard"><div class="bptitle">Repeated assembly testing</div><div class="bptxt">If service reusability is required, test installation and removal cycles to the expected service count plus a margin. Record torque change per cycle. Forming screws in metal generally sustain multiple cycles well; plastics degrade more quickly.</div></div>
+    <div class="bpcard"><div class="bptitle">Environmental validation</div><div class="bptxt">For plastics in thermal cycling applications, validate at temperature extremes. Plastics creep under sustained clamp load. For metal assemblies in corrosive environments, evaluate galvanic compatibility and coating impact on drive/strip torque.</div></div>
+  </div>
+  <div class="disc"><strong>Disclaimer:</strong> This tool is intended as a general engineering reference for SBS Specialty Bolt &amp; Screw customers and staff. Final fastener selection must be validated by testing in the actual substrate, hole condition, and production environment. Proprietary thread form geometries vary by manufacturer. This tool does not constitute an engineering specification or product approval.</div>
+</div>
+</div>
+
+<!-- MODAL -->
+<div class="overlay" id="modal"><div class="modal" id="modal-inner"></div></div>
+
+<!-- COMPARE BAR -->
+<div class="cbar" id="cbar">
+  <span class="cbarlbl">Comparing:</span>
+  <div class="cbaritems" id="cbar-items"></div>
+  <button class="btn btn-o" id="btn-view-cmp">View comparison &rarr;</button>
+  <button class="btn btn-g" id="btn-clr-cbar" style="color:#fff;border-color:rgba(255,255,255,.3)">Clear</button>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────
+var T = [
+ {id:"taptite",name:"TAPTITE-style",sub:"Trilobular forming — metal",cat:"forming",app:"metal",
+  url:"https://shop.specialtybolt.com/products/search/taptite",
+  mat:{"low carbon steel":"good","sheet metal":"good","aluminum":"good","brass":"good","stainless steel":"ok","die cast zinc":"ok","thermoplastic":"bad","thermoset":"bad"},
+  holes:["drilled","punched","extruded"],chips:"None",torque:"Moderate",clamp:"High",reuse:"Good (metal)",
+  strip:"Low",boss:"N/A",sizes:"#4–½in / M3–M12",
+  how:"Trilobular cross-section cold-works the substrate as it advances, displacing metal into the thread form — no chips generated",
+  adv:"No chips, high strip torque, work-hardens thread engagement zone, good vibration resistance",
+  lim:"Not suitable for brittle or hard materials (>HRC 28), higher drive torque than cutting in same hole",
+  std:"ASME B18.6.4 (general); proprietary CONTI/ITW geometry",trade:"TAPTITE 2000, TAPTITE II",
+  tags:["no chips","metal","forming","trilobular"],tr:60,cr:85,rr:75,req:["chip-free","reusable","high-clamp"],vis:"tri"},
+
+ {id:"duotaptite",name:"DUO-TAPTITE-style",sub:"Dual-lead trilobular forming — metal",cat:"forming",app:"metal",
+  url:"https://shop.specialtybolt.com/products/search/duo-taptite",
+  mat:{"low carbon steel":"good","sheet metal":"good","aluminum":"good","brass":"good","stainless steel":"ok","die cast zinc":"ok","thermoplastic":"bad","thermoset":"bad"},
+  holes:["drilled","punched","extruded"],chips:"None",torque:"Lower (dual lead)",clamp:"High",reuse:"Good",
+  strip:"Low",boss:"N/A",sizes:"#6–⅞in / M4–M10",
+  how:"Dual helix lead reduces forming torque per unit advance; trilobular body displaces material",
+  adv:"Lower drive torque than standard TAPTITE, maintains high strip strength, faster installation",
+  lim:"Same substrate ductility requirements as TAPTITE, higher cost than standard forming screws",
+  std:"Proprietary ITW geometry",trade:"DUO-TAPTITE",
+  tags:["no chips","metal","forming","low torque"],tr:45,cr:82,rr:73,req:["chip-free","low-torque","high-clamp"],vis:"tri"},
+
+ {id:"remform",name:"REMFORM-style",sub:"Asymmetric forming — plastics",cat:"forming",app:"plastic",
+  url:"https://shop.specialtybolt.com/products/search/remform",
+  mat:{"thermoplastic":"good","thermoset":"ok","low carbon steel":"bad","sheet metal":"bad","aluminum":"bad","stainless steel":"bad","die cast zinc":"bad","brass":"bad"},
+  holes:["molded","drilled"],chips:"None",torque:"Low",clamp:"Moderate–High",reuse:"Limited (3–5 cycles)",
+  strip:"Low if boss designed correctly",boss:"Low (designed for plastics)",sizes:"#4–#12 / M3–M6",
+  how:"Asymmetric thread profile — steep flank on load side, low-angle flank on drive side — minimizes radial hoop stress on plastic boss",
+  adv:"Best-in-class for plastic boss integrity, lowest radial stress of plastic forming forms, good pull-out, low torque",
+  lim:"Plastic applications only, boss geometry critical, limited reusability, proprietary form",
+  std:"Proprietary REMINC geometry",trade:"REMFORM, REMFORM II",
+  tags:["no chips","plastic","forming","low stress","asymmetric"],tr:35,cr:70,rr:40,req:["chip-free","low-torque"],vis:"asym"},
+
+ {id:"deltapt",name:"DELTA PT-style",sub:"Low-stress forming — plastics",cat:"forming",app:"plastic",
+  url:"https://shop.specialtybolt.com/products/search/delta-pt",
+  mat:{"thermoplastic":"good","thermoset":"ok","low carbon steel":"bad","sheet metal":"bad","aluminum":"bad","stainless steel":"bad","die cast zinc":"bad","brass":"bad"},
+  holes:["molded","drilled"],chips:"None",torque:"Very Low",clamp:"Moderate",reuse:"Limited",
+  strip:"Low–Moderate",boss:"Very Low",sizes:"M2–M8 / #2–#10",
+  how:"EJOT-style triangular cross-section with specific flank angles reduces stress concentration in boss wall",
+  adv:"Very low drive torque, excellent boss crack prevention, wide range for plastics including soft grades",
+  lim:"Plastic-only, lower pull-out than REMFORM in some substrates, proprietary",
+  std:"Proprietary EJOT geometry",trade:"DELTA PT, EJOT PT",
+  tags:["no chips","plastic","forming","ultra-low torque"],tr:25,cr:65,rr:35,req:["chip-free","low-torque"],vis:"asym"},
+
+ {id:"plastite",name:"PT-style / Plastite-style",sub:"General plastic forming screw",cat:"forming",app:"plastic",
+  url:"https://shop.specialtybolt.com/products/search/plastite",
+  mat:{"thermoplastic":"good","thermoset":"ok","low carbon steel":"bad","sheet metal":"bad","aluminum":"bad","stainless steel":"bad","die cast zinc":"bad","brass":"bad"},
+  holes:["molded","drilled"],chips:"None",torque:"Low–Moderate",clamp:"Moderate",reuse:"Limited",
+  strip:"Moderate if boss undersized",boss:"Moderate",sizes:"#4–¼in / M3–M6",
+  how:"Coarse pitch 30° thread form displaces plastic; trilobular or circular cross-section depending on version",
+  adv:"Widely available, standard specification, good for general thermoplastics, low cost",
+  lim:"Higher radial stress than REMFORM/DELTA PT, boss design more critical, limited to plastics",
+  std:"IFI-137, various proprietary versions",trade:"Plastite, PT-style, Inj-Screw",
+  tags:["no chips","plastic","forming","standard"],tr:45,cr:62,rr:35,req:["chip-free"],vis:"tri"},
+
+ {id:"hilo",name:"High-Low forming style",sub:"Dual-pitch forming — plastics & soft metals",cat:"forming",app:"plastic",
+  url:"https://shop.specialtybolt.com/products/search/hi-lo",
+  mat:{"thermoplastic":"good","thermoset":"ok","aluminum":"ok","die cast zinc":"ok","low carbon steel":"bad","sheet metal":"bad","stainless steel":"bad","brass":"ok"},
+  holes:["molded","drilled"],chips:"None",torque:"Low",clamp:"Moderate",reuse:"Very Limited",
+  strip:"Low–Moderate",boss:"Low",sizes:"#4–#14 / M3–M6",
+  how:"Alternating high and low threads reduce material displacement per engagement, distributing load over boss wall",
+  adv:"Lower hoop stress than single-pitch forms, good for soft or flexible plastics",
+  lim:"Less common, limited sizes, lower ultimate clamp load than optimized forms",
+  std:"Proprietary / no consensus standard",trade:"Hi-Lo, Various",
+  tags:["no chips","plastic","forming","low stress"],tr:35,cr:58,rr:30,req:["chip-free","low-torque"],vis:"tri"},
+
+ {id:"type23",name:"Type 23",sub:"Thread cutting — plastics",cat:"cutting",app:"plastic",
+  url:"https://shop.specialtybolt.com/products/search/type-23",
+  mat:{"thermoplastic":"good","thermoset":"good","aluminum":"ok","die cast zinc":"ok","low carbon steel":"bad","sheet metal":"bad","stainless steel":"bad","brass":"ok"},
+  holes:["molded","drilled"],chips:"Yes — provide chip relief",torque:"Low",clamp:"Moderate",reuse:"Good for plastics",
+  strip:"Moderate",boss:"Low (cuts, does not stress boss)",sizes:"#4–¼in / M3–M6",
+  how:"Tapered point with two cutting slots removes material as the screw advances, cutting a mating thread into the substrate",
+  adv:"Works in brittle plastics, thermosets, filled plastics; low installation torque; good re-entry behavior",
+  lim:"Chips generated — contamination risk in electronics assemblies; need chip relief in blind holes",
+  std:"ASME B18.6.4 Type 23",trade:"Type 23, Thread Cutter",
+  tags:["chips","plastic","cutting","brittle ok"],tr:30,cr:55,rr:65,req:["reusable"],vis:"cut"},
+
+ {id:"type25",name:"Type 25",sub:"Thread cutting — plastics (coarser)",cat:"cutting",app:"plastic",
+  url:"https://shop.specialtybolt.com/products/search/type-25",
+  mat:{"thermoplastic":"good","thermoset":"good","aluminum":"ok","die cast zinc":"ok","low carbon steel":"bad","sheet metal":"bad","stainless steel":"bad","brass":"ok"},
+  holes:["molded","drilled"],chips:"Yes",torque:"Low",clamp:"Moderate",reuse:"Good",
+  strip:"Moderate",boss:"Low",sizes:"#6–₅/₁₆in / M4–M8",
+  how:"Similar to Type 23 with different cutting slot geometry for coarser engagement in softer plastics and light die castings",
+  adv:"Slightly coarser pitch suits softer plastics, lower torque in larger holes, widely available",
+  lim:"Chips — same contamination concerns as Type 23",
+  std:"ASME B18.6.4 Type 25",trade:"Type 25",
+  tags:["chips","plastic","cutting"],tr:28,cr:52,rr:63,req:["reusable"],vis:"cut"},
+
+ {id:"typeF",name:"Type F",sub:"Thread cutting — metals",cat:"cutting",app:"metal",
+  url:"https://shop.specialtybolt.com/products/search/type-f",
+  mat:{"low carbon steel":"good","stainless steel":"good","aluminum":"good","brass":"good","die cast zinc":"good","sheet metal":"ok","thermoplastic":"bad","thermoset":"bad"},
+  holes:["drilled","punched","extruded"],chips:"Yes — provide chip relief",torque:"Low–Moderate",clamp:"Moderate–High",reuse:"Good (cuts reusable metal thread)",
+  strip:"Low–Moderate",boss:"N/A",sizes:"#4–½in / M3–M12",
+  how:"Spiral or straight flute along the threaded portion acts as a tap, cutting away material and forming a reusable machine-thread-compatible female thread",
+  adv:"Creates reusable thread in metal, works in hard metals, machine thread compatible, very wide material range",
+  lim:"Chips generated, spiral flute is weaker torsionally, needs chip clearance in blind holes",
+  std:"ASME B18.6.4 Type F",trade:"Type F, Thread Cutter for Metal",
+  tags:["chips","metal","cutting","reusable","hard material ok"],tr:50,cr:72,rr:85,req:["reusable","high-clamp"],vis:"cut"},
+
+ {id:"typeBF",name:"Type BF",sub:"Thread cutting — metals (coarse)",cat:"cutting",app:"metal",
+  url:"https://shop.specialtybolt.com/products/search/type-bf",
+  mat:{"low carbon steel":"good","aluminum":"good","die cast zinc":"good","brass":"good","sheet metal":"ok","stainless steel":"ok","thermoplastic":"bad","thermoset":"bad"},
+  holes:["drilled","punched"],chips:"Yes",torque:"Moderate",clamp:"Moderate",reuse:"Good",
+  strip:"Moderate",boss:"N/A",sizes:"#8–₅/₁₆in / M4–M8",
+  how:"Blunt point with fluting or slotting; coarser engagement suits soft castings and non-ferrous metals",
+  adv:"Good in die castings and soft alloys, lower cost than spiral flute Type F in some sizes",
+  lim:"Less common, coarser pitch limits use in thin materials",
+  std:"ASME B18.6.4 Type BF",trade:"Type BF",
+  tags:["chips","metal","cutting"],tr:52,cr:65,rr:75,req:["reusable"],vis:"cut"},
+
+ {id:"type1",name:"Type 1 / Blunt Point",sub:"Thread cutting — metal & thick material",cat:"cutting",app:"metal",
+  url:"https://shop.specialtybolt.com/products/search/type-1",
+  mat:{"low carbon steel":"good","aluminum":"good","die cast zinc":"good","brass":"good","stainless steel":"ok","sheet metal":"ok","thermoplastic":"ok","thermoset":"bad"},
+  holes:["drilled","tapped"],chips:"Yes",torque:"Moderate",clamp:"High",reuse:"Excellent",
+  strip:"Low",boss:"N/A",sizes:"#6–¾in / M4–M16",
+  how:"Blunt/flat point with single or multi-start cutting slot; enters a pre-drilled or pre-tapped hole and cuts clean thread engagement",
+  adv:"Excellent reusability, machine thread equivalent engagement, very high clamp load, large size range",
+  lim:"Requires accurate pre-drilled pilot hole, generates chips, not a self-starting point",
+  std:"ASME B18.6.4 Type 1",trade:"Type 1, Slotted Tapping Screw",
+  tags:["chips","metal","cutting","reusable","high load"],tr:55,cr:88,rr:90,req:["reusable","high-clamp"],vis:"cut"},
+
+ {id:"generic",name:"Generic forming — sheet metal",sub:"Standard thread-rolling screw for metal",cat:"forming",app:"metal",
+  url:"https://shop.specialtybolt.com/products/search/thread-forming",
+  mat:{"sheet metal":"good","low carbon steel":"good","aluminum":"good","brass":"good","stainless steel":"ok","die cast zinc":"ok","thermoplastic":"bad","thermoset":"bad"},
+  holes:["punched","drilled","extruded"],chips:"None",torque:"Moderate",clamp:"Moderate–High",reuse:"Moderate",
+  strip:"Moderate",boss:"N/A",sizes:"#4–⅞in / M3–M10",
+  how:"Circular or slightly non-circular cross-section advances through ductile metal, displacing material radially to form mating thread",
+  adv:"No chips, cost-effective, widely available, good for sheet metal assemblies",
+  lim:"Less optimized than trilobular forms, higher torque for same engagement",
+  std:"IFI-124 (general rolling screw)",trade:"Various generic thread rolling screws",
+  tags:["no chips","metal","forming","sheet metal"],tr:58,cr:70,rr:60,req:["chip-free"],vis:"tri"}
+];
+
+// ── SVG PROFILES ──────────────────────────────────────────────────────
+function svgFor(vis) {
+  var W=200, H=76, mid=38;
+  var out = '<svg viewBox="0 0 200 76" xmlns="http://www.w3.org/2000/svg" width="200" height="76">';
+  out += '<line x1="8" y1="38" x2="192" y2="38" stroke="#E2E6EA" stroke-width="1.5"/>';
+  for (var i=0; i<6; i++) {
+    var x = 20 + i*30;
+    if (vis === 'tri') {
+      var hh = i<3 ? 18 : 16;
+      var op = (0.5 + i*0.09).toFixed(2);
+      out += '<rect x="'+(x-9)+'" y="'+(mid-hh)+'" width="18" height="'+(hh*2)+'" rx="3" fill="#E87722" opacity="'+op+'"/>';
+    } else if (vis === 'cut') {
+      out += '<rect x="'+(x-8)+'" y="23" width="16" height="30" rx="2" fill="#0d7a6e" opacity="0.65"/>';
+      out += '<line x1="'+x+'" y1="23" x2="'+x+'" y2="53" stroke="white" stroke-width="1.5"/>';
+    } else {
+      out += '<polygon points="'+(x-9)+',21 '+(x+9)+',25 '+(x+9)+',51 '+(x-9)+',55" fill="#E87722" opacity="0.62"/>';
+    }
+  }
+  if (vis === 'cut') out += '<polygon points="20,26 8,38 20,50" fill="#0d7a6e" opacity="0.45"/>';
+  var lbl = vis==='tri' ? 'TRILOBULAR' : vis==='cut' ? 'FLUTED CUTTING POINT' : 'ASYMMETRIC FLANK';
+  out += '<text x="100" y="72" text-anchor="middle" fill="#ADB5BD" font-size="9" font-family="Barlow,sans-serif" font-weight="600" letter-spacing="0.06">'+lbl+'</text>';
+  out += '</svg>';
+  return out;
+}
+
+// ── STATE ─────────────────────────────────────────────────────────────
+var AF = {category:null, app:null, mat:null, req:null};
+var CMP = [];
+var SEL_STEP = 0;
+var SEL_ANS = {};
+
+// ── FILTERS ───────────────────────────────────────────────────────────
+document.querySelectorAll('.fb').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var f = btn.dataset.f, v = btn.dataset.v;
+    if (AF[f] === v) {
+      AF[f] = null;
+      btn.classList.remove('on','on-t');
+    } else {
+      document.querySelectorAll('[data-f="'+f+'"]').forEach(function(b){ b.classList.remove('on','on-t'); });
+      AF[f] = v;
+      btn.classList.add((f==='category' && v==='cutting') ? 'on-t' : 'on');
+    }
+    applyFilters();
+  });
+});
+
+document.getElementById('btn-clear').addEventListener('click', function() {
+  AF = {category:null, app:null, mat:null, req:null};
+  document.querySelectorAll('.fb').forEach(function(b){ b.classList.remove('on','on-t'); });
+  document.getElementById('search').value = '';
+  applyFilters();
+});
+
+document.getElementById('search').addEventListener('input', applyFilters);
+document.getElementById('sort-sel').addEventListener('change', applyFilters);
+
+function applyFilters() {
+  var q = document.getElementById('search').value.toLowerCase();
+  var sort = document.getElementById('sort-sel').value;
+  var filtered = T.filter(function(t) {
+    if (AF.category && t.cat !== AF.category) return false;
+    if (AF.app && t.app !== AF.app) return false;
+    if (AF.mat && t.mat[AF.mat] === 'bad') return false;
+    if (AF.req && t.req.indexOf(AF.req) === -1) return false;
+    if (q && t.name.toLowerCase().indexOf(q)===-1 && t.sub.toLowerCase().indexOf(q)===-1 && t.tags.join(' ').indexOf(q)===-1) return false;
+    return true;
+  });
+  if (sort==='name') filtered.sort(function(a,b){ return a.name.localeCompare(b.name); });
+  else if (sort==='cat') filtered.sort(function(a,b){ return a.cat.localeCompare(b.cat); });
+  else if (sort==='app') filtered.sort(function(a,b){ return a.app.localeCompare(b.app); });
+  renderCards(filtered);
+  document.getElementById('res-count').innerHTML = 'Showing <em>'+filtered.length+'</em> of '+T.length;
+}
+
+// ── CARDS ─────────────────────────────────────────────────────────────
+function renderCards(list) {
+  var grid = document.getElementById('card-grid');
+  grid.innerHTML = '';
+  list.forEach(function(t) {
+    var card = document.createElement('div');
+    card.className = 'card' + (CMP.indexOf(t.id)!==-1 ? ' sel' : '');
+    card.innerHTML =
+      '<div class="stripe '+t.cat+'"></div>' +
+      '<div class="ci">' +
+        '<div class="ctop">' +
+          '<div><div class="cname">'+t.name+'</div><div class="csub">'+t.sub+'</div></div>' +
+          '<div class="bdgs">' +
+            '<span class="badge '+t.cat+'-b">'+t.cat+'</span>' +
+            '<span class="badge '+t.app+'-b">'+t.app+'</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="cvis">'+svgFor(t.vis)+'</div>' +
+        '<div class="pills">' +
+          '<div class="pill"><div class="pl">Chips</div><div class="pv '+(t.chips==='None'?'g':'a')+'">'+(t.chips==='None'?'None':'Yes')+'</div></div>' +
+          '<div class="pill"><div class="pl">Drive torque</div><div class="pv">'+t.torque+'</div></div>' +
+          '<div class="pill"><div class="pl">Reusability</div><div class="pv">'+t.reuse.split(' ')[0]+'</div></div>' +
+          '<div class="pill"><div class="pl">Strip risk</div><div class="pv">'+t.strip.split(' ')[0]+'</div></div>' +
+        '</div>' +
+        '<div class="ctags">'+t.tags.map(function(g){ return '<span class="tag">'+g+'</span>'; }).join('')+'</div>' +
+        '<div class="cacts">' +
+          '<button class="cb cb-d" data-id="'+t.id+'" data-action="detail">Details</button>' +
+          '<button class="cb cb-c'+(CMP.indexOf(t.id)!==-1?' on':'')+'" data-id="'+t.id+'" data-action="compare">'+(CMP.indexOf(t.id)!==-1?'&#10003; Added':'+ Compare')+'</button>' +
+          '<a class="cb cb-s" href="'+t.url+'" target="_blank" rel="noopener">Search Parts &#8599;</a>' +
+        '</div>' +
+      '</div>';
+    grid.appendChild(card);
+  });
+  // attach listeners via delegation on grid
+}
+
+document.getElementById('card-grid').addEventListener('click', function(e) {
+  var btn = e.target.closest('[data-action]');
+  if (!btn) return;
+  var id = btn.dataset.id;
+  if (btn.dataset.action === 'detail') openDetail(id);
+  if (btn.dataset.action === 'compare') toggleCmp(id);
+});
+
+// ── DETAIL MODAL ──────────────────────────────────────────────────────
+function openDetail(id) {
+  var t = T.filter(function(x){ return x.id===id; })[0];
+  var mats = Object.keys(t.mat).map(function(m){ return '<span class="mch '+t.mat[m]+'">'+m+'</span>'; }).join('');
+  var html =
+    '<div class="mhdr">' +
+      '<div><div class="mtitle">'+t.name+'</div><div class="msub">'+t.sub+'</div></div>' +
+      '<button class="mclose" id="modal-close-btn">&#10005;</button>' +
+    '</div>' +
+    '<div class="mbody">' +
+      '<div class="msec"><div class="mst">Thread profile</div>' +
+        '<div style="background:var(--g50);border:1px solid var(--g200);border-radius:8px;padding:12px;display:flex;justify-content:center">'+svgFor(t.vis)+'</div>' +
+      '</div>' +
+      '<div class="msec"><div class="mst">How it works</div><div style="font-size:13px;color:var(--g600);line-height:1.7">'+t.how+'</div></div>' +
+      '<div class="msec"><div class="mst">Performance ratings</div><div class="dgrid">' +
+        '<div class="drow"><div class="dk">Installation torque</div><div class="dv">'+t.torque+'</div><div class="rbar"><div class="rfill" style="width:'+t.tr+'%"></div></div></div>' +
+        '<div class="drow"><div class="dk">Clamp load</div><div class="dv">'+t.clamp+'</div><div class="rbar"><div class="rfill t" style="width:'+t.cr+'%"></div></div></div>' +
+        '<div class="drow"><div class="dk">Reusability</div><div class="dv">'+t.reuse+'</div><div class="rbar"><div class="rfill gr" style="width:'+t.rr+'%"></div></div></div>' +
+        '<div class="drow"><div class="dk">Strip-out risk</div><div class="dv">'+t.strip+'</div></div>' +
+        '<div class="drow"><div class="dk">Chip generation</div><div class="dv">'+t.chips+'</div></div>' +
+        '<div class="drow"><div class="dk">Boss crack risk</div><div class="dv">'+t.boss+'</div></div>' +
+      '</div></div>' +
+      '<div class="msec"><div class="mst">Material compatibility</div><div class="mats">'+mats+'</div>' +
+        '<div style="font-size:11px;color:var(--g400);margin-top:8px;display:flex;gap:12px">' +
+          '<span><span class="mch good" style="font-size:10px">good</span> recommended</span>' +
+          '<span><span class="mch ok" style="font-size:10px">ok</span> use with caution</span>' +
+          '<span><span class="mch bad" style="font-size:10px">avoid</span></span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="msec"><div class="mst">Application details</div><div class="dgrid">' +
+        '<div class="drow"><div class="dk">Size range</div><div class="dv">'+t.sizes+'</div></div>' +
+        '<div class="drow"><div class="dk">Hole types</div><div class="dv">'+t.holes.join(', ')+'</div></div>' +
+      '</div>' +
+        '<div class="drow" style="margin-top:8px"><div class="dk">Advantages</div><div class="dv">'+t.adv+'</div></div>' +
+        '<div class="drow" style="margin-top:8px"><div class="dk">Limitations</div><div class="dv">'+t.lim+'</div></div>' +
+      '</div>' +
+      '<div class="msec"><div class="mst">Standards &amp; trade names</div><div class="dgrid">' +
+        '<div class="drow"><div class="dk">Standards</div><div class="dv">'+t.std+'</div></div>' +
+        '<div class="drow"><div class="dk">Trade names</div><div class="dv">'+t.trade+'</div></div>' +
+      '</div></div>' +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">' +
+        '<button class="btn btn-o" data-action="ecatalog" data-name="'+t.name+'">Search E-Catalog &#8599;</button>' +
+        '<button class="btn btn-n" data-action="modal-compare" data-id="'+t.id+'">'+(CMP.indexOf(t.id)!==-1?'Remove from compare':'Add to compare')+'</button>' +
+      '</div>' +
+    '</div>';
+  document.getElementById('modal-inner').innerHTML = html;
+  document.getElementById('modal').classList.add('open');
+  document.getElementById('modal-close-btn').addEventListener('click', closeModal);
+}
+
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+document.getElementById('modal').addEventListener('click', function(e) { if (e.target===this) closeModal(); });
+document.getElementById('modal').addEventListener('click', function(e) {
+  var btn = e.target.closest('[data-action]');
+  if (!btn) return;
+  if (btn.dataset.action === 'ecatalog') openECatalog(btn.dataset.name);
+  if (btn.dataset.action === 'modal-compare') { toggleCmp(btn.dataset.id); closeModal(); }
+});
+
+// ── COMPARE ───────────────────────────────────────────────────────────
+function toggleCmp(id) {
+  var i = CMP.indexOf(id);
+  if (i !== -1) { CMP.splice(i,1); }
+  else { if (CMP.length>=4) { alert('Maximum 4 thread forms for comparison.'); return; } CMP.push(id); }
+  updateCmpBar();
+  applyFilters();
+}
+
+function updateCmpBar() {
+  var bar = document.getElementById('cbar');
+  document.getElementById('cmp-cnt').textContent = CMP.length;
+  if (CMP.length===0) { bar.classList.remove('show'); return; }
+  bar.classList.add('show');
+  document.getElementById('cbar-items').innerHTML = CMP.map(function(id) {
+    var t = T.filter(function(x){ return x.id===id; })[0];
+    return '<span class="cbarchip">'+t.name+' <span class="cbchipx" data-remove="'+id+'">&#10005;</span></span>';
+  }).join('');
+}
+
+document.getElementById('cbar-items').addEventListener('click', function(e) {
+  var el = e.target.closest('[data-remove]');
+  if (el) toggleCmp(el.dataset.remove);
+});
+
+document.getElementById('btn-view-cmp').addEventListener('click', function() { showPage('compare'); });
+document.getElementById('btn-clr-cbar').addEventListener('click', clearCompare);
+document.getElementById('btn-clr-cmp').addEventListener('click', clearCompare);
+
+function clearCompare() { CMP=[]; updateCmpBar(); buildCmpTable(); applyFilters(); }
+
+var CMP_FIELDS = [
+  ['Category', function(t){ return t.cat; }],
+  ['Application', function(t){ return t.app; }],
+  ['How thread is created', function(t){ return t.how.substring(0,90)+'&hellip;'; }],
+  ['Chip generation', function(t){ return t.chips; }],
+  ['Best materials', function(t){ return Object.keys(t.mat).filter(function(m){ return t.mat[m]==='good'; }).join(', '); }],
+  ['Avoid in', function(t){ return Object.keys(t.mat).filter(function(m){ return t.mat[m]==='bad'; }).join(', '); }],
+  ['Hole types', function(t){ return t.holes.join(', '); }],
+  ['Install torque', function(t){ return t.torque; }],
+  ['Clamp load', function(t){ return t.clamp; }],
+  ['Reusability', function(t){ return t.reuse; }],
+  ['Strip risk', function(t){ return t.strip; }],
+  ['Boss crack risk', function(t){ return t.boss; }],
+  ['Size range', function(t){ return t.sizes; }],
+  ['Standards', function(t){ return t.std; }],
+  ['Trade names', function(t){ return t.trade; }]
+];
+
+function buildCmpTable() {
+  var wrap=document.getElementById('cmp-content'), empty=document.getElementById('cmp-empty'), tbl=document.getElementById('cmp-table');
+  if (CMP.length===0) { wrap.style.display='none'; empty.style.display=''; return; }
+  wrap.style.display=''; empty.style.display='none';
+  var ts = CMP.map(function(id){ return T.filter(function(x){ return x.id===id; })[0]; });
+  var html = '<thead><tr><th>Field</th>'+ts.map(function(t){ return '<th><span class="badge '+t.cat+'-b" style="margin-right:6px">'+t.cat+'</span>'+t.name+'</th>'; }).join('')+'</tr></thead><tbody>';
+  CMP_FIELDS.forEach(function(pair) {
+    var vals = ts.map(pair[1]);
+    var same = vals.every(function(v){ return v===vals[0]; });
+    html += '<tr><td>'+pair[0]+'</td>'+vals.map(function(v){ return '<td'+(same?'':' class="diff"')+'>'+v+'</td>'; }).join('')+'</tr>';
+  });
+  html += '</tbody>';
+  tbl.innerHTML = html;
+}
+
+// ── GUIDED SELECTOR ───────────────────────────────────────────────────
+var STEPS = [
+  {q:'What material are you fastening into?', sub:'Choose the base substrate material.', key:'material', opts:[
+    {l:'Low carbon steel', s:'ductile, weldable', v:'low carbon steel'},
+    {l:'Sheet metal', s:'thin gauge, any ductile', v:'sheet metal'},
+    {l:'Aluminum', s:'wrought or extruded', v:'aluminum'},
+    {l:'Die cast zinc / Al', s:'pressure die castings', v:'die cast zinc'},
+    {l:'Stainless steel', s:'work-hardening alloys', v:'stainless steel'},
+    {l:'Brass', s:'copper alloy', v:'brass'},
+    {l:'Thermoplastic', s:'ABS, PP, PA, PC…', v:'thermoplastic'},
+    {l:'Thermoset / FRP', s:'brittle, filled plastic', v:'thermoset'}
+  ]},
+  {q:'What type of hole will the screw enter?', sub:'Select the closest match.', key:'hole', opts:[
+    {l:'Punched hole', v:'punched'},{l:'Drilled hole', v:'drilled'},
+    {l:'Molded hole', v:'molded'},{l:'Extruded hole', v:'extruded'},
+    {l:'Not sure / open', v:'any'}
+  ]},
+  {q:'Is chip generation a concern?', sub:'Chips from cutting screws can contaminate assemblies.', key:'chips', opts:[
+    {l:'Yes — chip-free required', s:'electronics, precision assemblies', v:'no'},
+    {l:'No — chips acceptable', s:'chip relief or ventilation available', v:'yes'},
+    {l:'No preference', v:'any'}
+  ]},
+  {q:'Is the joint reusable?', sub:'Will the screw be removed and re-driven in service?', key:'reuse', opts:[
+    {l:'Yes — must be reusable', s:'multiple removal/reinstall cycles', v:'yes'},
+    {l:'No — permanent assembly', v:'no'},
+    {l:'Occasional / low cycles', v:'limited'}
+  ]}
+];
+
+function initSelector() { SEL_STEP=0; SEL_ANS={}; renderStep(); }
+
+function renderStep() {
+  var dots = document.getElementById('sdots');
+  dots.innerHTML = STEPS.map(function(_,i){ return '<div class="sdot '+(i<SEL_STEP?'done':i===SEL_STEP?'cur':'')+'"></div>'; }).join('');
+  if (SEL_STEP>=STEPS.length) { renderResults(); return; }
+  var s = STEPS[SEL_STEP];
+  var html = '<div class="sq">'+s.q+'</div><div class="ssub">'+s.sub+'</div><div class="optgrid">';
+  s.opts.forEach(function(o) {
+    html += '<button class="optbtn'+(SEL_ANS[s.key]===o.v?' on':'')+'" data-key="'+s.key+'" data-val="'+o.v+'">';
+    html += '<span class="ol">'+o.l+'</span>';
+    if (o.s) html += '<span class="os">'+o.s+'</span>';
+    html += '</button>';
+  });
+  html += '</div><div class="snav">';
+  if (SEL_STEP>0) html += '<button class="btn btn-g" id="step-back">&#8592; Back</button>';
+  html += '</div>';
+  document.getElementById('step-content').innerHTML = html;
+  document.querySelectorAll('.optbtn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      SEL_ANS[btn.dataset.key] = btn.dataset.val;
+      SEL_STEP++;
+      renderStep();
+    });
+  });
+  var bk = document.getElementById('step-back');
+  if (bk) bk.addEventListener('click', function(){ SEL_STEP--; renderStep(); });
+}
+
+function renderResults() {
+  var mat=SEL_ANS.material, chips=SEL_ANS.chips, reuse=SEL_ANS.reuse;
+  var scored = T.map(function(t) {
+    var score=0, reasons=[], cautions=[];
+    var mv = t.mat[mat];
+    if (mv==='good') { score+=40; reasons.push('Recommended for '+mat); }
+    else if (mv==='ok') { score+=15; cautions.push('Material compatibility is marginal — test thoroughly'); }
+    else { score-=50; }
+    if (chips==='no' && t.chips==='None') { score+=20; reasons.push('Chip-free — no contamination risk'); }
+    if (chips==='no' && t.chips!=='None') { score-=30; cautions.push('Generates chips — may not suit this application'); }
+    if (reuse==='yes' && t.reuse.toLowerCase().indexOf('excellent')!==-1) { score+=25; reasons.push('Excellent reusability'); }
+    else if (reuse==='yes' && t.reuse.toLowerCase().indexOf('good')!==-1) { score+=15; reasons.push('Good reusability'); }
+    else if (reuse==='yes' && t.reuse.toLowerCase().indexOf('limited')!==-1) { score-=10; cautions.push('Limited reusability'); }
+    return {t:t, score:score, reasons:reasons, cautions:cautions};
+  }).filter(function(x){ return x.score>0; }).sort(function(a,b){ return b.score-a.score; });
+
+  var html = '<div class="rech">Results based on your inputs</div>';
+  if (!scored.length) html += '<div class="disc">No strong matches found. Try adjusting your inputs or browse the full Library.</div>';
+  scored.slice(0,5).forEach(function(x,i) {
+    var rnk = i===0?'<span class="rnk rnk-b">Best fit</span>':i<=2?'<span class="rnk rnk-g">Good match</span>':'<span class="rnk rnk-c">Consider</span>';
+    html += '<div class="reccard">'+rnk+
+      '<div style="flex:1">'+
+        '<div class="rname">'+x.t.name+' <span class="badge '+x.t.cat+'-b" style="margin-left:6px">'+x.t.cat+'</span></div>'+
+        '<div class="rreason">'+x.reasons.slice(0,2).join(' &middot; ')+'</div>'+
+        (x.cautions.length?'<div class="rcaut">&#9888; '+x.cautions[0]+'</div>':'')+
+        '<div style="display:flex;gap:6px;margin-top:8px">'+
+          '<button class="btn btn-n" style="font-size:11px;padding:5px 10px" data-action="res-detail" data-id="'+x.t.id+'">Details</button>'+
+          '<button class="btn btn-g" style="font-size:11px;padding:5px 10px" data-action="res-cmp" data-id="'+x.t.id+'">+ Compare</button>'+
+        '</div>'+
+      '</div></div>';
+  });
+  html += '<div class="disc">Guidance only. Final selection must be validated by testing in the actual substrate, hole condition, and production environment.</div>';
+  html += '<div style="margin-top:16px"><button class="btn btn-g" id="sel-restart">&#8592; Start over</button></div>';
+  document.getElementById('step-content').innerHTML = html;
+  document.getElementById('sel-restart').addEventListener('click', initSelector);
+  document.querySelectorAll('[data-action="res-detail"]').forEach(function(b){ b.addEventListener('click', function(){ openDetail(b.dataset.id); }); });
+  document.querySelectorAll('[data-action="res-cmp"]').forEach(function(b){ b.addEventListener('click', function(){ toggleCmp(b.dataset.id); }); });
+}
+
+// ── PAGE NAVIGATION ───────────────────────────────────────────────────
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  document.querySelector('.tab[data-page="'+name+'"]').classList.add('active');
+  if (name==='compare') buildCmpTable();
+  if (name==='selector' && Object.keys(SEL_ANS).length===0) initSelector();
+}
+
+document.querySelectorAll('.tab').forEach(function(tab) {
+  tab.addEventListener('click', function(){ showPage(tab.dataset.page); });
+});
+
+// ── MISC ─────────────────────────────────────────────────────────────
+document.getElementById('btn-print').addEventListener('click', function(){ window.print(); });
+
+// ── FILTER TOOLTIPS ───────────────────────────────────────────────────
+var TIP_DATA = {
+  category: {
+    head: 'Forming vs Cutting',
+    body: 'Thread forming screws have a lobed or asymmetric cross-section that cold-displaces the substrate material as they advance. No material is removed, no chips are created. The displaced material compacts tightly around the thread flanks, work-hardening the engagement zone and delivering superior vibration resistance and clamp retention. Thread cutting screws use a fluted or slotted point to remove material like a hand tap, producing chips. Cutting is required for hard or brittle substrates that cannot flow.'
+  },
+  app: {
+    head: 'Metal vs Plastic',
+    body: 'The substrate type determines which thread form family applies. Metal applications require forms engineered for ductile or hard alloys. Plastic applications require forms with optimized flank angles and coarse pitch to minimize radial hoop stress on the boss wall. Using a metal thread form in plastic will typically crack the boss; plastic thread forms lack the geometry to perform in metal.'
+  },
+  material: {
+    head: 'Substrate Material',
+    body: 'Material ductility, hardness, and brittleness all determine which thread forms are viable. Ductile metals (low-carbon steel, aluminum, brass) accept cold-forming well. Hard metals require cutting or specialized forming grades. Thermoplastics flow under stress and suit plastic forming screws. Thermosets and highly filled plastics are brittle and require cutting. Filtering by material hides forms rated Avoid for that substrate.'
+  },
+  req: {
+    head: 'Assembly Requirements',
+    subs: [
+      { label: 'Chip-free', text: 'Forming screws produce no chips. Critical in electronics, hydraulics, and precision assemblies where loose metal contamination causes failure.' },
+      { label: 'Reusable joint', text: 'Cutting screws create a reusable female thread in metal. Forming screws in metal also sustain multiple cycles well. In plastic, reuse degrades the joint rapidly.' },
+      { label: 'High clamp load', text: 'Formed threads retain clamp load better over time because material compaction around the flanks resists loosening under vibration.' },
+      { label: 'Low drive torque', text: 'Some forming geometries (dual-lead, asymmetric flank) reduce drive effort while maintaining strip strength. Useful where torque control is tight or tooling is limited.' }
+    ]
+  }
+};
+
+(function() {
+  var tip = document.createElement('div');
+  tip.id = 'ftooltip';
+  document.body.appendChild(tip);
+
+  function buildHtml(key) {
+    var d = TIP_DATA[key];
+    if (!d) return '';
+    var h = '<div class="tt-head">' + d.head + '</div>';
+    if (d.subs) {
+      d.subs.forEach(function(s) {
+        h += '<div class="tt-sub">' + s.label + '</div>' + s.text + ' ';
+      });
+    } else {
+      h += d.body;
+    }
+    return h;
+  }
+
+  function show(el) {
+    var key = el.dataset.tip;
+    if (!key) return;
+    tip.innerHTML = buildHtml(key);
+    tip.classList.add('show');
+    // Use viewport-relative coords so sidebar overflow:hidden can't clip us
+    var r = el.getBoundingClientRect();
+    var tipLeft = r.right + 12;
+    var tipTop  = r.top + (r.height / 2) - 14;
+    // Clamp so tooltip stays inside viewport vertically
+    var tipH = tip.offsetHeight || 150;
+    if (tipTop + tipH > window.innerHeight - 8) {
+      tipTop = window.innerHeight - tipH - 8;
+    }
+    if (tipTop < 8) tipTop = 8;
+    // If it would overflow right, flip to left side
+    var tipW = tip.offsetWidth || 240;
+    if (tipLeft + tipW > window.innerWidth - 8) {
+      tipLeft = r.left - tipW - 12;
+      tip.style.setProperty('--arrow-side','right');
+    }
+    tip.style.top  = tipTop  + 'px';
+    tip.style.left = tipLeft + 'px';
+  }
+
+  function hide() { tip.classList.remove('show'); }
+
+  document.querySelectorAll('.fi').forEach(function(el) {
+    el.addEventListener('mouseenter', function() { show(el); });
+    el.addEventListener('mouseleave', hide);
+    el.addEventListener('focus',      function() { show(el); });
+    el.addEventListener('blur',       hide);
+  });
+})();
+
+// ── BETA MODAL ────────────────────────────────────────────────────────
+document.getElementById('beta-continue').addEventListener('click', function() {
+  document.getElementById('beta-overlay').classList.add('gone');
+});
+
+// ── INIT ─────────────────────────────────────────────────────────────
+applyFilters();
+</script>
+</body>
+</html>
