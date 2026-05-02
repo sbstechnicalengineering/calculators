@@ -1,0 +1,1245 @@
+<!--
+  SBS Joint Stiffness and Fatigue Life Estimator | Copyright (c) 2024 Specialty Bolt and Screw, Inc.
+  Fingerprint: SBS-JSFLE-v1 | https://shop.specialtybolt.com/
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Joint Stiffness and Fatigue Life Estimator | SBS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy:           #1D3557;
+      --navy-dark:      #12243a;
+      --orange:         #E87722;
+      --orange-light:   #F0913A;
+      --orange-pale:    #FDF0E5;
+      --white:          #ffffff;
+      --gray-50:        #F8F9FA;
+      --gray-100:       #F0F2F5;
+      --gray-200:       #E2E6EA;
+      --gray-300:       #CED4DA;
+      --gray-400:       #ADB5BD;
+      --gray-500:       #6C757D;
+      --gray-600:       #495057;
+      --gray-700:       #343A40;
+      --active-green:   #1A8A4A;
+      --active-bg:      #E8F5EE;
+      --obsolete-red:   #C0392B;
+      --obsolete-bg:    #FDECEA;
+      --withdrawn-amber:#B7610A;
+      --withdrawn-bg:   #FEF3E2;
+      --header-height:  72px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--gray-100);
+      color: var(--gray-700);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    /* ===== STICKY HEADER ===== */
+    .sbs-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--white);
+      border-bottom: 3px solid var(--orange);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+      padding: 0.65rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      min-height: var(--header-height);
+    }
+
+    .sbs-header .logo-wrap {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .sbs-header .logo-wrap img {
+      height: 48px;
+      display: block;
+    }
+
+    .sbs-header .divider {
+      width: 1px;
+      height: 36px;
+      background: var(--gray-200);
+      flex-shrink: 0;
+    }
+
+    .sbs-header .title-block {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .sbs-header .tool-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1.1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .sbs-header .tool-subtitle {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      color: var(--gray-500);
+      margin-top: 2px;
+    }
+
+    .sbs-header .header-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    /* ===== BUTTONS ===== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Barlow', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.3px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      padding: 8px 14px;
+      text-decoration: none;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--orange);
+      color: var(--white);
+      box-shadow: 0 2px 6px rgba(232,119,34,0.3);
+    }
+
+    .btn-primary:hover {
+      background: var(--orange-light);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(232,119,34,0.35);
+    }
+
+    .btn-secondary {
+      background: var(--navy);
+      color: var(--white);
+    }
+
+    .btn-secondary:hover {
+      background: var(--navy-dark);
+    }
+
+    .btn-lg {
+      font-size: 13px;
+      padding: 11px 20px;
+    }
+
+    /* ===== MAIN LAYOUT ===== */
+    .main-wrap {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 20px 20px 40px;
+    }
+
+    /* ===== NOTICE ===== */
+    .notice {
+      background: var(--withdrawn-bg);
+      border: 1px solid #fcd34d;
+      border-left: 4px solid var(--withdrawn-amber);
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 18px;
+      font-family: 'Inter', sans-serif;
+      font-size: 12.5px;
+      color: var(--withdrawn-amber);
+    }
+
+    .notice strong {
+      font-family: 'Barlow', sans-serif;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    /* ===== TABS ===== */
+    .tabs-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .tab-btn {
+      font-family: 'Barlow', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.3px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      border: 1.5px solid var(--gray-300);
+      background: var(--white);
+      color: var(--gray-600);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .tab-btn.active {
+      background: var(--navy);
+      color: var(--white);
+      border-color: var(--navy);
+    }
+
+    .tab-btn:hover:not(.active) {
+      border-color: var(--orange);
+      color: var(--orange);
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ===== GRID ===== */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    /* ===== CARD ===== */
+    .card {
+      background: var(--white);
+      border: 1.5px solid var(--gray-200);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 2px 8px rgba(29,53,87,0.05);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border-bottom: 1px solid var(--gray-200);
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+    }
+
+    .card-header h2 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--navy);
+    }
+
+    .step-badge {
+      font-family: 'Barlow', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--orange-pale);
+      color: var(--orange);
+      white-space: nowrap;
+    }
+
+    /* ===== FORM GRID ===== */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .form-grid.three {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .field label {
+      display: block;
+      font-family: 'Barlow', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--gray-500);
+      margin-bottom: 5px;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 9px 11px;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 6px;
+      background: var(--white);
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      color: var(--gray-700);
+      transition: border-color 0.15s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .field select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236C757D' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 30px;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      outline: none;
+      border-color: var(--orange);
+    }
+
+    .field .help {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      color: var(--gray-400);
+      margin-top: 4px;
+    }
+
+    /* ===== INFO TOOLTIP ===== */
+    .info-tip {
+      display: inline-flex;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--gray-100);
+      color: var(--navy);
+      align-items: center;
+      justify-content: center;
+      font-family: 'Barlow', sans-serif;
+      font-size: 10px;
+      font-weight: 800;
+      margin-left: 4px;
+      cursor: help;
+      position: relative;
+      vertical-align: middle;
+    }
+
+    .info-tip:hover::after {
+      content: attr(data-tip);
+      position: absolute;
+      left: 50%;
+      bottom: 130%;
+      transform: translateX(-50%);
+      width: 260px;
+      background: var(--navy-dark);
+      color: var(--white);
+      padding: 9px 11px;
+      border-radius: 6px;
+      font-family: 'Inter', sans-serif;
+      font-size: 11.5px;
+      font-weight: 400;
+      line-height: 1.4;
+      z-index: 50;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+      pointer-events: none;
+    }
+
+    /* ===== ACTIONS ROW ===== */
+    .actions-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid var(--gray-200);
+    }
+
+    /* ===== RESULTS ===== */
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .metric-tile {
+      background: var(--gray-50);
+      border: 1.5px solid var(--gray-200);
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
+
+    .metric-label {
+      font-family: 'Barlow', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gray-500);
+    }
+
+    .metric-value {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--navy);
+      margin: 3px 0 2px;
+      line-height: 1;
+    }
+
+    .metric-help {
+      font-family: 'Inter', sans-serif;
+      font-size: 10.5px;
+      color: var(--gray-400);
+    }
+
+    /* ===== STATUS ===== */
+    .status-bar {
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-family: 'Barlow', sans-serif;
+      font-weight: 700;
+      font-size: 13.5px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-bar.good {
+      background: var(--active-bg);
+      color: var(--active-green);
+      border: 1px solid #86efac;
+    }
+
+    .status-bar.warn {
+      background: var(--withdrawn-bg);
+      color: var(--withdrawn-amber);
+      border: 1px solid #fcd34d;
+    }
+
+    .status-bar.bad {
+      background: var(--obsolete-bg);
+      color: var(--obsolete-red);
+      border: 1px solid #fca5a5;
+    }
+
+    /* ===== WARNINGS ===== */
+    .warnings-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy);
+      margin: 14px 0 8px;
+    }
+
+    .warnings-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .warnings-list li {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      color: var(--gray-600);
+      padding: 6px 0 6px 16px;
+      border-bottom: 1px solid var(--gray-100);
+      position: relative;
+      line-height: 1.45;
+    }
+
+    .warnings-list li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 12px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--orange);
+    }
+
+    /* ===== CONCEPT CARD ===== */
+    .formula-box {
+      background: var(--navy-dark);
+      color: #e2e8f0;
+      border-radius: 8px;
+      padding: 11px 14px;
+      font-family: 'Courier New', Consolas, monospace;
+      font-size: 14px;
+      margin: 10px 0;
+      overflow-x: auto;
+    }
+
+    .placeholder-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .placeholder-img {
+      min-height: 100px;
+      border: 2px dashed var(--gray-300);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: var(--gray-400);
+      background: var(--gray-50);
+      padding: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 11.5px;
+      line-height: 1.4;
+    }
+
+    /* ===== COMPARE ===== */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .compare-slot {
+      background: var(--white);
+      border: 1.5px solid var(--gray-200);
+      border-radius: 10px;
+      padding: 18px;
+    }
+
+    .compare-slot h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .compare-slot table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .compare-slot th,
+    .compare-slot td {
+      font-family: 'Inter', sans-serif;
+      font-size: 12.5px;
+      color: var(--gray-700);
+      padding: 7px 9px;
+      border-bottom: 1px solid var(--gray-100);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .compare-slot th {
+      font-family: 'Barlow', sans-serif;
+      font-weight: 700;
+      font-size: 10.5px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--gray-500);
+      background: var(--gray-50);
+    }
+
+    /* ===== GUIDE ===== */
+    .guide-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .guide-card {
+      background: var(--white);
+      border: 1.5px solid var(--gray-200);
+      border-radius: 10px;
+      padding: 18px;
+    }
+
+    .guide-card h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 8px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--orange-pale);
+    }
+
+    .guide-card p,
+    .guide-card li {
+      font-family: 'Inter', sans-serif;
+      font-size: 12.5px;
+      color: var(--gray-600);
+      line-height: 1.55;
+      margin-bottom: 5px;
+    }
+
+    .guide-card ul {
+      padding-left: 16px;
+      margin-top: 6px;
+    }
+
+    /* ===== DISCLAIMER ===== */
+    .disclaimer {
+      background: var(--gray-50);
+      border-top: 1px solid var(--gray-200);
+      padding: 14px 20px;
+      border-radius: 0 0 10px 10px;
+      margin-top: -1px;
+      text-align: center;
+      font-family: 'Inter', sans-serif;
+      font-size: 11.5px;
+      color: var(--gray-500);
+    }
+
+    .disclaimer strong {
+      font-family: 'Barlow', sans-serif;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 960px) {
+      .two-col,
+      .compare-grid,
+      .guide-grid { grid-template-columns: 1fr; }
+      .form-grid.three { grid-template-columns: repeat(2, 1fr); }
+      .placeholder-row { grid-template-columns: 1fr; }
+      .sbs-header .tool-title { font-size: 18px; }
+    }
+
+    @media (max-width: 600px) {
+      .form-grid,
+      .form-grid.three,
+      .results-grid { grid-template-columns: 1fr; }
+      .main-wrap { padding: 12px 12px 32px; }
+      .sbs-header { padding: 0.5rem 1rem; }
+    }
+
+    @media print {
+      .sbs-header, .tabs-row, .actions-row, .no-print { display: none !important; }
+      .main-wrap { padding: 0; max-width: none; }
+      .tab-panel { display: block !important; }
+      .card { box-shadow: none; break-inside: avoid; border: 1px solid #ccc; }
+      body { background: white; }
+    }
+
+    /* ===== BETA MODAL ===== */
+    .beta-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 2147483647;
+      background: rgba(18, 36, 58, 0.82);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 1;
+      transition: opacity 0.28s ease;
+    }
+
+    .beta-overlay.dismissing {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .beta-modal {
+      background: var(--white);
+      border-radius: 14px;
+      width: 100%;
+      max-width: 520px;
+      box-shadow: 0 24px 64px rgba(18,36,58,0.38), 0 4px 16px rgba(18,36,58,0.18);
+      overflow: hidden;
+      transform: translateY(0);
+      transition: transform 0.28s ease;
+    }
+
+    .beta-overlay.dismissing .beta-modal {
+      transform: translateY(12px);
+    }
+
+    .beta-modal-header {
+      background: var(--navy);
+      border-bottom: 3px solid var(--orange);
+      padding: 18px 22px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .beta-modal-icon {
+      flex-shrink: 0;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--orange);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .beta-modal-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--white);
+    }
+
+    .beta-modal-title-block {
+      flex: 1;
+    }
+
+    .beta-modal-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--white);
+      line-height: 1.1;
+    }
+
+    .beta-modal-org {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      color: rgba(255,255,255,0.6);
+      margin-top: 2px;
+      letter-spacing: 0.03em;
+    }
+
+    .beta-pill {
+      flex-shrink: 0;
+      font-family: 'Barlow', sans-serif;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      background: var(--orange);
+      color: var(--white);
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1.5px solid rgba(255,255,255,0.25);
+    }
+
+    .beta-modal-body {
+      padding: 24px 24px 20px;
+    }
+
+    .beta-modal-body p {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      color: var(--gray-600);
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+
+    .beta-modal-body p:last-of-type {
+      margin-bottom: 0;
+    }
+
+    .beta-modal-body p strong {
+      font-family: 'Barlow', sans-serif;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .beta-modal-footer {
+      padding: 16px 24px 22px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .btn-beta-dismiss {
+      font-family: 'Barlow', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.3px;
+      background: var(--orange);
+      color: var(--white);
+      border: none;
+      border-radius: 8px;
+      padding: 13px 28px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(232,119,34,0.35);
+      transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .btn-beta-dismiss:hover {
+      background: var(--orange-light);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(232,119,34,0.42);
+    }
+
+    @media print {
+      .beta-overlay { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BETA MODAL OVERLAY -->
+  <div class="beta-overlay" id="betaOverlay">
+    <div class="beta-modal" role="dialog" aria-modal="true" aria-labelledby="betaModalTitle">
+      <div class="beta-modal-header">
+        <div class="beta-modal-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+        </div>
+        <div class="beta-modal-title-block">
+          <div class="beta-modal-title" id="betaModalTitle">Joint Stiffness and Fatigue Life Estimator</div>
+          <div class="beta-modal-org">Specialty Bolt and Screw, Inc.</div>
+        </div>
+        <span class="beta-pill">Beta</span>
+      </div>
+      <div class="beta-modal-body">
+        <p>This tool is currently in <strong>beta</strong>. The calculations, outputs, and interface are under active development and have not yet been fully validated for production engineering use.</p>
+        <p>We encourage you to explore the estimator, run your scenarios, and share your feedback with us. Your input helps us improve the tool and make it more useful for the fastener engineering community.</p>
+        <p>Thank you for being an early user. If you encounter any issues or have suggestions, please reach out to our engineering team at <strong>specialtybolt.com</strong>.</p>
+      </div>
+      <div class="beta-modal-footer">
+        <button class="btn-beta-dismiss" data-sbs-action="dismissBeta">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          I Understand - Continue to Tool
+        </button>
+      </div>
+    </div>
+  </div>
+  <img id="sbsLogoPrint" src="data:image/png;base64,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" style="display:none;" alt="SBS">
+
+  <!-- STICKY HEADER -->
+  <header class="sbs-header">
+    <a href="https://shop.specialtybolt.com/" target="_blank" class="logo-wrap">
+      <img src="data:image/png;base64,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" alt="SBS Specialty Bolt and Screw">
+    </a>
+    <div class="divider"></div>
+    <div class="title-block">
+      <div class="tool-title">Joint Stiffness and Fatigue Life Estimator</div>
+      <div class="tool-subtitle">Bolted joint load sharing and cyclic bolt stress educational estimator</div>
+    </div>
+    <div class="header-actions no-print">
+      <button class="btn btn-primary" data-sbs-action="printReport">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        Print Report
+      </button>
+      <a class="btn btn-secondary" href="https://shop.specialtybolt.com/" target="_blank" rel="noopener">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        Search Parts
+      </a>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <div class="main-wrap">
+
+    <div class="notice">
+      <strong>Engineering use note:</strong> This tool is an educational estimator. It simplifies bolted-joint behavior and does not replace detailed analysis, test validation, VDI 2230 calculations, NASA/industry requirements, FEA, or customer-specific design approval.
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs-row no-print">
+      <button class="tab-btn active" data-sbs-action="tab" data-tab="estimator">Estimator</button>
+      <button class="tab-btn" data-sbs-action="tab" data-tab="compare">Compare Designs</button>
+      <button class="tab-btn" data-sbs-action="tab" data-tab="guide">Best Practice Guide</button>
+      <button class="tab-btn" data-sbs-action="tab" data-tab="references">References and Assumptions</button>
+    </div>
+
+    <!-- ===== ESTIMATOR TAB ===== -->
+    <section id="estimator" class="tab-panel active">
+      <div class="two-col">
+        <div>
+
+          <!-- STEP 1 -->
+          <div class="card">
+            <div class="card-header">
+              <h2>1. Joint Setup</h2>
+              <span class="step-badge">Step 1 of 4</span>
+            </div>
+            <div class="form-grid">
+              <div class="field">
+                <label>Design name</label>
+                <input id="designName" value="Design A" />
+              </div>
+              <div class="field">
+                <label>Unit system</label>
+                <select id="unitSystem">
+                  <option value="metric">Metric: N, mm, MPa</option>
+                  <option value="inch">Inch: lbf, in, ksi</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Joint type <span class="info-tip" data-tip="Use through bolt when a nut is used. Tapped hole and stud joints can have additional thread engagement and substrate risks not fully calculated here.">i</span></label>
+                <select id="jointType">
+                  <option>Through bolt with nut</option>
+                  <option>Screw into tapped hole</option>
+                  <option>Stud with nut</option>
+                  <option>SEMS / washer assembled screw</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Joint stiffness class <span class="info-tip" data-tip="Soft joints include gaskets, plastics, rubber, thin stacks, or long compression paths. Stiff joints include steel/steel joints with short grip and broad bearing area.">i</span></label>
+                <select id="jointStiffnessClass">
+                  <option value="soft">Soft joint / gasketed / plastic</option>
+                  <option value="medium" selected>Medium joint / mixed materials</option>
+                  <option value="stiff">Stiff joint / metal-to-metal</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Clamped material</label>
+                <select id="memberMaterial">
+                  <option value="steel">Steel / iron</option>
+                  <option value="stainless">Stainless steel</option>
+                  <option value="aluminum">Aluminum</option>
+                  <option value="magnesium">Magnesium</option>
+                  <option value="brass">Brass / bronze</option>
+                  <option value="plastic">Engineering plastic</option>
+                  <option value="custom">Custom modulus</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Member modulus <span id="memberModulusUnit">MPa</span></label>
+                <input id="memberModulus" type="number" value="200000" />
+                <div class="help">Auto-filled by material; editable.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 2 -->
+          <div class="card">
+            <div class="card-header">
+              <h2>2. Fastener Geometry and Material</h2>
+              <span class="step-badge">Step 2 of 4</span>
+            </div>
+            <div class="form-grid three">
+              <div class="field">
+                <label>Fastener size</label>
+                <select id="fastenerSize"></select>
+              </div>
+              <div class="field">
+                <label>Nominal diameter <span id="diameterUnit">mm</span></label>
+                <input id="diameter" type="number" step="0.001" value="8" />
+              </div>
+              <div class="field">
+                <label>Thread pitch / TPI</label>
+                <input id="pitch" type="number" step="0.001" value="1.25" />
+              </div>
+              <div class="field">
+                <label>Grip length <span id="gripUnit">mm</span> <span class="info-tip" data-tip="The clamped thickness between the bolt head and nut or tapped thread reaction. Longer grip generally makes the bolt more elastic, which can improve fatigue behavior.">i</span></label>
+                <input id="gripLength" type="number" step="0.001" value="25" />
+              </div>
+              <div class="field">
+                <label>Threaded length in grip <span id="threadedGripUnit">mm</span></label>
+                <input id="threadedGrip" type="number" step="0.001" value="8" />
+              </div>
+              <div class="field">
+                <label>Bolt material / grade</label>
+                <select id="boltGrade">
+                  <option value="metric88">Metric Class 8.8</option>
+                  <option value="metric109">Metric Class 10.9</option>
+                  <option value="metric129">Metric Class 12.9</option>
+                  <option value="sae5">SAE Grade 5</option>
+                  <option value="sae8">SAE Grade 8</option>
+                  <option value="stainlessA2">A2 / 18-8 Stainless</option>
+                  <option value="stainlessA4">A4 / 316 Stainless</option>
+                  <option value="custom">Custom</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Bolt modulus <span id="boltModulusUnit">MPa</span></label>
+                <input id="boltModulus" type="number" value="200000" />
+              </div>
+              <div class="field">
+                <label>Proof strength <span id="proofUnit">MPa</span></label>
+                <input id="proofStrength" type="number" value="640" />
+              </div>
+              <div class="field">
+                <label>Fatigue reference stress <span id="fatigueUnit">MPa</span> <span class="info-tip" data-tip="Simplified educational threshold for bolt alternating stress risk. Replace with validated fatigue data for the fastener, thread condition, surface finish, coating, temperature, and reliability target.">i</span></label>
+                <input id="fatigueRef" type="number" value="120" />
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 3 -->
+          <div class="card">
+            <div class="card-header">
+              <h2>3. Torque, Preload and Service Load</h2>
+              <span class="step-badge">Step 3 of 4</span>
+            </div>
+            <div class="form-grid three">
+              <div class="field">
+                <label>Assembly torque <span id="torqueUnit">N&#183;m</span></label>
+                <input id="torque" type="number" step="0.001" value="25" />
+              </div>
+              <div class="field">
+                <label>Nut factor K <span class="info-tip" data-tip="Preload is estimated with T = K times F times d. K depends strongly on thread friction, bearing friction, lubrication, coating, washer, and assembly method.">i</span></label>
+                <input id="nutFactor" type="number" step="0.001" value="0.20" />
+              </div>
+              <div class="field">
+                <label>Preload loss allowance (%)</label>
+                <input id="preloadLoss" type="number" step="0.1" value="15" />
+              </div>
+              <div class="field">
+                <label>Mean external axial load <span id="meanLoadUnit">N</span></label>
+                <input id="meanLoad" type="number" step="0.001" value="3000" />
+              </div>
+              <div class="field">
+                <label>Cyclic load range <span id="rangeLoadUnit">N</span> <span class="info-tip" data-tip="Peak-to-peak external axial load variation. The bolt only sees a fraction of this range when the joint remains clamped.">i</span></label>
+                <input id="loadRange" type="number" step="0.001" value="4000" />
+              </div>
+              <div class="field">
+                <label>Target cycles</label>
+                <select id="cycles">
+                  <option value="10000">10,000 cycles</option>
+                  <option value="100000">100,000 cycles</option>
+                  <option value="1000000" selected>1,000,000 cycles</option>
+                  <option value="10000000">10,000,000+ cycles</option>
+                </select>
+              </div>
+            </div>
+            <div class="actions-row">
+              <button class="btn btn-primary btn-lg" data-sbs-action="calculate">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg>
+                Calculate Estimate
+              </button>
+              <button class="btn btn-secondary" data-sbs-action="saveA">Save as Design A</button>
+              <button class="btn btn-secondary" data-sbs-action="saveB">Save as Design B</button>
+              <button class="btn btn-primary" data-sbs-action="printReport">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                Print Report
+              </button>
+            </div>
+          </div>
+
+        </div><!-- end left col -->
+
+        <aside>
+
+          <!-- STEP 4 RESULTS -->
+          <div class="card">
+            <div class="card-header">
+              <h2>4. Results</h2>
+              <span class="step-badge" id="resultBadge">Not calculated</span>
+            </div>
+            <div class="status-bar warn" id="riskStatus">Enter the joint details and calculate the estimate.</div>
+            <div class="results-grid" id="resultsGrid"></div>
+            <div class="warnings-title">Interpretation and Warnings</div>
+            <ul class="warnings-list" id="warnings"></ul>
+          </div>
+
+          <!-- CONCEPT CARD -->
+          <div class="card">
+            <div class="card-header">
+              <h2>Load Sharing Concept</h2>
+            </div>
+            <p style="font-family:'Inter',sans-serif;font-size:12.5px;color:var(--gray-600);margin-bottom:10px;">The joint constant estimates the fraction of external axial load added to the bolt while the joint remains clamped.</p>
+            <div class="formula-box">C = kb / (kb + km)</div>
+            <p style="font-family:'Inter',sans-serif;font-size:12.5px;color:var(--gray-600);margin-top:10px;">Lower C usually means the bolt sees less cyclic load. This is often achieved with a more elastic bolt and a stiffer clamped joint.</p>
+            <div class="placeholder-row">
+              <div class="placeholder-img">Placeholder image:<br>bolt and clamped stack</div>
+              <div class="placeholder-img">Placeholder image:<br>spring model</div>
+              <div class="placeholder-img">Placeholder image:<br>fatigue stress range</div>
+            </div>
+          </div>
+
+        </aside>
+      </div><!-- end two-col -->
+    </section>
+
+    <!-- ===== COMPARE TAB ===== -->
+    <section id="compare" class="tab-panel">
+      <div class="card">
+        <div class="card-header">
+          <h2>Compare Two Joint Designs</h2>
+          <span class="step-badge">Side by side</span>
+        </div>
+        <p style="font-family:'Inter',sans-serif;font-size:12.5px;color:var(--gray-600);margin-bottom:16px;">Save the current estimator inputs as Design A or Design B, then compare stiffness, load sharing, preload, stress range, and risk indicators.</p>
+        <div class="compare-grid" id="compareWrap">
+          <div class="compare-slot"><h3>Design A</h3><p style="font-family:'Inter',sans-serif;font-size:12.5px;color:var(--gray-500);">No saved result yet.</p></div>
+          <div class="compare-slot"><h3>Design B</h3><p style="font-family:'Inter',sans-serif;font-size:12.5px;color:var(--gray-500);">No saved result yet.</p></div>
+        </div>
+        <div class="actions-row">
+          <button class="btn btn-primary" data-sbs-action="printReport">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            Print Comparison
+          </button>
+          <button class="btn btn-secondary" data-sbs-action="clearCompare">Clear Saved Designs</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== GUIDE TAB ===== -->
+    <section id="guide" class="tab-panel">
+      <div class="card">
+        <div class="card-header">
+          <h2>Best Practice Guide</h2>
+          <span class="step-badge">Training / educational</span>
+        </div>
+        <div class="guide-grid">
+          <div class="guide-card">
+            <h3>Why joint stiffness matters</h3>
+            <p>A preloaded bolted joint behaves like two springs: the bolt is stretched and the clamped members are compressed. When an external axial load is applied, only part of that load should increase bolt tension. The remainder unloads the clamped members.</p>
+            <ul>
+              <li>A stiffer clamped stack generally lowers the fraction of load added to the bolt.</li>
+              <li>A longer, more elastic bolt can reduce cyclic bolt stress.</li>
+              <li>Soft gaskets, plastics, thin flanges, or embedment can increase joint movement and preload loss.</li>
+            </ul>
+          </div>
+          <div class="guide-card">
+            <h3>Preload and torque control</h3>
+            <p>Torque is an indirect way to create preload. Most of the applied torque is consumed by thread and bearing friction, so preload scatter can be large.</p>
+            <ul>
+              <li>Use realistic nut factor values for the actual coating, lubrication, washer, and bearing surface.</li>
+              <li>Consider torque-angle, yield-control, direct tension indicating washers, or measured elongation for critical joints.</li>
+              <li>Account for relaxation, embedment, gasket creep, paint compression, and thermal effects.</li>
+            </ul>
+          </div>
+          <div class="guide-card">
+            <h3>Fatigue design logic</h3>
+            <p>Fatigue risk is driven by cyclic stress range, thread root stress concentration, mean stress, preload scatter, material, manufacturing quality, surface finish, coating, and environment.</p>
+            <ul>
+              <li>Reducing bolt load range is usually more important than simply increasing bolt diameter.</li>
+              <li>Adequate preload helps keep the joint clamped and limits alternating bolt stress.</li>
+              <li>Avoid joint separation; once separation begins, bolt load can rise rapidly.</li>
+            </ul>
+          </div>
+          <div class="guide-card">
+            <h3>Ways to improve joint reliability</h3>
+            <ul>
+              <li>Increase clamped member stiffness with thicker flanges, larger bearing area, washers, bosses, or sleeves.</li>
+              <li>Increase effective grip length when practical to make the bolt more elastic.</li>
+              <li>Use controlled preload and validated friction assumptions.</li>
+              <li>Minimize eccentric loading, bending, prying, and transverse slip.</li>
+              <li>Use appropriate locking features only after the clamp-load design is sound.</li>
+            </ul>
+          </div>
+          <div class="guide-card">
+            <h3>Special caution: tapped holes and studs</h3>
+            <p>Tapped-hole joints add substrate thread strength, engagement length, material strength, and thread-form quality concerns. This estimator does not calculate thread stripping or pull-out.</p>
+            <ul>
+              <li>Check internal thread shear, boss strength, and minimum engagement.</li>
+              <li>Be especially careful with aluminum, magnesium, castings, plastics, and inserts.</li>
+              <li>Consider helicoils, thread inserts, or larger engagement where fatigue and serviceability matter.</li>
+            </ul>
+          </div>
+          <div class="guide-card">
+            <h3>Special caution: SEMS and washers</h3>
+            <p>SEMS assemblies and washers can change bearing friction, embedment, bearing area, prevailing torque, and preload retention.</p>
+            <ul>
+              <li>Confirm whether the washer is free-spinning, conical, toothed, captive, or spring-type.</li>
+              <li>Do not assume a lock washer solves a fatigue or preload problem.</li>
+              <li>Validate torque-preload behavior with the actual washer and mating surface.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== REFERENCES TAB ===== -->
+    <section id="references" class="tab-panel">
+      <div class="card">
+        <div class="card-header">
+          <h2>References, Formulas and Assumptions</h2>
+          <span class="step-badge">Estimator basis</span>
+        </div>
+        <div class="guide-grid">
+          <div class="guide-card">
+            <h3>Primary simplified formulas</h3>
+            <div class="formula-box">Fpreload = T / (K x d)</div>
+            <div class="formula-box">kb = Eb x At / Leffective</div>
+            <div class="formula-box">km = stiffnessFactor x kb</div>
+            <div class="formula-box">C = kb / (kb + km)</div>
+            <div class="formula-box">DFb = C x DFexternal</div>
+            <div class="formula-box">sa = (DFb / 2) / At</div>
+            <p>These relationships are simplified to support early design comparison and training.</p>
+          </div>
+          <div class="guide-card">
+            <h3>Reference names to consider</h3>
+            <ul>
+              <li>VDI 2230: systematic calculation of high-duty bolted joints.</li>
+              <li>NASA-STD-5020: requirements and definitions for threaded fastening systems in spaceflight hardware.</li>
+              <li>NASA / Sandia bolted joint design guidance: preload uncertainty, joint separation, and safety-factor concepts.</li>
+              <li>ISO 898 and SAE J429: common mechanical property references for carbon/alloy steel fasteners.</li>
+              <li>ASTM F606 / ISO 16047: testing and torque-tension considerations.</li>
+            </ul>
+          </div>
+          <div class="guide-card">
+            <h3>What this tool does not calculate</h3>
+            <ul>
+              <li>Thread stripping or pull-out.</li>
+              <li>Bending, prying, eccentric loads, or transverse slip.</li>
+              <li>Thermal expansion mismatch.</li>
+              <li>Detailed gasket creep or viscoelastic behavior.</li>
+              <li>Goodman, Soderberg, Gerber, or VDI 2230 fatigue proof.</li>
+              <li>Reliability, scatter, surface defect, coating, corrosion, or hydrogen embrittlement effects.</li>
+            </ul>
+          </div>
+          <div class="guide-card">
+            <h3>Recommended use</h3>
+            <ul>
+              <li>Use the estimator to compare alternatives and identify risk drivers.</li>
+              <li>Use validated material data, actual torque-tension testing, and customer-approved standards for final decisions.</li>
+              <li>Escalate critical safety, fatigue, pressure, lifting, vehicle, aerospace, or regulatory joints for formal engineering review.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DISCLAIMER -->
+    <div class="disclaimer">
+      <strong>Disclaimer:</strong> This tool is provided for educational and early-design comparison purposes only. Results are simplified estimates and do not constitute engineering certification. Specialty Bolt and Screw, Inc. makes no warranty regarding the accuracy or completeness of these calculations. Always consult a qualified engineer and apply applicable standards for safety-critical applications.
+    </div>
+
+  </div><!-- end main-wrap -->
+
+<script>
+var metricSizes=[{label:"M3 x 0.5",d:3,p:0.5},{label:"M4 x 0.7",d:4,p:0.7},{label:"M5 x 0.8",d:5,p:0.8},{label:"M6 x 1.0",d:6,p:1.0},{label:"M8 x 1.25",d:8,p:1.25},{label:"M10 x 1.5",d:10,p:1.5},{label:"M12 x 1.75",d:12,p:1.75},{label:"M14 x 2.0",d:14,p:2.0},{label:"M16 x 2.0",d:16,p:2.0},{label:"M20 x 2.5",d:20,p:2.5},{label:"Custom metric",d:8,p:1.25}];
+var inchSizes=[{label:"#4-40",d:0.112,p:40},{label:"#6-32",d:0.138,p:32},{label:"#8-32",d:0.164,p:32},{label:"#10-24",d:0.190,p:24},{label:"#10-32",d:0.190,p:32},{label:"1/4-20",d:0.250,p:20},{label:"5/16-18",d:0.3125,p:18},{label:"3/8-16",d:0.375,p:16},{label:"7/16-14",d:0.4375,p:14},{label:"1/2-13",d:0.500,p:13},{label:"5/8-11",d:0.625,p:11},{label:"3/4-10",d:0.750,p:10},{label:"Custom inch",d:0.375,p:16}];
+var gradeData={metric88:{EbMetric:200000,proofMetric:640,fatigueMetric:120},metric109:{EbMetric:200000,proofMetric:830,fatigueMetric:145},metric129:{EbMetric:200000,proofMetric:970,fatigueMetric:160},sae5:{EbMetric:200000,proofMetric:586,fatigueMetric:115},sae8:{EbMetric:200000,proofMetric:827,fatigueMetric:140},stainlessA2:{EbMetric:193000,proofMetric:450,fatigueMetric:85},stainlessA4:{EbMetric:193000,proofMetric:450,fatigueMetric:85},custom:{EbMetric:200000,proofMetric:640,fatigueMetric:120}};
+var memberModulusMetric={steel:200000,stainless:193000,aluminum:69000,magnesium:45000,brass:100000,plastic:3000,custom:200000};
+var saved={A:null,B:null};
+function q(id){return document.getElementById(id);}
+function num(id){return parseFloat(q(id).value)||0;}
+function fmt(v,d){return Number.isFinite(v)?v.toLocaleString(undefined,{maximumFractionDigits:d,minimumFractionDigits:d}):"--";}
+function convertStressFromMetric(v){return q("unitSystem").value==="metric"?v:v*0.145038;}
+function convertModulusFromMetric(v){return q("unitSystem").value==="metric"?v:v*0.145038;}
+function loadSizeOptions(){var unit=q("unitSystem").value;var list=unit==="metric"?metricSizes:inchSizes;q("fastenerSize").innerHTML=list.map(function(x){return"<option>"+x.label+"<\/option>";}).join("");var def=unit==="metric"?"M8 x 1.25":"3/8-16";q("fastenerSize").value=def;syncSizeToInputs();}
+function syncSizeToInputs(){var unit=q("unitSystem").value;var list=unit==="metric"?metricSizes:inchSizes;var item=list.find(function(x){return x.label===q("fastenerSize").value;})||list[0];q("diameter").value=item.d;q("pitch").value=item.p;}
+function updateUnitLabels(){var m=q("unitSystem").value==="metric";q("diameterUnit").textContent=m?"mm":"in";q("gripUnit").textContent=m?"mm":"in";q("threadedGripUnit").textContent=m?"mm":"in";q("boltModulusUnit").textContent=m?"MPa":"ksi";q("memberModulusUnit").textContent=m?"MPa":"ksi";q("proofUnit").textContent=m?"MPa":"ksi";q("fatigueUnit").textContent=m?"MPa":"ksi";q("torqueUnit").textContent=m?"N·m":"lbf·in";q("meanLoadUnit").textContent=m?"N":"lbf";q("rangeLoadUnit").textContent=m?"N":"lbf";if(m){q("gripLength").value=25;q("threadedGrip").value=8;q("torque").value=25;q("meanLoad").value=3000;q("loadRange").value=4000;}else{q("gripLength").value=1.0;q("threadedGrip").value=0.3;q("torque").value=220;q("meanLoad").value=675;q("loadRange").value=900;}}
+function applyGradeDefaults(){var data=gradeData[q("boltGrade").value];if(!data||q("boltGrade").value==="custom")return;q("boltModulus").value=Math.round(convertModulusFromMetric(data.EbMetric));q("proofStrength").value=Math.round(convertStressFromMetric(data.proofMetric));q("fatigueRef").value=Math.round(convertStressFromMetric(data.fatigueMetric));}
+function applyMaterialDefault(){var material=q("memberMaterial").value;if(material==="custom")return;q("memberModulus").value=Math.round(convertModulusFromMetric(memberModulusMetric[material]));}
+function tensileStressArea(d,p,metric){if(metric){return Math.PI/4*Math.pow(d-0.9382*p,2);}var n=p;return Math.PI/4*Math.pow(d-0.9743/n,2);}
+function calculate(){var metric=q("unitSystem").value==="metric";var d=num("diameter");var pitch=num("pitch");var grip=Math.max(num("gripLength"),0.001);var threadedGrip=Math.min(Math.max(num("threadedGrip"),0),grip);var unthreadedGrip=Math.max(grip-threadedGrip,0.001);var Eb=num("boltModulus");var Em=num("memberModulus");var proof=num("proofStrength");var fatigueRef=num("fatigueRef");var torque=num("torque");var K=Math.max(num("nutFactor"),0.001);var preloadLoss=Math.min(Math.max(num("preloadLoss"),0),90)/100;var meanLoad=num("meanLoad");var loadRange=num("loadRange");var At=tensileStressArea(d,pitch,metric);var shankArea=Math.PI*d*d/4;var preload=torque/(K*d);if(metric)preload=preload*1000;var effectivePreload=preload*(1-preloadLoss);var threadedCompliance=threadedGrip/(Eb*At);var shankCompliance=unthreadedGrip/(Eb*shankArea);var kb=1/(threadedCompliance+shankCompliance);var stiffnessClass=q("jointStiffnessClass").value;var classFactor=stiffnessClass==="soft"?1.5:stiffnessClass==="medium"?3.0:6.0;var materialFactor=Math.max(0.1,Math.min(1.2,Em/Eb));var km=kb*classFactor*materialFactor;var C=kb/(kb+km);var boltMeanLoad=effectivePreload+C*meanLoad;var boltLoadRange=C*loadRange;var alternatingBoltLoad=boltLoadRange/2;var altStress=alternatingBoltLoad/At;var meanStress=boltMeanLoad/At;var proofUtil=meanStress/proof;var fatigueRatio=altStress/fatigueRef;var separationLoad=effectivePreload/Math.max(1-C,0.001);var maxExternalLoad=meanLoad+loadRange/2;var jointSafetyRatio=separationLoad/Math.max(maxExternalLoad,0.001);var risk="good";var riskText="Lower fatigue risk estimate";if(fatigueRatio>0.75||proofUtil>0.75||jointSafetyRatio<1.5){risk="warn";riskText="Moderate risk -- review recommended";}
+if(fatigueRatio>1.0||proofUtil>0.9||jointSafetyRatio<1.0){risk="bad";riskText="High risk -- engineering review required";}
+var forceUnit=metric?"N":"lbf";var stressUnit=metric?"MPa":"ksi";var stiffnessUnit=metric?"N/mm":"lbf/in";var warnings=[];if(K<0.14||K>0.30)warnings.push("Nut factor K is outside a common general range. Confirm torque-tension data for the actual finish, lubrication, washer, and mating surface.");if(preloadLoss>=0.2)warnings.push("Preload loss allowance is high. Review embedment, gasket creep, paint compression, plastic relaxation, and thermal effects.");if(q("jointStiffnessClass").value==="soft")warnings.push("Soft joints often have higher preload loss and joint movement. Fatigue and loosening risk may be underestimated.");if(q("memberMaterial").value==="plastic")warnings.push("Plastic clamped materials are creep-sensitive. Validate clamp retention over time, temperature, and humidity.");if(q("jointType").value.indexOf("tapped")>-1)warnings.push("Tapped-hole joints require separate checks for internal thread shear, pull-out, boss strength, and engagement length.");if(q("jointType").value.indexOf("SEMS")>-1)warnings.push("SEMS assemblies require actual torque-preload validation because washers can change friction, embedment, and bearing area.");if(jointSafetyRatio<1.0)warnings.push("Estimated joint separation occurs at or below peak external load. Once separation begins, bolt load can rise sharply.");if(fatigueRatio>1.0)warnings.push("Estimated alternating stress exceeds the selected educational fatigue reference stress. Reduce load range, reduce joint constant, or use validated fatigue data.");if(proofUtil>0.9)warnings.push("Estimated mean bolt stress is near or above proof strength. Review torque/preload, proof strength, and scatter.");if(grip/d<2)warnings.push("Short grip length relative to diameter can make the bolt stiff and increase fatigue sensitivity. Consider increasing effective grip length if practical.");if(loadRange<=0)warnings.push("Cyclic load range is zero or not entered. Fatigue output will not be meaningful.");if(warnings.length===0)warnings.push("No major estimator warnings. Continue with formal design checks for critical applications.");return{name:q("designName").value||"Unnamed design",metric:metric,forceUnit:forceUnit,stressUnit:stressUnit,stiffnessUnit:stiffnessUnit,d:d,pitch:pitch,grip:grip,At:At,preload:preload,effectivePreload:effectivePreload,kb:kb,km:km,C:C,meanLoad:meanLoad,loadRange:loadRange,boltLoadRange:boltLoadRange,altStress:altStress,meanStress:meanStress,proofUtil:proofUtil,fatigueRatio:fatigueRatio,jointSafetyRatio:jointSafetyRatio,risk:risk,riskText:riskText,warnings:warnings,inputs:{jointType:q("jointType").value,stiffnessClass:q("jointStiffnessClass").value,grade:q("boltGrade").selectedOptions[0].text}};}
+function renderResults(r){q("resultBadge").textContent=r.name;q("riskStatus").className="status-bar "+r.risk;q("riskStatus").textContent=r.riskText;var cards=[["Estimated preload",fmt(r.preload,1)+" "+r.forceUnit,"From torque and nut factor"],["Effective preload",fmt(r.effectivePreload,1)+" "+r.forceUnit,"After preload loss allowance"],["Bolt stiffness kb",fmt(r.kb,1)+" "+r.stiffnessUnit,"Simplified axial spring rate"],["Member stiffness km",fmt(r.km,1)+" "+r.stiffnessUnit,"Estimated from class and material"],["Joint constant C",fmt(r.C,3),"Fraction of axial load added to bolt"],["Bolt load range",fmt(r.boltLoadRange,1)+" "+r.forceUnit,"C times external cyclic range"],["Alternating stress",fmt(r.altStress,2)+" "+r.stressUnit,"Approx. fatigue-driving stress"],["Mean bolt stress",fmt(r.meanStress,2)+" "+r.stressUnit,"Preload plus mean service effect"],["Proof utilization",fmt(r.proofUtil*100,1)+"%","Simplified mean stress / proof"],["Separation ratio",fmt(r.jointSafetyRatio,2),"Separation load / peak external load"]];q("resultsGrid").innerHTML=cards.map(function(c){return'<div class="metric-tile"><div class="metric-label">'+c[0]+'<\/div><div class="metric-value">'+c[1]+'<\/div><div class="metric-help">'+c[2]+'<\/div><\/div>';}).join("");q("warnings").innerHTML=r.warnings.map(function(w){return"<li>"+w+"<\/li>";}).join("");}
+function renderCompare(){var slots=["A","B"];var html="";slots.forEach(function(slot){var r=saved[slot];if(!r){html+='<div class="compare-slot"><h3>Design '+slot+'<\/h3><p style="font-family:Inter,sans-serif;font-size:12.5px;color:var(--gray-500);">No saved result yet.<\/p><\/div>';return;}html+='<div class="compare-slot"><h3>'+r.name+' <span class="step-badge">Design '+slot+'<\/span><\/h3><table><tr><th>Item<\/th><th>Estimate<\/th><\/tr><tr><td>Risk<\/td><td>'+r.riskText+'<\/td><\/tr><tr><td>Joint type<\/td><td>'+r.inputs.jointType+'<\/td><\/tr><tr><td>Fastener / grade<\/td><td>'+r.inputs.grade+'<\/td><\/tr><tr><td>Preload<\/td><td>'+fmt(r.preload,1)+" "+r.forceUnit+'<\/td><\/tr><tr><td>Effective preload<\/td><td>'+fmt(r.effectivePreload,1)+" "+r.forceUnit+'<\/td><\/tr><tr><td>Joint constant C<\/td><td>'+fmt(r.C,3)+'<\/td><\/tr><tr><td>Bolt load range<\/td><td>'+fmt(r.boltLoadRange,1)+" "+r.forceUnit+'<\/td><\/tr><tr><td>Alternating stress<\/td><td>'+fmt(r.altStress,2)+" "+r.stressUnit+'<\/td><\/tr><tr><td>Proof utilization<\/td><td>'+fmt(r.proofUtil*100,1)+'%<\/td><\/tr><tr><td>Separation ratio<\/td><td>'+fmt(r.jointSafetyRatio,2)+'<\/td><\/tr><\/table><\/div>';});q("compareWrap").innerHTML=html;}
+function calculateAndDisplay(){var r=calculate();renderResults(r);}
+document.addEventListener("change",function(e){var el=e.target;if(el.id==="unitSystem"){loadSizeOptions();updateUnitLabels();applyGradeDefaults();applyMaterialDefault();}if(el.id==="fastenerSize"){syncSizeToInputs();}if(el.id==="boltGrade"){applyGradeDefaults();}if(el.id==="memberMaterial"){applyMaterialDefault();}});
+document.addEventListener("click",function(e){var el=e.target;var action=null;for(var i=0;i<6;i++){if(!el||el===document.body)break;if(el.getAttribute&&el.getAttribute("data-sbs-action")){action=el.getAttribute("data-sbs-action");break;}el=el.parentNode;}if(action==="calculate"){calculateAndDisplay();}else if(action==="saveA"){var r=calculate();saved.A=r;renderResults(r);renderCompare();alert("Saved current estimate as Design A.");}else if(action==="saveB"){var r=calculate();saved.B=r;renderResults(r);renderCompare();alert("Saved current estimate as Design B.");}else if(action==="printReport"){window.print();}else if(action==="clearCompare"){saved={A:null,B:null};renderCompare();}else if(action==="tab"){var tabId=el.getAttribute("data-tab");document.querySelectorAll(".tab-btn").forEach(function(b){b.classList.remove("active");});document.querySelectorAll(".tab-panel").forEach(function(p){p.classList.remove("active");});el.classList.add("active");var panel=document.getElementById(tabId);if(panel)panel.classList.add("active");}});
+loadSizeOptions();updateUnitLabels();applyGradeDefaults();applyMaterialDefault();calculateAndDisplay();
+(function(){var overlay=document.getElementById("betaOverlay");if(!overlay)return;document.addEventListener("click",function(e){var el=e.target;for(var i=0;i<6;i++){if(!el||el===document.body)break;if(el.getAttribute&&el.getAttribute("data-sbs-action")==="dismissBeta"){overlay.classList.add("dismissing");setTimeout(function(){overlay.style.display="none";},300);return;}el=el.parentNode;}});}());
+</script>
+</body>
+</html>
