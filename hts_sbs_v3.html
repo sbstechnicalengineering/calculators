@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<!--
+  SBS HTS Code Calculator | Copyright (c) 2025 Specialty Bolt & Screw, Inc.
+  Fingerprint: SBS-HTS-CALC-v3 | https://shop.specialtybolt.com/
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTS Code Calculator 2026 | Specialty Bolt and Screw</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --navy:#1D3557;--navy-dark:#12243a;--orange:#E87722;--orange-light:#F0913A;
+  --orange-pale:#FDF0E5;--white:#ffffff;--gray-50:#F8F9FA;--gray-100:#F0F2F5;
+  --gray-200:#E2E6EA;--gray-300:#CED4DA;--gray-400:#ADB5BD;--gray-500:#6C757D;
+  --gray-600:#495057;--gray-700:#343A40;
+}
+body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-700);min-height:100vh;}
+
+/* ═══ BETA MODAL ═══ */
+#betaOverlay{
+  position:fixed;inset:0;z-index:2147483647;
+  background:rgba(18,36,58,0.82);
+  backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);
+  display:flex;align-items:center;justify-content:center;
+  padding:24px;
+}
+#betaModal{
+  background:var(--white);border-radius:14px;
+  max-width:540px;width:100%;
+  box-shadow:0 24px 80px rgba(0,0,0,0.45);
+  overflow:hidden;
+}
+.beta-modal-header{
+  background:var(--navy);
+  border-bottom:4px solid var(--orange);
+  padding:18px 24px;
+  display:flex;align-items:center;gap:14px;
+}
+.beta-modal-header .beta-icon{
+  width:36px;height:36px;flex-shrink:0;
+  background:var(--orange);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+}
+.beta-modal-header .beta-icon svg{stroke:var(--white);}
+.beta-modal-header h2{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:1.35rem;font-weight:800;color:var(--white);
+  letter-spacing:0.01em;flex:1;
+}
+.beta-pill{
+  background:var(--orange);color:var(--white);
+  font-family:'Barlow',sans-serif;font-size:0.65rem;font-weight:700;
+  letter-spacing:0.12em;text-transform:uppercase;
+  padding:3px 10px;border-radius:999px;
+  display:inline-block;margin-bottom:14px;
+}
+.beta-modal-body{padding:24px 28px;}
+.beta-modal-body p{
+  font-family:'Inter',sans-serif;font-size:0.875rem;line-height:1.65;
+  color:var(--gray-600);margin-bottom:12px;
+}
+.beta-modal-body p:last-child{margin-bottom:0;}
+.beta-modal-footer{
+  padding:16px 28px 22px;display:flex;justify-content:flex-end;
+}
+#betaDismissBtn{
+  background:var(--orange);color:var(--white);border:none;cursor:pointer;
+  font-family:'Barlow',sans-serif;font-size:0.88rem;font-weight:700;
+  letter-spacing:0.3px;padding:11px 24px;border-radius:6px;
+  box-shadow:0 2px 6px rgba(232,119,34,0.35);
+  transition:background 0.18s,transform 0.12s,box-shadow 0.18s;
+}
+#betaDismissBtn:hover{background:var(--orange-light);transform:translateY(-1px);box-shadow:0 4px 12px rgba(232,119,34,0.4);}
+
+/* ═══ HEADER ═══ */
+.sbs-header{
+  position:sticky;top:0;z-index:100;
+  background:var(--white);
+  border-bottom:3px solid var(--orange);
+  box-shadow:0 2px 8px rgba(0,0,0,0.10);
+  padding:0.65rem 1.5rem;
+}
+.sbs-header-inner{display:flex;align-items:center;gap:16px;max-width:1280px;margin:0 auto;flex-wrap:wrap;}
+.sbs-logo-link{flex-shrink:0;display:block;}
+.sbs-divider{width:1px;height:36px;background:var(--gray-200);flex-shrink:0;}
+.sbs-header-title h1{
+  font-family:'Barlow Condensed',sans-serif;font-size:1.45rem;font-weight:800;
+  color:var(--navy);line-height:1.1;letter-spacing:0.01em;
+}
+.sbs-header-title p{font-family:'Inter',sans-serif;font-size:0.72rem;color:var(--gray-500);margin-top:1px;}
+.header-badge{
+  background:var(--orange-pale);color:var(--orange);
+  font-family:'Barlow',sans-serif;font-size:0.65rem;font-weight:700;
+  padding:2px 8px;border-radius:999px;border:1px solid var(--orange);
+  vertical-align:middle;margin-left:6px;letter-spacing:0.08em;
+}
+
+/* ═══ CHAPTER BADGES ═══ */
+.chapter-badges-row{
+  display:flex;flex-wrap:wrap;gap:8px;
+  padding:10px 1.5rem;max-width:1280px;margin:0 auto;
+}
+.ch-badge{
+  font-family:'Barlow',sans-serif;font-size:0.72rem;font-weight:700;
+  background:var(--navy);color:var(--white);
+  padding:5px 12px;border-radius:6px;text-decoration:none;
+  transition:background 0.15s,transform 0.1s;display:inline-block;
+  letter-spacing:0.2px;
+}
+.ch-badge:hover{background:var(--navy-dark);transform:translateY(-1px);}
+
+/* ═══ SEARCH AND FILTERS ═══ */
+.search-bar-wrap{
+  background:var(--white);border-bottom:1px solid var(--gray-200);
+  position:sticky;z-index:99;
+}
+.search-bar-inner{max-width:1280px;margin:0 auto;padding:12px 1.5rem;display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.search-input-wrap{position:relative;flex:1;min-width:240px;}
+.search-input-wrap svg.search-icon{
+  position:absolute;left:12px;top:50%;transform:translateY(-50%);
+  stroke:var(--gray-400);pointer-events:none;
+}
+#searchInput{
+  width:100%;padding:9px 36px 9px 38px;
+  border:2px solid var(--navy);border-radius:6px;
+  font-family:'Inter',sans-serif;font-size:0.875rem;
+  background:var(--white);color:var(--gray-700);outline:none;
+  transition:border-color 0.18s;
+}
+#searchInput:focus{border-color:var(--orange);}
+#searchInput::placeholder{font-style:italic;color:var(--gray-400);}
+#clearBtn{
+  position:absolute;right:10px;top:50%;transform:translateY(-50%);
+  background:none;border:none;cursor:pointer;padding:2px;
+  display:none;align-items:center;color:var(--gray-400);
+}
+#clearBtn:hover{color:var(--orange);}
+.result-count{font-family:'Barlow',sans-serif;font-size:0.8rem;font-weight:700;color:var(--orange);white-space:nowrap;}
+
+/* ═══ FILTER GRID ═══ */
+#filterGrid{
+  max-width:1280px;margin:0 auto;padding:10px 1.5rem;
+  display:flex;gap:10px;flex-wrap:wrap;align-items:center;
+}
+.filter-wrap{position:relative;}
+.filter-wrap label{
+  font-family:'Barlow',sans-serif;font-size:0.65rem;font-weight:700;
+  letter-spacing:1px;text-transform:uppercase;color:var(--gray-500);
+  display:block;margin-bottom:3px;
+}
+.filter-wrap select{
+  font-family:'Inter',sans-serif;font-size:0.8rem;color:var(--gray-700);
+  background:var(--white);border:1.5px solid var(--gray-200);
+  border-radius:6px;padding:7px 28px 7px 10px;
+  appearance:none;-webkit-appearance:none;outline:none;
+  cursor:pointer;transition:border-color 0.15s,background 0.15s;
+  min-width:160px;
+}
+.filter-wrap select:focus{border-color:var(--orange);}
+.filter-wrap.filter-active select{
+  border-color:var(--orange);background:var(--orange-pale);color:var(--navy);font-weight:600;
+}
+.filter-chevron{
+  position:absolute;right:8px;bottom:10px;pointer-events:none;stroke:var(--gray-400);
+}
+.filter-wrap.filter-active .filter-chevron{stroke:var(--orange);}
+#resetFiltersBtn{
+  background:var(--navy);color:var(--white);border:none;cursor:pointer;
+  font-family:'Barlow',sans-serif;font-size:0.75rem;font-weight:700;
+  padding:8px 16px;border-radius:6px;letter-spacing:0.3px;
+  transition:background 0.15s;margin-top:18px;
+}
+#resetFiltersBtn:hover{background:var(--navy-dark);}
+.filter-disabled select{opacity:0.55;cursor:not-allowed;pointer-events:none;}
+.filter-hint{font-family:'Inter',sans-serif;font-size:0.68rem;color:var(--gray-400);font-style:italic;margin-top:3px;}
+
+/* ═══ RESULTS AREA ═══ */
+#resultsArea{max-width:1280px;margin:0 auto;padding:20px 1.5rem 40px;}
+#noResults{
+  text-align:center;padding:60px 20px;color:var(--gray-400);
+  font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:700;
+  letter-spacing:0.05em;display:none;
+}
+
+/* ═══ CARDS ═══ */
+.hts-card{
+  background:var(--white);border-radius:10px;
+  border:1.5px solid var(--gray-200);margin-bottom:10px;
+  overflow:hidden;transition:box-shadow 0.18s,transform 0.18s;
+  position:relative;
+}
+.hts-card::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:0;
+  background:var(--orange);border-radius:10px 0 0 10px;
+  transition:width 0.18s;
+}
+.hts-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(29,53,87,0.10);}
+.hts-card:hover::before{width:4px;}
+.card-inner{padding:14px 18px 14px 22px;display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;}
+.card-left{flex:1;min-width:200px;}
+.card-code{
+  font-family:'Barlow Condensed',sans-serif;font-size:1.25rem;font-weight:800;
+  color:var(--navy);line-height:1;margin-bottom:4px;
+}
+.card-chapter-badge{
+  font-family:'Barlow',sans-serif;font-size:0.65rem;font-weight:700;
+  letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--gray-500);background:var(--gray-100);
+  border:1px solid var(--gray-200);border-radius:4px;
+  padding:2px 6px;display:inline-block;margin-bottom:8px;
+}
+.card-desc{
+  font-family:'Inter',sans-serif;font-size:0.85rem;color:var(--gray-600);
+  line-height:1.55;
+}
+.card-desc .bold-type{font-weight:600;color:var(--navy);}
+mark.hl{background:#fef08a;color:inherit;border-radius:2px;padding:0 1px;}
+.card-right{display:flex;flex-direction:column;gap:8px;align-items:flex-end;flex-shrink:0;}
+.rate-block{text-align:right;}
+.rate-label{
+  font-family:'Barlow',sans-serif;font-size:0.6rem;font-weight:700;
+  letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-400);
+}
+.rate-val{
+  font-family:'Barlow Condensed',sans-serif;font-size:1.05rem;font-weight:800;
+  color:var(--navy);
+}
+.rate-val.free{color:#1A8A4A;}
+.copy-btn{
+  background:var(--gray-100);border:1px solid var(--gray-200);
+  color:var(--gray-600);border-radius:5px;cursor:pointer;
+  font-family:'Barlow',sans-serif;font-size:0.7rem;font-weight:700;
+  padding:5px 10px;display:flex;align-items:center;gap:5px;
+  transition:background 0.15s,border-color 0.15s,color 0.15s;letter-spacing:0.2px;
+}
+.copy-btn:hover,.copy-btn.copied{
+  background:var(--orange-pale);border-color:var(--orange);color:var(--orange);
+}
+
+/* ═══ LOAD MORE ═══ */
+#loadMoreWrap{text-align:center;padding:20px 0;}
+#loadMoreBtn{
+  background:var(--orange);color:var(--white);border:none;cursor:pointer;
+  font-family:'Barlow',sans-serif;font-size:0.85rem;font-weight:700;
+  padding:11px 32px;border-radius:6px;letter-spacing:0.3px;
+  box-shadow:0 2px 6px rgba(232,119,34,0.3);
+  transition:background 0.15s,transform 0.12s;
+}
+#loadMoreBtn:hover{background:var(--orange-light);transform:translateY(-1px);}
+.loading-dots span{
+  display:inline-block;width:8px;height:8px;background:var(--orange);
+  border-radius:50%;margin:0 2px;animation:bounce 0.9s infinite;
+}
+.loading-dots span:nth-child(2){animation-delay:0.15s;}
+.loading-dots span:nth-child(3){animation-delay:0.3s;}
+@keyframes bounce{0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-7px);}}
+
+/* ═══ DISCLAIMER ═══ */
+.disclaimer-bar{
+  background:var(--gray-50);border-top:1px solid var(--gray-200);
+  padding:14px 1.5rem;text-align:center;
+}
+.disclaimer-bar p{
+  font-family:'Inter',sans-serif;font-size:0.72rem;color:var(--gray-500);
+  max-width:900px;margin:0 auto;line-height:1.6;
+}
+.disclaimer-bar strong{color:var(--navy);}
+
+/* ═══ PRINT LOGO (hidden) ═══ */
+#sbsLogoPrint{display:none;}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:640px){
+  .sbs-header-inner{gap:10px;}
+  .sbs-header-title h1{font-size:1.1rem;}
+  .card-inner{flex-direction:column;}
+  .card-right{align-items:flex-start;flex-direction:row;flex-wrap:wrap;}
+  #filterGrid{flex-direction:column;align-items:flex-start;}
+  .filter-wrap select{min-width:100%;}
+}
+</style>
+</head>
+<body>
+
+<!-- HIDDEN PRINT LOGO -->
+<img id="sbsLogoPrint" src="data:image/png;base64,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" alt="SBS">
+
+<!-- ═══ BETA MODAL ═══ -->
+<div id="betaOverlay">
+  <div id="betaModal" role="dialog" aria-modal="true" aria-labelledby="betaModalTitle">
+    <div class="beta-modal-header">
+      <div class="beta-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+      </div>
+      <h2 id="betaModalTitle">Specialty Bolt and Screw</h2>
+    </div>
+    <div class="beta-modal-body">
+      <span class="beta-pill">Beta</span>
+      <p>This tool is currently in beta. The HTS Code Calculator searches 2026 Revision 4 duty rates across Chapters 39, 48, 73, 74, 76, 81, 83, 84, and 87 and is provided for reference and guidance purposes only.</p>
+      <p>We invite you to explore the tool and share your feedback with our team. If you notice any missing codes, incorrect rates, or have suggestions for improvement, please reach out to <strong>Specialty Bolt and Screw</strong> directly.</p>
+      <p>Thank you for your support as we continue to build tools that serve the fastener and industrial supply community.</p>
+    </div>
+    <div class="beta-modal-footer">
+      <button id="betaDismissBtn" data-sbs-action="dismissBeta">I Understand - Continue to Tool</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ HEADER ═══ -->
+<header class="sbs-header" id="mainHeader">
+  <div class="sbs-header-inner">
+    <a href="https://shop.specialtybolt.com/" target="_blank" class="sbs-logo-link" rel="noopener noreferrer">
+      <img src="data:image/png;base64,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" alt="SBS Specialty Bolt and Screw" style="height:48px;display:block;">
+    </a>
+    <div class="sbs-divider"></div>
+    <div class="sbs-header-title">
+      <h1>HTS Code Calculator <span class="header-badge">2026 Rev 4</span></h1>
+      <p>Harmonized Tariff Schedule of the United States</p>
+    </div>
+  </div>
+</header>
+
+<!-- ═══ CHAPTER BADGES ═══ -->
+<div style="background:var(--white);border-bottom:1px solid var(--gray-200);">
+  <div class="chapter-badges-row">
+    <a class="ch-badge" href="https://drive.google.com/file/d/1ZMBYvcwVNMNipfQL8DEIlAjZr7TuJypu/view?usp=drive_link" target="_blank" rel="noopener">Ch. 73 Iron and Steel</a>
+    <a class="ch-badge" href="https://drive.google.com/file/d/1HiRH8UC2Pgym1sJ09JWBoRSBjj8RWerc/view?usp=drive_link" target="_blank" rel="noopener">Ch. 39 Plastics</a>
+    <a class="ch-badge" href="https://drive.google.com/file/d/1O33uNTrOIpfrF_zCKjVSVVzaozyY35dS/view?usp=drive_link" target="_blank" rel="noopener">Ch. 48 Paper</a>
+    <a class="ch-badge" href="https://drive.google.com/file/d/1dcJd3TNpoRJlJ6JCNNiLqKAym05Nt4FS/view?usp=drive_link" target="_blank" rel="noopener">Ch. 74 Copper</a>
+    <a class="ch-badge" href="https://drive.google.com/file/d/1QiXT6B9q8dodTyRarw73F-9GXiU_KekW/view?usp=drive_link" target="_blank" rel="noopener">Ch. 76 Aluminum</a>
+    <a class="ch-badge" href="https://drive.google.com/file/d/1Xw37R9IvAN5OiOKY2eGegI_scgwCb6x_/view?usp=drive_link" target="_blank" rel="noopener">Ch. 81 Base Metals</a>
+    <a class="ch-badge" href="https://drive.google.com/file/d/1pWTP9Q2WOGcv43dkA3Lbasq9AqSZmVHP/view?usp=drive_link" target="_blank" rel="noopener">Ch. 83 Metal Articles</a>
+    <a class="ch-badge" href="https://drive.google.com/file/d/1HXhHib8Ri4b6c_SomePlaceholder/view?usp=drive_link" target="_blank" rel="noopener">Ch. 84 Machinery</a>
+    <a class="ch-badge" href="https://drive.google.com/file/d/1UQQ96u6ZsSkoYfbqO12bukkjMSNVBb1t/view?usp=drive_link" target="_blank" rel="noopener">Ch. 87 Vehicles</a>
+  </div>
+</div>
+
+<!-- ═══ SEARCH BAR ═══ -->
+<div class="search-bar-wrap" id="searchBarWrap">
+  <div class="search-bar-inner">
+    <div class="search-input-wrap">
+      <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="searchInput" placeholder="Search by keyword, HTS code, or description..." autocomplete="off" spellcheck="false">
+      <button id="clearBtn" aria-label="Clear search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <span id="resultCount" class="result-count"></span>
+  </div>
+  <div id="filterGrid">
+    <div class="filter-wrap" id="filterChapter">
+      <label>Chapter / Material</label>
+      <select id="selChapter"><option value="">All Chapters</option>
+        <option value="39">Ch. 39 - Plastics</option>
+        <option value="48">Ch. 48 - Paper and Paperboard</option>
+        <option value="73">Ch. 73 - Iron and Steel</option>
+        <option value="74">Ch. 74 - Copper</option>
+        <option value="76">Ch. 76 - Aluminum</option>
+        <option value="81">Ch. 81 - Other Base Metals</option>
+        <option value="83">Ch. 83 - Misc. Base Metal Articles</option>
+        <option value="84">Ch. 84 - Machinery and Equipment</option>
+        <option value="87">Ch. 87 - Vehicles and Parts</option>
+      </select>
+      <svg class="filter-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="filter-wrap" id="filterDuty">
+      <label>General Duty Rate</label>
+      <select id="selDuty"><option value="">All Rates</option>
+        <option value="free">Free</option>
+        <option value="low">Under 5%</option>
+        <option value="mid">5% to 10%</option>
+        <option value="high">Over 10%</option>
+      </select>
+      <svg class="filter-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <button id="resetFiltersBtn" data-sbs-action="resetFilters">Reset Filters</button>
+  </div>
+</div>
+
+<!-- ═══ RESULTS ═══ -->
+<div id="resultsArea">
+  <div id="noResults">No matching HTS codes found. Try different search terms.</div>
+  <div id="cardsList"></div>
+  <div id="loadMoreWrap" style="display:none;">
+    <button id="loadMoreBtn" data-sbs-action="loadMore">Load More Results</button>
+  </div>
+</div>
+
+<!-- ═══ DISCLAIMER ═══ -->
+<div class="disclaimer-bar">
+  <p><strong>Disclaimer:</strong> This tool is provided for informational and reference purposes only. Duty rates are based on the 2026 HTS Revision 4 and are subject to change. Specialty Bolt and Screw, Inc. makes no warranty as to the accuracy, completeness, or fitness for any particular purpose of the information provided. Users should verify all HTS classifications and duty rates with a licensed customs broker or the USITC before making import decisions. This tool does not constitute legal or customs advice.</p>
+</div>
+
+<script>
+var HTS_DATA=[
+  {code:"7318.11.00",desc:"Coach screws, of iron or steel",general:"Free",col2:"25%",chapter:73,chname:"Iron and Steel"},
+  {code:"7318.12.00",desc:"Other wood screws, of iron or steel",general:"Free",col2:"25%",chapter:73,chname:"Iron and Steel"},
+  {code:"7318.13.00",desc:"Screw hooks and screw rings, of iron or steel",general:"Free",col2:"45%",chapter:73,chname:"Iron and Steel"},
+  {code:"7318.14.10",desc:"Self-tapping screws, diameter less than 6 mm, of iron or steel",general:"6.2%",col2:"45%",chapter:73,chname:"Iron and Steel"},
+  {code:"7318.14.50",desc:"Self-tapping screws, diameter 6 mm or more, of iron or steel",general:"8.6%",col2:"45%",chapter:73,chname:"Iron and Steel"},
+  {code:"7318.15.20",desc:"Bolts and bolts with nuts or washers entered or exported in the same shipment, of iron or steel",general:"3.5%",col2:"45%",chapter:73,chname:"Iron and Steel"},
+  {code:"7318.15.40",desc:"Machine screws 9.5 mm or more in length and 3.2 mm or more in diameter (not cap screws), iron or steel",general:"2.2c/kg",col2:"45%",chapter:73,chname:"Iron and Steel"},
+  {code:"7318.15.50",desc:"Studs, of iron or steel",general:"Free",col2:"45%",chapter:73,chname:"Iron and Steel"},
+  {code:"7318.15.60",desc:"Other screws and bolts, diameter less than 6 mm (socket screws and other), of iron or steel",general:"6.2%",col2:"45%",chapter:73,chname:"Iron and Steel"},
+  {code:"7318.15.80",desc:"Other screws and bolts, diameter 6 mm or more (set screws, socket screws, hex cap screws, other), of iron or steel",general:"8.5%",col2:"45%",chapter:73,chname:"Iron and Steel"},
+  {code:"7318.16.00",desc:"Nuts, of iron or steel (including lugnuts, locking, stainless steel, and other)",general:"0.5%",col2:"45%",chapter:73,chname:"Iron and Steel"},
+  {code:"7318.19.00",desc:"Other threaded articles, of iron or steel",general:"5.7%",col2:"45%",chapter:73,chname:"Iron and Steel"},
+  {code:"7318.21.00",desc:"Spring washers and other lock washers, of iron or steel (including helical spring lock washers)",general:"5.8%",col2:"35%",chapter:73,chname:"Iron and Steel"},
+  {code:"7318.22.00",desc:"Other flat washers, of iron or steel",general:"1.3c/kg",col2:"45%",chapter:73,chname:"Iron and Steel"},
+  {code:"7318.23.00",desc:"Rivets, of iron or steel",general:"Free",col2:"45%",chapter:73,chname:"Iron and Steel"},
+  {code:"7318.24.00",desc:"Cotters and cotter pins, of iron or steel",general:"3.8%",col2:"45%",chapter:73,chname:"Iron and Steel"},
+  {code:"7318.29.00",desc:"Other non-threaded fasteners and similar articles, of iron or steel",general:"2.8%",col2:"45%",chapter:73,chname:"Iron and Steel"},
+  {code:"7317.00.10",desc:"Thumb tacks, of iron or steel",general:"Free",col2:"4%",chapter:73,chname:"Iron and Steel"},
+  {code:"7317.00.20",desc:"Nails suitable for powder-actuated handtools, not threaded, of iron or steel",general:"Free",col2:"45%",chapter:73,chname:"Iron and Steel"},
+  {code:"7317.00.30",desc:"Nails suitable for powder-actuated handtools, threaded, of iron or steel",general:"Free",col2:"45%",chapter:73,chname:"Iron and Steel"},
+  {code:"7317.00.55",desc:"Nails of round wire construction (collated roofing nails, coil nails, strip nails, smooth shank, galvanized), iron or steel",general:"Free",col2:"3.5%",chapter:73,chname:"Iron and Steel"},
+  {code:"7317.00.65",desc:"Other nails (cut nails, other), of iron or steel",general:"Free",col2:"5.5%",chapter:73,chname:"Iron and Steel"},
+  {code:"7317.00.75",desc:"Nails of two or more pieces, of iron or steel",general:"Free",col2:"8%",chapter:73,chname:"Iron and Steel"},
+  {code:"7319.40.20",desc:"Safety pins, of iron or steel",general:"Free",col2:"35%",chapter:73,chname:"Iron and Steel"},
+  {code:"7319.40.30",desc:"Dressmakers or common pins, of iron or steel",general:"Free",col2:"35%",chapter:73,chname:"Iron and Steel"},
+  {code:"7319.40.50",desc:"Other pins (push pins and other), of iron or steel",general:"Free",col2:"35%",chapter:73,chname:"Iron and Steel"},
+  {code:"7319.90.10",desc:"Sewing, darning or embroidery needles, of iron or steel",general:"Free",col2:"45%",chapter:73,chname:"Iron and Steel"},
+  {code:"7319.90.90",desc:"Other needles and similar articles, of iron or steel",general:"Free",col2:"45%",chapter:73,chname:"Iron and Steel"},
+  {code:"7307.11.00",desc:"Tube or pipe fittings, cast, of nonmalleable cast iron (couplings, elbows, sleeves, threaded pipe)",general:"Free",col2:"25%",chapter:73,chname:"Iron and Steel"},
+  {code:"7307.19.30",desc:"Tube or pipe fittings, cast, ductile iron (grooved-end, threaded, flanged)",general:"Free",col2:"45%",chapter:73,chname:"Iron and Steel"},
+  {code:"7307.19.90",desc:"Other cast tube or pipe fittings, iron or steel (unions, grooved-end, threaded, other)",general:"6.2%",col2:"45%",chapter:73,chname:"Iron and Steel"},
+  {code:"7307.91.10",desc:"Flanges, not machined after forging, of iron or nonalloy steel",general:"Free",col2:"25%",chapter:73,chname:"Iron and Steel"},
+  {code:"7307.91.30",desc:"Flanges, not machined after forging, of alloy steel (except stainless)",general:"Free",col2:"33%",chapter:73,chname:"Iron and Steel"},
+  {code:"7307.91.50",desc:"Other flanges, of iron or steel (stainless and other)",general:"5.5%",col2:"45%",chapter:73,chname:"Iron and Steel"},
+  {code:"7307.92.30",desc:"Threaded sleeves (couplings), of iron or steel",general:"Free",col2:"45%",chapter:73,chname:"Iron and Steel"},
+  {code:"7307.92.90",desc:"Other threaded elbows and bends, of iron or steel",general:"6.2%",col2:"45%",chapter:73,chname:"Iron and Steel"},
+  {code:"7307.93.30",desc:"Butt welding fittings, inside diameter less than 360 mm, of iron or nonalloy steel",general:"6.2%",col2:"45%",chapter:73,chname:"Iron and Steel"},
+  {code:"7307.93.60",desc:"Butt welding fittings, inside diameter less than 360 mm, of alloy steel (except stainless)",general:"Free",col2:"45%",chapter:73,chname:"Iron and Steel"},
+  {code:"7307.93.90",desc:"Butt welding fittings, inside diameter 360 mm or more, of iron or steel",general:"4.3%",col2:"45%",chapter:73,chname:"Iron and Steel"},
+  {code:"7307.99.10",desc:"Other pipe fittings, not machined after forging, of iron or nonalloy steel",general:"25%",col2:"Free",chapter:73,chname:"Iron and Steel"},
+  {code:"7307.99.30",desc:"Other pipe fittings, not machined after forging, of alloy steel (except stainless)",general:"Free",col2:"33%",chapter:73,chname:"Iron and Steel"},
+  {code:"7307.99.50",desc:"Other pipe fittings (nipples, other), of iron or steel",general:"4.3%",col2:"45%",chapter:73,chname:"Iron and Steel"},
+  {code:"7325.10.00",desc:"Manhole covers, catch basins, cleanout covers, valve and service boxes of nonmalleable cast iron",general:"10%",col2:"Free",chapter:73,chname:"Iron and Steel"},
+  {code:"7325.91.00",desc:"Grinding balls and similar articles for mills, of iron or steel, cast",general:"Free",col2:"45%",chapter:73,chname:"Iron and Steel"},
+  {code:"7325.99.10",desc:"Other cast articles of cast iron",general:"Free",col2:"20%",chapter:73,chname:"Iron and Steel"},
+  {code:"7325.99.50",desc:"Other cast articles of iron or steel",general:"Free",col2:"45%",chapter:73,chname:"Iron and Steel"},
+  {code:"7326.11.00",desc:"Grinding balls and similar articles for mills, forged or stamped, of iron or steel",general:"Free",col2:"27.5%",chapter:73,chname:"Iron and Steel"},
+  {code:"7326.19.00",desc:"Other forged or stamped articles (not further worked), of iron or steel",general:"2.9%",col2:"45%",chapter:73,chname:"Iron and Steel"},
+  {code:"7326.20.00",desc:"Articles of iron or steel wire (belts, garment hangers, sod staples, paint roller frames, other)",general:"3.9%",col2:"45%",chapter:73,chname:"Iron and Steel"},
+  {code:"7304.90.10",desc:"Seamless tubes and pipes, other, wall thickness 4 mm or more, of iron or nonalloy steel",general:"Free",col2:"1%",chapter:73,chname:"Iron and Steel"},
+  {code:"7304.90.30",desc:"Seamless tubes and pipes, other, wall thickness 4 mm or more, of alloy steel",general:"Free",col2:"8.5%",chapter:73,chname:"Iron and Steel"},
+  {code:"7315.89.10",desc:"Chain with links of essentially round cross section, not over 8 mm in diameter, iron or steel",general:"Free",col2:"10%",chapter:73,chname:"Iron and Steel"},
+  {code:"7315.89.30",desc:"Chain with links of essentially round cross section, over 8 mm in diameter, iron or steel",general:"Free",col2:"10%",chapter:73,chname:"Iron and Steel"},
+  {code:"7315.89.50",desc:"Other chain, iron or steel",general:"3.9%",col2:"45%",chapter:73,chname:"Iron and Steel"},
+  {code:"7316.00.00",desc:"Anchors, grapnels and parts thereof, of iron or steel",general:"Free",col2:"25%",chapter:73,chname:"Iron and Steel"},
+  {code:"7415.10.00",desc:"Nails, tacks, drawing pins, staples and similar articles, of copper",general:"2.5%",col2:"45%",chapter:74,chname:"Copper"},
+  {code:"7415.21.00",desc:"Washers including spring washers, of copper",general:"Free",col2:"45%",chapter:74,chname:"Copper"},
+  {code:"7415.29.00",desc:"Other non-threaded articles, of copper (rivets, cotters, cotter pins, other)",general:"Free",col2:"45%",chapter:74,chname:"Copper"},
+  {code:"7415.33.05",desc:"Screws for wood, of copper",general:"Free",col2:"45%",chapter:74,chname:"Copper"},
+  {code:"7415.33.10",desc:"Muntz or yellow metal bolts, of copper",general:"Free",col2:"7%",chapter:74,chname:"Copper"},
+  {code:"7415.33.80",desc:"Other screws, bolts and nuts, of copper (diameter 6 mm or more; diameter less than 6 mm)",general:"Free",col2:"45%",chapter:74,chname:"Copper"},
+  {code:"7415.39.00",desc:"Other threaded articles, of copper",general:"Free",col2:"45%",chapter:74,chname:"Copper"},
+  {code:"7616.10.10",desc:"Nails, tacks and staples, of aluminum",general:"Free",col2:"45%",chapter:76,chname:"Aluminum"},
+  {code:"7616.10.30",desc:"Rivets, of aluminum",general:"Free",col2:"45%",chapter:76,chname:"Aluminum"},
+  {code:"7616.10.50",desc:"Cotters and cotter pins, of aluminum",general:"Free",col2:"45%",chapter:76,chname:"Aluminum"},
+  {code:"7616.10.70",desc:"Other fasteners, shanks or holes over 6 mm in diameter (threaded and other), of aluminum",general:"5.5%",col2:"45%",chapter:76,chname:"Aluminum"},
+  {code:"7616.10.90",desc:"Other fasteners, shanks or holes 6 mm or less in diameter (threaded and other), of aluminum",general:"6%",col2:"45%",chapter:76,chname:"Aluminum"},
+  {code:"8302.10.30",desc:"Hinges designed for motor vehicles, of iron, steel, aluminum or zinc",general:"Free",col2:"25%",chapter:83,chname:"Misc Base Metal"},
+  {code:"8302.10.60",desc:"Other hinges (doors, furniture, cabinets), of iron, steel, aluminum or zinc",general:"3.5%",col2:"45%",chapter:83,chname:"Misc Base Metal"},
+  {code:"8302.10.90",desc:"Other hinges (not iron, steel, aluminum or zinc)",general:"3.4%",col2:"45%",chapter:83,chname:"Misc Base Metal"},
+  {code:"8302.20.00",desc:"Castors with mountings of base metal",general:"Free",col2:"45%",chapter:83,chname:"Misc Base Metal"},
+  {code:"8302.30.30",desc:"Mountings and fittings for motor vehicles, of iron, steel, aluminum or zinc",general:"25%",col2:"Free",chapter:83,chname:"Misc Base Metal"},
+  {code:"8302.30.60",desc:"Other mountings and fittings for motor vehicles, of other base metal",general:"Free",col2:"45%",chapter:83,chname:"Misc Base Metal"},
+  {code:"8302.41.30",desc:"Door closers (except automatic), and parts, of base metal, for buildings",general:"3.9%",col2:"45%",chapter:83,chname:"Misc Base Metal"},
+  {code:"8302.41.60",desc:"Other mountings and fittings for buildings, of iron, steel, aluminum or zinc (doorstops, door pulls, kick plates, curtain hardware, other)",general:"3.9%",col2:"45%",chapter:83,chname:"Misc Base Metal"},
+  {code:"8302.41.90",desc:"Other mountings and fittings for buildings, of other base metal",general:"3.5%",col2:"45%",chapter:83,chname:"Misc Base Metal"},
+  {code:"8302.49.60",desc:"Other mountings, fittings and similar articles, of iron, steel, aluminum or zinc",general:"5.7%",col2:"45%",chapter:83,chname:"Misc Base Metal"},
+  {code:"8302.49.80",desc:"Other mountings, fittings and similar articles, of other base metal",general:"3.5%",col2:"45%",chapter:83,chname:"Misc Base Metal"},
+  {code:"8302.50.00",desc:"Hat-racks, hat pegs, brackets and similar fixtures, of base metal",general:"Free",col2:"40%",chapter:83,chname:"Misc Base Metal"},
+  {code:"8302.60.30",desc:"Automatic door closers, of base metal",general:"3.9%",col2:"45%",chapter:83,chname:"Misc Base Metal"},
+  {code:"8302.60.90",desc:"Parts of automatic door closers, of base metal",general:"3.1%",col2:"45%",chapter:83,chname:"Misc Base Metal"},
+  {code:"8303.00.00",desc:"Armored or reinforced safes, strong-boxes, safe deposit lockers, cash or deed boxes, of base metal",general:"3.8%",col2:"45%",chapter:83,chname:"Misc Base Metal"},
+  {code:"8304.00.00",desc:"Desk-top filing cabinets, card-index cabinets, paper trays, pen trays, stamp stands and similar office equipment, of base metal",general:"3.9%",col2:"45%",chapter:83,chname:"Misc Base Metal"},
+  {code:"8305.10.00",desc:"Fittings for looseleaf binders or files, ring binder mechanisms, of base metal",general:"2.9%",col2:"45%",chapter:83,chname:"Misc Base Metal"},
+  {code:"8305.20.00",desc:"Staples in strips (for offices, upholstery, packaging), of base metal",general:"4%",col2:"Free",chapter:83,chname:"Misc Base Metal"},
+  {code:"8305.90.30",desc:"Paper clips and parts thereof, of base metal",general:"Free",col2:"45%",chapter:83,chname:"Misc Base Metal"},
+  {code:"8305.90.60",desc:"Other office articles (letter clips, letter corners, indexing tags, and similar), of base metal",general:"5.7%",col2:"45%",chapter:83,chname:"Misc Base Metal"},
+  {code:"8307.10.30",desc:"Flexible tubing of iron or steel, with fittings",general:"3.8%",col2:"30%",chapter:83,chname:"Misc Base Metal"},
+  {code:"8307.10.60",desc:"Flexible tubing of iron or steel, without fittings",general:"3.8%",col2:"30%",chapter:83,chname:"Misc Base Metal"},
+  {code:"8307.90.30",desc:"Flexible tubing of other base metal, with fittings",general:"3.8%",col2:"30%",chapter:83,chname:"Misc Base Metal"},
+  {code:"8307.90.60",desc:"Flexible tubing of other base metal, without fittings",general:"3.8%",col2:"30%",chapter:83,chname:"Misc Base Metal"},
+  {code:"8308.10.00",desc:"Hooks, eyes and eyelets of base metal, for clothing, footwear, jewelry, or other articles",general:"1.1c/kg + 2.9%",col2:"10c/kg + 25%",chapter:83,chname:"Misc Base Metal"},
+  {code:"8308.20.30",desc:"Tubular or bifurcated rivets, of iron or steel, not brightened or machined",general:"Free",col2:"2.2c/kg",chapter:83,chname:"Misc Base Metal"},
+  {code:"8308.20.60",desc:"Other tubular or bifurcated rivets, of base metal",general:"Free",col2:"45%",chapter:83,chname:"Misc Base Metal"},
+  {code:"8308.90.30",desc:"Beads and spangles of base metal",general:"Free",col2:"40%",chapter:83,chname:"Misc Base Metal"},
+  {code:"8308.90.60",desc:"Buckles and buckle clasps, and parts thereof, of base metal",general:"3.9%",col2:"45%",chapter:83,chname:"Misc Base Metal"},
+  {code:"8308.90.90",desc:"Other clasps, frames, buckle-clasps, eyelets and similar fastening articles of base metal",general:"2.7%",col2:"65%",chapter:83,chname:"Misc Base Metal"},
+  {code:"3926.90.85",desc:"Fasteners in clips suitable for use in a mechanical attaching device, of plastics",general:"6.5%",col2:"60%",chapter:39,chname:"Plastics"},
+  {code:"4823.90.60",desc:"Gaskets, washers and other seals, of coated paper or paperboard",general:"Free",col2:"26.5%",chapter:48,chname:"Paper"},
+  {code:"4823.90.80",desc:"Gaskets, washers and other seals, of other paper or paperboard",general:"Free",col2:"35%",chapter:48,chname:"Paper"},
+  {code:"8433.90.50",desc:"Parts of harvesting, threshing, and mowing machinery, of iron or steel",general:"Free",col2:"Free",chapter:84,chname:"Machinery"},
+  {code:"8434.10.00",desc:"Milking machines",general:"Free",col2:"Free",chapter:84,chname:"Machinery"},
+  {code:"8434.20.00",desc:"Dairy machinery",general:"Free",col2:"Free",chapter:84,chname:"Machinery"},
+  {code:"8434.90.00",desc:"Parts of milking machines and dairy machinery",general:"Free",col2:"Free",chapter:84,chname:"Machinery"},
+  {code:"8445.90.00",desc:"Other textile fiber preparation machinery (not spinning machines, winding machines, or opening machines)",general:"3.7%",col2:"40%",chapter:84,chname:"Machinery"},
+  {code:"8446.10.00",desc:"Weaving machines for fabrics of width not exceeding 30 cm",general:"Free",col2:"40%",chapter:84,chname:"Machinery"},
+  {code:"8446.21.10",desc:"Power looms for weaving fabrics exceeding 4.9 m in width",general:"Free",col2:"40%",chapter:84,chname:"Machinery"},
+  {code:"8446.21.50",desc:"Other power looms, shuttle type, for fabrics over 30 cm in width",general:"3.7%",col2:"40%",chapter:84,chname:"Machinery"},
+  {code:"8446.29.00",desc:"Other weaving machines, shuttle type, for fabrics over 30 cm",general:"Free",col2:"40%",chapter:84,chname:"Machinery"},
+  {code:"8446.30.10",desc:"Power looms for weaving fabrics over 4.9 m, shuttleless type",general:"Free",col2:"40%",chapter:84,chname:"Machinery"},
+  {code:"8446.30.50",desc:"Other shuttleless weaving machines (rapier, jet, other) for fabrics over 30 cm",general:"3.7%",col2:"40%",chapter:84,chname:"Machinery"},
+  {code:"8447.11.10",desc:"Circular knitting machines, cylinder diameter not exceeding 165 mm, for hosiery",general:"Free",col2:"40%",chapter:84,chname:"Machinery"},
+  {code:"8447.11.90",desc:"Other circular knitting machines, cylinder diameter not exceeding 165 mm",general:"Free",col2:"40%",chapter:84,chname:"Machinery"},
+  {code:"8447.12.10",desc:"Circular knitting machines, cylinder diameter exceeding 165 mm, for hosiery",general:"Free",col2:"40%",chapter:84,chname:"Machinery"},
+  {code:"8447.12.90",desc:"Other circular knitting machines, cylinder diameter exceeding 165 mm",general:"Free",col2:"40%",chapter:84,chname:"Machinery"},
+  {code:"8447.20.20",desc:"V-bed flat knitting machines, power driven, over 50.8 cm in width",general:"Free",col2:"40%",chapter:84,chname:"Machinery"},
+  {code:"8447.20.30",desc:"Other V-bed flat knitting machines",general:"2.6%",col2:"40%",chapter:84,chname:"Machinery"},
+  {code:"8447.20.40",desc:"Warp knitting machines",general:"Free",col2:"40%",chapter:84,chname:"Machinery"},
+  {code:"8447.20.60",desc:"Other flat and stitch-bonding machines",general:"Free",col2:"40%",chapter:84,chname:"Machinery"},
+  {code:"8447.90.10",desc:"Braiding and lace-braiding machines",general:"Free",col2:"40%",chapter:84,chname:"Machinery"},
+  {code:"8447.90.50",desc:"Embroidery machines",general:"Free",col2:"30%",chapter:84,chname:"Machinery"},
+  {code:"8447.90.90",desc:"Other knitting and tulle machines",general:"Free",col2:"40%",chapter:84,chname:"Machinery"},
+
+  // Ch. 81 - Other Base Metals
+  {code:"8101.10.00",desc:"Tungsten powders",general:"Free",col2:"58%",chapter:81,chname:"Other Base Metals"},
+  {code:"8101.94.00",desc:"Unwrought tungsten, including bars and rods obtained simply by sintering",general:"Free",col2:"60%",chapter:81,chname:"Other Base Metals"},
+  {code:"8101.96.00",desc:"Tungsten wire",general:"Free",col2:"60%",chapter:81,chname:"Other Base Metals"},
+  {code:"8101.99.10",desc:"Tungsten bars, rods, profiles, plates, sheets, strip and foil",general:"Free",col2:"60%",chapter:81,chname:"Other Base Metals"},
+  {code:"8101.99.80",desc:"Other tungsten articles",general:"Free",col2:"45%",chapter:81,chname:"Other Base Metals"},
+  {code:"8102.10.00",desc:"Molybdenum powders",general:"$1.10/kg + 15%",col2:"9.1c/kg + 1.2%",chapter:81,chname:"Other Base Metals"},
+  {code:"8102.94.00",desc:"Unwrought molybdenum, including bars and rods obtained simply by sintering",general:"$1.10/kg + 15%",col2:"13.9c/kg + 1.9%",chapter:81,chname:"Other Base Metals"},
+  {code:"8102.95.30",desc:"Molybdenum bars and rods (other than sintered)",general:"Free",col2:"60%",chapter:81,chname:"Other Base Metals"},
+  {code:"8102.95.60",desc:"Molybdenum profiles, plates, sheets, strip and foil",general:"Free",col2:"60%",chapter:81,chname:"Other Base Metals"},
+  {code:"8102.96.00",desc:"Molybdenum wire",general:"Free",col2:"60%",chapter:81,chname:"Other Base Metals"},
+  {code:"8102.99.00",desc:"Other molybdenum articles",general:"Free",col2:"45%",chapter:81,chname:"Other Base Metals"},
+  {code:"8103.20.00",desc:"Tantalum unwrought, bars, rods and powders",general:"Free",col2:"25%",chapter:81,chname:"Other Base Metals"},
+  {code:"8103.99.00",desc:"Other tantalum articles",general:"Free",col2:"45%",chapter:81,chname:"Other Base Metals"},
+  {code:"8104.11.00",desc:"Unwrought magnesium, at least 99.8 percent pure",general:"Free",col2:"100%",chapter:81,chname:"Other Base Metals"},
+  {code:"8104.19.00",desc:"Other unwrought magnesium",general:"Free",col2:"60.5%",chapter:81,chname:"Other Base Metals"},
+  {code:"8104.30.00",desc:"Magnesium raspings, turnings, granules and powders",general:"4.4%",col2:"60.5%",chapter:81,chname:"Other Base Metals"},
+  {code:"8104.90.00",desc:"Other magnesium articles",general:"88c/kg + 20%",col2:"14.8c/kg + 3.5%",chapter:81,chname:"Other Base Metals"},
+  {code:"8105.20.30",desc:"Unwrought cobalt alloys",general:"Free",col2:"45%",chapter:81,chname:"Other Base Metals"},
+  {code:"8105.20.60",desc:"Other unwrought cobalt",general:"Free",col2:"Free",chapter:81,chname:"Other Base Metals"},
+  {code:"8105.90.00",desc:"Other cobalt articles",general:"Free",col2:"45%",chapter:81,chname:"Other Base Metals"},
+  {code:"8106.10.00",desc:"Bismuth containing more than 99.99 percent bismuth by weight",general:"Free",col2:"7.5%",chapter:81,chname:"Other Base Metals"},
+  {code:"8106.90.00",desc:"Other bismuth articles and scrap",general:"Free",col2:"7.5%",chapter:81,chname:"Other Base Metals"},
+  {code:"8110.10.00",desc:"Unwrought antimony and powders",general:"Free",col2:"4.4c/kg",chapter:81,chname:"Other Base Metals"},
+  {code:"8111.00.60",desc:"Other manganese articles",general:"Free",col2:"45%",chapter:81,chname:"Other Base Metals"},
+  {code:"8112.21.00",desc:"Unwrought chromium and powders",general:"Free",col2:"30%",chapter:81,chname:"Other Base Metals"},
+  {code:"8112.29.00",desc:"Other chromium articles",general:"Free",col2:"30%",chapter:81,chname:"Other Base Metals"},
+  {code:"8113.00.00",desc:"Cermets and articles thereof, including waste and scrap",general:"Free",col2:"45%",chapter:81,chname:"Other Base Metals"},
+  // Ch. 87 - Vehicles and Parts
+  {code:"8707.10.00",desc:"Bodies (including cabs) for passenger motor vehicles (heading 8703)",general:"10%",col2:"Free",chapter:87,chname:"Vehicles and Parts"},
+  {code:"8707.90.50",desc:"Other bodies for motor vehicles (tractors, buses, trucks)",general:"Free",col2:"25%",chapter:87,chname:"Vehicles and Parts"},
+  {code:"8708.10.30",desc:"Bumpers for motor vehicles",general:"25%",col2:"Free",chapter:87,chname:"Vehicles and Parts"},
+  {code:"8708.10.60",desc:"Parts of bumpers for motor vehicles",general:"25%",col2:"Free",chapter:87,chname:"Vehicles and Parts"},
+  {code:"8708.40.11",desc:"Gear boxes for passenger vehicles and trucks",general:"25%",col2:"Free",chapter:87,chname:"Vehicles and Parts"},
+  {code:"8708.40.75",desc:"Parts of gear boxes for motor vehicles (steel forgings and other)",general:"25%",col2:"Free",chapter:87,chname:"Vehicles and Parts"},
+  {code:"8708.70.45",desc:"Road wheels for motor vehicles (including aluminum wheels)",general:"Free",col2:"25%",chapter:87,chname:"Vehicles and Parts"},
+  {code:"8708.70.60",desc:"Parts and accessories of road wheels (rims, wheel covers, hubcaps)",general:"25%",col2:"Free",chapter:87,chname:"Vehicles and Parts"},
+  {code:"8708.91.50",desc:"Radiators for motor vehicles",general:"Free",col2:"25%",chapter:87,chname:"Vehicles and Parts"},
+  {code:"8708.91.75",desc:"Parts of radiators for motor vehicles (radiator cores and other)",general:"25%",col2:"Free",chapter:87,chname:"Vehicles and Parts"},
+  {code:"8708.92.50",desc:"Mufflers and exhaust pipes for motor vehicles",general:"25%",col2:"Free",chapter:87,chname:"Vehicles and Parts"},
+  {code:"8708.92.75",desc:"Parts of mufflers and exhaust pipes for motor vehicles",general:"25%",col2:"Free",chapter:87,chname:"Vehicles and Parts"},
+  {code:"8708.93.60",desc:"Clutches for motor vehicles",general:"Free",col2:"25%",chapter:87,chname:"Vehicles and Parts"},
+  {code:"8708.93.75",desc:"Parts of clutches for motor vehicles",general:"Free",col2:"25%",chapter:87,chname:"Vehicles and Parts"},
+  {code:"8708.94.50",desc:"Steering wheels, columns and steering boxes for motor vehicles",general:"Free",col2:"25%",chapter:87,chname:"Vehicles and Parts"},
+  {code:"8708.94.75",desc:"Parts of steering wheels, columns and boxes for motor vehicles",general:"25%",col2:"Free",chapter:87,chname:"Vehicles and Parts"},
+  {code:"8708.95.05",desc:"Inflaters and modules for safety airbags",general:"Free",col2:"25%",chapter:87,chname:"Vehicles and Parts"},
+  {code:"8708.95.20",desc:"Safety airbags with inflater system for motor vehicles",general:"Free",col2:"25%",chapter:87,chname:"Vehicles and Parts"},
+  {code:"8708.99.55",desc:"Vibration control goods containing rubber for motor vehicles",general:"Free",col2:"25%",chapter:87,chname:"Vehicles and Parts"},
+  {code:"8708.99.68",desc:"Other parts for power trains for motor vehicles (drive shafts, universal joints)",general:"25%",col2:"Free",chapter:87,chname:"Vehicles and Parts"},
+  {code:"8708.99.81",desc:"Other motor vehicle parts and accessories (brake hoses, hub units, cable traction devices)",general:"25%",col2:"Free",chapter:87,chname:"Vehicles and Parts"},
+  // Ch. 76 additional
+  {code:"7608.10.00",desc:"Aluminum tubes and pipes, aluminum not alloyed (seamless and other)",general:"5.7%",col2:"45%",chapter:76,chname:"Aluminum"},
+  {code:"7608.20.00",desc:"Aluminum tubes and pipes, of aluminum alloys (seamless and other)",general:"5.7%",col2:"45%",chapter:76,chname:"Aluminum"},
+  {code:"7609.00.00",desc:"Aluminum tube or pipe fittings (couplings, elbows, sleeves)",general:"Free",col2:"45%",chapter:76,chname:"Aluminum"},
+  {code:"7610.10.00",desc:"Aluminum doors, windows and their frames and thresholds",general:"Free",col2:"45%",chapter:76,chname:"Aluminum"},
+  {code:"7610.90.00",desc:"Other aluminum structures and parts (roofing, siding, architectural work, mobile homes)",general:"Free",col2:"45%",chapter:76,chname:"Aluminum"},
+  {code:"7616.91.00",desc:"Aluminum wire cloth, grill, netting and fencing",general:"Free",col2:"45%",chapter:76,chname:"Aluminum"},
+  {code:"7616.99.51",desc:"Other aluminum articles (ladders, venetian blinds, pipe hangers, castings, forgings)",general:"Free",col2:"45%",chapter:76,chname:"Aluminum"},
+  // Ch. 74 tubes
+  {code:"7411.10.10",desc:"Copper tubes and pipes of refined copper, seamless",general:"Free",col2:"13%",chapter:74,chname:"Copper"},
+  {code:"7411.10.50",desc:"Other copper tubes and pipes of refined copper",general:"Free",col2:"47%",chapter:74,chname:"Copper"},
+  {code:"7411.21.10",desc:"Copper-zinc (brass) tubes and pipes, seamless",general:"Free",col2:"10%",chapter:74,chname:"Copper"},
+  {code:"7411.21.50",desc:"Other copper-zinc (brass) tubes and pipes",general:"Free",col2:"49%",chapter:74,chname:"Copper"},
+  {code:"7411.22.00",desc:"Copper-nickel or copper-nickel-zinc (cupro-nickel or nickel-silver) tubes and pipes",general:"Free",col2:"47%",chapter:74,chname:"Copper"},
+];
+
+var PAGE_SIZE=25;
+var currentQuery="";
+var currentFilters={};
+var currentPage=1;
+var filtered=[];
+
+function tokenize(s){return s.toLowerCase().replace(/[^a-z0-9 ]/g," ").split(/\s+/).filter(function(t){return t.length>1;});}
+
+function scoreItem(item,tokens){
+  if(!tokens.length)return 1;
+  var text=(item.code+" "+item.desc+" "+item.chname).toLowerCase();
+  var code=item.code.toLowerCase().replace(/\./g,"");
+  var qClean=tokens.join("").replace(/[^a-z0-9]/g,"");
+  var score=0;
+  tokens.forEach(function(t){
+    if(text.indexOf(t)>=0)score+=1;
+    if(code.indexOf(t)>=0)score+=2;
+    if(item.code.toLowerCase().indexOf(t)>=0)score+=3;
+  });
+  return score;
+}
+
+function isRateFree(r){return r&&r.toLowerCase().indexOf("free")>=0&&r.indexOf("%")<0;}
+function getRatePct(r){
+  if(!r)return -1;
+  if(isRateFree(r))return 0;
+  var m=r.match(/([\d.]+)%/);
+  return m?parseFloat(m[1]):-1;
+}
+
+function filterItem(item){
+  var ch=currentFilters.chapter;
+  var du=currentFilters.duty;
+  if(ch&&String(item.chapter)!==ch)return false;
+  if(du){
+    var p=getRatePct(item.general);
+    if(du==="free"&&p!==0)return false;
+    if(du==="low"&&(p<=0||p>=5))return false;
+    if(du==="mid"&&(p<5||p>10))return false;
+    if(du==="high"&&p<=10)return false;
+  }
+  return true;
+}
+
+function highlightTerms(text,tokens){
+  if(!tokens.length)return text;
+  var result=text;
+  tokens.forEach(function(t){
+    var re=new RegExp("("+t.replace(/[.*+?^${}()|\[\]\\]/g,"\\$&")+")","gi");
+    result=result.replace(re,"<mark class='hl'>$1</mark>");
+  });
+  return result;
+}
+
+function boldProductType(desc){
+  var qualifiers=["of stainless steel","of alloy steel","of iron or steel","of copper","of aluminum","of base metal","other","not elsewhere specified","similar articles","and similar","for use in","whether or not","including","and parts thereof"];
+  var segs=desc.split(",");
+  for(var i=segs.length-1;i>=0;i--){
+    var s=segs[i].trim().toLowerCase();
+    var isQ=false;
+    for(var j=0;j<qualifiers.length;j++){if(s.indexOf(qualifiers[j])>=0&&s.length<50){isQ=true;break;}}
+    if(!isQ&&s.length>3){
+      segs[i]="<span class='bold-type'>"+segs[i].trim()+"</span>";
+      break;
+    }
+  }
+  return segs.join(", ");
+}
+
+function applyFilters(){
+  var tokens=tokenize(currentQuery);
+  var scored=[];
+  for(var i=0;i<HTS_DATA.length;i++){
+    var item=HTS_DATA[i];
+    if(!filterItem(item))continue;
+    var s=scoreItem(item,tokens);
+    if(tokens.length>0&&s===0)continue;
+    scored.push({item:item,score:s});
+  }
+  scored.sort(function(a,b){return b.score-a.score;});
+  filtered=scored.map(function(x){return x.item;});
+  currentPage=1;
+  renderResults();
+}
+
+function renderResults(){
+  var cardsList=document.getElementById("cardsList");
+  var noResults=document.getElementById("noResults");
+  var loadMoreWrap=document.getElementById("loadMoreWrap");
+  var resultCount=document.getElementById("resultCount");
+  var tokens=tokenize(currentQuery);
+  var total=filtered.length;
+  var slice=filtered.slice(0,currentPage*PAGE_SIZE);
+  resultCount.textContent=total>0?(total+" result"+(total===1?"":"s")):"";
+  if(total===0){noResults.style.display="block";cardsList.innerHTML="";loadMoreWrap.style.display="none";return;}
+  noResults.style.display="none";
+  var html="";
+  for(var i=0;i<slice.length;i++){
+    var item=slice[i];
+    var descHl=boldProductType(highlightTerms(item.desc,tokens));
+    var isFree=isRateFree(item.general);
+    var rateClass=isFree?"rate-val free":"rate-val";
+    html+='<div class="hts-card">'+
+      '<div class="card-inner">'+
+        '<div class="card-left">'+
+          '<div class="card-code">'+item.code+'</div>'+
+          '<div class="card-chapter-badge">Ch. '+item.chapter+' - '+item.chname+'</div>'+
+          '<div class="card-desc">'+descHl+'</div>'+
+        '</div>'+
+        '<div class="card-right">'+
+          '<div class="rate-block">'+
+            '<div class="rate-label">General Rate</div>'+
+            '<div class="'+rateClass+'">'+item.general+'</div>'+
+          '</div>'+
+          '<div class="rate-block">'+
+            '<div class="rate-label">Column 2</div>'+
+            '<div class="rate-val">'+item.col2+'</div>'+
+          '</div>'+
+          '<button class="copy-btn" data-sbs-action="copyCode" data-code="'+item.code+'">'+
+            '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>'+
+            'Copy'+
+          '</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }
+  cardsList.innerHTML=html;
+  loadMoreWrap.style.display=(total>currentPage*PAGE_SIZE)?"block":"none";
+}
+
+var headerEl=document.getElementById("mainHeader");
+var searchBarEl=document.getElementById("searchBarWrap");
+function setSearchTop(){
+  var h=headerEl?headerEl.offsetHeight:60;
+  searchBarEl.style.top=h+"px";
+}
+setSearchTop();
+window.addEventListener("resize",setSearchTop);
+
+document.getElementById("searchInput").addEventListener("input",function(){
+  var v=this.value;
+  document.getElementById("clearBtn").style.display=v?"flex":"none";
+  currentQuery=v;currentPage=1;applyFilters();
+});
+
+document.getElementById("clearBtn").addEventListener("click",function(){
+  document.getElementById("searchInput").value="";
+  this.style.display="none";
+  currentQuery="";currentPage=1;applyFilters();
+  document.getElementById("searchInput").focus();
+});
+
+var filterSelects=["selChapter","selDuty"];
+filterSelects.forEach(function(id){
+  var el=document.getElementById(id);
+  if(!el)return;
+  el.addEventListener("change",function(){
+    var key=id==="selChapter"?"chapter":id==="selDuty"?"duty":"other";
+    var wrap=this.parentElement;
+    if(this.value){currentFilters[key]=this.value;if(wrap)wrap.classList.add("filter-active");}
+    else{delete currentFilters[key];if(wrap)wrap.classList.remove("filter-active");}
+    currentPage=1;applyFilters();
+  });
+});
+
+document.addEventListener("click",function(e){
+  var el=e.target;var action=null;
+  for(var i=0;i<8;i++){
+    if(!el||el===document.body)break;
+    if(el.getAttribute&&el.getAttribute("data-sbs-action")){action=el.getAttribute("data-sbs-action");break;}
+    el=el.parentNode;
+  }
+  if(!action)return;
+  if(action==="dismissBeta"){
+    var overlay=document.getElementById("betaOverlay");
+    if(overlay){overlay.style.display="none";}
+  }
+  if(action==="loadMore"){currentPage++;renderResults();}
+  if(action==="copyCode"){
+    var code=el.getAttribute("data-code");
+    if(code&&navigator.clipboard){
+      navigator.clipboard.writeText(code).then(function(){
+        el.classList.add("copied");el.textContent="Copied";
+        setTimeout(function(){el.classList.remove("copied");el.innerHTML='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy';},1800);
+      });
+    }
+  }
+  if(action==="resetFilters"){
+    currentFilters={};currentPage=1;
+    var sels=document.querySelectorAll("#filterGrid select");
+    for(var si=0;si<sels.length;si++){
+      sels[si].value="";
+      if(sels[si].parentElement)sels[si].parentElement.classList.remove("filter-active");
+    }
+    applyFilters();
+  }
+});
+
+applyFilters();
+</script>
+</body>
+</html>
