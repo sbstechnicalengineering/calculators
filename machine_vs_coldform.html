@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<!--
+  SBS Machining vs Cold Forming Decision Tool | Copyright (c) 2024 Specialty Bolt &amp; Screw, Inc.
+  Fingerprint: SBS-MACH-COLD-v1 | https://shop.specialtybolt.com/
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Machining vs Cold Forming Decision Tool | SBS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #1D3557;
+      --navy-dark: #12243a;
+      --orange: #E87722;
+      --orange-light: #F0913A;
+      --orange-pale: #FDF0E5;
+      --white: #ffffff;
+      --gray-50: #F8F9FA;
+      --gray-100: #F0F2F5;
+      --gray-200: #E2E6EA;
+      --gray-300: #CED4DA;
+      --gray-400: #ADB5BD;
+      --gray-500: #6C757D;
+      --gray-600: #495057;
+      --gray-700: #343A40;
+      --active-green: #1A8A4A;
+      --active-bg: #E8F5EE;
+      --red: #C0392B;
+      --red-bg: #FDECEA;
+      --amber: #B7610A;
+      --amber-bg: #FEF3E2;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, sans-serif; background: var(--gray-100); color: var(--gray-700); line-height: 1.5; }
+
+    /* BETA MODAL */
+    #betaOverlay {
+      position: fixed; inset: 0; z-index: 2147483647;
+      background: rgba(18,36,58,0.82);
+      backdrop-filter: blur(5px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px;
+    }
+    #betaModal {
+      background: var(--white);
+      border-radius: 14px;
+      max-width: 520px;
+      width: 100%;
+      overflow: hidden;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.32);
+    }
+    .beta-modal-header {
+      background: var(--navy);
+      border-bottom: 4px solid var(--orange);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .beta-modal-header-icon {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--orange);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .beta-modal-header-icon svg { color: white; }
+    .beta-modal-header-text { flex: 1; }
+    .beta-modal-header-text .company-name {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 18px; font-weight: 800;
+      color: var(--white);
+      letter-spacing: 0.02em;
+    }
+    .beta-modal-header-text .tool-subtitle {
+      font-family: Inter, sans-serif;
+      font-size: 11px; color: rgba(255,255,255,0.65);
+      margin-top: 1px;
+    }
+    .beta-pill {
+      background: var(--orange);
+      color: white;
+      font-family: Barlow, sans-serif;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 999px;
+      flex-shrink: 0;
+    }
+    .beta-modal-body {
+      padding: 28px 28px 24px;
+    }
+    .beta-modal-body p {
+      font-family: Inter, sans-serif;
+      font-size: 14px;
+      color: var(--gray-600);
+      line-height: 1.65;
+      margin-bottom: 14px;
+    }
+    .beta-modal-body p:last-child { margin-bottom: 0; }
+    .beta-modal-body strong { color: var(--navy); }
+    .beta-modal-footer {
+      padding: 16px 28px 24px;
+      display: flex;
+      justify-content: flex-end;
+    }
+    #betaDismissBtn {
+      background: var(--orange);
+      color: white;
+      font-family: Barlow, sans-serif;
+      font-size: 13px; font-weight: 700;
+      letter-spacing: 0.3px;
+      border: none;
+      border-radius: 6px;
+      padding: 11px 22px;
+      cursor: pointer;
+      transition: background 0.18s, transform 0.12s, box-shadow 0.18s;
+      box-shadow: 0 2px 6px rgba(232,119,34,0.3);
+    }
+    #betaDismissBtn:hover {
+      background: var(--orange-light);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(232,119,34,0.4);
+    }
+
+    /* STICKY HEADER */
+    .sbs-header {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--white);
+      border-bottom: 3px solid var(--orange);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+      padding: 0.65rem 1.5rem;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .sbs-header a img { height: 48px; display: block; }
+    .header-divider { width: 1px; height: 36px; background: var(--gray-200); flex-shrink: 0; }
+    .header-text { flex: 1; min-width: 0; }
+    .header-title {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 22px; font-weight: 800;
+      color: var(--navy); line-height: 1.1;
+    }
+    .header-subtitle {
+      font-family: Inter, sans-serif;
+      font-size: 11px; color: var(--gray-500);
+      margin-top: 2px;
+    }
+    .header-actions { display: flex; gap: 8px; flex-shrink: 0; }
+    .btn-orange {
+      background: var(--orange); color: white;
+      font-family: Barlow, sans-serif; font-size: 12px; font-weight: 700;
+      border: none; border-radius: 6px; padding: 8px 14px;
+      cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+      transition: background 0.18s, transform 0.12s, box-shadow 0.18s;
+      box-shadow: 0 2px 6px rgba(232,119,34,0.3);
+    }
+    .btn-orange:hover { background: var(--orange-light); transform: translateY(-1px); box-shadow: 0 4px 10px rgba(232,119,34,0.35); }
+    .btn-navy {
+      background: var(--navy); color: white;
+      font-family: Barlow, sans-serif; font-size: 12px; font-weight: 700;
+      border: none; border-radius: 6px; padding: 8px 14px;
+      cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+      transition: background 0.18s;
+    }
+    .btn-navy:hover { background: var(--navy-dark); }
+
+    /* TABS */
+    .tabs-bar {
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-200);
+      padding: 0 1.5rem;
+      display: flex; gap: 0;
+    }
+    .tab-btn {
+      font-family: Barlow, sans-serif; font-size: 13px; font-weight: 700;
+      color: var(--gray-500);
+      background: none; border: none;
+      border-bottom: 3px solid transparent;
+      padding: 12px 16px;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+      white-space: nowrap;
+    }
+    .tab-btn.active { color: var(--navy); border-bottom-color: var(--orange); }
+    .tab-btn:hover:not(.active) { color: var(--gray-700); }
+
+    /* NOTICE BANNER */
+    .notice-banner {
+      background: var(--amber-bg);
+      border-left: 4px solid var(--amber);
+      padding: 12px 20px;
+      margin: 20px 24px 0;
+      border-radius: 8px;
+      font-family: Inter, sans-serif;
+      font-size: 12.5px;
+      color: #5a3c10;
+      line-height: 1.5;
+    }
+
+    /* MAIN LAYOUT */
+    .tool-wrapper { max-width: 1180px; margin: 0 auto; padding: 0 24px 40px; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+      gap: 24px;
+      align-items: start;
+      padding-top: 24px;
+    }
+
+    /* CARD */
+    .card {
+      background: var(--white);
+      border: 1.5px solid var(--gray-200);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+      margin-bottom: 0;
+    }
+    .card-title {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 20px; font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    /* FORM */
+    .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field.full { grid-column: 1 / -1; }
+    .label-row { display: flex; align-items: center; gap: 7px; }
+    .field-label {
+      font-family: Barlow, sans-serif;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.8px; text-transform: uppercase;
+      color: var(--gray-500);
+    }
+    .field-help { font-family: Inter, sans-serif; font-size: 11px; color: var(--gray-400); }
+
+    .info-tip {
+      width: 18px; height: 18px; border-radius: 50%;
+      border: 1px solid var(--gray-300);
+      background: var(--gray-50);
+      color: var(--gray-500);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 800;
+      cursor: help; position: relative; flex-shrink: 0;
+    }
+    .info-tip::after {
+      content: attr(data-tip);
+      position: absolute; left: 50%; transform: translateX(-50%);
+      bottom: 130%; width: 270px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: var(--navy);
+      color: white;
+      font-size: 11px; line-height: 1.4; font-weight: 500;
+      font-family: Inter, sans-serif;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.22);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.15s;
+      z-index: 50;
+    }
+    .info-tip:hover::after, .info-tip:focus::after { opacity: 1; }
+
+    select, textarea {
+      width: 100%;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 6px;
+      padding: 9px 12px;
+      font-family: Inter, sans-serif;
+      font-size: 13px;
+      color: var(--gray-700);
+      background: white;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236C757D' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 30px;
+      transition: border-color 0.15s;
+    }
+    select:focus, textarea:focus { outline: none; border-color: var(--orange); }
+    textarea { min-height: 80px; resize: vertical; background-image: none; padding-right: 12px; }
+
+    /* CHECKBOX GRID */
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .check-item {
+      display: flex; gap: 8px; align-items: flex-start;
+      padding: 9px 10px;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 8px;
+      background: var(--gray-50);
+      font-family: Inter, sans-serif;
+      font-size: 12.5px;
+      color: var(--gray-600);
+      cursor: pointer;
+      transition: border-color 0.12s, background 0.12s;
+    }
+    .check-item:hover { border-color: var(--orange); background: var(--orange-pale); }
+    .check-item input[type="checkbox"] { width: 14px; height: 14px; margin-top: 1px; flex-shrink: 0; accent-color: var(--orange); }
+
+    /* ACTION ROW */
+    .action-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--gray-200); }
+
+    /* RESULTS */
+    .result-box {
+      background: var(--gray-50);
+      border: 1.5px solid var(--gray-200);
+      border-radius: 10px;
+      padding: 18px;
+      margin-bottom: 20px;
+    }
+    .recommendation {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 22px; font-weight: 800;
+      margin-bottom: 6px;
+    }
+    .recommendation.cold { color: var(--active-green); }
+    .recommendation.machine { color: var(--navy); }
+    .recommendation.hybrid { color: var(--amber); }
+    .recommendation.pending { color: var(--gray-400); }
+    #summaryText { font-family: Inter, sans-serif; font-size: 13px; color: var(--gray-500); }
+
+    .score-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+    .score-card {
+      background: white;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 10px;
+      padding: 14px;
+    }
+    .score-label {
+      font-family: Barlow, sans-serif;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--gray-500);
+    }
+    .score-number {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 32px; font-weight: 800;
+      color: var(--navy);
+      margin-top: 4px;
+    }
+    .bar { height: 6px; border-radius: 999px; background: var(--gray-200); margin-top: 8px; overflow: hidden; }
+    .bar span { display: block; height: 100%; border-radius: 999px; background: var(--orange); width: 0%; transition: width 0.4s ease; }
+
+    .section-label {
+      font-family: Barlow, sans-serif;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--gray-500);
+      margin: 18px 0 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+    #resultsCard ul { padding-left: 18px; }
+    #resultsCard li {
+      font-family: Inter, sans-serif;
+      font-size: 12.5px;
+      color: var(--gray-600);
+      margin-bottom: 5px;
+      line-height: 1.5;
+    }
+
+    .cta-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--navy); color: white;
+      font-family: Barlow, sans-serif; font-size: 13px; font-weight: 700;
+      border-radius: 6px; padding: 11px 18px;
+      text-decoration: none;
+      margin-top: 16px;
+      transition: background 0.18s;
+    }
+    .cta-link:hover { background: var(--navy-dark); }
+
+    /* BEST PRACTICE GUIDE */
+    .comparison-table {
+      width: 100%; border-collapse: collapse;
+      margin-top: 16px;
+      font-family: Inter, sans-serif; font-size: 13px;
+    }
+    .comparison-table th {
+      background: var(--gray-50);
+      font-family: Barlow, sans-serif; font-size: 10.5px; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--gray-500);
+      padding: 10px 12px;
+      border: 1px solid var(--gray-200);
+      text-align: left;
+    }
+    .comparison-table td {
+      padding: 10px 12px;
+      border: 1px solid var(--gray-200);
+      color: var(--gray-600);
+      vertical-align: top;
+    }
+    .comparison-table tr:hover td { background: var(--gray-50); }
+
+    .guide-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .guide-card {
+      background: white;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 10px;
+      padding: 18px;
+    }
+    .guide-card h3 {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 16px; font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 10px;
+    }
+    .guide-card ul { padding-left: 16px; }
+    .guide-card li { font-family: Inter, sans-serif; font-size: 12.5px; color: var(--gray-600); margin-bottom: 5px; }
+
+    /* DISCLAIMER */
+    .disclaimer-bar {
+      background: var(--gray-50);
+      border-top: 1px solid var(--gray-200);
+      padding: 14px 24px;
+      text-align: center;
+      font-family: Inter, sans-serif;
+      font-size: 11.5px;
+      color: var(--gray-500);
+      margin-top: 32px;
+    }
+    .disclaimer-bar strong { color: var(--navy); }
+
+    /* PRINT */
+    .print-only { display: none; }
+    @media print {
+      body { background: white; }
+      .sbs-header, .tabs-bar, .notice-banner, .input-panel, .action-row, .cta-link,
+      #bestPracticePanel, #betaOverlay { display: none !important; }
+      .main-grid { display: block; }
+      .card { box-shadow: none; border: none; }
+      .print-only { display: block; }
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .main-grid, .form-grid, .checkbox-grid, .score-grid, .guide-grid { grid-template-columns: 1fr; }
+      .info-tip::after { left: 0; transform: none; }
+      .header-actions { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HIDDEN PRINT LOGO -->
+<img id="sbsLogoPrint" src="data:image/png;base64,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" style="display:none;" alt="">
+
+<!-- BETA MODAL OVERLAY -->
+<div id="betaOverlay" role="dialog" aria-modal="true" aria-labelledby="betaTitle">
+  <div id="betaModal">
+    <div class="beta-modal-header">
+      <div class="beta-modal-header-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <div class="beta-modal-header-text">
+        <div class="company-name" id="betaTitle">Specialty Bolt and Screw</div>
+        <div class="tool-subtitle">Machining vs Cold Forming Decision Tool</div>
+      </div>
+      <span class="beta-pill">Beta</span>
+    </div>
+    <div class="beta-modal-body">
+      <p>This tool is currently in <strong>beta</strong>. The decision logic, scoring, and recommendations are directional and educational only. Results should not be used as a final engineering or sourcing decision without a formal print review and DFM analysis.</p>
+      <p>We encourage you to use the tool, explore its outputs, and share your feedback. If you notice a result that seems off, or have a suggestion to improve the logic, we want to hear from you. Your input helps us make this resource more useful for the entire SBS community.</p>
+      <p>Thank you for being an early user of this tool. We appreciate your support and look forward to continuing to improve it.</p>
+    </div>
+    <div class="beta-modal-footer">
+      <button id="betaDismissBtn" type="button">I Understand &ndash; Continue to Tool</button>
+    </div>
+  </div>
+</div>
+
+<!-- STICKY HEADER -->
+<header class="sbs-header">
+  <a href="https://shop.specialtybolt.com/" target="_blank" rel="noopener">
+    <img src="data:image/png;base64,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" alt="SBS Specialty Bolt and Screw" style="height:48px;display:block;">
+  </a>
+  <div class="header-divider"></div>
+  <div class="header-text">
+    <div class="header-title">Machining vs Cold Forming Decision Tool</div>
+    <div class="header-subtitle">Directional process selection for non-standard metal parts</div>
+  </div>
+  <div class="header-actions">
+    <button class="btn-orange" data-sbs-action="printReport">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Print Report
+    </button>
+  </div>
+</header>
+
+<!-- TABS -->
+<div class="tabs-bar">
+  <button class="tab-btn active" data-sbs-action="switchTab" data-panel="decisionPanel">Decision Tool</button>
+  <button class="tab-btn" data-sbs-action="switchTab" data-panel="bestPracticePanel">Best Practice Guide</button>
+</div>
+
+<!-- NOTICE -->
+<div class="notice-banner">
+  <strong>Important:</strong> This tool does not replace print review, DFM review, PPAP requirements, or supplier process validation. Results should be read as "likely preferred," not as an absolute manufacturing decision.
+</div>
+
+<!-- TOOL WRAPPER -->
+<div class="tool-wrapper">
+
+  <!-- DECISION PANEL -->
+  <section id="decisionPanel" class="tab-panel active">
+    <div class="main-grid">
+      <!-- LEFT: INPUTS -->
+      <div class="input-panel">
+        <div class="card">
+          <div class="card-title">Part and Program Inputs</div>
+          <div class="form-grid">
+
+            <div class="field">
+              <div class="label-row">
+                <span class="field-label">Program Stage</span>
+                <span class="info-tip" tabindex="0" data-tip="Prototype parts usually favor machining because design changes are easier. PPAP prototypes should normally use the intended production process.">i</span>
+              </div>
+              <select id="programStage">
+                <option value="prototype">Prototype / Development</option>
+                <option value="ppapPrototype">Prototype for PPAP Submission</option>
+                <option value="production">Full Production</option>
+              </select>
+              <span class="field-help">PPAP prototypes should use the intended production process.</span>
+            </div>
+
+            <div class="field">
+              <div class="label-row">
+                <span class="field-label">Estimated Annual Usage</span>
+                <span class="info-tip" tabindex="0" data-tip="EAU helps determine whether cold-form tooling can be amortized. Higher annual volume usually improves the cold forming business case.">i</span>
+              </div>
+              <select id="eau">
+                <option value="under500">Prototype / under 500</option>
+                <option value="500to5000">500 to 5,000</option>
+                <option value="5000to25000">5,000 to 25,000</option>
+                <option value="25000to100000">25,000 to 100,000</option>
+                <option value="over100000">100,000+</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <div class="label-row">
+                <span class="field-label">When Are Parts Needed?</span>
+                <span class="info-tip" tabindex="0" data-tip="Short lead times usually favor machining. Cold forming normally requires tooling, sampling, approval, and process validation.">i</span>
+              </div>
+              <select id="needDate">
+                <option value="under2">Under 2 weeks</option>
+                <option value="2to8">2 to 8 weeks</option>
+                <option value="over8">More than 8 weeks</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <div class="label-row">
+                <span class="field-label">Material</span>
+                <span class="info-tip" tabindex="0" data-tip="Material ductility and work-hardening behavior matter. Low carbon steel is often more formable than titanium, hard stainless, or unknown alloys.">i</span>
+              </div>
+              <select id="material">
+                <option value="lowCarbon">Low carbon steel</option>
+                <option value="mediumCarbon">Medium carbon steel</option>
+                <option value="alloySteel">Alloy steel</option>
+                <option value="ss300">Stainless steel, 300 series</option>
+                <option value="ss400">Stainless steel, 400 series</option>
+                <option value="aluminum">Aluminum</option>
+                <option value="brassCopper">Brass / copper alloy</option>
+                <option value="titanium">Titanium</option>
+                <option value="other">Other / unknown</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <div class="label-row">
+                <span class="field-label">Grade / Property Class</span>
+                <span class="info-tip" tabindex="0" data-tip="Mechanical requirements such as SAE J429 Grade 5/8 or ISO 898 Class 8.8/10.9 affect material selection, heat treatment, and validation.">i</span>
+              </div>
+              <select id="grade">
+                <option value="commercial">Commercial / low strength</option>
+                <option value="sae2iso46">SAE J429 Grade 2 / ISO Class 4.6</option>
+                <option value="sae5iso88">SAE J429 Grade 5 / ISO Class 8.8</option>
+                <option value="sae8iso109">SAE J429 Grade 8 / ISO Class 10.9</option>
+                <option value="iso129">ISO Class 12.9 or very high strength</option>
+                <option value="unknown">Unknown / not specified</option>
+              </select>
+              <span class="field-help">High strength may require heat treatment or tighter process control.</span>
+            </div>
+
+            <div class="field">
+              <div class="label-row">
+                <span class="field-label">Approximate Part Weight</span>
+                <span class="info-tip" tabindex="0" data-tip="Part weight is a rough proxy for material cost and scrap exposure. Heavy machined parts may remove a lot of material from bar stock.">i</span>
+              </div>
+              <select id="partWeight">
+                <option value="veryLight">Very light: under 5 g / 0.01 lb</option>
+                <option value="light">Light: 5 to 25 g / 0.01 to 0.055 lb</option>
+                <option value="medium">Medium: 25 to 100 g / 0.055 to 0.22 lb</option>
+                <option value="heavy">Heavy: 100 to 500 g / 0.22 to 1.1 lb</option>
+                <option value="veryHeavy">Very heavy: over 500 g / 1.1 lb</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <div class="label-row">
+                <span class="field-label">Required Accuracy / Precision</span>
+                <span class="info-tip" tabindex="0" data-tip="Cold forming is repeatable, but very tight tolerances or critical datums may require machining, grinding, or secondary finishing.">i</span>
+              </div>
+              <select id="precision">
+                <option value="general">General: about plus or minus 0.25 mm / 0.010 in</option>
+                <option value="moderate">Moderate: about plus or minus 0.10 mm / 0.004 in</option>
+                <option value="tight">Tight: about plus or minus 0.05 mm / 0.002 in</option>
+                <option value="veryTight">Very tight: under plus or minus 0.025 mm / 0.001 in</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <div class="label-row">
+                <span class="field-label">Surface Finish Requirement</span>
+                <span class="info-tip" tabindex="0" data-tip="Bearing, sealing, sliding, and cosmetic surfaces may require machining or finishing even when the blank can be cold formed.">i</span>
+              </div>
+              <select id="surfaceFinish">
+                <option value="standard">Standard commercial finish</option>
+                <option value="controlled">Controlled finish / cosmetic requirement</option>
+                <option value="fine">Fine machined finish requirement</option>
+                <option value="critical">Critical sealing, bearing, or sliding surface</option>
+              </select>
+            </div>
+
+            <div class="field full">
+              <div class="label-row">
+                <span class="field-label">Optional Geometry Features</span>
+                <span class="info-tip" tabindex="0" data-tip="Cold forming favors simple round geometry, shoulders, heads, and external threads. Cross holes, undercuts, off-center features, and tight concentricity may push the part toward machining or a hybrid process.">i</span>
+              </div>
+              <span class="field-help">Select all that apply.</span>
+              <div class="checkbox-grid">
+                <label class="check-item"><input type="checkbox" value="simpleRound" class="geometry"> Simple round or axisymmetric shape</label>
+                <label class="check-item"><input type="checkbox" value="headed" class="geometry"> Headed pin / shoulder / upset feature</label>
+                <label class="check-item"><input type="checkbox" value="externalThreads" class="geometry"> External threads</label>
+                <label class="check-item"><input type="checkbox" value="internalThreads" class="geometry"> Internal threads</label>
+                <label class="check-item"><input type="checkbox" value="crossHoles" class="geometry"> Cross holes</label>
+                <label class="check-item"><input type="checkbox" value="offCenter" class="geometry"> Off-center or non-axisymmetric features</label>
+                <label class="check-item"><input type="checkbox" value="undercuts" class="geometry"> Undercuts, grooves, or reliefs</label>
+                <label class="check-item"><input type="checkbox" value="sharpCorners" class="geometry"> Sharp corners or tight internal radii</label>
+                <label class="check-item"><input type="checkbox" value="tightConcentricity" class="geometry"> Tight concentricity / runout requirement</label>
+                <label class="check-item"><input type="checkbox" value="highWaste" class="geometry"> Likely high material waste if machined</label>
+              </div>
+            </div>
+
+            <div class="field full">
+              <div class="label-row">
+                <span class="field-label">Optional Secondary Operations</span>
+                <span class="info-tip" tabindex="0" data-tip="Secondary operations do not eliminate cold forming, but they may change the best answer to cold formed blank plus machining, drilling, tapping, grinding, coating, or cleaning.">i</span>
+              </div>
+              <span class="field-help">Select all that apply.</span>
+              <div class="checkbox-grid">
+                <label class="check-item"><input type="checkbox" value="plating" class="secondaryOp"> Plating / coating</label>
+                <label class="check-item"><input type="checkbox" value="heatTreat" class="secondaryOp"> Heat treatment</label>
+                <label class="check-item"><input type="checkbox" value="threadPatch" class="secondaryOp"> Thread locking / patch</label>
+                <label class="check-item"><input type="checkbox" value="drilling" class="secondaryOp"> Drilling / cross drilling</label>
+                <label class="check-item"><input type="checkbox" value="tapping" class="secondaryOp"> Tapping / internal threading</label>
+                <label class="check-item"><input type="checkbox" value="grinding" class="secondaryOp"> Grinding</label>
+                <label class="check-item"><input type="checkbox" value="broaching" class="secondaryOp"> Broaching / drive feature</label>
+                <label class="check-item"><input type="checkbox" value="cleaning" class="secondaryOp"> Special cleaning / passivation</label>
+              </div>
+            </div>
+
+            <div class="field full">
+              <div class="label-row">
+                <span class="field-label">Additional Notes</span>
+                <span class="info-tip" tabindex="0" data-tip="Add anything not captured above: current process, target cost issue, supplier concern, customer requirement, or unusual feature.">i</span>
+              </div>
+              <textarea id="notes" placeholder="Example: part is currently machined from bar stock; customer wants lower piece price; print has tight OD tolerance and one cross hole."></textarea>
+            </div>
+
+          </div>
+          <div class="action-row">
+            <button class="btn-orange" data-sbs-action="evaluate">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Evaluate Part
+            </button>
+            <button class="btn-navy" data-sbs-action="resetTool">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+              Reset
+            </button>
+            <button class="btn-navy" data-sbs-action="printReport">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              Print Report
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: RESULTS -->
+      <aside id="resultsCard" class="card">
+        <div class="print-only"><h1 style="font-family:Arial;color:#1D3557;margin-bottom:8px;">Machining vs Cold Forming Decision Report</h1></div>
+        <div class="card-title">Decision Summary</div>
+        <div class="result-box">
+          <p id="recommendation" class="recommendation pending">Complete the inputs and select Evaluate Part.</p>
+          <p id="summaryText">The tool will provide a directional manufacturing-method preference, reasons, risks, and next steps.</p>
+          <div class="score-grid">
+            <div class="score-card">
+              <div class="score-label">Machining Fit</div>
+              <div class="score-number" id="machiningScore">0</div>
+              <div class="bar"><span id="machiningBar"></span></div>
+            </div>
+            <div class="score-card">
+              <div class="score-label">Cold Forming Fit</div>
+              <div class="score-number" id="formingScore">0</div>
+              <div class="bar"><span id="formingBar"></span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-label">Why This Result Was Generated</div>
+        <ul id="reasonsList"><li>Reasons will appear here after evaluation.</li></ul>
+
+        <div class="section-label">Things to Consider</div>
+        <ul id="considerationsList"><li>Considerations will appear here after evaluation.</li></ul>
+
+        <div class="section-label">Machining Pros and Cons</div>
+        <ul id="machiningList"><li>Machining is often preferred for prototypes, low volumes, short lead times, tight tolerances, and design flexibility.</li></ul>
+
+        <div class="section-label">Cold Forming Pros and Cons</div>
+        <ul id="formingList"><li>Cold forming is often preferred for high-volume, axisymmetric metal parts where tooling cost can be amortized and material waste reduction matters.</li></ul>
+
+        <div class="section-label">Suggested Next Steps</div>
+        <ul id="nextStepsList"><li>Upload a drawing, print, or photo for a more analytical review.</li></ul>
+
+        <a class="cta-link" href="https://example.com/submit-part-review" target="_blank" rel="noopener">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Submit Part Print for Review
+        </a>
+      </aside>
+    </div>
+  </section>
+
+  <!-- BEST PRACTICE PANEL -->
+  <section id="bestPracticePanel" class="tab-panel">
+    <div style="padding-top:24px;">
+      <div class="card">
+        <div class="card-title">Best Practice Guide</div>
+        <p style="font-family:Inter,sans-serif;font-size:13px;color:var(--gray-500);margin-bottom:12px;">This guide explains the common decision factors when comparing machining, cold forming, or a hybrid process for non-standard metal parts such as pins, bushings, spacers, standoffs, inserts, shafts, and fittings.</p>
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Decision Factor</th>
+              <th>Machining Usually Looks Better When...</th>
+              <th>Cold Forming Usually Looks Better When...</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Run rate / EAU</td><td>Volume is low, demand is uncertain, or the part is still in development.</td><td>Volume is high enough to amortize tooling and process development.</td></tr>
+            <tr><td>Lead time</td><td>Parts are needed quickly, especially under 2 weeks.</td><td>There is enough time for tooling, sampling, validation, and PPAP if required.</td></tr>
+            <tr><td>Precision</td><td>Tolerances are tight, datums are critical, or geometry requires controlled machining surfaces.</td><td>Tolerances are general to moderate and features can be formed repeatably.</td></tr>
+            <tr><td>Scrap / material waste</td><td>The machined shape is close to bar stock or raw material size.</td><td>The machined version removes significant material, especially on heavier parts.</td></tr>
+            <tr><td>Geometry</td><td>The part has cross holes, off-center features, undercuts, deep internal threads, or sharp details.</td><td>The part is round, axisymmetric, headed, stepped, or externally threaded.</td></tr>
+            <tr><td>Design changes</td><td>The print is still changing or customer approval is not final.</td><td>The design is stable and production requirements are understood.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="guide-grid">
+        <div class="guide-card">
+          <h3>Precision and Tolerance</h3>
+          <ul>
+            <li><strong>General tolerance</strong> around plus or minus 0.25 mm / 0.010 in is often compatible with cold forming.</li>
+            <li><strong>Moderate tolerance</strong> around plus or minus 0.10 mm / 0.004 in may work for either process depending on the feature.</li>
+            <li><strong>Tight tolerance</strong> around plus or minus 0.05 mm / 0.002 in may require machining or secondary finishing.</li>
+            <li><strong>Very tight tolerance</strong> under plus or minus 0.025 mm / 0.001 in usually needs machining, grinding, or a highly controlled secondary operation.</li>
+          </ul>
+        </div>
+        <div class="guide-card">
+          <h3>Run Rate and Cost</h3>
+          <ul>
+            <li>Machining often wins at low volume because it avoids dedicated forming tooling.</li>
+            <li>Cold forming often wins at high volume because the cycle time and material utilization can reduce piece price.</li>
+            <li>Tooling cost should be considered against expected annual usage and program life.</li>
+            <li>For PPAP or production launch, process stability may matter as much as the initial unit price.</li>
+          </ul>
+        </div>
+        <div class="guide-card">
+          <h3>Scrap and Material Utilization</h3>
+          <ul>
+            <li>Machining from bar stock can create high scrap when the final shape is much smaller than the starting material.</li>
+            <li>Cold forming can move material into shape instead of cutting it away.</li>
+            <li>Heavier parts with large shoulders, heads, or diameter changes may deserve a cold forming review.</li>
+            <li>Material savings are especially important for stainless, alloy steel, brass, copper alloys, and other expensive materials.</li>
+          </ul>
+        </div>
+        <div class="guide-card">
+          <h3>Threads and Strength</h3>
+          <ul>
+            <li>Rolled external threads can be attractive for production because they are fast and can improve thread surface condition.</li>
+            <li>Cut threads may be preferred for low volume, prototypes, or complex machined features.</li>
+            <li>Internal threads often require tapping or thread forming as a secondary operation.</li>
+            <li>Weak thread engagement, short thread length, or soft mating material should be reviewed carefully regardless of manufacturing method.</li>
+          </ul>
+        </div>
+        <div class="guide-card">
+          <h3>Cold Forming Is Often Attractive For</h3>
+          <ul>
+            <li>Simple pins and headed pins.</li>
+            <li>Stepped shafts and shoulders.</li>
+            <li>Spacers, bushings, inserts, and standoffs with production volume.</li>
+            <li>Externally threaded specials where thread rolling is practical.</li>
+            <li>Parts currently machined with high material waste.</li>
+          </ul>
+        </div>
+        <div class="guide-card">
+          <h3>Machining Is Often Attractive For</h3>
+          <ul>
+            <li>Prototypes and development parts.</li>
+            <li>Parts needed quickly.</li>
+            <li>Low annual volume or uncertain demand.</li>
+            <li>Complex features such as cross holes, off-center geometry, grooves, undercuts, and tight concentricity.</li>
+            <li>Critical bearing, sealing, or sliding surfaces.</li>
+          </ul>
+        </div>
+        <div class="guide-card">
+          <h3>Hybrid Process: Cold Formed Blank plus Secondary Machining</h3>
+          <ul>
+            <li>A hybrid route may be best when the basic shape is formable but critical features still need machining.</li>
+            <li>Examples include cold formed blank plus drilling, tapping, grinding, broaching, or finish machining.</li>
+            <li>This approach may reduce material waste while still meeting tighter print requirements.</li>
+            <li>A print review is needed to decide whether the added handling and secondary operations still make economic sense.</li>
+          </ul>
+        </div>
+        <div class="guide-card">
+          <h3>Information Needed for a Real Review</h3>
+          <ul>
+            <li>Part print, model, or clear photo.</li>
+            <li>EAU and expected program life.</li>
+            <li>Material, grade, and property class such as SAE J429 or ISO 898.</li>
+            <li>Critical dimensions and tolerances.</li>
+            <li>Required finish, coating, heat treatment, and PPAP level if applicable.</li>
+          </ul>
+          <a class="cta-link" href="https://example.com/submit-part-review" target="_blank" rel="noopener" style="margin-top:12px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Submit Part Print for Review
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- DISCLAIMER -->
+<div class="disclaimer-bar">
+  <strong>Disclaimer:</strong> This tool is directional and educational only. Results do not replace a formal engineering review, DFM analysis, PPAP requirements, or supplier process validation. A drawing or photo is required for a true manufacturing assessment.
+</div>
+
+<script>
+(function() {
+  var activePanel = 'decisionPanel';
+
+  // BETA DISMISS
+  document.getElementById('betaDismissBtn').addEventListener('click', function() {
+    var ov = document.getElementById('betaOverlay');
+    ov.style.opacity = '0';
+    ov.style.transition = 'opacity 0.25s';
+    setTimeout(function() { ov.style.display = 'none'; }, 260);
+  });
+
+  function getChecked(cls) {
+    return Array.from(document.querySelectorAll('.' + cls + ':checked')).map(function(el) { return el.value; });
+  }
+
+  function renderList(id, items, defaultText) {
+    var ul = document.getElementById(id);
+    if (!ul) return;
+    if (!items || items.length === 0) { ul.innerHTML = '<li>' + defaultText + '<\/li>'; return; }
+    ul.innerHTML = items.map(function(t) { return '<li>' + t + '<\/li>'; }).join('');
+  }
+
+  function evaluateDecision() {
+    var programStage = document.getElementById('programStage').value;
+    var eau = document.getElementById('eau').value;
+    var needDate = document.getElementById('needDate').value;
+    var material = document.getElementById('material').value;
+    var grade = document.getElementById('grade').value;
+    var partWeight = document.getElementById('partWeight').value;
+    var precision = document.getElementById('precision').value;
+    var surfaceFinish = document.getElementById('surfaceFinish').value;
+    var geometry = getChecked('geometry');
+    var secondaryOps = getChecked('secondaryOp');
+
+    var machining = 0, forming = 0;
+    var reasons = [], considerations = [], machProsCons = [], formProsCons = [], nextSteps = [];
+
+    // Program stage
+    if (programStage === 'prototype') {
+      machining += 40;
+      reasons.push('Prototype / development stage strongly favors machining because CNC machining usually provides faster development time, lower upfront tooling cost, and more design flexibility.');
+      considerations.push('If the prototype will later become a PPAP submission, consider whether the prototype should instead be produced using the intended production process.');
+    } else if (programStage === 'ppapPrototype') {
+      forming += 15; machining += 5;
+      reasons.push('Prototype for PPAP submission should normally use the same manufacturing process intended for full production.');
+    } else {
+      forming += 10;
+      reasons.push('Full production allows the analysis to consider tooling amortization, repeatability, and piece-price optimization.');
+    }
+
+    // EAU
+    var eauMap = {
+      under500: [25, 0, 'Very low annual usage favors machining because cold-form tooling is unlikely to be amortized.'],
+      '500to5000': [18, 4, 'Low to moderate annual usage usually favors machining, although simple formed blanks may still be worth review.'],
+      '5000to25000': [8, 12, 'Mid-range annual usage may support either process. Geometry, tolerance, and material waste become important decision factors.'],
+      '25000to100000': [2, 24, 'Higher annual usage favors cold forming because tooling cost can be spread across more parts.'],
+      over100000: [0, 35, 'Very high annual usage strongly favors cold forming when geometry and material are suitable.']
+    };
+    if (eauMap[eau]) { machining += eauMap[eau][0]; forming += eauMap[eau][1]; reasons.push(eauMap[eau][2]); }
+
+    // Lead time
+    if (needDate === 'under2') { machining += 25; reasons.push('Need date under 2 weeks favors machining because cold-form tooling and process development usually require more lead time.'); }
+    else if (needDate === '2to8') { machining += 10; forming += 5; reasons.push('A 2 to 8 week need date may support machining or a limited forming review, depending on supplier tooling availability and part complexity.'); }
+    else { forming += 12; reasons.push('More than 8 weeks of lead time gives more room for cold-form tooling, sampling, and validation.'); }
+
+    // Material
+    var matMap = {
+      lowCarbon: [2, 18, 'Low carbon steel is generally a strong cold-forming candidate.'],
+      mediumCarbon: [5, 12, 'Medium carbon steel can be cold formed, but formability and downstream heat treatment need review.'],
+      alloySteel: [6, 10, 'Alloy steel may be cold formable, but grade, strength, and heat treatment requirements become important.'],
+      ss300: [8, 8, '300 series stainless can be formed or machined, but work hardening and tooling forces should be reviewed.'],
+      ss400: [10, 5, '400 series stainless may favor machining depending on hardness, ductility, and final property requirements.'],
+      aluminum: [6, 12, 'Aluminum often has good formability, but alloy and surface finish requirements matter.'],
+      brassCopper: [8, 8, 'Brass and copper alloys may be machined or formed depending on alloy, geometry, and tolerance needs.'],
+      titanium: [18, 0, 'Titanium generally favors machining or specialized process review because cold forming can be challenging and supplier-dependent.'],
+      other: [8, 0, 'Unknown material favors review before recommending cold forming. Material ductility and formability must be confirmed.']
+    };
+    if (matMap[material]) { machining += matMap[material][0]; forming += matMap[material][1]; reasons.push(matMap[material][2]); }
+
+    // Grade
+    if (grade === 'commercial' || grade === 'sae2iso46') { forming += 8; reasons.push('Lower strength requirements are generally more favorable for cold forming.'); }
+    else if (grade === 'sae5iso88') { machining += 4; forming += 6; reasons.push('SAE J429 Grade 5 / ISO Class 8.8 can be compatible with cold forming, but heat treatment and mechanical-property validation should be reviewed.'); }
+    else if (grade === 'sae8iso109') { machining += 8; forming += 4; reasons.push('SAE J429 Grade 8 / ISO Class 10.9 may be cold formed but requires stronger control of material, forming, heat treatment, and validation.'); }
+    else if (grade === 'iso129') { machining += 14; reasons.push('Very high strength requirements such as ISO 12.9 require careful review and may reduce the attractiveness of cold forming.'); }
+    else { machining += 4; reasons.push('Unknown grade adds risk. Confirm SAE J429 grade, ISO 898 property class, or equivalent mechanical requirements before selecting the process.'); }
+
+    // Part weight
+    if (partWeight === 'heavy') { forming += 10; reasons.push('Heavier parts may favor cold forming when machining would remove significant material.'); }
+    else if (partWeight === 'veryHeavy') { forming += 16; machining += 4; reasons.push('Very heavy parts may offer large material-savings potential through cold forming, but forming press capacity and tooling feasibility must be reviewed.'); }
+    else if (partWeight === 'veryLight') { forming += 4; machining += 4; reasons.push('Very light parts may be economical by either method depending on volume and complexity.'); }
+
+    // Precision
+    if (precision === 'general') { forming += 14; reasons.push('General tolerances around plus or minus 0.25 mm / 0.010 in are usually more compatible with cold forming.'); }
+    else if (precision === 'moderate') { forming += 8; machining += 5; reasons.push('Moderate tolerances around plus or minus 0.10 mm / 0.004 in may be possible by forming, machining, or formed blank plus secondary machining.'); }
+    else if (precision === 'tight') { machining += 16; forming += 2; reasons.push('Tight tolerances around plus or minus 0.05 mm / 0.002 in often favor machining or cold forming with secondary finishing.'); }
+    else { machining += 28; reasons.push('Very tight tolerances under plus or minus 0.025 mm / 0.001 in strongly favor machining, grinding, or secondary finishing after forming.'); }
+
+    // Surface finish
+    if (surfaceFinish === 'controlled') { machining += 4; forming += 4; reasons.push('Controlled cosmetic finish can be compatible with either process, but tooling marks, handling marks, and coating appearance should be reviewed.'); }
+    else if (surfaceFinish === 'fine') { machining += 12; reasons.push('Fine machined finish requirements favor machining or secondary finishing.'); }
+    else if (surfaceFinish === 'critical') { machining += 18; reasons.push('Critical sealing, bearing, or sliding surfaces often require machining, grinding, or finishing even if the blank is cold formed.'); }
+
+    // Geometry
+    if (geometry.indexOf('simpleRound') >= 0) { forming += 18; reasons.push('Simple round or axisymmetric geometry favors cold forming.'); }
+    if (geometry.indexOf('headed') >= 0) { forming += 14; reasons.push('Headed pins, shoulders, and upset features are often good candidates for cold forming.'); }
+    if (geometry.indexOf('externalThreads') >= 0) { forming += 8; reasons.push('External threads may favor cold forming with thread rolling, especially at production volume.'); }
+    if (geometry.indexOf('internalThreads') >= 0) { machining += 8; reasons.push('Internal threads usually require tapping or forming after blank creation, which may create a hybrid process.'); }
+    if (geometry.indexOf('crossHoles') >= 0) { machining += 14; reasons.push('Cross holes usually require secondary drilling and reduce the simplicity advantage of cold forming.'); }
+    if (geometry.indexOf('offCenter') >= 0) { machining += 18; reasons.push('Off-center or non-axisymmetric features favor machining or secondary operations.'); }
+    if (geometry.indexOf('undercuts') >= 0) { machining += 12; reasons.push('Undercuts, grooves, and reliefs may require machining or special tooling after forming.'); }
+    if (geometry.indexOf('sharpCorners') >= 0) { machining += 10; reasons.push('Sharp corners and tight internal radii may be difficult to form and may require machining or design modification.'); }
+    if (geometry.indexOf('tightConcentricity') >= 0) { machining += 14; reasons.push('Tight concentricity or runout requirements often favor machining, grinding, or formed blank plus secondary finishing.'); }
+    if (geometry.indexOf('highWaste') >= 0) { forming += 16; reasons.push('High expected machining waste favors cold forming because formed parts can reduce scrap and improve material utilization.'); }
+
+    // Secondary ops
+    if (secondaryOps.indexOf('heatTreat') >= 0) { forming += 4; machining += 4; considerations.push('Heat treatment affects both process routes. Confirm distortion risk, hardness targets, and mechanical property validation.'); }
+    if (secondaryOps.indexOf('drilling') >= 0 || secondaryOps.indexOf('tapping') >= 0 || secondaryOps.indexOf('broaching') >= 0 || secondaryOps.indexOf('grinding') >= 0) { machining += 10; considerations.push('Required drilling, tapping, broaching, or grinding suggests either machining complete or a cold formed blank with secondary machining.'); }
+    if (secondaryOps.indexOf('plating') >= 0 || secondaryOps.indexOf('threadPatch') >= 0 || secondaryOps.indexOf('cleaning') >= 0) { considerations.push('Plating, thread patch, passivation, or special cleaning may be similar after either primary process, but process sequence and masking requirements should be reviewed.'); }
+
+    // Pros/cons
+    machProsCons.push('Pros: fast development, no dedicated forming tooling in many cases, strong design flexibility, suitable for low volume and tight features.');
+    machProsCons.push('Cons: higher piece price at volume, slower cycle time, potential material waste, and less attractive for high-volume repeat production.');
+    formProsCons.push('Pros: low piece price at volume, high repeatability, efficient material use, good for headed/stepped/axisymmetric parts, and can pair well with thread rolling.');
+    formProsCons.push('Cons: higher upfront tooling cost, longer development lead time, more constrained design changes, and possible need for secondary machining.');
+
+    // Hybrid signals
+    var hybridSignals = geometry.indexOf('crossHoles') >= 0 || geometry.indexOf('internalThreads') >= 0 || geometry.indexOf('offCenter') >= 0 || geometry.indexOf('tightConcentricity') >= 0 || secondaryOps.indexOf('grinding') >= 0 || secondaryOps.indexOf('broaching') >= 0 || secondaryOps.indexOf('drilling') >= 0 || secondaryOps.indexOf('tapping') >= 0;
+
+    // Scores
+    var total = machining + forming;
+    var machPct = total > 0 ? Math.round((machining / total) * 100) : 0;
+    var formPct = total > 0 ? Math.round((forming / total) * 100) : 0;
+
+    // Recommendation
+    var rec = document.getElementById('recommendation');
+    var summary = document.getElementById('summaryText');
+    var diff = machining - forming;
+
+    if (forming > machining && forming > 0 && diff < -20) {
+      if (hybridSignals) {
+        rec.textContent = 'Likely: Hybrid Process (Cold Formed Blank + Secondary Machining)';
+        rec.className = 'recommendation hybrid';
+        summary.textContent = 'Cold forming may be the right primary process, but secondary operations appear likely. A print review is needed to confirm whether the full route is economical.';
+        nextSteps.push('Request a cold forming feasibility review from SBS or a forming supplier.');
+        nextSteps.push('Identify which features can be formed vs which require secondary machining, drilling, tapping, or grinding.');
+        nextSteps.push('Evaluate total landed cost including tooling, secondary ops, and cycle time.');
+      } else {
+        rec.textContent = 'Likely: Cold Forming';
+        rec.className = 'recommendation cold';
+        summary.textContent = 'The combination of inputs suggests cold forming may be the more cost-effective and efficient manufacturing method for this part at volume.';
+        nextSteps.push('Submit a part print or photo for a formal cold forming feasibility review.');
+        nextSteps.push('Confirm EAU and program life to evaluate tooling amortization.');
+        nextSteps.push('Review material grade and any heat treatment requirements with the forming supplier.');
+      }
+    } else if (machining > forming && machining > 0 && diff > 20) {
+      rec.textContent = 'Likely: CNC Machining';
+      rec.className = 'recommendation machine';
+      summary.textContent = 'The combination of inputs suggests CNC machining is likely the better fit for this part based on volume, lead time, geometry, tolerance, or material.';
+      nextSteps.push('Confirm the machining process and material specification with your current or target supplier.');
+      nextSteps.push('If volume grows, revisit cold forming feasibility when EAU justifies tooling investment.');
+      nextSteps.push('For prototypes, ensure the prototype process matches the intended production process if PPAP will be required.');
+    } else {
+      rec.textContent = 'Unclear: Further Review Recommended';
+      rec.className = 'recommendation hybrid';
+      summary.textContent = 'The scores are close enough that no clear winner emerges from the inputs alone. A print review and supplier discussion are recommended before committing to a process.';
+      nextSteps.push('Submit a part print for a side-by-side machining vs cold forming cost estimate.');
+      nextSteps.push('Clarify EAU, program life, and tolerance requirements to sharpen the analysis.');
+      nextSteps.push('Consider whether a hybrid approach (cold formed blank plus secondary machining) could satisfy both cost and quality requirements.');
+    }
+
+    // Update scores
+    document.getElementById('machiningScore').textContent = machining;
+    document.getElementById('formingScore').textContent = forming;
+    setTimeout(function() {
+      document.getElementById('machiningBar').style.width = machPct + '%';
+      document.getElementById('formingBar').style.width = formPct + '%';
+    }, 50);
+
+    // Render lists
+    renderList('reasonsList', reasons, 'No specific reasons generated.');
+    renderList('considerationsList', considerations, 'No additional considerations flagged.');
+    renderList('machiningList', machProsCons, '');
+    renderList('formingList', formProsCons, '');
+    renderList('nextStepsList', nextSteps, 'Submit a drawing or photo for a detailed review.');
+
+    // Scroll to results on mobile
+    if (window.innerWidth < 900) {
+      document.getElementById('resultsCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  function resetTool() {
+    document.getElementById('programStage').selectedIndex = 0;
+    document.getElementById('eau').selectedIndex = 0;
+    document.getElementById('needDate').selectedIndex = 0;
+    document.getElementById('material').selectedIndex = 0;
+    document.getElementById('grade').selectedIndex = 0;
+    document.getElementById('partWeight').selectedIndex = 2;
+    document.getElementById('precision').selectedIndex = 0;
+    document.getElementById('surfaceFinish').selectedIndex = 0;
+    document.getElementById('notes').value = '';
+    document.querySelectorAll('.geometry, .secondaryOp').forEach(function(cb) { cb.checked = false; });
+    document.getElementById('recommendation').textContent = 'Complete the inputs and select Evaluate Part.';
+    document.getElementById('recommendation').className = 'recommendation pending';
+    document.getElementById('summaryText').textContent = 'The tool will provide a directional manufacturing-method preference, reasons, risks, and next steps.';
+    document.getElementById('machiningScore').textContent = '0';
+    document.getElementById('formingScore').textContent = '0';
+    document.getElementById('machiningBar').style.width = '0%';
+    document.getElementById('formingBar').style.width = '0%';
+    renderList('reasonsList', [], 'Reasons will appear here after evaluation.');
+    renderList('considerationsList', [], 'Considerations will appear here after evaluation.');
+    renderList('machiningList', [], 'Machining is often preferred for prototypes, low volumes, short lead times, tight tolerances, and design flexibility.');
+    renderList('formingList', [], 'Cold forming is often preferred for high-volume, axisymmetric metal parts where tooling cost can be amortized and material waste reduction matters.');
+    renderList('nextStepsList', [], 'Upload a drawing, print, or photo for a more analytical review.');
+  }
+
+  function switchTab(panelId) {
+    document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+    document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+    var panel = document.getElementById(panelId);
+    if (panel) panel.classList.add('active');
+    document.querySelectorAll('[data-sbs-action="switchTab"]').forEach(function(b) {
+      if (b.getAttribute('data-panel') === panelId) b.classList.add('active');
+    });
+    activePanel = panelId;
+  }
+
+  // Event delegation
+  document.addEventListener('click', function(e) {
+    var el = e.target;
+    var action = null;
+    var panel = null;
+    for (var i = 0; i < 6; i++) {
+      if (!el || el === document.body) break;
+      if (el.getAttribute) {
+        if (el.getAttribute('data-sbs-action')) { action = el.getAttribute('data-sbs-action'); panel = el.getAttribute('data-panel'); break; }
+      }
+      el = el.parentNode;
+    }
+    if (action === 'evaluate') { evaluateDecision(); }
+    else if (action === 'resetTool') { resetTool(); }
+    else if (action === 'printReport') { window.print(); }
+    else if (action === 'switchTab') { switchTab(panel); }
+  });
+})();
+</script>
+</body>
+</html>

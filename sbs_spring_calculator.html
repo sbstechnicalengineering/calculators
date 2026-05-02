@@ -127,6 +127,22 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .disclaimer{background:var(--gray-50);border-top:1px solid var(--gray-200);padding:12px 20px;font-family:'Inter',sans-serif;font-size:11px;color:var(--gray-500);text-align:center;max-width:100%}
 .disclaimer strong{color:var(--navy)}
 
+/* BETA MODAL */
+.beta-overlay{position:fixed;inset:0;z-index:2147483647;background:rgba(18,36,58,0.82);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:20px}
+.beta-modal{background:var(--white);border-radius:14px;width:100%;max-width:520px;box-shadow:0 24px 64px rgba(0,0,0,0.35);overflow:hidden}
+.beta-modal-header{background:var(--navy);padding:20px 24px;border-bottom:3px solid var(--orange);display:flex;align-items:center;gap:14px}
+.beta-modal-icon{width:40px;height:40px;background:var(--orange);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.beta-modal-header-text{flex:1}
+.beta-modal-header-text h2{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;color:var(--white);line-height:1.1}
+.beta-modal-header-text p{font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,0.6);margin-top:2px}
+.beta-pill{background:var(--orange);color:var(--white);font-family:'Barlow',sans-serif;font-size:10px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;padding:3px 10px;border-radius:20px;flex-shrink:0}
+.beta-modal-body{padding:24px}
+.beta-modal-body p{font-family:'Inter',sans-serif;font-size:13px;color:var(--gray-600);line-height:1.65;margin-bottom:14px}
+.beta-modal-body p:last-of-type{margin-bottom:0}
+.beta-modal-body strong{color:var(--navy);font-weight:600}
+.beta-modal-footer{padding:0 24px 24px;display:flex;justify-content:flex-end}
+.beta-modal-footer .btn-primary{font-size:13px;padding:11px 24px}
+
 /* RESPONSIVE */
 @media(max-width:900px){
   .app-body{grid-template-columns:1fr}
@@ -587,6 +603,48 @@ document.getElementById('inp-mat').addEventListener('change',function(){
 });
 
 calcSpring();
+
+// BETA MODAL dismiss
+document.addEventListener('click',function(e){
+  var el=e.target;
+  for(var i=0;i<6;i++){
+    if(!el||el===document.body)break;
+    if(el.getAttribute&&el.getAttribute('data-sbs-action')==='dismissBeta'){
+      var ov=document.getElementById('beta-overlay');
+      if(ov){ov.style.display='none';document.body.style.overflow='';}
+      return;
+    }
+    el=el.parentNode;
+  }
+});
+document.body.style.overflow='hidden';
 </script>
+
+<div id="beta-overlay" class="beta-overlay" role="dialog" aria-modal="true" aria-labelledby="beta-title">
+  <div class="beta-modal">
+    <div class="beta-modal-header">
+      <div class="beta-modal-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="8"/><line x1="12" y1="12" x2="12" y2="16"/></svg>
+      </div>
+      <div class="beta-modal-header-text">
+        <h2 id="beta-title">Specialty Bolt and Screw</h2>
+        <p>Spring Design Calculator</p>
+      </div>
+      <span class="beta-pill">Beta</span>
+    </div>
+    <div class="beta-modal-body">
+      <p>This tool is currently in <strong>beta</strong>. While the underlying engineering formulas reference established consensus standards including SMI, DIN 2095, ISO 10243, and ASTM material specifications, results should be treated as preliminary estimates and have not yet undergone full validation review.</p>
+      <p>We encourage you to use this calculator and <strong>share your feedback</strong>. If you notice an error, unexpected result, or have a suggestion for improvement, please contact our engineering team. Your input directly improves this tool for the entire SBS community.</p>
+      <p>Thank you for being an early user. We are committed to delivering accurate, standards-referenced engineering tools that support your work.</p>
+    </div>
+    <div class="beta-modal-footer">
+      <button class="btn-primary" data-sbs-action="dismissBeta">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg>
+        I Understand - Continue to Tool
+      </button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
