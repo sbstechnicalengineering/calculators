@@ -230,31 +230,36 @@
 
   async function doLookup() {
     const num = numInput.value.trim();
-    if (!num) { setResult('Enter a number first', true); return; }
+    if (!num) {
+      setLoading(false);
+      document.getElementById('resultVal').className = 'result-value error';
+      document.getElementById('resultVal').textContent = 'Enter a number first';
+      return;
+    }
 
     setLoading(true);
 
-    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Sheet1`;
+    // CSV export endpoint — no CORS issues, works with "Published to web"
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`;
 
     try {
       const res = await fetch(url);
-      const raw = await res.text();
-      // Strip Google's JSONP wrapper
-      const json = JSON.parse(raw.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)[1]);
-      const rows = json.table.rows;
+      if (!res.ok) throw new Error('Fetch failed');
+      const text = await res.text();
+
+      // Parse CSV rows
+      const rows = text.trim().split('\n').map(r => r.split(','));
 
       const target = parseInt(num, 10);
       let found = null;
 
-      for (const row of rows) {
-        const cellA = row.c[INPUT_COL];
-        const cellB = row.c[OUTPUT_COL];
-        if (cellA && cellB) {
-          const val = parseInt(cellA.v, 10);
-          if (val === target) {
-            found = cellB.v;
-            break;
-          }
+      // Skip header row (row 0 = "Input, Output")
+      for (let i = 1; i < rows.length; i++) {
+        const colA = parseInt(rows[i][0], 10);
+        const colB = rows[i][1] ? rows[i][1].trim() : null;
+        if (colA === target && colB) {
+          found = colB;
+          break;
         }
       }
 
