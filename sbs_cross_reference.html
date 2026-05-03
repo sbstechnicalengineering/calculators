@@ -327,6 +327,12 @@ document.addEventListener('keydown',function(e){if(e.target===document.getElemen
 window.addEventListener('resize',setTop);
 setTop();
 render();
+(function(){
+  var btn=document.getElementById('btnContinue');
+  if(btn){btn.addEventListener('click',function(e){e.stopPropagation();document.getElementById('betaOverlay').style.display='none';},true);}
+  var ov=document.getElementById('betaOverlay');
+  if(ov){ov.addEventListener('click',function(e){if(e.target===ov){ov.style.display='none';}},true);}
+})();
 </script>
 </body>
 </html>
