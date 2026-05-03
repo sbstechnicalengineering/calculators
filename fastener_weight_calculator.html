@@ -1,0 +1,1160 @@
+<!--
+  SBS Fastener Weight Calculator | Copyright (c) 2024 Specialty Bolt & Screw, Inc.
+  Fingerprint: SBS-FWC-v1 | https://shop.specialtybolt.com/
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fastener Weight Calculator | SBS Specialty Bolt &amp; Screw</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy:           #1D3557;
+      --navy-dark:      #12243a;
+      --orange:         #E87722;
+      --orange-light:   #F0913A;
+      --orange-pale:    #FDF0E5;
+      --white:          #ffffff;
+      --gray-50:        #F8F9FA;
+      --gray-100:       #F0F2F5;
+      --gray-200:       #E2E6EA;
+      --gray-300:       #CED4DA;
+      --gray-400:       #ADB5BD;
+      --gray-500:       #6C757D;
+      --gray-600:       #495057;
+      --gray-700:       #343A40;
+      --active-green:   #1A8A4A;
+      --active-bg:      #E8F5EE;
+      --shadow-sm:      0 2px 8px rgba(0,0,0,0.08);
+      --shadow-md:      0 4px 16px rgba(0,0,0,0.10);
+      --shadow-lg:      0 8px 32px rgba(0,0,0,0.12);
+      --radius:         10px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Inter, sans-serif;
+      background: var(--gray-100);
+      color: var(--gray-700);
+      min-height: 100vh;
+    }
+
+    /* ===== STICKY HEADER ===== */
+    .sbs-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--white);
+      border-bottom: 3px solid var(--orange);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+      padding: 0.65rem 1.5rem;
+    }
+
+    .sbs-header-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .sbs-header-logo img {
+      height: 48px;
+      display: block;
+    }
+
+    .sbs-header-divider {
+      width: 1px;
+      height: 36px;
+      background: var(--gray-200);
+      flex-shrink: 0;
+    }
+
+    .sbs-header-title {
+      flex: 1;
+    }
+
+    .sbs-header-title h1 {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: clamp(20px, 3vw, 26px);
+      font-weight: 800;
+      color: var(--navy);
+      letter-spacing: -0.01em;
+      line-height: 1.1;
+    }
+
+    .sbs-header-title p {
+      font-family: Inter, sans-serif;
+      font-size: 11px;
+      color: var(--gray-500);
+      margin-top: 2px;
+    }
+
+    .sbs-header-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    /* ===== BUTTONS ===== */
+    .btn {
+      font-family: Barlow, sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.3px;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      text-decoration: none;
+      min-height: 44px;
+    }
+
+    .btn-primary {
+      background: var(--orange);
+      color: var(--white);
+      box-shadow: 0 2px 6px rgba(232,119,34,0.3);
+    }
+
+    .btn-primary:hover {
+      background: var(--orange-light);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(232,119,34,0.4);
+    }
+
+    .btn-secondary {
+      background: var(--navy);
+      color: var(--white);
+    }
+
+    .btn-secondary:hover {
+      background: var(--navy-dark);
+    }
+
+    .btn svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    /* ===== NAV TABS ===== */
+    .nav-tabs {
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-200);
+      position: sticky;
+      top: 0;
+      z-index: 90;
+    }
+
+    .nav-tabs-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      font-family: Barlow, sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      padding: 14px 18px;
+      border: none;
+      background: none;
+      color: var(--gray-500);
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -1px;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+
+    .tab-btn:hover { color: var(--navy); }
+
+    .tab-btn.active {
+      color: var(--orange);
+      border-bottom-color: var(--orange);
+    }
+
+    /* ===== PAGE BODY ===== */
+    .page {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 24px 1.5rem 60px;
+    }
+
+    /* ===== GRID ===== */
+    .main-grid {
+      display: grid;
+      grid-template-columns: minmax(300px, 420px) 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    /* ===== CARD ===== */
+    .card {
+      background: var(--white);
+      border: 1.5px solid var(--gray-200);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--gray-200);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--gray-50);
+    }
+
+    .card-header h2 {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--navy);
+      letter-spacing: -0.01em;
+    }
+
+    .badge {
+      font-family: Barlow, sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--orange-pale);
+      color: var(--orange);
+      white-space: nowrap;
+    }
+
+    .card-body { padding: 20px; }
+
+    /* ===== FORM ===== */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .field.full { grid-column: 1 / -1; }
+
+    label {
+      font-family: Barlow, sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--gray-500);
+    }
+
+    input, select {
+      width: 100%;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-family: Inter, sans-serif;
+      font-size: 14px;
+      background: var(--white);
+      color: var(--gray-700);
+      transition: border-color 0.15s;
+      min-height: 44px;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--orange);
+    }
+
+    input:disabled, select:disabled {
+      background: var(--gray-100);
+      color: var(--gray-400);
+      cursor: not-allowed;
+      border-color: var(--gray-200);
+    }
+
+    label.dimmed {
+      color: var(--gray-300);
+    }
+
+    .hint {
+      font-family: Inter, sans-serif;
+      font-size: 11px;
+      color: var(--gray-400);
+      line-height: 1.4;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--gray-200);
+    }
+
+    /* ===== STATUS ===== */
+    .status {
+      font-family: Inter, sans-serif;
+      font-size: 12px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      background: var(--active-bg);
+      color: var(--active-green);
+      font-weight: 600;
+      margin-top: 14px;
+    }
+
+    /* ===== METRICS ===== */
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .metric {
+      background: var(--gray-50);
+      border: 1.5px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+
+    .metric .label {
+      font-family: Barlow, sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--gray-500);
+    }
+
+    .metric .value {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--navy);
+      letter-spacing: -0.02em;
+      margin-top: 6px;
+      line-height: 1;
+    }
+
+    /* ===== FORMULA BOX ===== */
+    .formula-box {
+      background: var(--navy);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      overflow-x: auto;
+    }
+
+    .formula-box code {
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      color: #fef3c7;
+      white-space: pre-wrap;
+      line-height: 1.6;
+    }
+
+    /* ===== TABLE ===== */
+    .table-wrap {
+      overflow-x: auto;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 520px;
+    }
+
+    th {
+      font-family: Barlow, sans-serif;
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--gray-500);
+      background: var(--gray-50);
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--gray-200);
+      text-align: left;
+    }
+
+    td {
+      font-family: Inter, sans-serif;
+      font-size: 13px;
+      color: var(--gray-700);
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--gray-50); }
+
+    /* ===== NOTE ===== */
+    .note {
+      font-family: Inter, sans-serif;
+      font-size: 12px;
+      background: var(--orange-pale);
+      border-left: 3px solid var(--orange);
+      border-radius: 0 6px 6px 0;
+      padding: 12px 14px;
+      color: var(--gray-600);
+      line-height: 1.5;
+      margin-top: 16px;
+    }
+
+    /* ===== INFO TOOLTIP ===== */
+    .info {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #dbeafe;
+      color: #1d4ed8;
+      font-size: 10px;
+      font-weight: 900;
+      cursor: help;
+      position: relative;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+
+    .info:hover::after {
+      content: attr(data-tip);
+      position: absolute;
+      left: 50%;
+      bottom: 130%;
+      transform: translateX(-50%);
+      min-width: 220px;
+      max-width: 300px;
+      background: var(--navy);
+      color: var(--white);
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-family: Inter, sans-serif;
+      font-weight: 500;
+      font-size: 11px;
+      line-height: 1.4;
+      z-index: 50;
+      box-shadow: var(--shadow-md);
+      white-space: normal;
+    }
+
+    /* ===== GUIDE / DEFAULTS / PRACTICE PANELS ===== */
+    .panel-card {
+      background: var(--white);
+      border: 1.5px solid var(--gray-200);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      padding: 24px;
+    }
+
+    .panel-card h2 {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 16px;
+    }
+
+    .section-label {
+      font-family: Barlow, sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gray-500);
+      margin-bottom: 12px;
+    }
+
+    /* ===== DISCLAIMER ===== */
+    .disclaimer {
+      background: var(--gray-50);
+      border-top: 1px solid var(--gray-200);
+      padding: 14px 1.5rem;
+      margin-top: 32px;
+      text-align: center;
+    }
+
+    .disclaimer p {
+      font-family: Inter, sans-serif;
+      font-size: 11.5px;
+      color: var(--gray-500);
+      max-width: 900px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+
+    .disclaimer strong {
+      color: var(--navy);
+    }
+
+    /* ===== UTILITIES ===== */
+    .hidden { display: none !important; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 960px) {
+      .main-grid { grid-template-columns: 1fr; }
+      .results-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .results-grid { grid-template-columns: 1fr; }
+      .sbs-header { padding: 0.65rem 1rem; }
+      .page { padding: 16px 1rem 48px; }
+      .sbs-header-actions { display: none; }
+    }
+
+    @media print {
+      body { background: white; }
+      .nav-tabs, .btn-row, .sbs-header-actions { display: none; }
+      .sbs-header { position: static; box-shadow: none; border-bottom: 3px solid #E87722; }
+      .page { padding: 0; }
+      .card, .panel-card { box-shadow: none; }
+      .main-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hidden logo for print -->
+  <img id="sbsLogoPrint" src="data:image/png;base64,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" style="display:none;" alt="SBS Logo">
+
+  <!-- ===== STICKY HEADER ===== -->
+  <header class="sbs-header">
+    <div class="sbs-header-inner">
+      <a class="sbs-header-logo" href="https://shop.specialtybolt.com/" target="_blank" rel="noopener">
+        <img src="data:image/png;base64,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" alt="SBS Specialty Bolt &amp; Screw" />
+      </a>
+      <div class="sbs-header-divider"></div>
+      <div class="sbs-header-title">
+        <h1>Fastener Weight Calculator</h1>
+        <p>Parametric weight estimation for catalog, freight, and quoting estimates</p>
+      </div>
+      <div class="sbs-header-actions">
+        <button class="btn btn-primary" data-sbs-action="printTool">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Print / Save PDF
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== NAV TABS ===== -->
+  <nav class="nav-tabs" id="navTabs">
+    <div class="nav-tabs-inner">
+      <button class="tab-btn active" data-tab="calculator">Calculator</button>
+      <button class="tab-btn" data-tab="guide">Formula Guide</button>
+      <button class="tab-btn" data-tab="defaults">Default Dimensions</button>
+      <button class="tab-btn" data-tab="practice">Best Practice Notes</button>
+    </div>
+  </nav>
+
+  <main class="page">
+
+    <!-- ===== CALCULATOR TAB ===== -->
+    <section id="calculator" class="tab-panel">
+      <div class="main-grid">
+
+        <!-- INPUTS CARD -->
+        <section class="card">
+          <div class="card-header">
+            <h2>Inputs</h2>
+            <span class="badge">Parametric Estimate</span>
+          </div>
+          <div class="card-body">
+            <div class="form-grid">
+
+              <div class="field full">
+                <label for="family">Fastener Type</label>
+                <select id="family">
+                  <option value="hex_cap">Hex Cap Screw / Hex Bolt</option>
+                  <option value="hex_flange">Hex Flange Bolt</option>
+                  <option value="socket_head">Socket Head Cap Screw</option>
+                  <option value="button_head">Button Head Screw</option>
+                  <option value="flat_head">Flat Head / Countersunk Screw</option>
+                  <option value="set_screw">Set Screw</option>
+                  <option value="hex_nut">Hex Nut</option>
+                  <option value="flange_nut">Flange Nut</option>
+                  <option value="lock_nut">Prevailing Torque / Lock Nut</option>
+                  <option value="flat_washer">Flat Washer</option>
+                  <option value="split_lock_washer">Split Lock Washer</option>
+                </select>
+                <div class="hint">Choose the closest geometry. More styles can be added by defining a new head or body formula.</div>
+              </div>
+
+              <div class="field">
+                <label for="material">Material</label>
+                <select id="material">
+                  <option value="7.85">Steel / Alloy Steel -- 7.85 g/cm3</option>
+                  <option value="7.90">Stainless Steel -- 7.90 g/cm3</option>
+                  <option value="8.50">Brass -- 8.50 g/cm3</option>
+                  <option value="2.70">Aluminum -- 2.70 g/cm3</option>
+                  <option value="4.43">Titanium -- 4.43 g/cm3</option>
+                  <option value="custom">Custom Density</option>
+                </select>
+              </div>
+
+              <div class="field" id="customDensityWrap">
+                <label for="customDensity">Custom Density, g/cm3</label>
+                <input id="customDensity" type="number" step="0.01" value="7.85" />
+              </div>
+
+              <div class="field">
+                <label for="series">Thread Series</label>
+                <select id="series">
+                  <option value="metric">Metric</option>
+                  <option value="inch">Inch</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="threadSize">Thread Size</label>
+                <select id="threadSize"></select>
+              </div>
+
+              <div class="field lengthOnly">
+                <label for="length">Length, <span class="unitLabel">mm</span> <span class="info" data-tip="Nominal fastener length. For hex bolts and cap screws, measured under the head to tip. For flat head screws, nominal length typically includes the head height. For set screws, full body length. Switch to Inch series to enter and display in inches.">i</span></label>
+                <input id="length" type="number" step="0.001" value="25" />
+              </div>
+
+              <div class="field lengthOnly" id="threadedLengthWrap">
+                <label for="threadedLength">Threaded Length, <span class="unitLabel">mm</span> <span class="info" data-tip="Optional. Leave blank or zero to treat the fastener as fully threaded. For partially threaded bolts enter only the threaded portion. The unthreaded shank is calculated at the major diameter; the threaded section uses the effective (pitch) diameter for a more accurate volume.">i</span></label>
+                <input id="threadedLength" type="number" step="0.001" placeholder="Optional -- defaults to full length" />
+                <div class="hint">Leave blank for fully threaded.</div>
+              </div>
+
+              <div class="field">
+                <label for="quantity">Quantity <span class="info" data-tip="Number of pieces for the total quantity weight calculation. Does not affect per-piece, per-100, or per-1000 results.">i</span></label>
+                <input id="quantity" type="number" step="1" value="1000" />
+              </div>
+
+              <div class="field">
+                <label for="coatingAdder">Coating / Plating Adder, % <span class="info" data-tip="Adds a percentage to the bare metal weight to account for coating or plating mass. Typical guidance: Clear zinc electroplate 0.1 to 0.3%, hot-dip galvanize 3 to 6%, mechanical zinc 1 to 2%, black oxide less than 0.1%, nylon patch or pellet 0.3 to 1%, dacromet or geomet 0.2 to 0.5%. Use 0 for bare or passivated parts.">i</span></label>
+                <input id="coatingAdder" type="number" step="0.1" value="0" />
+              </div>
+
+              <div class="field geometry boltGeo">
+                <label for="headAF">Head Across Flats, <span class="unitLabel">mm</span> <span class="info" data-tip="Width across flats (wrench size). Loaded from thread defaults. Override with measured or print value. For hex bolts: ASME B18.2.1 and ISO 4014 specify maximum and minimum AF. Using nominal AF is acceptable for estimates.">i</span></label>
+                <input id="headAF" type="number" step="0.001" value="10" />
+                <div class="hint">Loaded from thread defaults. Override if known.</div>
+              </div>
+
+              <div class="field geometry boltGeo">
+                <label for="headHeight">Head Height, <span class="unitLabel">mm</span> <span class="info" data-tip="Distance from bearing face to top of head. Loaded from thread defaults. For hex cap screws this is the k dimension per ASME B18.2.1 or ISO 4014. For heavy hex bolts, head height is greater than standard hex.">i</span></label>
+                <input id="headHeight" type="number" step="0.001" value="4" />
+                <div class="hint">Loaded from thread defaults. Override if known.</div>
+              </div>
+
+              <div class="field geometry roundHeadGeo">
+                <label for="headDiameter">Head Diameter, <span class="unitLabel">mm</span> <span class="info" data-tip="Outer diameter of the cylindrical or domed head. For socket head cap screws, this is the dk dimension. For button heads, the overall head diameter. Loaded from thread defaults as 1.75 x major diameter.">i</span></label>
+                <input id="headDiameter" type="number" step="0.001" value="10" />
+                <div class="hint">Loaded from thread defaults. Override if known.</div>
+              </div>
+
+              <div class="field geometry roundHeadGeo">
+                <label for="roundHeadHeight">Head Height, <span class="unitLabel">mm</span> <span class="info" data-tip="Total head height from bearing face to top. For socket head cap screws, this is the k dimension. For button heads, the head height is much lower. For flat/countersunk heads, this is the head depth before the shank. Loaded from thread defaults as 0.55 x major diameter.">i</span></label>
+                <input id="roundHeadHeight" type="number" step="0.001" value="3" />
+                <div class="hint">Loaded from thread defaults. Override if known.</div>
+              </div>
+
+              <div class="field geometry flangeGeo">
+                <label for="flangeDiameter">Flange Diameter, <span class="unitLabel">mm</span> <span class="info" data-tip="Overall flange outer diameter including any serrations. For hex flange bolts, this is the dc dimension. For flange nuts, the bearing flange OD. Loaded from thread defaults as 2.35 x major diameter.">i</span></label>
+                <input id="flangeDiameter" type="number" step="0.001" value="14.2" />
+                <div class="hint">Loaded from thread defaults. Override if known.</div>
+              </div>
+
+              <div class="field geometry flangeGeo">
+                <label for="flangeThickness">Flange Thickness, <span class="unitLabel">mm</span> <span class="info" data-tip="Thickness of the flange disk below the hex body, not including the hex itself. Estimated as 0.25 x major diameter by default. Flange serrations add a small amount not captured here.">i</span></label>
+                <input id="flangeThickness" type="number" step="0.001" value="1.5" />
+                <div class="hint">Loaded from thread defaults. Override if known.</div>
+              </div>
+
+              <div class="field geometry socketGeo">
+                <label for="socketDiameter">Socket / Drive Diameter, <span class="unitLabel">mm</span> <span class="info" data-tip="Diameter of the hex or other drive recess, used to subtract the drive void from head volume. For socket head cap screws, this is the hex key size (s dimension). Loaded from thread defaults as 0.60 x major diameter.">i</span></label>
+                <input id="socketDiameter" type="number" step="0.001" value="4" />
+                <div class="hint">Loaded from thread defaults. Override if known.</div>
+              </div>
+
+              <div class="field geometry socketGeo">
+                <label for="socketDepth">Socket / Drive Depth, <span class="unitLabel">mm</span> <span class="info" data-tip="Depth of the hex socket or drive recess into the head. Used to subtract the drive void. Loaded from thread defaults as 0.50 x major diameter.">i</span></label>
+                <input id="socketDepth" type="number" step="0.001" value="3" />
+                <div class="hint">Loaded from thread defaults. Override if known.</div>
+              </div>
+
+              <div class="field geometry nutGeo">
+                <label for="nutAF">Nut Across Flats, <span class="unitLabel">mm</span> <span class="info" data-tip="Width across flats (wrench size) of the nut hex body. Loaded from thread defaults. For heavy hex nuts, AF is larger than standard. For thin or jam nuts, AF is usually same but height differs.">i</span></label>
+                <input id="nutAF" type="number" step="0.001" value="10" />
+                <div class="hint">Loaded from thread defaults. Override if known.</div>
+              </div>
+
+              <div class="field geometry nutGeo">
+                <label for="nutHeight">Nut Height, <span class="unitLabel">mm</span> <span class="info" data-tip="Total height (thickness) of the nut including any nylon collar for prevailing torque types. For standard hex nuts this is the m dimension. Thin/jam nuts are roughly 60% of standard height.">i</span></label>
+                <input id="nutHeight" type="number" step="0.001" value="5" />
+                <div class="hint">Loaded from thread defaults. Override if known.</div>
+              </div>
+
+              <div class="field geometry washerGeo">
+                <label for="washerOD">Washer Outside Diameter, <span class="unitLabel">mm</span> <span class="info" data-tip="Outer diameter of the washer. Varies significantly by series: narrow, regular, wide, structural, and hardened washers all have different ODs for the same bolt size. Loaded from thread defaults (regular series estimate).">i</span></label>
+                <input id="washerOD" type="number" step="0.001" value="12" />
+                <div class="hint">Loaded from thread defaults. Override for your series.</div>
+              </div>
+
+              <div class="field geometry washerGeo">
+                <label for="washerID">Washer Inside Diameter, <span class="unitLabel">mm</span> <span class="info" data-tip="Inner bore diameter of the washer. Should be slightly larger than the bolt shank. Clearance varies by standard and hole class.">i</span></label>
+                <input id="washerID" type="number" step="0.001" value="6.4" />
+                <div class="hint">Loaded from thread defaults. Override if known.</div>
+              </div>
+
+              <div class="field geometry washerGeo">
+                <label for="washerThickness">Washer Thickness, <span class="unitLabel">mm</span> <span class="info" data-tip="Axial thickness of the washer. Hardened and structural washers are thicker than standard plain washers. Split lock washers vary by wire gauge.">i</span></label>
+                <input id="washerThickness" type="number" step="0.001" value="1.6" />
+                <div class="hint">Loaded from thread defaults. Override if known.</div>
+              </div>
+
+            </div>
+
+            <div class="btn-row">
+              <button class="btn btn-primary" data-sbs-action="calculate">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="12" y2="18"/></svg>
+                Calculate Weight
+              </button>
+              <button class="btn btn-secondary" data-sbs-action="loadDefaults">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                Load Typical Defaults
+              </button>
+              <button class="btn btn-secondary" data-sbs-action="printTool">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                Print / Save PDF
+              </button>
+            </div>
+
+            <div id="status" class="status">Ready. Adjust inputs and calculate.</div>
+          </div>
+        </section>
+
+        <!-- RESULTS CARD -->
+        <section class="card">
+          <div class="card-header">
+            <h2>Results</h2>
+            <span class="badge" id="selectedLabel">Hex Cap Screw / Hex Bolt</span>
+          </div>
+          <div class="card-body">
+
+            <div class="results-grid">
+              <div class="metric">
+                <div class="label">Weight per Piece</div>
+                <div class="value" id="weightPiece">--</div>
+              </div>
+              <div class="metric">
+                <div class="label">Weight per 100</div>
+                <div class="value" id="weight100">--</div>
+              </div>
+              <div class="metric">
+                <div class="label">Weight per 1,000</div>
+                <div class="value" id="weight1000">--</div>
+              </div>
+              <div class="metric">
+                <div class="label">Qty Weight</div>
+                <div class="value" id="weightQty">--</div>
+              </div>
+            </div>
+
+            <div class="formula-box">
+              <code id="formulaUsed">Select inputs and calculate to see formula detail.</code>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Component</th>
+                    <th>Volume mm3</th>
+                    <th>Included</th>
+                    <th>Comment</th>
+                  </tr>
+                </thead>
+                <tbody id="breakdownBody"></tbody>
+              </table>
+            </div>
+
+            <p class="note">
+              Use this result as an estimate. Exact weight depends on the controlling standard, manufacturer tolerances, chamfers, thread truncation, recess geometry, washer face details, nylon inserts, coating thickness, and lot variation.
+            </p>
+          </div>
+        </section>
+
+      </div>
+    </section>
+
+    <!-- ===== GUIDE TAB ===== -->
+    <section id="guide" class="tab-panel hidden">
+      <div class="panel-card">
+        <h2>Formula Guide</h2>
+        <div class="formula-box" style="margin-bottom:20px;"><code>Weight (g) = Total Volume (mm3) x Density (g/cm3) divided by 1000</code></div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Fastener Family</th><th>Parametric Geometry</th><th>Notes</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Hex Cap / Hex Bolt</td><td>Hex prism head + cylindrical shank + thread-equivalent cylinder</td><td>Hex area factor = 0.6495 x AF squared</td></tr>
+              <tr><td>Hex Flange Bolt</td><td>Hex head + flange disk + body</td><td>Flange recess and washer face are approximated</td></tr>
+              <tr><td>Socket Head Cap Screw</td><td>Cylindrical head minus socket recess + body</td><td>Socket drive is simplified as a cylinder</td></tr>
+              <tr><td>Button / Pan Head</td><td>Dome factor x cylindrical head + body</td><td>Button head default factor = 0.55</td></tr>
+              <tr><td>Flat Head</td><td>Conical/frustum head + body</td><td>Nominal length usually includes the head</td></tr>
+              <tr><td>Set Screw</td><td>Thread-equivalent cylinder minus drive recess</td><td>Point style can be added as a future refinement</td></tr>
+              <tr><td>Hex Nut</td><td>Hex prism minus threaded hole cylinder</td><td>Chamfers are approximated by a small correction factor</td></tr>
+              <tr><td>Flange Nut</td><td>Hex nut + flange ring/disk minus threaded hole</td><td>Flange underside details are approximated</td></tr>
+              <tr><td>Flat Washer</td><td>Annular cylinder</td><td>pi/4 x (OD squared minus ID squared) x thickness</td></tr>
+              <tr><td>Split Lock Washer</td><td>Annular cylinder x correction factor</td><td>Default correction factor = 0.92 for split/gap/helical form</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== DEFAULTS TAB ===== -->
+    <section id="defaults" class="tab-panel hidden">
+      <div class="panel-card">
+        <h2>Default Dimensions Used by Tool</h2>
+        <p class="hint" style="margin-bottom:16px;">Defaults are typical metric/inch relationships for quick estimates. Replace with exact dimensions from ASME, ISO, DIN, IFI, or manufacturer drawings when higher accuracy is required.</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Thread</th><th>Major Dia mm</th><th>Pitch mm</th><th>Hex AF mm</th><th>Hex Head Height mm</th><th>Nut Height mm</th><th>Washer ID mm</th><th>Washer OD mm</th><th>Washer Thk mm</th></tr>
+            </thead>
+            <tbody id="defaultsTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== PRACTICE TAB ===== -->
+    <section id="practice" class="tab-panel hidden">
+      <div class="panel-card">
+        <h2>Best Practice Notes</h2>
+        <div class="note" style="margin-bottom:20px;">
+          <strong>Use the right level of precision.</strong> Parametric formulas are excellent for catalog pages, freight estimates, kit weights, quoting, and rough cost modeling. For final shipping labels, PPAP, inspection, or automated warehouse weight controls, validate with actual scale weights by part number and lot.
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Consideration</th><th>Recommendation</th></tr></thead>
+            <tbody>
+              <tr><td>Material density</td><td>Use alloy-specific density when known. Stainless, brass, aluminum, and titanium can vary by grade.</td></tr>
+              <tr><td>Thread geometry</td><td>Using pitch diameter or thread-equivalent diameter is better than using the full major diameter for fully threaded parts.</td></tr>
+              <tr><td>Coatings</td><td>Most thin electroplated finishes add very little mass, but heavy coatings, hot dip galvanizing, nylon patches, or sealers can matter.</td></tr>
+              <tr><td>Nuts</td><td>Subtract the threaded hole. Apply a correction factor if chamfers, nylon collars, flange serrations, or distorted threads are significant.</td></tr>
+              <tr><td>Washers</td><td>Use actual OD, ID, and thickness. Washer standards can vary significantly by series: narrow, regular, wide, hardened, structural, etc.</td></tr>
+              <tr><td>Standards</td><td>For high confidence, load default dimensions from the controlling standard: ASME B18, ISO, DIN, IFI, ASTM, SAE, or customer print.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== DISCLAIMER ===== -->
+  <footer class="disclaimer">
+    <p><strong>Disclaimer:</strong> Results are parametric estimates intended for catalog, packaging, freight, and quoting purposes. They are not suitable for final inspection acceptance, certified shipping documentation, or quality-controlled weight verification. Actual fastener weight varies by controlling standard, manufacturer tolerance, lot variation, coating, and geometry details. Specialty Bolt and Screw, Inc. assumes no liability for decisions made based on estimated values.</p>
+  </footer>
+
+  <script>
+    var metricThreads = {"M2":{d:2.0,p:0.40,af:4.0,hh:1.4,nutH:1.6,washerID:2.2,washerOD:5.0,washerT:0.3},"M2.5":{d:2.5,p:0.45,af:5.0,hh:1.7,nutH:2.0,washerID:2.7,washerOD:6.0,washerT:0.5},"M3":{d:3.0,p:0.50,af:5.5,hh:2.0,nutH:2.4,washerID:3.2,washerOD:7.0,washerT:0.5},"M4":{d:4.0,p:0.70,af:7.0,hh:2.8,nutH:3.2,washerID:4.3,washerOD:9.0,washerT:0.8},"M5":{d:5.0,p:0.80,af:8.0,hh:3.5,nutH:4.0,washerID:5.3,washerOD:10.0,washerT:1.0},"M6":{d:6.0,p:1.00,af:10.0,hh:4.0,nutH:5.0,washerID:6.4,washerOD:12.0,washerT:1.6},"M8":{d:8.0,p:1.25,af:13.0,hh:5.3,nutH:6.5,washerID:8.4,washerOD:16.0,washerT:1.6},"M10":{d:10.0,p:1.50,af:17.0,hh:6.4,nutH:8.0,washerID:10.5,washerOD:20.0,washerT:2.0},"M12":{d:12.0,p:1.75,af:19.0,hh:7.5,nutH:10.0,washerID:13.0,washerOD:24.0,washerT:2.5},"M16":{d:16.0,p:2.00,af:24.0,hh:10.0,nutH:13.0,washerID:17.0,washerOD:30.0,washerT:3.0},"M20":{d:20.0,p:2.50,af:30.0,hh:12.5,nutH:16.0,washerID:21.0,washerOD:37.0,washerT:3.0}};
+    var inchThreads = {"#4-40":{d:2.845,p:25.4/40,af:6.35,hh:1.90,nutH:2.38,washerID:3.05,washerOD:7.14,washerT:0.81},"#6-32":{d:3.505,p:25.4/32,af:7.94,hh:2.38,nutH:2.78,washerID:3.76,washerOD:8.74,washerT:0.81},"#8-32":{d:4.166,p:25.4/32,af:8.73,hh:2.78,nutH:3.18,washerID:4.50,washerOD:9.53,washerT:0.81},"#10-24":{d:4.826,p:25.4/24,af:9.53,hh:3.18,nutH:3.97,washerID:5.26,washerOD:11.11,washerT:0.81},"1/4-20":{d:6.350,p:25.4/20,af:11.11,hh:4.13,nutH:5.56,washerID:7.14,washerOD:15.88,washerT:1.65},"5/16-18":{d:7.938,p:25.4/18,af:12.70,hh:5.16,nutH:6.75,washerID:8.73,washerOD:17.46,washerT:1.65},"3/8-16":{d:9.525,p:25.4/16,af:14.29,hh:6.15,nutH:7.94,washerID:10.32,washerOD:20.64,washerT:1.65},"1/2-13":{d:12.700,p:25.4/13,af:19.05,hh:7.94,nutH:11.11,washerID:13.49,washerOD:26.99,washerT:2.77},"5/8-11":{d:15.875,p:25.4/11,af:23.81,hh:9.92,nutH:13.49,washerID:17.46,washerOD:34.93,washerT:3.05},"3/4-10":{d:19.050,p:25.4/10,af:28.58,hh:11.91,nutH:15.88,washerID:20.64,washerOD:38.10,washerT:3.40}};
+    var families = {hex_cap:"Hex Cap Screw / Hex Bolt",hex_flange:"Hex Flange Bolt",socket_head:"Socket Head Cap Screw",button_head:"Button Head Screw",flat_head:"Flat Head / Countersunk Screw",set_screw:"Set Screw",hex_nut:"Hex Nut",flange_nut:"Flange Nut",lock_nut:"Prevailing Torque / Lock Nut",flat_washer:"Flat Washer",split_lock_washer:"Split Lock Washer"};
+
+    function g(id){return document.getElementById(id);}
+    function num(id){return parseFloat(g(id).value)||0;}
+    var pi=Math.PI;
+
+    function isInch(){return g("series").value==="inch";}
+
+    // All internal calculations use mm. toMM converts user input to mm.
+    // When series=inch, user types inches; we convert to mm for math, display in inches.
+    function toMM(val){return isInch()?val*25.4:val;}
+    function fromMM(val){return isInch()?val/25.4:val;}
+    function unitLabel(){return isInch()?"in":"mm";}
+    function unitStep(){return isInch()?"0.001":"0.001";}
+    function numMM(id){return toMM(num(id));}  // read field value, convert to mm
+
+    function activeThreadTable(){return isInch()?inchThreads:metricThreads;}
+
+    function populateThreads(){
+      var table=activeThreadTable();
+      var select=g("threadSize");
+      select.innerHTML="";
+      Object.keys(table).forEach(function(key){
+        var opt=document.createElement("option");
+        opt.value=key;
+        opt.textContent=key;
+        select.appendChild(opt);
+      });
+      loadTypicalDefaults();
+    }
+
+    function getDensity(){return g("material").value==="custom"?num("customDensity"):parseFloat(g("material").value);}
+    function threadData(){return activeThreadTable()[g("threadSize").value];}
+    function threadEffectiveDiameter(d,p){return Math.max(d-0.65*p,d*0.70);}
+    function cylVol(d,h){return pi/4*d*d*h;}
+    function hexVol(af,h){return 0.6495*af*af*h;}
+    function annularVol(od,id,t){return pi/4*(od*od-id*id)*t;}
+
+    function updateUnitLabels(){
+      var ul=unitLabel();
+      document.querySelectorAll(".unitLabel").forEach(function(el){el.textContent=ul;});
+    }
+
+    function loadTypicalDefaults(){
+      var td=threadData();
+      if(!td){updateVisibility();return;}
+      var family=g("family").value;
+      var inch=isInch();
+      // td values are always in mm; convert to display unit
+      function disp(mmVal){return inch?parseFloat((mmVal/25.4).toFixed(4)):parseFloat(mmVal.toFixed(2));}
+
+      g("headAF").value=disp(td.af);
+      g("headHeight").value=disp(td.hh);
+      g("nutAF").value=disp(td.af);
+      g("nutHeight").value=disp(td.nutH);
+      g("washerID").value=disp(td.washerID);
+      g("washerOD").value=disp(td.washerOD);
+      g("washerThickness").value=disp(td.washerT);
+      g("headDiameter").value=disp(td.d*1.75);
+      g("roundHeadHeight").value=disp(td.d*0.55);
+      g("socketDiameter").value=disp(td.d*0.60);
+      g("socketDepth").value=disp(td.d*0.50);
+      g("flangeDiameter").value=disp(td.d*2.35);
+      g("flangeThickness").value=disp(td.d*0.25);
+
+      var isNutOrWasher=["hex_nut","flange_nut","lock_nut","flat_washer","split_lock_washer"].indexOf(family)>-1;
+      if(isNutOrWasher){
+        g("length").value="0";
+        g("threadedLength").value="";
+      } else {
+        var curLen=num("length");
+        if(curLen<=0){g("length").value=inch?"1.00":"25.00";}
+        g("threadedLength").value=""; // reset to blank = fully threaded
+      }
+      updateUnitLabels();
+      updateVisibility();
+      calculate();
+    }
+
+    function updateVisibility(){
+      var family=g("family").value;
+      var isNut=["hex_nut","flange_nut","lock_nut"].indexOf(family)>-1;
+      var isWasher=["flat_washer","split_lock_washer"].indexOf(family)>-1;
+      var isBoltHex=["hex_cap","hex_flange"].indexOf(family)>-1;
+      var isRoundHead=["socket_head","button_head","flat_head"].indexOf(family)>-1;
+      var hasFlange=["hex_flange","flange_nut"].indexOf(family)>-1;
+      var hasSocket=["socket_head","set_screw"].indexOf(family)>-1;
+      function show(sel,cond){document.querySelectorAll(sel).forEach(function(el){el.classList.toggle("hidden",!cond);});}
+      show(".lengthOnly",!isNut&&!isWasher);
+      show(".boltGeo",isBoltHex);
+      show(".roundHeadGeo",isRoundHead);
+      show(".flangeGeo",hasFlange);
+      show(".socketGeo",hasSocket);
+      show(".nutGeo",isNut);
+      show(".washerGeo",isWasher);
+      var isCustom=g("material").value==="custom";
+      g("customDensity").disabled=!isCustom;
+      var lbl=g("customDensityWrap").querySelector("label");
+      if(lbl){lbl.classList.toggle("dimmed",!isCustom);}
+      g("selectedLabel").textContent=families[family];
+      updateUnitLabels();
+    }
+
+    function calculate(){
+      updateVisibility();
+      var family=g("family").value;
+      var td=threadData();
+      if(!td)return;
+      var d=td.d; // always mm
+      var p=td.p; // always mm
+      var deff=threadEffectiveDiameter(d,p);
+      var density=getDensity();
+
+      // Read length fields — convert from display unit to mm
+      var lengthMM=numMM("length");
+      // Threaded length: if blank/zero treat as fully threaded
+      var tlRaw=g("threadedLength").value.trim();
+      var threadedLengthMM=(tlRaw===""||parseFloat(tlRaw)<=0)?lengthMM:Math.min(numMM("threadedLength"),lengthMM);
+      var unthreadedLengthMM=Math.max(lengthMM-threadedLengthMM,0);
+
+      var coatingFactor=1+num("coatingAdder")/100;
+      var qty=Math.max(num("quantity"),0);
+      var parts=[];
+      var formula="";
+
+      function addPart(name,vol,included,comment){parts.push({name:name,vol:Math.max(vol,0),included:included,comment:comment});}
+
+      // Head geometry fields — read and convert to mm
+      var headAFmm=numMM("headAF");
+      var headHmm=numMM("headHeight");
+      var headDmm=numMM("headDiameter");
+      var roundHHmm=numMM("roundHeadHeight");
+      var flangeDmm=numMM("flangeDiameter");
+      var flangeTmm=numMM("flangeThickness");
+      var socketDmm=numMM("socketDiameter");
+      var socketDepmm=numMM("socketDepth");
+      var nutAFmm=numMM("nutAF");
+      var nutHmm=numMM("nutHeight");
+      var washerODmm=numMM("washerOD");
+      var washerIDmm=numMM("washerID");
+      var washerTmm=numMM("washerThickness");
+
+      var bodyVol=cylVol(d,unthreadedLengthMM)+cylVol(deff,threadedLengthMM);
+
+      if(family==="hex_cap"){
+        addPart("Hex head",hexVol(headAFmm,headHmm),true,"0.6495 x AF2 x head height");
+        addPart("Body",bodyVol,true,"Shank at major diameter + thread section at effective diameter");
+        formula="Hex cap = hex head + unthreaded shank + thread-equivalent cylinder";
+      }
+      if(family==="hex_flange"){
+        addPart("Hex head",hexVol(headAFmm,headHmm),true,"0.6495 x AF2 x head height");
+        addPart("Flange",cylVol(flangeDmm,flangeTmm),true,"Simplified flange disk");
+        addPart("Body",bodyVol,true,"Shank at major diameter + thread section at effective diameter");
+        formula="Hex flange bolt = hex head + flange disk + body";
+      }
+      if(family==="socket_head"){
+        addPart("Cylindrical head",cylVol(headDmm,roundHHmm),true,"pi/4 x head diameter2 x head height");
+        addPart("Socket recess",-cylVol(socketDmm,socketDepmm),true,"Subtracted as simplified cylinder");
+        addPart("Body",bodyVol,true,"Shank at major diameter + thread section at effective diameter");
+        formula="Socket head = cylindrical head minus socket recess + body";
+      }
+      if(family==="button_head"){
+        addPart("Button head",0.55*cylVol(headDmm,roundHHmm),true,"Dome factor 0.55 x cylinder volume");
+        addPart("Body",bodyVol,true,"Shank at major diameter + thread section at effective diameter");
+        formula="Button head = dome factor x head cylinder + body";
+      }
+      if(family==="flat_head"){
+        addPart("Countersunk head",(1/3)*cylVol(headDmm,roundHHmm),true,"Cone approximation");
+        addPart("Body",bodyVol,true,"Length treatment depends on standard/print convention");
+        formula="Flat head = countersunk cone approximation + body";
+      }
+      if(family==="set_screw"){
+        addPart("Threaded body",cylVol(deff,lengthMM),true,"Fully threaded equivalent cylinder");
+        addPart("Drive recess",-cylVol(socketDmm,socketDepmm),true,"Subtracted as simplified cylinder");
+        formula="Set screw = thread-equivalent cylinder minus drive recess";
+      }
+      if(family==="hex_nut"||family==="lock_nut"||family==="flange_nut"){
+        var correction=family==="lock_nut"?1.08:0.94;
+        addPart("Hex nut body",hexVol(nutAFmm,nutHmm)*correction,true,family==="lock_nut"?"Includes estimated added collar/locking feature":"Includes approximate chamfer correction");
+        addPart("Threaded hole",-cylVol(deff,nutHmm),true,"Subtracted using thread effective diameter");
+        if(family==="flange_nut"){addPart("Flange",cylVol(flangeDmm,flangeTmm),true,"Simplified flange disk");}
+        formula=family==="flange_nut"?"Flange nut = corrected hex nut minus threaded hole + flange":"Nut = corrected hex prism minus threaded hole";
+      }
+      if(family==="flat_washer"||family==="split_lock_washer"){
+        var correction=family==="split_lock_washer"?0.92:1.00;
+        addPart("Washer ring",annularVol(washerODmm,washerIDmm,washerTmm)*correction,true,family==="split_lock_washer"?"Split/helical washer correction factor 0.92":"Annular cylinder");
+        formula=family==="split_lock_washer"?"Split lock washer = annular cylinder x split correction":"Flat washer = pi/4 x (OD2 minus ID2) x thickness";
+      }
+
+      var volume=parts.reduce(function(sum,part){return sum+part.vol;},0);
+      volume=Math.max(volume,0)*coatingFactor;
+      var gramsEach=volume*density/1000;
+      var grams100=gramsEach*100;
+      var kg1000=gramsEach;
+      var kgQty=gramsEach*qty/1000;
+
+      g("weightPiece").textContent=gramsEach.toFixed(3)+" g";
+      g("weight100").textContent=grams100.toFixed(1)+" g";
+      g("weight1000").textContent=kg1000.toFixed(3)+" kg";
+      g("weightQty").textContent=kgQty.toFixed(3)+" kg";
+
+      var ul=unitLabel();
+      var dispLen=fromMM(lengthMM).toFixed(3);
+      var dispTL=threadedLengthMM<lengthMM?fromMM(threadedLengthMM).toFixed(3)+" "+ul+" threaded":"fully threaded";
+      g("formulaUsed").textContent=formula+"\n\nMajor diameter D = "+d.toFixed(3)+" mm\nPitch = "+p.toFixed(3)+" mm\nThread effective diameter Deff approx D minus 0.65P = "+deff.toFixed(3)+" mm\nInput length = "+dispLen+" "+ul+" ("+dispTL+")\nDensity = "+density.toFixed(2)+" g/cm3\nCoating/plating adder = "+num("coatingAdder").toFixed(1)+"%\nTotal adjusted volume = "+volume.toFixed(2)+" mm3";
+
+      var tbody=g("breakdownBody");
+      tbody.innerHTML="";
+      parts.forEach(function(part){
+        var tr=document.createElement("tr");
+        tr.innerHTML="<td>"+part.name+"</td><td>"+part.vol.toFixed(2)+"</td><td>"+(part.included?"Yes":"No")+"</td><td>"+part.comment+"</td>";
+        tbody.appendChild(tr);
+      });
+      g("status").textContent="Calculated "+families[family]+" using "+g("threadSize").value+" and selected material density.";
+    }
+
+    function buildDefaultsTable(){
+      var tbody=g("defaultsTable");
+      tbody.innerHTML="";
+      var all=Object.assign({},metricThreads,inchThreads);
+      Object.entries(all).forEach(function(entry){
+        var key=entry[0];var v=entry[1];
+        var tr=document.createElement("tr");
+        tr.innerHTML="<td>"+key+"</td><td>"+v.d.toFixed(3)+"</td><td>"+v.p.toFixed(3)+"</td><td>"+v.af.toFixed(2)+"</td><td>"+v.hh.toFixed(2)+"</td><td>"+v.nutH.toFixed(2)+"</td><td>"+v.washerID.toFixed(2)+"</td><td>"+v.washerOD.toFixed(2)+"</td><td>"+v.washerT.toFixed(2)+"</td>";
+        tbody.appendChild(tr);
+      });
+    }
+
+    document.addEventListener("click",function(e){
+      var el=e.target;var action=null;
+      for(var i=0;i<6;i++){
+        if(!el||el===document.body)break;
+        if(el.getAttribute&&el.getAttribute("data-sbs-action")){action=el.getAttribute("data-sbs-action");break;}
+        el=el.parentNode;
+      }
+      if(action==="calculate"){calculate();}
+      else if(action==="loadDefaults"){loadTypicalDefaults();}
+      else if(action==="printTool"){window.print();}
+    });
+
+    document.addEventListener("change",function(e){
+      var id=e.target&&e.target.id;
+      if(id==="series"){populateThreads();}
+      else if(id==="threadSize"||id==="family"){loadTypicalDefaults();}
+      else{updateVisibility();calculate();}
+    });
+
+    document.addEventListener("input",function(e){calculate();});
+
+    document.querySelectorAll(".tab-btn").forEach(function(btn){
+      btn.addEventListener("click",function(){
+        document.querySelectorAll(".tab-btn").forEach(function(b){b.classList.remove("active");});
+        btn.classList.add("active");
+        document.querySelectorAll(".tab-panel").forEach(function(panel){panel.classList.add("hidden");});
+        g(btn.dataset.tab).classList.remove("hidden");
+      });
+    });
+
+    populateThreads();
+    buildDefaultsTable();
+    updateVisibility();
+    calculate();
+
+    var header=document.querySelector(".sbs-header");
+    var navTabs=document.getElementById("navTabs");
+    function setTabsTop(){if(header&&navTabs){navTabs.style.top=header.offsetHeight+"px";}}
+    setTabsTop();
+    window.addEventListener("resize",setTabsTop);
+</script>
+</body>
+</html>
