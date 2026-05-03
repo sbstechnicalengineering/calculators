@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Lookup Tool</title>
+  <title>Sheet Viewer</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,wght@0,300;0,600;1,300&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -23,7 +23,7 @@
       font-family: 'DM Mono', monospace;
       min-height: 100vh;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
       padding: 2rem;
     }
@@ -31,6 +31,7 @@
     .wrap {
       width: 100%;
       max-width: 420px;
+      padding-top: 2rem;
     }
 
     .label {
@@ -52,10 +53,7 @@
       margin-bottom: 0.25rem;
     }
 
-    h1 em {
-      font-style: italic;
-      color: var(--accent);
-    }
+    h1 em { font-style: italic; color: var(--accent); }
 
     .subtitle {
       font-size: 0.72rem;
@@ -72,87 +70,109 @@
       box-shadow: 4px 4px 0px var(--border);
     }
 
-    .input-row {
+    .search-row {
       display: flex;
       gap: 0.75rem;
-      align-items: stretch;
+      align-items: center;
+      margin-bottom: 1.25rem;
     }
 
-    input[type="number"] {
+    .search-input {
       flex: 1;
       font-family: 'DM Mono', monospace;
-      font-size: 1.4rem;
-      padding: 0.6rem 0.8rem;
+      font-size: 0.85rem;
+      padding: 0.55rem 0.8rem;
       border: 1.5px solid var(--border);
       border-radius: 3px;
       background: var(--bg);
       color: var(--ink);
       outline: none;
       transition: border-color 0.15s;
-      -moz-appearance: textfield;
     }
-    input[type="number"]::-webkit-outer-spin-button,
-    input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
-    input[type="number"]:focus { border-color: var(--accent); }
+    .search-input:focus { border-color: var(--accent); }
+    .search-input::placeholder { color: var(--muted); }
 
-    button {
+    .refresh-btn {
       font-family: 'DM Mono', monospace;
-      font-size: 0.78rem;
+      font-size: 0.72rem;
       font-weight: 500;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      padding: 0.6rem 1.2rem;
+      padding: 0.55rem 1rem;
       background: var(--accent);
       color: #fff;
       border: none;
       border-radius: 3px;
       cursor: pointer;
       transition: opacity 0.15s, transform 0.1s;
+      white-space: nowrap;
     }
-    button:hover { opacity: 0.88; }
-    button:active { transform: scale(0.97); }
-    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    .refresh-btn:hover { opacity: 0.88; }
+    .refresh-btn:active { transform: scale(0.97); }
+    .refresh-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
-    .result-box {
-      margin-top: 1.5rem;
-      min-height: 3.5rem;
-      display: flex;
-      align-items: center;
-      border-top: 1px dashed var(--border);
-      padding-top: 1.25rem;
+    .row-count {
+      font-size: 0.62rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      min-height: 1rem;
+      margin-bottom: 0.6rem;
     }
 
-    .result-label {
-      font-size: 0.65rem;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    thead tr { border-bottom: 2px solid var(--ink); }
+    thead th {
+      font-size: 0.62rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--muted);
-      margin-right: 1rem;
-      white-space: nowrap;
+      text-align: left;
+      padding: 0 0 0.6rem;
     }
+    thead th.right { text-align: right; }
 
-    .result-value {
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.1s;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: var(--bg); }
+
+    td { padding: 0.65rem 0; }
+    td.num {
+      font-size: 0.75rem;
+      color: var(--muted);
+      width: 3.5rem;
+    }
+    td.word {
       font-family: 'Fraunces', serif;
-      font-size: 1.9rem;
+      font-size: 1.15rem;
       font-weight: 300;
       font-style: italic;
+      text-align: right;
       color: var(--ink);
-      transition: opacity 0.2s;
     }
 
-    .result-value.error {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.78rem;
-      font-style: normal;
+    .empty-state, .loading-state, .error-state {
+      font-size: 0.75rem;
       color: var(--muted);
+      text-align: center;
+      padding: 2rem 0;
     }
+    .error-state { color: var(--accent); }
 
     .spinner {
-      width: 18px; height: 18px;
+      display: inline-block;
+      width: 16px; height: 16px;
       border: 2px solid var(--border);
       border-top-color: var(--accent);
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 0.4rem;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
@@ -172,115 +192,110 @@
       border-radius: 50%;
       animation: pulse 2s ease-in-out infinite;
     }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    mark {
+      background: #ffe58a;
+      border-radius: 2px;
+      padding: 0 1px;
+      font-style: normal;
     }
   </style>
 </head>
 <body>
 <div class="wrap">
   <div class="label">Live Sheet</div>
-  <h1>Look<em>up</em></h1>
-  <p class="subtitle">Enter a number — fetch the value from Google Sheets</p>
+  <h1>All <em>Results</em></h1>
+  <p class="subtitle">Auto-loads from Google Sheets — filter or refresh anytime</p>
 
   <div class="card">
-    <div class="input-row">
-      <input type="number" id="numInput" placeholder="1" min="1" />
-      <button id="lookupBtn" onclick="doLookup()">Go</button>
+    <div class="search-row">
+      <input class="search-input" id="searchInput" type="text" placeholder="Filter by number or word…" oninput="filterTable()" />
+      <button class="refresh-btn" id="refreshBtn" onclick="loadSheet()">↻ Refresh</button>
     </div>
 
-    <div class="result-box" id="resultBox">
-      <span class="result-label">Result</span>
-      <span class="result-value error" id="resultVal">—</span>
-    </div>
+    <div class="row-count" id="rowCount"></div>
+    <div id="tableWrap"><div class="loading-state"><span class="spinner"></span>Loading…</div></div>
   </div>
 
-  <div class="live-badge">
-    <span class="live-dot"></span>
-    Live from Google Sheets
-  </div>
+  <div class="live-badge"><span class="live-dot"></span>Live from Google Sheets</div>
 </div>
 
 <script>
   const SHEET_ID = '1GRaECPcnF1aqRV84aSHhSphdUzgfiT--puQfyfEC3KA';
-  const INPUT_COL  = 0; // Column A (Input numbers)
-  const OUTPUT_COL = 1; // Column B (Output words)
+  let allRows = [];
 
-  const btn = document.getElementById('lookupBtn');
-  const resultVal = document.getElementById('resultVal');
-  const resultBox = document.getElementById('resultBox');
-  const numInput = document.getElementById('numInput');
+  async function loadSheet() {
+    const btn = document.getElementById('refreshBtn');
+    const wrap = document.getElementById('tableWrap');
+    btn.disabled = true;
+    wrap.innerHTML = '<div class="loading-state"><span class="spinner"></span>Loading…</div>';
+    document.getElementById('rowCount').textContent = '';
 
-  numInput.addEventListener('keydown', e => { if (e.key === 'Enter') doLookup(); });
-
-  function setResult(text, isError = false) {
-    resultVal.className = 'result-value' + (isError ? ' error' : '');
-    resultVal.textContent = text;
-  }
-
-  function setLoading(on) {
-    btn.disabled = on;
-    if (on) {
-      resultBox.innerHTML = '<span class="result-label">Result</span><div class="spinner"></div>';
-    } else {
-      resultBox.innerHTML = '<span class="result-label">Result</span><span class="result-value error" id="resultVal">—</span>';
-    }
-  }
-
-  async function doLookup() {
-    const num = numInput.value.trim();
-    if (!num) {
-      setLoading(false);
-      document.getElementById('resultVal').className = 'result-value error';
-      document.getElementById('resultVal').textContent = 'Enter a number first';
-      return;
-    }
-
-    setLoading(true);
-
-    // CSV export endpoint — no CORS issues, works with "Published to web"
     const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`;
 
     try {
       const res = await fetch(url);
       if (!res.ok) throw new Error('Fetch failed');
       const text = await res.text();
+      const lines = text.trim().split('\n');
+      allRows = [];
 
-      // Parse CSV rows
-      const rows = text.trim().split('\n').map(r => r.split(','));
-
-      const target = parseInt(num, 10);
-      let found = null;
-
-      // Skip header row (row 0 = "Input, Output")
-      for (let i = 1; i < rows.length; i++) {
-        const colA = parseInt(rows[i][0], 10);
-        const colB = rows[i][1] ? rows[i][1].trim() : null;
-        if (colA === target && colB) {
-          found = colB;
-          break;
-        }
+      for (let i = 1; i < lines.length; i++) {
+        const parts = lines[i].split(',');
+        const num  = parts[0] ? parts[0].trim() : '';
+        const word = parts[1] ? parts[1].trim() : '';
+        if (num && word) allRows.push({ num, word });
       }
 
-      setLoading(false);
-      const rv = document.getElementById('resultVal');
-      if (found !== null) {
-        rv.className = 'result-value';
-        rv.textContent = found;
-      } else {
-        rv.className = 'result-value error';
-        rv.textContent = `No row found for ${target}`;
-      }
-
+      document.getElementById('searchInput').value = '';
+      renderTable(allRows, '');
     } catch (err) {
-      setLoading(false);
-      const rv = document.getElementById('resultVal');
-      rv.className = 'result-value error';
-      rv.textContent = 'Could not reach sheet — check sharing settings';
+      wrap.innerHTML = '<div class="error-state">Could not reach sheet — check sharing settings</div>';
       console.error(err);
+    } finally {
+      btn.disabled = false;
     }
   }
+
+  function filterTable() {
+    const q = document.getElementById('searchInput').value.trim().toLowerCase();
+    const filtered = allRows.filter(r =>
+      r.num.toLowerCase().includes(q) || r.word.toLowerCase().includes(q)
+    );
+    renderTable(filtered, q);
+  }
+
+  function hl(text, q) {
+    if (!q) return text;
+    const i = text.toLowerCase().indexOf(q);
+    if (i === -1) return text;
+    return text.slice(0, i) + '<mark>' + text.slice(i, i + q.length) + '</mark>' + text.slice(i + q.length);
+  }
+
+  function renderTable(rows, q) {
+    const wrap = document.getElementById('tableWrap');
+    const count = document.getElementById('rowCount');
+
+    count.textContent = rows.length === 0 ? '' :
+      rows.length === allRows.length
+        ? `${rows.length} row${rows.length !== 1 ? 's' : ''}`
+        : `${rows.length} of ${allRows.length} rows`;
+
+    if (rows.length === 0) {
+      wrap.innerHTML = '<div class="empty-state">No matching rows</div>';
+      return;
+    }
+
+    let html = `<table><thead><tr><th>Input</th><th class="right">Output</th></tr></thead><tbody>`;
+    for (const row of rows) {
+      html += `<tr><td class="num">${hl(row.num, q)}</td><td class="word">${hl(row.word, q)}</td></tr>`;
+    }
+    html += '</tbody></table>';
+    wrap.innerHTML = html;
+  }
+
+  loadSheet();
 </script>
 </body>
 </html>
