@@ -55,7 +55,6 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);min-height:100vh;
 .sec-finishes .item-icon{color:#16a085}
 .sec-design .item-icon{color:#d35400}
 .sec-threads .item-icon{color:#c0392b}
-.sec-drives .item-icon{color:#27ae60}
 .sec-quality .item-icon{color:#1D3557}
 .sec-standardization .item-icon{color:#e67e22}
 .sec-procurement .item-icon{color:#2c6e49}
@@ -66,7 +65,6 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);min-height:100vh;
 .sec-finishes .sec-head{background:#16a085}
 .sec-design .sec-head{background:#d35400}
 .sec-threads .sec-head{background:#c0392b}
-.sec-drives .sec-head{background:#27ae60}
 .sec-quality .sec-head{background:#1D3557}
 .sec-standardization .sec-head{background:#e67e22}
 .sec-procurement .sec-head{background:#2c6e49}
@@ -112,6 +110,23 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);min-height:100vh;
   .tooltip-bubble{left:auto;right:0;top:calc(100% + 8px);transform:none;width:260px}
   .tooltip-bubble::before,.tooltip-bubble::after{display:none}
 }
+
+/* SEARCH BAR */
+.search-wrap{margin-bottom:1.1rem;position:relative}
+.search-input{width:100%;padding:0.6rem 1rem 0.6rem 2.5rem;font-family:'Inter',sans-serif;font-size:13px;color:var(--gray-700);background:var(--white);border:2px solid var(--navy);border-radius:6px;outline:none;transition:border 0.15s}
+.search-input:focus{border-color:var(--orange)}
+.search-input::placeholder{color:var(--gray-400);font-style:italic}
+.search-icon{position:absolute;left:0.7rem;top:50%;transform:translateY(-50%);color:var(--gray-400);pointer-events:none}
+.search-icon svg{width:16px;height:16px;display:block}
+.search-clear{display:none;position:absolute;right:0.7rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--gray-400);padding:2px}
+.search-clear:hover{color:var(--gray-600)}
+.search-clear svg{width:14px;height:14px;display:block}
+.search-count{font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;color:var(--orange);text-align:right;margin-top:0.35rem;min-height:1rem}
+/* search highlight */
+.items li.search-match a,.items li.search-match span{font-weight:700}
+.items li.search-match a{color:var(--navy)}
+.items li.search-hidden{display:none}
+.section.search-section-empty{display:none}
 </style>
 </head>
 <body>
@@ -140,8 +155,14 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);min-height:100vh;
 <div class="page-wrap">
   <div class="page-label">SBS Technical Resources — Tools and Calculators Directory</div>
 
-  <div class="tools-grid">
+  <div class="search-wrap">
+    <span class="search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+    <input class="search-input" id="toolSearch" type="text" placeholder="Search tools and calculators..." autocomplete="off">
+    <button class="search-clear" id="searchClear" data-sbs-action="clearSearch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div>
+  <div class="search-count" id="searchCount"></div>
 
+  <div class="tools-grid" id="toolsGrid">
     <!-- CONVERSION -->
     <div class="section sec-conversion">
       <div class="sec-head"><span class="sec-dot"></span><span>Conversion</span></div>
@@ -432,9 +453,9 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);min-height:100vh;
       </ul>
     </div>
 
-    <!-- THREADS -->
+    <!-- THREADS AND DRIVES -->
     <div class="section sec-threads">
-      <div class="sec-head"><span class="sec-dot"></span><a href="https://shop.specialtybolt.com/technical/threads-and-thread-forms">Threads</a></div>
+      <div class="sec-head"><span class="sec-dot"></span><a href="https://shop.specialtybolt.com/technical/threads-and-thread-forms">Threads and Drives</a></div>
       <ul class="items">
         <li>
           <div class="tooltip-wrap">
@@ -501,13 +522,6 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);min-height:100vh;
             </div>
           </div>
         </li>
-      </ul>
-    </div>
-
-    <!-- DRIVES -->
-    <div class="section sec-drives">
-      <div class="sec-head"><span class="sec-dot"></span><a href="https://shop.specialtybolt.com/technical/drives">Drives</a></div>
-      <ul class="items">
         <li>
           <div class="tooltip-wrap">
             <a href="https://shop.specialtybolt.com/tool/drive_size" target="_blank">
@@ -554,19 +568,6 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);min-height:100vh;
             </div>
           </div>
         </li>
-        <li><span><svg class="item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Torque Audit and Residual Torque Interpreter</span></li>
-        <li>
-          <div class="tooltip-wrap">
-            <span>
-              <svg class="item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-              Testing Requirements
-            </span>
-            <div class="tooltip-bubble">
-              <div class="tooltip-title">Fastener Testing Requirements</div>
-              <div class="tooltip-body">Provides guidance on the mechanical, dimensional, and performance tests required to validate fasteners against applicable standards. Outlines common tests such as tensile, proof load, hardness, torque-tension, and coating performance, helping ensure compliance, quality assurance, and reliable in-service performance.</div>
-            </div>
-          </div>
-        </li>
         <li>
           <div class="tooltip-wrap">
             <a href="https://shop.specialtybolt.com/technical/consensusstandardslibrary" target="_blank">
@@ -595,13 +596,14 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);min-height:100vh;
         </li>
         <li>
           <div class="tooltip-wrap">
-            <span>
+            <a href="https://shop.specialtybolt.com/technical/ppap-library" target="_blank">
               <svg class="item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
               SBS PPAP Library and Signed PSW Directory (SBS Only)
-            </span>
+            </a>
             <div class="tooltip-bubble">
               <div class="tooltip-title">SBS PPAP Library and Signed PSW Directory</div>
               <div class="tooltip-body">Provides centralized access to Production Part Approval Process (PPAP) documentation and approved Part Submission Warrants (PSWs). Enables SBS teams to quickly retrieve validated records, ensuring compliance, traceability, and efficient support of customer, quality, and audit requirements. For internal SBS use only.</div>
+              <a href="https://shop.specialtybolt.com/technical/ppap-library" target="_blank" class="tooltip-link">Open Tool <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
             </div>
           </div>
         </li>
@@ -615,6 +617,19 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);min-height:100vh;
               <div class="tooltip-title">Inspection Records Directory</div>
               <div class="tooltip-body">Provides centralized access to inspection reports and quality records for SBS parts and processes. Enables teams to quickly retrieve dimensional results, certifications, and verification data, supporting traceability, compliance, audits, and efficient resolution of quality inquiries. For internal SBS use only.</div>
               <a href="https://shop.specialtybolt.com/technical/inspection-records" target="_blank" class="tooltip-link">Open Tool <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+            </div>
+          </div>
+        </li>
+        <li><span><svg class="item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Torque Audit and Residual Torque Interpreter</span></li>
+        <li>
+          <div class="tooltip-wrap">
+            <span>
+              <svg class="item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              Testing Requirements
+            </span>
+            <div class="tooltip-bubble">
+              <div class="tooltip-title">Fastener Testing Requirements</div>
+              <div class="tooltip-body">Provides guidance on the mechanical, dimensional, and performance tests required to validate fasteners against applicable standards. Outlines common tests such as tensile, proof load, hardness, torque-tension, and coating performance, helping ensure compliance, quality assurance, and reliable in-service performance.</div>
             </div>
           </div>
         </li>
@@ -666,6 +681,51 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);min-height:100vh;
       </ul>
     </div>
 
+    <!-- COMPLIANCE AND REGULATORY -->
+    <div class="section sec-compliance">
+      <div class="sec-head"><span class="sec-dot"></span><span>Compliance and Regulatory</span></div>
+      <ul class="items">
+        <li>
+          <div class="tooltip-wrap">
+            <a href="https://shop.specialtybolt.com/technical/rohsreachprop65" target="_blank">
+              <svg class="item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              RoHS and REACH Material Compliance Checker
+            </a>
+            <div class="tooltip-bubble">
+              <div class="tooltip-title">RoHS, REACH and Prop 65 Material Compliance Checker</div>
+              <div class="tooltip-body">Helps evaluate materials and components against key environmental and regulatory requirements, including RoHS, REACH, and California Proposition 65. Supports identification of restricted substances and compliance risks, enabling informed material selection, regulatory alignment, and responsible product stewardship.</div>
+              <a href="https://shop.specialtybolt.com/technical/rohsreachprop65" target="_blank" class="tooltip-link">Open Tool <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+            </div>
+          </div>
+        </li>
+        <li>
+          <div class="tooltip-wrap">
+            <a href="https://shop.specialtybolt.com/technical/hts-code-calculator" target="_blank">
+              <svg class="item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+              HTS Calculator
+            </a>
+            <div class="tooltip-bubble">
+              <div class="tooltip-title">SBS HTS Code Calculator</div>
+              <div class="tooltip-body">Helps importers, purchasing teams, and logistics professionals quickly identify the correct Harmonized Tariff Schedule codes and U.S. duty rates for fasteners and industrial hardware, without manually searching government tariff schedules. Type a keyword such as hex bolt or stainless nut and instantly see every matching code with its General duty rate, Column 2 rate, and full classification description, drawn from official 2026 data across the chapters most relevant to Specialty Bolt and Screw.</div>
+              <a href="https://shop.specialtybolt.com/technical/hts-code-calculator" target="_blank" class="tooltip-link">Open Tool <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+            </div>
+          </div>
+        </li>
+        <li>
+          <div class="tooltip-wrap">
+            <span>
+              <svg class="item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              Duty and Tariff Calculator
+            </span>
+            <div class="tooltip-bubble">
+              <div class="tooltip-title">Duty, Freight and Tariff Calculator</div>
+              <div class="tooltip-body">Helps estimate total landed cost by combining product duties, tariffs, and freight expenses into one analysis. Supports better sourcing and purchasing decisions by factoring in HTS classification, country of origin, shipping cost, and trade impacts to provide a clearer view of true delivered cost.</div>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+
     <!-- PROCUREMENT -->
     <div class="section sec-procurement">
       <div class="sec-head"><span class="sec-dot"></span><span>Procurement</span></div>
@@ -683,53 +743,22 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);min-height:100vh;
             </div>
           </div>
         </li>
+        <li>
+          <div class="tooltip-wrap">
+            <a href="https://shop.specialtybolt.com/technical/leadtimecalc" target="_blank">
+              <svg class="item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="8.01" y2="14"/><line x1="12" y1="14" x2="12.01" y2="14"/></svg>
+              Lead Time Calculator
+            </a>
+            <div class="tooltip-bubble">
+              <div class="tooltip-title">Lead Time Calculator</div>
+              <div class="tooltip-body">Calculate lead times based on calendar days, business days, and ISO week reference. Helps procurement and planning teams determine accurate delivery timelines and communicate realistic schedules across suppliers and customers.</div>
+              <a href="https://shop.specialtybolt.com/technical/leadtimecalc" target="_blank" class="tooltip-link">Open Tool <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+            </div>
+          </div>
+        </li>
         <li><span><svg class="item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Lead Time and Reorder Point Calculator</span></li>
         <li><span><svg class="item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>Total Cost of Ownership Estimator</span></li>
         <li><span><svg class="item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Freight and Minimum Order Optimizer</span></li>
-      </ul>
-    </div>
-
-    <!-- COMPLIANCE AND REGULATORY -->
-    <div class="section sec-compliance">
-      <div class="sec-head"><span class="sec-dot"></span><span>Compliance and Regulatory</span></div>
-      <ul class="items">
-        <li>
-          <div class="tooltip-wrap">
-            <span>
-              <svg class="item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-              RoHS and REACH Material Compliance Checker
-            </span>
-            <div class="tooltip-bubble">
-              <div class="tooltip-title">RoHS, REACH and Prop 65 Material Compliance Checker</div>
-              <div class="tooltip-body">Helps evaluate materials and components against key environmental and regulatory requirements, including RoHS, REACH, and California Proposition 65. Supports identification of restricted substances and compliance risks, enabling informed material selection, regulatory alignment, and responsible product stewardship.</div>
-            </div>
-          </div>
-        </li>
-        <li>
-          <div class="tooltip-wrap">
-            <span>
-              <svg class="item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-              Duty and Tariff Calculator
-            </span>
-            <div class="tooltip-bubble">
-              <div class="tooltip-title">Duty, Freight and Tariff Calculator</div>
-              <div class="tooltip-body">Helps estimate total landed cost by combining product duties, tariffs, and freight expenses into one analysis. Supports better sourcing and purchasing decisions by factoring in HTS classification, country of origin, shipping cost, and trade impacts to provide a clearer view of true delivered cost.</div>
-            </div>
-          </div>
-        </li>
-        <li>
-          <div class="tooltip-wrap">
-            <a href="https://shop.specialtybolt.com/technical/hts-code-calculator" target="_blank">
-              <svg class="item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-              HTS Calculator
-            </a>
-            <div class="tooltip-bubble">
-              <div class="tooltip-title">SBS HTS Code Calculator</div>
-              <div class="tooltip-body">Helps importers, purchasing teams, and logistics professionals quickly identify the correct Harmonized Tariff Schedule codes and U.S. duty rates for fasteners and industrial hardware, without manually searching government tariff schedules. Type a keyword such as hex bolt or stainless nut and instantly see every matching code with its General duty rate, Column 2 rate, and full classification description, drawn from official 2026 data across the chapters most relevant to Specialty Bolt and Screw.</div>
-              <a href="https://shop.specialtybolt.com/technical/hts-code-calculator" target="_blank" class="tooltip-link">Open Tool <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
-            </div>
-          </div>
-        </li>
       </ul>
     </div>
 
@@ -774,6 +803,106 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);min-height:100vh;
   window.addEventListener('resize',positionTooltips);
 })();
 document.addEventListener('click',function(e){var el=e.target;var action=null;for(var i=0;i<6;i++){if(!el||el===document.body)break;if(el.getAttribute&&el.getAttribute('data-sbs-action')){action=el.getAttribute('data-sbs-action');break;}el=el.parentNode;}});
+
+// SEARCH FUNCTIONALITY
+(function(){
+  var input = document.getElementById('toolSearch');
+  var clearBtn = document.getElementById('searchClear');
+  var countEl = document.getElementById('searchCount');
+  if(!input) return;
+
+  // Build index of all list items with their searchable text
+  function getSearchData(){
+    var items = document.querySelectorAll('.items li');
+    var data = [];
+    for(var i=0;i<items.length;i++){
+      var li = items[i];
+      var name = '';
+      var tip = '';
+      var aEl = li.querySelector('a');
+      var spanEl = li.querySelector('span:not(.item-icon)');
+      var el = aEl || spanEl;
+      if(el){ name = el.textContent.replace(/\s+/g,' ').trim(); }
+      var titleEl = li.querySelector('.tooltip-title');
+      var bodyEl = li.querySelector('.tooltip-body');
+      if(titleEl){ tip += titleEl.textContent + ' '; }
+      if(bodyEl){ tip += bodyEl.textContent; }
+      data.push({li:li, text:(name+' '+tip).toLowerCase(), section:li.closest('.section')});
+    }
+    return data;
+  }
+
+  var searchData = null;
+
+  function runSearch(q){
+    if(!searchData){ searchData = getSearchData(); }
+    q = q.trim().toLowerCase();
+
+    if(!q){
+      // reset all
+      for(var i=0;i<searchData.length;i++){
+        searchData[i].li.classList.remove('search-match','search-hidden');
+      }
+      var sections = document.querySelectorAll('.section');
+      for(var s=0;s<sections.length;s++){
+        sections[s].classList.remove('search-section-empty');
+      }
+      countEl.textContent='';
+      clearBtn.style.display='none';
+      return;
+    }
+
+    clearBtn.style.display='block';
+    var tokens = q.split(/\s+/).filter(Boolean);
+    var matchCount = 0;
+    var sectionHits = {};
+
+    for(var i=0;i<searchData.length;i++){
+      var d = searchData[i];
+      var matches = tokens.every(function(t){ return d.text.indexOf(t) !== -1; });
+      if(matches){
+        d.li.classList.add('search-match');
+        d.li.classList.remove('search-hidden');
+        matchCount++;
+        var sid = d.section ? d.section.className : '';
+        sectionHits[sid] = true;
+      } else {
+        d.li.classList.remove('search-match');
+        d.li.classList.add('search-hidden');
+      }
+    }
+
+    // Hide/show sections
+    var sections = document.querySelectorAll('.section');
+    for(var s=0;s<sections.length;s++){
+      var sec = sections[s];
+      if(sectionHits[sec.className]){
+        sec.classList.remove('search-section-empty');
+      } else {
+        sec.classList.add('search-section-empty');
+      }
+    }
+
+    countEl.textContent = matchCount === 0 ? 'No tools found' : matchCount + ' tool' + (matchCount===1?'':'s') + ' found';
+  }
+
+  input.addEventListener('input', function(){ runSearch(this.value); });
+
+  document.addEventListener('click', function(e){
+    var el = e.target;
+    for(var i=0;i<6;i++){
+      if(!el||el===document.body) break;
+      if(el.getAttribute && el.getAttribute('data-sbs-action')==='clearSearch'){
+        input.value='';
+        runSearch('');
+        input.focus();
+        return;
+      }
+      el = el.parentNode;
+    }
+  });
+})();
+
 </script>
 </body>
 </html>
