@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<!--
+  SBS RoHS / REACH / Prop 65 Compliance Screening Tool | Copyright (c) 2024 Specialty Bolt & Screw, Inc.
+  Fingerprint: SBS-ROHS-SCREEN-v1 | https://shop.specialtybolt.com/
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RoHS / REACH / Prop 65 Compliance Screening Tool | SBS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy:           #1D3557;
+      --navy-dark:      #12243a;
+      --orange:         #E87722;
+      --orange-light:   #F0913A;
+      --orange-pale:    #FDF0E5;
+      --white:          #ffffff;
+      --gray-50:        #F8F9FA;
+      --gray-100:       #F0F2F5;
+      --gray-200:       #E2E6EA;
+      --gray-300:       #CED4DA;
+      --gray-400:       #ADB5BD;
+      --gray-500:       #6C757D;
+      --gray-600:       #495057;
+      --gray-700:       #343A40;
+      --active-green:   #1A8A4A;
+      --active-bg:      #E8F5EE;
+      --obsolete-red:   #C0392B;
+      --obsolete-bg:    #FDECEA;
+      --withdrawn-amber:#B7610A;
+      --withdrawn-bg:   #FEF3E2;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--gray-700);
+      background: var(--gray-100);
+      line-height: 1.5;
+    }
+
+    /* ── BETA MODAL OVERLAY ── */
+    #betaOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(18, 36, 58, 0.82);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      z-index: 2147483647;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    #betaModal {
+      background: var(--white);
+      border-radius: 14px;
+      max-width: 520px;
+      width: 100%;
+      overflow: hidden;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.35);
+    }
+    #betaModal .modal-header {
+      background: var(--navy);
+      border-bottom: 4px solid var(--orange);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    #betaModal .modal-header .header-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--orange);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    #betaModal .modal-header .header-icon svg {
+      width: 22px;
+      height: 22px;
+      color: white;
+    }
+    #betaModal .modal-header .header-text {
+      flex: 1;
+    }
+    #betaModal .modal-header .header-text .company {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 20px;
+      color: var(--white);
+      letter-spacing: 0.3px;
+    }
+    #betaModal .modal-header .header-text .subtitle {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      color: rgba(255,255,255,0.65);
+      margin-top: 2px;
+    }
+    #betaModal .modal-body {
+      padding: 28px 28px 24px;
+    }
+    .beta-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--orange);
+      color: white;
+      font-family: 'Barlow', sans-serif;
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 18px;
+    }
+    .beta-pill svg {
+      width: 12px;
+      height: 12px;
+    }
+    #betaModal h2 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      color: var(--navy);
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+    #betaModal p {
+      font-family: 'Inter', sans-serif;
+      font-size: 13.5px;
+      color: var(--gray-600);
+      line-height: 1.65;
+      margin-bottom: 12px;
+    }
+    #betaModal p:last-of-type {
+      margin-bottom: 24px;
+    }
+    #betaContinueBtn {
+      width: 100%;
+      background: var(--orange);
+      color: white;
+      border: none;
+      padding: 14px 20px;
+      border-radius: 8px;
+      font-family: 'Barlow', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+      box-shadow: 0 2px 8px rgba(232,119,34,0.35);
+    }
+    #betaContinueBtn:hover {
+      background: var(--orange-light);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(232,119,34,0.4);
+    }
+
+    /* ── STICKY HEADER ── */
+    .sbs-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--white);
+      border-bottom: 3px solid var(--orange);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+      padding: 0.65rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .sbs-header a img {
+      height: 48px;
+      display: block;
+    }
+    .header-divider {
+      width: 1px;
+      height: 36px;
+      background: var(--gray-200);
+      flex-shrink: 0;
+    }
+    .header-titles {
+      flex: 1;
+    }
+    .header-titles .tool-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      color: var(--navy);
+      line-height: 1.1;
+    }
+    .header-titles .tool-sub {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      color: var(--gray-500);
+      margin-top: 2px;
+    }
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .btn-header-print {
+      background: var(--orange);
+      color: white;
+      border: none;
+      padding: 7px 13px;
+      border-radius: 6px;
+      font-family: 'Barlow', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .btn-header-print:hover { background: var(--orange-light); }
+
+    /* ── MAIN CONTAINER ── */
+    .container {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* ── DISCLAIMER ── */
+    .disclaimer {
+      background: var(--orange-pale);
+      border-left: 5px solid var(--orange);
+      padding: 13px 16px;
+      margin-bottom: 18px;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 12.5px;
+      color: var(--gray-600);
+    }
+    .disclaimer strong { color: var(--navy); font-family: 'Barlow', sans-serif; font-weight: 700; }
+
+    /* ── TABS ── */
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+    .tab-button {
+      border: 1.5px solid var(--gray-300);
+      background: white;
+      padding: 9px 16px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-family: 'Barlow', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--gray-600);
+      transition: all 0.15s;
+    }
+    .tab-button.active {
+      background: var(--orange);
+      border-color: var(--orange);
+      color: white;
+    }
+    .tab-button:hover:not(.active) {
+      border-color: var(--orange);
+      color: var(--orange);
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* ── GRID ── */
+    .grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 18px;
+    }
+    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--white);
+      border: 1.5px solid var(--gray-200);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 16px rgba(29, 53, 87, 0.07);
+      margin-bottom: 18px;
+    }
+    .card h2 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      color: var(--navy);
+      margin-bottom: 16px;
+    }
+    .card h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 17px;
+      color: var(--navy);
+      margin: 18px 0 8px;
+    }
+
+    /* ── FORM ── */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    @media (max-width: 700px) { .form-row { grid-template-columns: 1fr; } }
+
+    label {
+      display: block;
+      font-family: 'Barlow', sans-serif;
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--gray-500);
+      margin-bottom: 5px;
+    }
+
+    select, input[type="text"], input[type="number"], textarea {
+      width: 100%;
+      padding: 9px 11px;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 6px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      color: var(--gray-700);
+      background: white;
+      appearance: none;
+      -webkit-appearance: none;
+      transition: border-color 0.15s;
+    }
+    select:focus, input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--orange);
+    }
+    textarea { min-height: 80px; resize: vertical; }
+
+    /* ── TOOLTIP ── */
+    .info {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      background: #dbeafe;
+      color: #1d4ed8;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: help;
+      margin-left: 5px;
+      position: relative;
+      font-family: 'Inter', sans-serif;
+    }
+    .info:hover::after {
+      content: attr(data-tip);
+      position: absolute;
+      z-index: 5;
+      left: 22px;
+      top: -6px;
+      width: 270px;
+      background: var(--navy-dark);
+      color: white;
+      padding: 10px;
+      border-radius: 8px;
+      font-weight: 400;
+      font-size: 12px;
+      line-height: 1.4;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* ── BUTTONS ── */
+    .button-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+    .btn-primary {
+      background: var(--orange);
+      color: white;
+      border: none;
+      padding: 11px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: 'Barlow', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.3px;
+      box-shadow: 0 2px 6px rgba(232,119,34,0.3);
+      transition: background 0.15s, transform 0.1s;
+    }
+    .btn-primary:hover { background: var(--orange-light); transform: translateY(-1px); }
+    .btn-secondary {
+      background: var(--navy);
+      color: white;
+      border: none;
+      padding: 11px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: 'Barlow', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.3px;
+      transition: background 0.15s;
+    }
+    .btn-secondary:hover { background: var(--navy-dark); }
+
+    /* ── STATUS CARDS ── */
+    .status-card {
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 14px;
+      border: 1.5px solid var(--gray-200);
+    }
+    .status-low { background: var(--active-bg); border-color: #99f6e4; }
+    .status-medium { background: var(--withdrawn-bg); border-color: #fde68a; }
+    .status-high { background: var(--obsolete-bg); border-color: #fecaca; }
+    .status-unknown { background: var(--gray-50); border-color: var(--gray-200); }
+
+    /* ── BADGES ── */
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-family: 'Barlow', sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      margin-right: 5px;
+      margin-bottom: 5px;
+    }
+    .badge-low { background: var(--active-bg); color: var(--active-green); }
+    .badge-medium { background: var(--withdrawn-bg); color: var(--withdrawn-amber); }
+    .badge-high { background: var(--obsolete-bg); color: var(--obsolete-red); }
+    .badge-unknown { background: var(--gray-100); color: var(--gray-600); }
+
+    ul { padding-left: 20px; }
+    li { margin-bottom: 6px; font-family: 'Inter', sans-serif; font-size: 13px; }
+
+    /* ── DECISION TREE ── */
+    .decision-tree {
+      border-left: 4px solid var(--orange);
+      padding-left: 14px;
+      margin-top: 14px;
+    }
+    .tree-step {
+      background: var(--gray-50);
+      border: 1.5px solid var(--gray-200);
+      border-radius: 8px;
+      padding: 11px 14px;
+      margin-bottom: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+    }
+
+    .small { font-size: 12px; color: var(--gray-500); font-family: 'Inter', sans-serif; }
+
+    /* ── TABLE ── */
+    table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; }
+    th, td { border: 1px solid var(--gray-200); padding: 10px 12px; text-align: left; vertical-align: top; font-family: 'Inter', sans-serif; font-size: 13px; }
+    th { background: var(--gray-100); font-family: 'Barlow', sans-serif; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--gray-500); }
+
+    /* ── COMPARE GRID ── */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 900px) { .compare-grid { grid-template-columns: 1fr; } }
+
+    /* ── REF LINKS ── */
+    a { color: var(--orange); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── PRINT ── */
+    .print-only { display: none; }
+    @media print {
+      body { background: white; }
+      .tabs, .button-row, .no-print, .sbs-header { display: none !important; }
+      .tab-content { display: block !important; }
+      .card { box-shadow: none; page-break-inside: avoid; }
+      .print-only { display: block; }
+      #betaOverlay { display: none !important; }
+    }
+
+    @media (max-width: 640px) {
+      .sbs-header { flex-wrap: wrap; gap: 10px; }
+      .header-actions { width: 100%; }
+      .container { padding: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Hidden logo for print -->
+<img id="sbsLogoPrint" src="data:image/png;base64,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" style="display:none;" alt="SBS Logo">
+
+<!-- ── BETA MODAL ── -->
+<div id="betaOverlay" role="dialog" aria-modal="true" aria-labelledby="betaTitle">
+  <div id="betaModal">
+    <div class="modal-header">
+      <div class="header-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+      </div>
+      <div class="header-text">
+        <div class="company">Specialty Bolt and Screw</div>
+        <div class="subtitle">Technical Compliance Tools</div>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="beta-pill">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+        </svg>
+        Beta
+      </div>
+      <h2 id="betaTitle">RoHS / REACH / Prop 65 Screening Tool</h2>
+      <p>This tool is currently in beta. It has been developed to help SBS team members and customers screen fastener materials and coatings for common regulatory risk areas, but it is still being tested and refined. Results are guidance only and should not be treated as final compliance determinations.</p>
+      <p>We encourage you to use the tool and share your feedback. If you notice anything that seems incorrect, incomplete, or unclear, please let us know so we can continue to improve it. Your input directly shapes how this tool evolves.</p>
+      <p>Thank you for being an early user of this resource. We appreciate your patience as we work to make it as accurate and useful as possible.</p>
+      <button id="betaContinueBtn" data-sbs-action="dismissBeta">I Understand - Continue to Tool</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── STICKY HEADER ── -->
+<header class="sbs-header no-print">
+  <a href="https://shop.specialtybolt.com/" target="_blank" rel="noopener">
+    <img src="data:image/png;base64,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" alt="SBS Specialty Bolt and Screw" style="height:48px;display:block;">
+  </a>
+  <div class="header-divider"></div>
+  <div class="header-titles">
+    <div class="tool-name">RoHS / REACH / Prop 65 Screening</div>
+    <div class="tool-sub">Compliance decision-tree tool for fastener materials and coatings</div>
+  </div>
+  <div class="header-actions">
+    <button class="btn-header-print" data-sbs-action="printPage">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 6 2 18 2 18 9"></polyline>
+        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+        <rect x="6" y="14" width="12" height="8"></rect>
+      </svg>
+      Print Summary
+    </button>
+  </div>
+</header>
+
+<div class="container">
+  <div class="disclaimer">
+    <strong>Important:</strong> This tool provides a compliance screening recommendation only. It does not certify a part, coating, supplier, or lot. Final compliance depends on current law, product use, homogeneous material analysis, supplier declarations, customer requirements, and actual exposure conditions.
+  </div>
+
+  <nav class="tabs no-print">
+    <button class="tab-button active" data-tab="screen">Decision Tree</button>
+    <button class="tab-button" data-tab="compare">Compare Options</button>
+    <button class="tab-button" data-tab="best">Best Practice Guide</button>
+    <button class="tab-button" data-tab="refs">Reference Links</button>
+  </nav>
+
+  <section id="screen" class="tab-content active">
+    <div class="grid">
+      <div class="card">
+        <h2>Part Screening Inputs</h2>
+        <div class="form-row">
+          <div>
+            <label>Fastener / Part Family <span class="info" data-tip="Used only for context. The material and coating drive most compliance screening decisions.">i</span></label>
+            <select id="partFamily">
+              <option value="bolt">Bolt / Screw / Stud</option>
+              <option value="nut">Nut / Insert</option>
+              <option value="washer">Washer / Clip / Stamping</option>
+              <option value="rivet">Rivet / Rivet Nut</option>
+              <option value="plastic">Plastic / Non-metal Component</option>
+              <option value="assembly">Assembly / SEMS / Multi-material Part</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div>
+            <label>Base Material <span class="info" data-tip="Choose the closest material family. Use supplier documentation for exact alloy and restricted substance content.">i</span></label>
+            <select id="material"></select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div>
+            <label>Coating / Finish <span class="info" data-tip="Coatings can drive RoHS, REACH, and Prop 65 risk. Pay special attention to chromates, cadmium, nickel, PFAS/PTFE, and lead-containing finishes.">i</span></label>
+            <select id="coating"></select>
+          </div>
+          <div>
+            <label>Chromate Type <span class="info" data-tip="Trivalent chromium systems are generally lower RoHS risk. Hexavalent chromate should be treated as higher risk and requires specific confirmation.">i</span></label>
+            <select id="chromate">
+              <option value="not_applicable">Not applicable / No chromate</option>
+              <option value="trivalent">Trivalent chromate / Cr(III)</option>
+              <option value="hexavalent">Hexavalent chromate / Cr(VI)</option>
+              <option value="unknown">Unknown chromate chemistry</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div>
+            <label>Part Size / Surface Area Risk <span class="info" data-tip="Washers, clips, thin stampings, and small parts can have a higher coating-to-part-weight ratio.">i</span></label>
+            <select id="surfaceRisk">
+              <option value="normal">Normal fastener geometry</option>
+              <option value="high_surface">High surface area to weight, e.g., washer or thin stamping</option>
+              <option value="very_small">Very small part where coating mass may be proportionally higher</option>
+            </select>
+          </div>
+          <div>
+            <label>Destination / Use Context <span class="info" data-tip="Used for Prop 65 and overall risk context. California consumer or worker exposure increases review needs.">i</span></label>
+            <select id="market">
+              <option value="general">General industrial / unknown</option>
+              <option value="eu">EU / EEA market</option>
+              <option value="california">California market or possible California exposure</option>
+              <option value="global">Global / multiple regions</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div>
+            <label>Available Documentation <span class="info" data-tip="The more documentation available, the stronger the screening conclusion.">i</span></label>
+            <select id="docs">
+              <option value="none">No documentation available</option>
+              <option value="coc">CoC only</option>
+              <option value="declaration">Supplier RoHS / REACH / Prop 65 declaration</option>
+              <option value="fmd">Full material disclosure or test report</option>
+              <option value="imds">IMDS / CAMDS / CDX / SCIP-ready material record</option>
+            </select>
+          </div>
+          <div>
+            <label>Known Listed / Restricted Substance? <span class="info" data-tip="Use when supplier data identifies lead, cadmium, Cr(VI), nickel, DEHP, PFAS, or another regulated/listed substance.">i</span></label>
+            <select id="knownSubstance">
+              <option value="none">None known</option>
+              <option value="lead">Lead</option>
+              <option value="cadmium">Cadmium</option>
+              <option value="cr6">Hexavalent chromium</option>
+              <option value="nickel">Nickel</option>
+              <option value="phthalates">RoHS phthalates / plasticizers</option>
+              <option value="pfas">PFAS / PTFE / fluorinated chemistry</option>
+              <option value="unknown">Unknown / not yet reviewed</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div>
+            <label>Coating Thickness Estimate <span class="info" data-tip="Optional. Used for educational notes only, not certification.">i</span></label>
+            <select id="thickness">
+              <option value="unknown">Unknown</option>
+              <option value="thin">Thin decorative/protective film, under 5 um</option>
+              <option value="typical">Typical electroplated zinc / zinc-nickel, about 5 to 12 um</option>
+              <option value="heavy">Heavy coating, HDG, thick dip-spin, or multiple layers</option>
+            </select>
+          </div>
+          <div>
+            <label>Part Weight vs Coating Concern <span class="info" data-tip="RoHS thresholds are evaluated by homogeneous material, not simply total part weight. This field records whether a coating mass concern exists.">i</span></label>
+            <select id="weightConcern">
+              <option value="none">No special concern</option>
+              <option value="washer_example">Washer / high surface-to-weight example</option>
+              <option value="customer_asks">Customer specifically questions coating percentage by total part weight</option>
+            </select>
+          </div>
+        </div>
+
+        <label>Notes / Part Description</label>
+        <textarea id="notes" placeholder="Example: M8 washer, zinc plated yellow chromate; customer asking if 8 um zinc plus chromate makes part non-RoHS."></textarea>
+
+        <div class="button-row">
+          <button class="btn-primary" data-sbs-action="runScreening">Run Compliance Screening</button>
+          <button class="btn-secondary" data-sbs-action="resetForm">Reset</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Screening Result</h2>
+        <div id="resultPanel" class="status-card status-unknown">
+          Complete the inputs and select <strong>Run Compliance Screening</strong>.
+        </div>
+        <div id="decisionTree" class="decision-tree" style="display:none;"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="compare" class="tab-content">
+    <div class="card">
+      <h2>Compare Two Material / Coating Options</h2>
+      <p class="small" style="margin-bottom:16px;">Use this section when engineering or sourcing is deciding between two finishes, such as zinc yellow hexavalent chromate vs. zinc clear trivalent chromate.</p>
+      <div class="compare-grid">
+        <div class="card">
+          <h3>Option A</h3>
+          <label>Material</label><select id="materialA" style="margin-bottom:10px;"></select>
+          <label>Coating / Finish</label><select id="coatingA" style="margin-bottom:10px;"></select>
+          <label>Chromate Type</label>
+          <select id="chromateA">
+            <option value="not_applicable">Not applicable / No chromate</option>
+            <option value="trivalent">Trivalent chromate / Cr(III)</option>
+            <option value="hexavalent">Hexavalent chromate / Cr(VI)</option>
+            <option value="unknown">Unknown</option>
+          </select>
+        </div>
+        <div class="card">
+          <h3>Option B</h3>
+          <label>Material</label><select id="materialB" style="margin-bottom:10px;"></select>
+          <label>Coating / Finish</label><select id="coatingB" style="margin-bottom:10px;"></select>
+          <label>Chromate Type</label>
+          <select id="chromateB">
+            <option value="not_applicable">Not applicable / No chromate</option>
+            <option value="trivalent">Trivalent chromate / Cr(III)</option>
+            <option value="hexavalent">Hexavalent chromate / Cr(VI)</option>
+            <option value="unknown">Unknown</option>
+          </select>
+        </div>
+      </div>
+      <div class="button-row">
+        <button class="btn-primary" data-sbs-action="compareOptions">Compare</button>
+      </div>
+      <div id="compareResult" style="margin-top:18px;"></div>
+    </div>
+  </section>
+
+  <section id="best" class="tab-content">
+    <div class="card">
+      <h2>Best Practice Guide</h2>
+      <h3>1. Treat this as a screening tool, not a certificate</h3>
+      <p style="font-family:Inter,sans-serif;font-size:13px;color:var(--gray-600);line-height:1.65;margin-bottom:12px;">Compliance cannot be determined absolutely from a generic material and finish description. A part described as "zinc plated" may be trivalent, hexavalent, sealed, dyed, topcoated, or supplied under different regional chemistries. The tool should guide the next question: what evidence is needed?</p>
+
+      <h3>2. RoHS: evaluate homogeneous materials</h3>
+      <p style="font-family:Inter,sans-serif;font-size:13px;color:var(--gray-600);line-height:1.65;margin-bottom:12px;">RoHS is commonly misunderstood as a total-part-weight calculation. The practical screening question is whether each homogeneous material in the article exceeds the restricted substance threshold. For fasteners, the base metal, plating layer, chromate conversion coating, sealers, lubricants, plastic washers, and adhesives may need separate consideration.</p>
+      <p style="font-family:Inter,sans-serif;font-size:13px;color:var(--gray-600);line-height:1.65;margin-bottom:12px;"><strong>Important fastener note:</strong> A thin zinc layer plus hexavalent chromate conversion coating, for example 8 um on a steel washer, does not automatically make the overall part non-RoHS simply because the washer has high surface area relative to weight. The concern is not only total coating weight divided by total part weight. The correct review should consider the restricted substance concentration in the relevant homogeneous material or coating layer, the chemistry used, any exemptions, and supplier evidence.</p>
+
+      <h3>3. Trivalent vs. hexavalent chromate</h3>
+      <ul>
+        <li><strong>Trivalent chromate / Cr(III):</strong> generally preferred for RoHS screening and modern automotive/industrial requirements.</li>
+        <li><strong>Hexavalent chromate / Cr(VI):</strong> higher regulatory and customer acceptance risk. Do not assume failure without documentation, but require specific supplier confirmation and, when needed, test evidence.</li>
+        <li><strong>Unknown yellow chromate:</strong> treat as higher risk until confirmed. "Yellow zinc" historically may imply hexavalent chemistry, but color alone is not enough proof.</li>
+      </ul>
+
+      <h3>4. REACH: check SVHC and restrictions</h3>
+      <p style="font-family:Inter,sans-serif;font-size:13px;color:var(--gray-600);line-height:1.65;margin-bottom:12px;">For REACH, the screening should ask whether any SVHC is present above the reporting threshold in the article, and whether Annex XVII restrictions apply. Brass, leaded steel, plasticizers, PFAS-containing materials, adhesives, sealers, and coatings deserve extra attention.</p>
+
+      <h3>5. Prop 65: listed substance does not always equal warning</h3>
+      <p style="font-family:Inter,sans-serif;font-size:13px;color:var(--gray-600);line-height:1.65;margin-bottom:12px;">This tool flags whether a material or coating may contain a Prop 65 listed substance. Prop 65 warning decisions depend on exposure, intended use, route of exposure, safe harbor levels when available, and whether the product can reach California consumers or workers.</p>
+
+      <h3>6. Manufacturer vs. distributor vs. end user responsibilities</h3>
+      <table>
+        <thead><tr><th>Role</th><th>Typical Responsibility</th><th>Recommended Evidence</th></tr></thead>
+        <tbody>
+          <tr><td>Manufacturer / Plater</td><td>Knows actual chemistry, process, coating, and material formulation.</td><td>RoHS declaration, REACH SVHC declaration, Prop 65 statement, SDS where applicable, test reports, full material disclosure.</td></tr>
+          <tr><td>Distributor</td><td>Collects and transmits evidence; avoids over-certifying beyond supplier data.</td><td>Supplier declarations, controlled part revision, lot traceability, customer-facing compliance statement with limitations.</td></tr>
+          <tr><td>End User / OEM</td><td>Defines market, application, exposure conditions, customer-specific thresholds, and final acceptability.</td><td>Approved supplier documentation, regulatory review, IMDS/CAMDS/CDX/SCIP submission where required.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>7. High-risk fastener examples</h3>
+      <ul>
+        <li>Cadmium plated aerospace or legacy parts.</li>
+        <li>Yellow zinc with unknown chromate chemistry.</li>
+        <li>Leaded brass, free-machining brass, and some leaded steels.</li>
+        <li>PVC, soft plastics, rubber, or polymer washers with unknown plasticizers.</li>
+        <li>Nickel-plated parts with possible skin contact or California consumer exposure.</li>
+        <li>PFAS/PTFE-containing lubricants, fluoropolymer coatings, or sealers where customer policy restricts them.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="refs" class="tab-content">
+    <div class="card">
+      <h2>Reference Links</h2>
+      <p style="font-family:Inter,sans-serif;font-size:13px;color:var(--gray-600);margin-bottom:14px;">Use these public references for education and verification. Always confirm the current version and customer-specific requirements before making a compliance statement.</p>
+      <ul>
+        <li><a href="https://environment.ec.europa.eu/topics/waste-and-recycling/rohs-directive_en" target="_blank" rel="noopener">European Commission - RoHS Directive</a></li>
+        <li><a href="https://echa.europa.eu/candidate-list-table" target="_blank" rel="noopener">ECHA - REACH Candidate List of SVHCs</a></li>
+        <li><a href="https://echa.europa.eu/substances-restricted-under-reach" target="_blank" rel="noopener">ECHA - Substances Restricted under REACH Annex XVII</a></li>
+        <li><a href="https://oehha.ca.gov/proposition-65/proposition-65-list" target="_blank" rel="noopener">California OEHHA - Proposition 65 List</a></li>
+        <li><a href="https://www.p65warnings.ca.gov/" target="_blank" rel="noopener">California Prop 65 Warnings Website</a></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- FOOTER DISCLAIMER -->
+  <div style="background:var(--gray-50);border-top:1px solid var(--gray-200);padding:14px 20px;border-radius:8px;text-align:center;margin-top:4px;">
+    <p style="font-family:Inter,sans-serif;font-size:11.5px;color:var(--gray-500);margin:0;max-width:900px;display:inline-block;">
+      <strong style="color:var(--navy);font-family:Barlow,sans-serif;">Disclaimer:</strong> This tool provides screening guidance only and does not constitute a regulatory compliance certificate. Results are based solely on selected inputs and do not account for actual test data, supplier declarations, or jurisdiction-specific requirements. Always obtain appropriate supplier documentation and regulatory review before making customer-facing compliance statements.
+    </p>
+  </div>
+</div>
+
+<script>
+var materialData = {
+  carbon_steel: { label: "Carbon steel / alloy steel", risk: 1, flags: ["Generally low material risk if not leaded and no restricted coating is present."], docs: ["Supplier material declaration", "RoHS / REACH declaration"] },
+  leaded_steel: { label: "Leaded steel / free-machining steel", risk: 3, flags: ["Lead content may trigger RoHS, REACH, and Prop 65 review."], docs: ["Full material disclosure", "Lead content statement", "Customer approval if lead is intentionally added"] },
+  stainless_300: { label: "Stainless steel 300 series, e.g., 302/304/316", risk: 1, flags: ["Generally low RoHS risk as a base material; nickel content may be relevant for Prop 65/exposure screening."], docs: ["Material grade confirmation", "RoHS / REACH declaration"] },
+  stainless_400: { label: "Stainless steel 400 series", risk: 1, flags: ["Generally low RoHS risk as a base material; confirm alloy and coating/passivation details."], docs: ["Material grade confirmation", "RoHS / REACH declaration"] },
+  brass: { label: "Brass / copper alloy", risk: 3, flags: ["Many brass alloys contain lead for machinability; lead may trigger RoHS exemption review and Prop 65 evaluation."], docs: ["Alloy specification", "Lead content", "RoHS exemption basis if applicable", "Prop 65 review"] },
+  bronze: { label: "Bronze / phosphor bronze", risk: 2, flags: ["Generally moderate risk; verify lead and any surface treatment."], docs: ["Alloy specification", "RoHS / REACH declaration"] },
+  aluminum: { label: "Aluminum / aluminum alloy", risk: 1, flags: ["Generally low material risk; anodizing/sealers may need review."], docs: ["Alloy specification", "Finish declaration"] },
+  zinc_diecast: { label: "Zinc alloy / die cast zinc", risk: 2, flags: ["Confirm lead, cadmium, and plating chemistry."], docs: ["Alloy specification", "Full material disclosure if available"] },
+  nylon: { label: "Nylon / polyamide", risk: 2, flags: ["Generally acceptable, but additives, colorants, flame retardants, and plasticizers should be checked."], docs: ["Resin declaration", "SVHC statement", "RoHS phthalate statement"] },
+  pom: { label: "POM / acetal", risk: 2, flags: ["Generally acceptable, but additives, colorants, and processing aids should be checked."], docs: ["Resin declaration", "SVHC statement"] },
+  ptfe: { label: "PTFE / fluoropolymer", risk: 3, flags: ["PFAS/customer policy concern. Not automatically non-RoHS, but often needs customer-specific review."], docs: ["PFAS statement", "REACH SVHC statement", "Customer approval if restricted by policy"] },
+  rubber: { label: "Rubber / elastomer", risk: 3, flags: ["Plasticizers, PAHs, carbon black, curing agents, and additives can create REACH/Prop 65 risk."], docs: ["Compound disclosure", "SVHC declaration", "Prop 65 statement"] },
+  pvc: { label: "PVC / soft plastic", risk: 3, flags: ["Phthalates and stabilizers are common concerns for RoHS 3, REACH, and Prop 65."], docs: ["Phthalate statement", "Full material disclosure", "Prop 65 review"] },
+  unknown: { label: "Unknown material", risk: 3, flags: ["Cannot determine without material identification."], docs: ["Material specification", "Supplier declaration", "Full material disclosure"] }
+};
+
+var coatingData = {
+  none: { label: "None / plain", risk: 0, flags: ["No coating-specific risk identified."], docs: [] },
+  zinc_clear_tri: { label: "Zinc clear / blue trivalent chromate", risk: 1, flags: ["Generally preferred over hexavalent chromate systems."], docs: ["Trivalent chromate confirmation", "RoHS declaration"] },
+  zinc_yellow_unknown: { label: "Zinc yellow chromate, chemistry unknown", risk: 3, flags: ["Treat as high risk until confirmed. Yellow color may indicate legacy hexavalent chromate, but color alone is not proof."], docs: ["Chromate chemistry confirmation", "RoHS test/declaration", "REACH declaration"] },
+  zinc_yellow_hex: { label: "Zinc yellow hexavalent chromate", risk: 3, flags: ["Hexavalent chromium requires careful RoHS and REACH review. Do not assume customer acceptance without evidence."], docs: ["Cr(VI) content review", "RoHS declaration or test report", "Customer approval where needed"] },
+  zinc_nickel_tri: { label: "Zinc-nickel with trivalent passivate/sealer", risk: 1, flags: ["Generally modern lower-risk corrosion coating; confirm sealer and passivate chemistry."], docs: ["RoHS declaration", "REACH SVHC statement", "Sealer chemistry statement if needed"] },
+  zinc_nickel_black: { label: "Black zinc-nickel with sealer", risk: 2, flags: ["Confirm passivate/sealer chemistry, nickel exposure relevance, and SVHC status."], docs: ["Finish declaration", "Sealer/topcoat declaration", "Prop 65 review if California exposure"] },
+  black_oxide: { label: "Black oxide plus oil", risk: 1, flags: ["Generally low RoHS risk; oil may need SDS/SVHC review."], docs: ["Oil/SDS review", "RoHS / REACH declaration"] },
+  phosphate_oil: { label: "Phosphate plus oil", risk: 1, flags: ["Generally low RoHS risk; oil may need SDS/SVHC review."], docs: ["Oil/SDS review", "RoHS / REACH declaration"] },
+  nickel: { label: "Nickel plating", risk: 2, flags: ["Nickel is a Prop 65 listed substance concern where exposure is possible."], docs: ["Prop 65 exposure review", "RoHS / REACH declaration"] },
+  chrome_tri: { label: "Decorative chrome, trivalent process", risk: 2, flags: ["Confirm chromium chemistry and any nickel underlayer."], docs: ["Process declaration", "RoHS / REACH declaration"] },
+  chrome_hex: { label: "Chrome / conversion coating with possible Cr(VI)", risk: 3, flags: ["Hexavalent chromium risk. Requires supplier confirmation and customer review."], docs: ["Cr(VI) declaration", "RoHS test/declaration", "REACH review"] },
+  cadmium: { label: "Cadmium plating", risk: 4, flags: ["Very high regulatory risk. Cadmium is heavily restricted and generally not acceptable except under limited exemptions/special applications."], docs: ["Cadmium content", "Exemption/customer approval", "Regulatory review"] },
+  hdg: { label: "Hot dip galvanizing", risk: 1, flags: ["Generally low RoHS risk; confirm bath chemistry and post-treatment."], docs: ["RoHS / REACH declaration"] },
+  magni_geomet: { label: "Zinc flake, e.g., Magni / Geomet / Delta Protekt", risk: 2, flags: ["Often designed as Cr(VI)-free, but confirm exact product and topcoat."], docs: ["Manufacturer coating declaration", "REACH SVHC statement", "PFAS statement if topcoat/lubricant is fluorinated"] },
+  passivation: { label: "Stainless passivation", risk: 1, flags: ["Generally low residual coating risk; confirm process and no restricted residues."], docs: ["Passivation standard/process declaration"] },
+  electropolish: { label: "Electropolishing", risk: 1, flags: ["Generally low residual coating risk because it removes surface metal; cleaning/passivation chemistry still needs process control."], docs: ["Process declaration", "Cleanliness/passivation statement if applicable"] },
+  anodize: { label: "Anodize on aluminum", risk: 2, flags: ["Confirm dye/sealer chemistry and any nickel acetate or restricted colorant concerns."], docs: ["Anodize/sealer declaration", "RoHS / REACH declaration"] },
+  adhesive_patch: { label: "Nylon patch / adhesive patch / microcapsule", risk: 2, flags: ["Polymer, adhesive, colorant, and microencapsulated chemistry may need SVHC/Prop 65 review."], docs: ["Patch material declaration", "SDS where applicable", "RoHS / REACH declaration"] },
+  ptfe_lube: { label: "PTFE / fluoropolymer lubricant or coating", risk: 3, flags: ["PFAS/customer policy concern; requires specific review even when RoHS substances are not present."], docs: ["PFAS statement", "SDS", "REACH SVHC declaration"] },
+  unknown: { label: "Unknown coating / finish", risk: 3, flags: ["Cannot determine coating compliance without finish chemistry."], docs: ["Finish specification", "Supplier declaration", "Coating chemistry confirmation"] }
+};
+
+function populateSelect(id, data) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = "";
+  Object.keys(data).forEach(function(key) {
+    var opt = document.createElement("option");
+    opt.value = key;
+    opt.textContent = data[key].label;
+    el.appendChild(opt);
+  });
+}
+
+function init() {
+  ["material","materialA","materialB"].forEach(function(id) { populateSelect(id, materialData); });
+  ["coating","coatingA","coatingB"].forEach(function(id) { populateSelect(id, coatingData); });
+}
+
+function scoreToStatus(score) {
+  if (score >= 8) return { text: "High risk / specialist review required", cls: "status-high", badge: "badge-high" };
+  if (score >= 5) return { text: "Medium risk / supplier evidence required", cls: "status-medium", badge: "badge-medium" };
+  if (score >= 2) return { text: "Low to medium risk / document and verify", cls: "status-medium", badge: "badge-medium" };
+  return { text: "Likely low risk based on selected inputs", cls: "status-low", badge: "badge-low" };
+}
+
+function evaluate(input) {
+  var mat = materialData[input.material];
+  var coat = coatingData[input.coating];
+  var score = mat.risk + coat.risk;
+  var flags = mat.flags.concat(coat.flags);
+  var docSet = {};
+  mat.docs.concat(coat.docs).forEach(function(d) { docSet[d] = true; });
+  var rohs = [], reach = [], prop65 = [], actions = [];
+
+  if (input.chromate === "hexavalent") { score += 3; rohs.push("Hexavalent chromate selected: review Cr(VI) concentration, homogeneous material basis, and available exemptions before making a RoHS statement."); reach.push("Chromium(VI) chemistry may trigger REACH restriction/SVHC review depending on substance and use."); docSet["Specific Cr(VI) / chromate chemistry declaration"] = true; }
+  if (input.chromate === "unknown") { score += 2; rohs.push("Chromate chemistry unknown: treat as medium/high risk until trivalent vs hexavalent chemistry is confirmed."); docSet["Chromate type confirmation from plater/supplier"] = true; }
+  if (input.chromate === "trivalent") { rohs.push("Trivalent chromate selected: generally preferred for RoHS screening, but still verify the complete finish and sealer system."); }
+
+  if (input.surfaceRisk !== "normal") { score += 1; flags.push("High surface-area or very small parts can make coating questions more visible. Review by homogeneous material/coating layer, not only total part weight."); }
+  if (input.market === "california" || input.market === "global") { score += 1; prop65.push("California/global market selected: check whether any Prop 65 listed substance may create exposure requiring a warning."); docSet["Prop 65 statement"] = true; }
+  if (input.market === "eu" || input.market === "global") { reach.push("EU/global market selected: REACH SVHC and Annex XVII screening should be documented."); docSet["REACH SVHC declaration"] = true; }
+
+  if (input.docs === "none") { score += 2; actions.push("Obtain supplier declaration before communicating compliance externally."); }
+  if (input.docs === "coc") { score += 1; actions.push("CoC alone is usually not enough for RoHS/REACH/Prop 65 screening; request a regulatory declaration or material disclosure."); }
+  if (["declaration","fmd","imds"].indexOf(input.docs) >= 0) { score -= 1; actions.push("Review the declaration scope, date, part number coverage, finish coverage, and substance list revision."); }
+
+  var substance = input.knownSubstance;
+  if (substance === "lead") { score += 3; rohs.push("Lead identified: check RoHS threshold/exemption applicability and whether the lead is in steel, aluminum, copper alloy, coating, or polymer."); reach.push("Lead may trigger REACH SVHC communication if above applicable threshold."); prop65.push("Lead is commonly a Prop 65 listed substance concern; exposure review required for California use."); docSet["Lead content / exemption statement"] = true; }
+  if (substance === "cadmium") { score += 4; rohs.push("Cadmium identified: very high RoHS risk unless a specific exemption applies."); reach.push("Cadmium/cadmium compounds require strict REACH review."); prop65.push("Cadmium is a Prop 65 concern; exposure review required."); docSet["Cadmium content and exemption/customer approval"] = true; }
+  if (substance === "cr6") { score += 3; rohs.push("Cr(VI) identified: do not assume compliance without specific evidence and homogeneous material analysis."); reach.push("Cr(VI) chemistry requires REACH screening."); prop65.push("Hexavalent chromium compounds can be Prop 65 concerns depending on exposure."); docSet["Cr(VI) test/declaration"] = true; }
+  if (substance === "nickel") { score += 1; prop65.push("Nickel identified: Prop 65 exposure review may be needed, especially for handling or skin-contact applications."); docSet["Prop 65 exposure assessment or statement"] = true; }
+  if (substance === "phthalates") { score += 3; rohs.push("RoHS 3 phthalates identified: check DEHP, BBP, DBP, and DIBP concentration in homogeneous plasticized material."); reach.push("Phthalates may also appear on REACH SVHC/restriction lists."); docSet["Phthalate content statement"] = true; }
+  if (substance === "pfas") { score += 2; reach.push("PFAS/PTFE concern identified: not automatically non-RoHS, but customer-specific and REACH/SVHC policy review may be required."); docSet["PFAS / fluorinated chemistry declaration"] = true; }
+  if (substance === "unknown") { score += 2; actions.push("Substance status unknown: request material and finish disclosure before making any compliance claim."); docSet["Full material disclosure"] = true; }
+
+  if (input.weightConcern !== "none") {
+    flags.push("Weight concern noted: for RoHS, do not rely only on total part weight. Evaluate the restricted substance concentration in the homogeneous material or separable coating layer and obtain supplier evidence.");
+    actions.push("If customer questions zinc plus chromate by total part weight, explain that total-part-weight screening is not the normal RoHS basis and request/perform homogeneous material review.");
+  }
+
+  rohs.push("RoHS screening should include Pb, Hg, Cd, Cr(VI), PBB, PBDE, DEHP, BBP, DBP, and DIBP.");
+  reach.push("REACH screening should check SVHC Candidate List communication needs and Annex XVII restrictions for the article, coating, lubricant, adhesive, and polymer components.");
+  prop65.push("Prop 65 screening here flags listed substances; warning decisions require exposure/use analysis.");
+  actions.push("Do not issue absolute certification from this tool alone. Use supplier declarations, test reports, or full material disclosure as supporting evidence.");
+
+  if (score < 0) score = 0;
+  var docs = Object.keys(docSet);
+  return { score: score, status: scoreToStatus(score), flags: flags, docs: docs, rohs: rohs, reach: reach, prop65: prop65, actions: actions };
+}
+
+function list(items) {
+  return "<ul>" + items.map(function(x) { return "<li>" + x + "</li>"; }).join("") + "</ul>";
+}
+
+function runScreening() {
+  var input = {
+    material: document.getElementById("material").value,
+    coating: document.getElementById("coating").value,
+    chromate: document.getElementById("chromate").value,
+    surfaceRisk: document.getElementById("surfaceRisk").value,
+    market: document.getElementById("market").value,
+    docs: document.getElementById("docs").value,
+    knownSubstance: document.getElementById("knownSubstance").value,
+    thickness: document.getElementById("thickness").value,
+    weightConcern: document.getElementById("weightConcern").value
+  };
+  var result = evaluate(input);
+  var panel = document.getElementById("resultPanel");
+  panel.className = "status-card " + result.status.cls;
+  panel.innerHTML = '<span class="badge ' + result.status.badge + '">' + result.status.text + '</span>' +
+    '<p style="margin:10px 0 4px;font-family:Inter,sans-serif;font-size:13px;"><strong>Risk score:</strong> ' + result.score + ' / 12+ directional score</p>' +
+    '<p style="font-family:Inter,sans-serif;font-size:13px;margin-bottom:10px;"><strong>Screening conclusion:</strong> This part/finish combination ' + (result.score >= 8 ? 'should not be represented as compliant without specialist review and supplier evidence' : result.score >= 5 ? 'requires supplier evidence before customer-facing compliance statements' : 'appears lower risk, provided current supplier documentation supports the selected material and finish') + '.</p>' +
+    '<h3>Key Flags</h3>' + list(result.flags) +
+    '<h3>RoHS Guidance</h3>' + list(result.rohs) +
+    '<h3>REACH Guidance</h3>' + list(result.reach) +
+    '<h3>Prop 65 Guidance</h3>' + list(result.prop65) +
+    '<h3>Recommended Documentation</h3>' + list(result.docs.length ? result.docs : ["Basic supplier regulatory declaration"]) +
+    '<h3>Next Actions</h3>' + list(result.actions);
+
+  var chromateEl = document.getElementById("chromate");
+  var chromateText = chromateEl.options[chromateEl.selectedIndex].text;
+  var docsEl = document.getElementById("docs");
+  var dt = document.getElementById("decisionTree");
+  dt.style.display = "block";
+  dt.innerHTML = '<h3>Decision Tree Path</h3>' +
+    '<div class="tree-step"><strong>1. Identify article construction:</strong> ' + materialData[input.material].label + ' with ' + coatingData[input.coating].label + '.</div>' +
+    '<div class="tree-step"><strong>2. Check coating chemistry:</strong> Chromate selected as ' + chromateText + '.</div>' +
+    '<div class="tree-step"><strong>3. Screen RoHS:</strong> Review restricted substances by homogeneous material, including base metal, coating, chromate, topcoat, lubricant, adhesive, and polymer components.</div>' +
+    '<div class="tree-step"><strong>4. Screen REACH:</strong> Check Candidate List SVHC communication and Annex XVII restrictions.</div>' +
+    '<div class="tree-step"><strong>5. Screen Prop 65:</strong> Identify listed substances and determine whether exposure/warning review is needed.</div>' +
+    '<div class="tree-step"><strong>6. Evidence decision:</strong> ' + (input.docs === "none" ? "Evidence is missing; request supplier documentation." : "Review available documentation for correct part/finish/revision coverage.") + '</div>';
+}
+
+function resetForm() {
+  document.querySelectorAll("select").forEach(function(s) { s.selectedIndex = 0; });
+  document.getElementById("notes").value = "";
+  var panel = document.getElementById("resultPanel");
+  panel.className = "status-card status-unknown";
+  panel.innerHTML = "Complete the inputs and select <strong>Run Compliance Screening</strong>.";
+  var dt = document.getElementById("decisionTree");
+  dt.style.display = "none";
+  dt.innerHTML = "";
+}
+
+function compareOptions() {
+  var mA = document.getElementById("materialA");
+  var mB = document.getElementById("materialB");
+  var cA = document.getElementById("coatingA");
+  var cB = document.getElementById("coatingB");
+  var chA = document.getElementById("chromateA");
+  var chB = document.getElementById("chromateB");
+  var a = evaluate({ material: mA.value, coating: cA.value, chromate: chA.value, surfaceRisk: "normal", market: "global", docs: "declaration", knownSubstance: "none", thickness: "unknown", weightConcern: "none" });
+  var b = evaluate({ material: mB.value, coating: cB.value, chromate: chB.value, surfaceRisk: "normal", market: "global", docs: "declaration", knownSubstance: "none", thickness: "unknown", weightConcern: "none" });
+  var better = a.score < b.score ? "Option A appears lower risk based on selected inputs." : b.score < a.score ? "Option B appears lower risk based on selected inputs." : "Both options appear similar based on selected inputs.";
+  document.getElementById("compareResult").innerHTML =
+    '<table><thead><tr><th></th><th>Option A</th><th>Option B</th></tr></thead><tbody>' +
+    '<tr><td>Material</td><td>' + materialData[mA.value].label + '</td><td>' + materialData[mB.value].label + '</td></tr>' +
+    '<tr><td>Coating</td><td>' + coatingData[cA.value].label + '</td><td>' + coatingData[cB.value].label + '</td></tr>' +
+    '<tr><td>Risk Score</td><td>' + a.score + '</td><td>' + b.score + '</td></tr>' +
+    '<tr><td>Status</td><td>' + a.status.text + '</td><td>' + b.status.text + '</td></tr>' +
+    '<tr><td>Key Flags</td><td>' + list(a.flags) + '</td><td>' + list(b.flags) + '</td></tr>' +
+    '</tbody></table>' +
+    '<div class="status-card ' + (a.score <= b.score ? a.status.cls : b.status.cls) + '" style="margin-top:14px;"><strong>Comparison guidance:</strong> ' + better + '</div>';
+}
+
+document.addEventListener('click', function(e) {
+  var el = e.target;
+  var action = null;
+  for (var i = 0; i < 6; i++) {
+    if (!el || el === document.body) break;
+    if (el.getAttribute && el.getAttribute('data-sbs-action')) {
+      action = el.getAttribute('data-sbs-action');
+      break;
+    }
+    el = el.parentNode;
+  }
+  if (action === 'dismissBeta') {
+    var overlay = document.getElementById('betaOverlay');
+    if (overlay) { overlay.style.display = 'none'; }
+  }
+  if (action === 'runScreening') { runScreening(); }
+  if (action === 'resetForm') { resetForm(); }
+  if (action === 'compareOptions') { compareOptions(); }
+  if (action === 'printPage') { window.print(); }
+  if (action && el && el.classList && el.classList.contains('tab-button')) {
+    document.querySelectorAll('.tab-button').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+    el.classList.add('active');
+    var tab = document.getElementById(el.getAttribute('data-tab'));
+    if (tab) tab.classList.add('active');
+  }
+});
+
+document.querySelectorAll('.tab-button').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tab-button').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+    btn.classList.add('active');
+    var tab = document.getElementById(btn.getAttribute('data-tab'));
+    if (tab) tab.classList.add('active');
+  });
+});
+
+init();
+</script>
+</body>
+</html>
