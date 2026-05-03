@@ -222,7 +222,7 @@
 </div>
 
 <script>
-  const SHEET_ID = '1GRaECPcnF1aqRV84aSHhSphdUzgfiT--puQfyfEC3KA';
+  const API_URL = 'https://script.google.com/macros/s/AKfycbxaRpzMfNt8Puie_lBpFZpU1lNdHglinJK3_m9H371-gU-AbmFimL0usnqJYVW6FRKZng/exec';
   let allRows = [];
 
   async function loadSheet() {
@@ -232,26 +232,14 @@
     wrap.innerHTML = '<div class="loading-state"><span class="spinner"></span>Loading…</div>';
     document.getElementById('rowCount').textContent = '';
 
-    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`;
-
     try {
-      const res = await fetch(url);
+      const res = await fetch(API_URL);
       if (!res.ok) throw new Error('Fetch failed');
-      const text = await res.text();
-      const lines = text.trim().split('\n');
-      allRows = [];
-
-      for (let i = 1; i < lines.length; i++) {
-        const parts = lines[i].split(',');
-        const num  = parts[0] ? parts[0].trim() : '';
-        const word = parts[1] ? parts[1].trim() : '';
-        if (num && word) allRows.push({ num, word });
-      }
-
+      allRows = await res.json();
       document.getElementById('searchInput').value = '';
       renderTable(allRows, '');
     } catch (err) {
-      wrap.innerHTML = '<div class="error-state">Could not reach sheet — check sharing settings</div>';
+      wrap.innerHTML = '<div class="error-state">Could not reach sheet — check Apps Script deployment</div>';
       console.error(err);
     } finally {
       btn.disabled = false;
