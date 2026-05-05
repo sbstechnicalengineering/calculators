@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --orange: #E8760A;
+    --orange-light: #F59332;
+    --bg: #FFFFFF;
+    --bg2: #F7F5F2;
+    --bg3: #EFECE8;
+    --dark: #1A1A1A;
+    --text: #1A1A1A;
+    --muted: #7A7570;
+    --border: #E0DDD8;
+  }
+
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+
+  .page { max-width: 1060px; margin: 0 auto; padding: 56px 40px 80px; }
+
+  .header { margin-bottom: 52px; animation: fadeUp 0.6s ease both; }
+  .eyebrow {
+    font-family: 'DM Mono', monospace; font-size: 10.5px; letter-spacing: 0.22em;
+    color: var(--orange); text-transform: uppercase; margin-bottom: 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .eyebrow::after { content:''; height:1px; width:40px; background:var(--orange); opacity:0.5; }
+  .main-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(60px, 8vw, 96px);
+    line-height: 0.95; letter-spacing: 0.01em; color: var(--dark);
+  }
+  .main-title span { color: var(--orange); }
+
+  .section-label {
+    font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 16px;
+    animation: fadeUp 0.6s 0.08s ease both;
+  }
+
+  /* Standards Grid — NO overflow:hidden so tooltips can escape */
+  .standards-grid {
+    display: grid;
+    grid-template-columns: 148px 1fr 1fr;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 44px;
+    animation: fadeUp 0.6s 0.12s ease both;
+    position: relative;
+    z-index: 1;
+  }
+
+  .g-cell {
+    padding: 15px 22px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .g-cell:nth-child(3n) { border-right: none; }
+  .g-cell.no-bot { border-bottom: none; }
+
+  /* Round the outer corners manually */
+  .g-cell:nth-child(1) { border-radius: 12px 0 0 0; }
+  .g-cell:nth-child(3) { border-radius: 0 12px 0 0; }
+  .g-cell:nth-child(13) { border-radius: 0 0 0 12px; } /* last row col 1 */
+  .g-cell:nth-child(15) { border-radius: 0 0 12px 0; } /* last row col 3 */
+
+  .g-head {
+    background: var(--bg2) !important;
+    font-family: 'DM Mono', monospace; font-size: 10.5px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--orange); display: flex; align-items: center;
+  }
+  .g-head:first-child { background: var(--bg) !important; }
+
+  .g-label {
+    background: var(--bg2) !important;
+    font-weight: 600; font-size: 13px;
+    color: var(--dark); display: flex; align-items: center;
+  }
+
+  /* std-wrap is the hover target */
+  .std-wrap { position: relative; }
+
+  .std-link {
+    display: block; text-decoration: none; cursor: pointer;
+    border-radius: 6px; transition: all 0.18s;
+  }
+  .std-link:hover { transform: translateX(3px); }
+  .std-link:hover .std-code { color: var(--orange-light); }
+  .std-link:hover .std-desc { color: var(--dark); }
+
+  .std-code {
+    font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500;
+    color: var(--orange); display: flex; align-items: center; gap: 5px;
+    transition: color 0.18s;
+  }
+  .std-code::after { content:'↗'; font-size:10px; opacity:0.55; }
+  .std-desc { font-size: 11px; color: var(--muted); margin-top: 3px; line-height: 1.4; transition: color 0.18s; }
+
+  /* Tooltip — fixed positioning via JS so it always clears everything */
+  .std-tooltip {
+    position: fixed;
+    width: 280px;
+    background: var(--dark);
+    color: #F0EDE8;
+    border-radius: 10px;
+    padding: 16px 18px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.18s;
+    z-index: 9999;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.28);
+    top: 0; left: 0; /* positioned by JS */
+  }
+  .std-tooltip.visible { opacity: 1; pointer-events: all; }
+
+  .std-tooltip::before {
+    content: '';
+    position: absolute;
+    bottom: 100%; left: 20px;
+    border: 6px solid transparent;
+    border-bottom-color: var(--dark);
+  }
+  .std-tooltip.flip-arrow::before {
+    left: auto; right: 20px;
+  }
+  /* Arrow pointing down (tooltip is above the link) */
+  .std-tooltip.above::before {
+    bottom: auto; top: 100%;
+    border-bottom-color: transparent;
+    border-top-color: var(--dark);
+  }
+  .std-tooltip.above.flip-arrow::before {
+    left: auto; right: 20px;
+  }
+
+  .stt-badge {
+    font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--orange); margin-bottom: 6px;
+  }
+  .stt-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: #fff; line-height: 1; margin-bottom: 8px; }
+  .stt-desc { font-size: 11.5px; line-height: 1.55; color: #B8B5B0; margin-bottom: 12px; }
+  .stt-links { display: flex; flex-direction: column; gap: 6px; }
+  .stt-link {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; line-height: 1.3;
+    text-decoration: none; transition: color 0.15s;
+    pointer-events: all;
+  }
+  .stt-link-primary { color: var(--orange-light); font-weight: 600; }
+  .stt-link-primary:hover { color: #fff; }
+  .stt-link-secondary { color: #888; }
+  .stt-link-secondary:hover { color: #bbb; }
+  .stt-divider { height: 1px; background: rgba(255,255,255,0.08); margin: 10px 0; }
+
+  /* Tools */
+  .tools-section { animation: fadeUp 0.6s 0.2s ease both; position: relative; z-index: 1; }
+  .tools-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+
+  .tool-wrap { position: relative; }
+  .tool-card {
+    display: flex; flex-direction: column; align-items: flex-start;
+    background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+    padding: 20px 16px; text-decoration: none; color: var(--dark);
+    transition: all 0.2s; cursor: pointer; position: relative; overflow: hidden; height: 100%;
+  }
+  .tool-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: var(--orange); opacity: 0; transition: opacity 0.2s;
+  }
+  .tool-card:hover { background: #fff; border-color: rgba(232,118,10,0.4); transform: translateY(-3px); box-shadow: 0 6px 24px rgba(0,0,0,0.09); }
+  .tool-card:hover::before { opacity: 1; }
+  .tool-icon { font-size: 22px; margin-bottom: 10px; display: block; }
+  .tool-name { font-weight: 600; font-size: 12px; line-height: 1.35; color: var(--dark); }
+
+  .tool-tooltip {
+    position: absolute; bottom: calc(100% + 10px); left: 50%;
+    transform: translateX(-50%) translateY(6px);
+    width: 240px; background: var(--dark); color: #F0EDE8;
+    border-radius: 10px; padding: 16px 18px;
+    pointer-events: none; opacity: 0;
+    transition: opacity 0.2s, transform 0.2s;
+    z-index: 9999; box-shadow: 0 12px 40px rgba(0,0,0,0.22);
+  }
+  .tool-tooltip::after {
+    content: ''; position: absolute; top: 100%; left: 50%;
+    transform: translateX(-50%); border: 6px solid transparent;
+    border-top-color: var(--dark);
+  }
+  .tool-wrap:hover .tool-tooltip { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .tool-wrap:first-child .tool-tooltip, .tool-wrap:nth-child(2) .tool-tooltip {
+    left: 0; transform: translateX(0) translateY(6px);
+  }
+  .tool-wrap:first-child .tool-tooltip::after, .tool-wrap:nth-child(2) .tool-tooltip::after { left: 24px; transform: none; }
+  .tool-wrap:first-child:hover .tool-tooltip, .tool-wrap:nth-child(2):hover .tool-tooltip { transform: translateX(0) translateY(0); }
+  .tool-wrap:last-child .tool-tooltip, .tool-wrap:nth-last-child(2) .tool-tooltip {
+    left: auto; right: 0; transform: translateX(0) translateY(6px);
+  }
+  .tool-wrap:last-child .tool-tooltip::after, .tool-wrap:nth-last-child(2) .tool-tooltip::after { left: auto; right: 24px; transform: none; }
+  .tool-wrap:last-child:hover .tool-tooltip, .tool-wrap:nth-last-child(2):hover .tool-tooltip { transform: translateX(0) translateY(0); }
+
+  .tt-title { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--orange); letter-spacing: 0.05em; margin-bottom: 7px; font-weight: 500; }
+  .tt-body { font-size: 11.5px; line-height: 1.55; color: #C8C5C0; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="header">
+    <div class="eyebrow">Specialty Bolt &amp; Screw · Technical Reference</div>
+    <h1 class="main-title">Materials<br>&amp; <span>Grades</span></h1>
+  </div>
+
+  <p class="section-label">Common Fastener Material Standards</p>
+  <div class="standards-grid" id="stdGrid">
+    <div class="g-cell g-head"></div>
+    <div class="g-cell g-head">Inch Series</div>
+    <div class="g-cell g-head">Metric Series</div>
+
+    <!-- Steel -->
+    <div class="g-cell g-label">Steel</div>
+    <div class="g-cell">
+      <div class="std-wrap" data-tip="tip-sae">
+        <a class="std-link" href="https://drive.google.com/file/d/1fA8SIRK_CAwd3iBnXbpDfjzzdcVPRUv7/view?usp=sharing" target="_blank">
+          <div class="std-code">SAE J429</div>
+          <div class="std-desc">Mechanical and material requirements for inch series fasteners used in automotive</div>
+        </a>
+      </div>
+    </div>
+    <div class="g-cell">
+      <div class="std-wrap" data-tip="tip-iso898" data-flip="true">
+        <a class="std-link" href="https://drive.google.com/file/d/19ZxXgLwiVyqnCcAUM0l28GbGGaelraRi/view?usp=sharing" target="_blank">
+          <div class="std-code">ISO 898-1</div>
+          <div class="std-desc">Mechanical properties of fasteners made of carbon steel and alloy steel</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Stainless -->
+    <div class="g-cell g-label">Stainless Steel</div>
+    <div class="g-cell">
+      <div class="std-wrap" data-tip="tip-f593">
+        <a class="std-link" href="https://drive.google.com/file/d/1wkcbUgnh0XuWW32bK5GSK872JzSewgqW/view?usp=sharing" target="_blank">
+          <div class="std-code">ASTM F593</div>
+          <div class="std-desc">Stainless steel bolts, hex cap screws and studs</div>
+        </a>
+      </div>
+    </div>
+    <div class="g-cell">
+      <div class="std-wrap" data-tip="tip-iso3506" data-flip="true">
+        <a class="std-link" href="https://drive.google.com/file/d/1SUEPIFmDwjoksZng6N7mGKovkzbxvs5J/view?usp=sharing" target="_blank">
+          <div class="std-code">ISO 3506-1</div>
+          <div class="std-desc">Mechanical properties of corrosion-resistant stainless steel fasteners</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- High Temp -->
+    <div class="g-cell g-label no-bot">Stainless Steel<br><span style="font-weight:400;font-size:11px;color:var(--muted);">High Temp</span></div>
+    <div class="g-cell no-bot">
+      <div class="std-wrap" data-tip="tip-a193">
+        <a class="std-link" href="https://drive.google.com/file/d/1A3qLXeYgsdl2t_ijSci0oR1tpxjJtypl/view?usp=sharing" target="_blank">
+          <div class="std-code">ASTM A193</div>
+          <div class="std-desc">Bolts in high temperature service</div>
+        </a>
+      </div>
+    </div>
+    <div class="g-cell no-bot" style="display:flex;align-items:center;">
+      <span style="font-size:12px;color:#ccc;">—</span>
+    </div>
+  </div>
+
+  <!-- Tooltip templates (hidden) -->
+  <template id="tip-sae">
+    <div class="stt-badge">Inch · Steel</div>
+    <div class="stt-title">SAE J429</div>
+    <div class="stt-desc">Defines mechanical and material requirements for externally threaded inch-series fasteners used in automotive and general applications. Covers grade designations 1 through 8, including proof load, yield, and tensile strength requirements.</div>
+    <div class="stt-divider"></div>
+    <div class="stt-links">
+      <a class="stt-link stt-link-primary" href="https://drive.google.com/file/d/1fA8SIRK_CAwd3iBnXbpDfjzzdcVPRUv7/view?usp=sharing" target="_blank">📄 SBS Technical Data Sheet ↗</a>
+      <a class="stt-link stt-link-secondary" href="https://shop.specialtybolt.com/technical/consensusstandardslibrary" target="_blank">📚 Find original in SBS Standards Library ↗</a>
+    </div>
+  </template>
+  <template id="tip-iso898">
+    <div class="stt-badge">Metric · Steel</div>
+    <div class="stt-title">ISO 898-1</div>
+    <div class="stt-desc">Specifies mechanical properties of bolts, screws, and studs made of carbon steel and alloy steel. Defines property class designations (e.g. 8.8, 10.9, 12.9) and corresponding minimum tensile, yield, and proof load values.</div>
+    <div class="stt-divider"></div>
+    <div class="stt-links">
+      <a class="stt-link stt-link-primary" href="https://drive.google.com/file/d/19ZxXgLwiVyqnCcAUM0l28GbGGaelraRi/view?usp=sharing" target="_blank">📄 SBS Technical Data Sheet ↗</a>
+      <a class="stt-link stt-link-secondary" href="https://shop.specialtybolt.com/technical/consensusstandardslibrary" target="_blank">📚 Find original in SBS Standards Library ↗</a>
+    </div>
+  </template>
+  <template id="tip-f593">
+    <div class="stt-badge">Inch · Stainless Steel</div>
+    <div class="stt-title">ASTM F593</div>
+    <div class="stt-desc">Covers stainless steel bolts, hex cap screws, and studs in inch sizes. Specifies alloy groups (e.g. 304, 316), condition designations, and mechanical property requirements including tensile and yield strength.</div>
+    <div class="stt-divider"></div>
+    <div class="stt-links">
+      <a class="stt-link stt-link-primary" href="https://drive.google.com/file/d/1wkcbUgnh0XuWW32bK5GSK872JzSewgqW/view?usp=sharing" target="_blank">📄 SBS Technical Data Sheet ↗</a>
+      <a class="stt-link stt-link-secondary" href="https://shop.specialtybolt.com/technical/consensusstandardslibrary" target="_blank">📚 Find original in SBS Standards Library ↗</a>
+    </div>
+  </template>
+  <template id="tip-iso3506">
+    <div class="stt-badge">Metric · Stainless Steel</div>
+    <div class="stt-title">ISO 3506-1</div>
+    <div class="stt-desc">Specifies mechanical properties for corrosion-resistant stainless steel bolts, screws, and studs. Covers property classes A2-70, A2-80, A4-70, and A4-80 with requirements for tensile strength, elongation, and hardness.</div>
+    <div class="stt-divider"></div>
+    <div class="stt-links">
+      <a class="stt-link stt-link-primary" href="https://drive.google.com/file/d/1SUEPIFmDwjoksZng6N7mGKovkzbxvs5J/view?usp=sharing" target="_blank">📄 SBS Technical Data Sheet ↗</a>
+      <a class="stt-link stt-link-secondary" href="https://shop.specialtybolt.com/technical/consensusstandardslibrary" target="_blank">📚 Find original in SBS Standards Library ↗</a>
+    </div>
+  </template>
+  <template id="tip-a193">
+    <div class="stt-badge">Inch · Stainless Steel · High Temp</div>
+    <div class="stt-title">ASTM A193</div>
+    <div class="stt-desc">Covers alloy-steel and stainless steel bolting for high-temperature or high-pressure service. Includes grades B7, B7M, B8, B8M, and related alloys with requirements for mechanical properties and heat treatment.</div>
+    <div class="stt-divider"></div>
+    <div class="stt-links">
+      <a class="stt-link stt-link-primary" href="https://drive.google.com/file/d/1A3qLXeYgsdl2t_ijSci0oR1tpxjJtypl/view?usp=sharing" target="_blank">📄 SBS Technical Data Sheet ↗</a>
+      <a class="stt-link stt-link-secondary" href="https://shop.specialtybolt.com/technical/consensusstandardslibrary" target="_blank">📚 Find original in SBS Standards Library ↗</a>
+    </div>
+  </template>
+
+  <!-- Tools -->
+  <p class="section-label" style="animation-delay:0.18s;">Engineering Calculators &amp; Tools</p>
+  <div class="tools-grid tools-section">
+    <div class="tool-wrap">
+      <a href="https://shop.specialtybolt.com/technical/torque-tension-calculator" target="_blank" class="tool-card">
+        <span class="tool-icon">⚙️</span>
+        <div class="tool-name">Torque, Tension &amp; Clamp Load Calculator</div>
+      </a>
+      <div class="tool-tooltip">
+        <div class="tt-title">Torque, Tension &amp; Clamp Load</div>
+        <div class="tt-body">Helps estimate the relationship between tightening torque, resulting bolt tension, and clamp load in a threaded joint. Supports more informed fastener selection and assembly decisions by showing how factors such as fastener size, friction, and tightening conditions influence joint preload, reliability, and performance.</div>
+      </div>
+    </div>
+    <div class="tool-wrap">
+      <a href="https://shop.specialtybolt.com/tool/material-strength" target="_blank" class="tool-card">
+        <span class="tool-icon">🔩</span>
+        <div class="tool-name">Strength Requirements</div>
+      </a>
+      <div class="tool-tooltip">
+        <div class="tt-title">Strength Requirements</div>
+        <div class="tt-body">Helps estimate the relationship between tightening torque, resulting bolt tension, and clamp load in a threaded joint. Supports more informed fastener selection and assembly decisions by showing how factors such as fastener size, friction, and tightening conditions influence joint preload, reliability, and performance.</div>
+      </div>
+    </div>
+    <div class="tool-wrap">
+      <a href="https://shop.specialtybolt.com/tool/hardness" target="_blank" class="tool-card">
+        <span class="tool-icon">💎</span>
+        <div class="tool-name">Hardness Conversion</div>
+      </a>
+      <div class="tool-tooltip">
+        <div class="tt-title">Hardness Conversion</div>
+        <div class="tt-body">Convert between common hardness scales such as Rockwell (HRC, HRB), Vickers (HV), and Brinell (HB). Provides quick, reliable comparisons to support material selection, specification alignment, and quality verification across different standards and testing methods.</div>
+      </div>
+    </div>
+    <div class="tool-wrap">
+      <a href="https://shop.specialtybolt.com/tool/chemical-requirements" class="tool-card">
+        <span class="tool-icon">🧪</span>
+        <div class="tool-name">Chemical Requirements</div>
+      </a>
+      <div class="tool-tooltip">
+        <div class="tt-title">Chemical Requirements</div>
+        <div class="tt-body">Provides guidance on chemical composition and material restrictions for fasteners and components. Helps users understand applicable specifications, material limits, and compliance requirements such as alloy content or restricted substances, supporting proper material selection, regulatory compliance, and consistent product performance.</div>
+      </div>
+    </div>
+    <div class="tool-wrap">
+      <a href="https://shop.specialtybolt.com/tool/material-conversion" target="_blank" class="tool-card">
+        <span class="tool-icon">↔️</span>
+        <div class="tool-name">Material Standards Conversion</div>
+      </a>
+      <div class="tool-tooltip">
+        <div class="tt-title">Materials Standards Conversion</div>
+        <div class="tt-body">Cross-reference equivalent material grades across different international standards such as ASTM, SAE, ISO, DIN, and JIS. Enables quick comparison of mechanical properties and compositions, supporting global sourcing, engineering validation, and confident material substitution decisions.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Single shared floating tooltip -->
+<div class="std-tooltip" id="floatingTip"></div>
+
+<script>
+  const floatingTip = document.getElementById('floatingTip');
+  let hideTimer = null;
+
+  document.querySelectorAll('.std-wrap').forEach(wrap => {
+    const templateId = wrap.dataset.tip;
+    const isFlip = wrap.dataset.flip === 'true';
+    const tpl = document.getElementById(templateId);
+    if (!tpl) return;
+
+    wrap.addEventListener('mouseenter', () => {
+      clearTimeout(hideTimer);
+      floatingTip.innerHTML = tpl.innerHTML;
+      floatingTip.classList.toggle('flip-arrow', isFlip);
+
+      // Position
+      const rect = wrap.getBoundingClientRect();
+      const tipW = 280;
+      const gap = 10;
+      const arrowH = 6;
+
+      // Try to place below; if off-screen, place above
+      let top = rect.bottom + gap + arrowH;
+      let above = false;
+      if (top + 200 > window.innerHeight) {
+        top = rect.top - gap - arrowH; // will be adjusted after measuring
+        above = true;
+      }
+
+      let left = isFlip
+        ? rect.right - tipW
+        : rect.left;
+
+      // Clamp horizontal
+      left = Math.max(8, Math.min(left, window.innerWidth - tipW - 8));
+
+      floatingTip.style.left = left + 'px';
+      floatingTip.style.top = top + 'px';
+      floatingTip.classList.toggle('above', above);
+      floatingTip.classList.add('visible');
+
+      // After render, fix "above" top using actual height
+      if (above) {
+        requestAnimationFrame(() => {
+          const h = floatingTip.offsetHeight;
+          floatingTip.style.top = (rect.top - h - gap - arrowH) + 'px';
+        });
+      }
+    });
+
+    wrap.addEventListener('mouseleave', () => {
+      hideTimer = setTimeout(() => floatingTip.classList.remove('visible'), 120);
+    });
+  });
+
+  floatingTip.addEventListener('mouseenter', () => clearTimeout(hideTimer));
+  floatingTip.addEventListener('mouseleave', () => {
+    hideTimer = setTimeout(() => floatingTip.classList.remove('visible'), 120);
+  });
+</script>
+</body>
+</html>
