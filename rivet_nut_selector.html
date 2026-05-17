@@ -279,8 +279,9 @@ input[type=number]{background-image:none}
 .warn-banner strong{color:#B7610A}
 
 /* Sidebar hidden when non-selector tab is active */
-.main.sidebar-hidden{grid-template-columns:0 1fr}
+.main.sidebar-hidden{grid-template-columns:1fr}
 .main.sidebar-hidden .sidebar{display:none}
+.main.sidebar-hidden .content{grid-column:1}
 
 @media(max-width:1050px){.main{grid-template-columns:1fr}.sidebar{border-right:0;border-bottom:1px solid var(--line)}.kpis{grid-template-columns:1fr 1fr}}
 @media(max-width:1050px){.main.sidebar-hidden{grid-template-columns:1fr}}
