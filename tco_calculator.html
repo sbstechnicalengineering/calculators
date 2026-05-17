@@ -425,7 +425,7 @@ svg{display:inline-block;vertical-align:middle;}
                 </div>
               </div>
               <div class="igroup">
-                <label>SBS Shipment Frequency <button class="info-btn" type="button">i<span class="tip">Depending on volume and line-side demand, SBS replenishment can be near-JIT every 2 hours, weekly, or as low as 1 shipment per month.</span></button></label>
+                <label>SBS Shipment Frequency <button class="info-btn" type="button">i<span class="tip">Deliveries per month from SBS. More frequent deliveries reduce average on-hand inventory, lowering your carrying, warehousing, and obsolescence costs. Near-JIT (daily or multiple times/week) maximizes working capital savings.</span></button></label>
                 <div style="display:flex;align-items:center;gap:8px;">
                   <input type="number" id="sbs-ship-freq" value="4" min="0.1" step="0.1" style="flex:1;">
                   <span style="font-family:Inter,sans-serif;font-size:11px;color:var(--gray-500);white-space:nowrap;">per month</span>
@@ -453,7 +453,7 @@ svg{display:inline-block;vertical-align:middle;}
                 </div>
               </div>
               <div class="igroup">
-                <label>Alternate Supplier OTD <button class="info-btn" type="button">i<span class="tip">Low OTD usually causes Purchasing and Planning to carry extra safety stock to protect against stockouts. That extra inventory reduces turns and increases working capital, storage, and obsolescence cost.</span></button></label>
+                <label>Alternate Supplier OTD <button class="info-btn" type="button">i<span class="tip">Low OTD forces extra safety stock to protect against late deliveries, which reduces effective inventory turns and raises carrying, warehousing, and obsolescence cost — in addition to direct expediting cost per late shipment. Higher OTD reduces all these costs.</span></button></label>
                 <div style="display:flex;align-items:center;gap:8px;">
                   <input type="number" id="otd-pct" value="90" min="0" max="100" step="1" style="flex:1;">
                   <span style="font-family:Inter,sans-serif;font-size:11px;color:var(--gray-500);">%</span>
@@ -737,7 +737,8 @@ svg{display:inline-block;vertical-align:middle;}
             <div><div class="cc-tot-lbl">Total Annual Cost</div><div class="cc-tot-val" id="cc-sbs-tot">--</div></div>
           </div>
           <div class="cc-body">
-            <div class="cc-row"><div class="cc-row-lbl"><div class="cc-dot dot-navy"></div>Material Cost (SBS per-piece price)</div><div><span class="cc-amt" id="sbs-mat">--</span><span class="cc-pct">100%</span></div></div>
+            <div class="cc-row"><div class="cc-row-lbl"><div class="cc-dot dot-navy"></div>Material Cost (SBS per-piece price)</div><div><span class="cc-amt" id="sbs-mat">--</span><span class="cc-pct" id="sbs-mat-pct">--</span></div></div>
+            <div class="cc-row"><div class="cc-row-lbl"><div class="cc-dot dot-navy"></div>Inventory Carrying Cost (at delivery freq.)</div><div><span class="cc-amt" id="sbs-carry">--</span><span class="cc-pct" id="sbs-carry-pct">--</span></div></div>
             <div class="cc-incl">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--active-green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
               <div class="cc-incl-txt">Freight, duties, ordering, receiving, planning, point-of-use delivery and quality guarantee are all included in the SBS per-piece price above.</div>
@@ -1017,13 +1018,33 @@ function recalc(){
 
   // SBS
   var spend_sbs=eau*sbsP;
-  var total_sbs=spend_sbs;
+  // SBS carrying cost: more frequent SBS deliveries = lower avg inventory on hand
+  // Assume SBS avg inventory = (EAU / (sbsShipFreq * 12)) * 0.5 shipments worth of stock
+  var sbsShipFreqMo=parseFloat(gi('sbs-ship-freq').value)||1; // deliveries per month
+  var sbsShipFreqYr=sbsShipFreqMo*12;
+  var sbsAvgInv=spend_sbs/Math.max(sbsShipFreqYr,0.5); // avg inventory value = annual spend / turns implied by freq
+  var sbs_carry=sbsAvgInv*(money+wh+obs);
+  var total_sbs=spend_sbs+sbs_carry;
 
   // Alternate
   var spend_alt=eau*altP;
   var tariff_alt=spend_alt*(gv('td')/100);
-  var moqFactor=moq>0?Math.max(1,(moq/Math.max(eau,1))*(Math.max(turns,0.1))):1;
-  var avgInv=( spend_alt/Math.max(turns,0.1))*Math.min(moqFactor,4);
+
+  // OTD penalty on inventory: low OTD forces safety stock, reducing effective turns
+  // Model: at 100% OTD, effective turns = user-set turns; at 0% OTD, effective turns halved
+  var otdPct=parseFloat(gi('otd-pct').value)||100;
+  var otdFactor=0.5+0.5*(otdPct/100); // ranges from 0.5 (0% OTD) to 1.0 (100% OTD)
+  var effectiveTurns=Math.max(turns*otdFactor,0.1);
+
+  // Alt shipment frequency also influences effective turns:
+  // More frequent shipments = smaller batch sizes = lower avg inventory
+  // Blend: weight equally between turns-implied-by-freq and user slider
+  var altFreqImpliedTurns=Math.max(shipFreq,0.1); // each shipment ~1 turn-equivalent batch
+  var blendedTurns=(effectiveTurns+altFreqImpliedTurns)/2;
+  var finalTurns=Math.max(blendedTurns,0.1);
+
+  var moqFactor=moq>0?Math.max(1,(moq/Math.max(eau,1))*(Math.max(finalTurns,0.1))):1;
+  var avgInv=(spend_alt/Math.max(finalTurns,0.1))*Math.min(moqFactor,4);
   var carry=avgInv*money;
   var whCost=avgInv*wh;
   var obsCost=avgInv*obs;
@@ -1036,7 +1057,6 @@ function recalc(){
   var quality_alt=netScrap+rwLabor;
   var stockout_alt=gv('sout-n')*gv('sout-c');
   // OTD risk cost: late deliveries cause expediting; approximate at 0.5 stockout cost per late event
-  var otdPct=parseFloat(gi('otd-pct').value)||100;
   var lateShipments=ordPerYr*(1-otdPct/100);
   var otdCost=lateShipments*gv('sout-c')*0.5;
   var total_alt=spend_alt+totFr+tariff_alt+carry+whCost+obsCost+po_alt+mgmt_alt+recv_alt+quality_alt+stockout_alt+otdCost;
@@ -1060,6 +1080,9 @@ function recalc(){
   gi('res-quality').textContent=fmt(quality_alt+stockout_alt+otdCost);
   gi('cc-sbs-tot').textContent=fmt(total_sbs);
   gi('sbs-mat').textContent=fmt(spend_sbs);
+  gi('sbs-mat-pct').textContent=total_sbs>0?(spend_sbs/total_sbs*100).toFixed(1)+'%':'--';
+  gi('sbs-carry').textContent=fmt(sbs_carry);
+  gi('sbs-carry-pct').textContent=total_sbs>0?(sbs_carry/total_sbs*100).toFixed(1)+'%':'--';
   gi('cc-sbs-cpu').textContent=fmtU(cpu_sbs);
   gi('cc-alt-tot').textContent=fmt(total_alt);
   gi('cc-alt-cpu').textContent=fmtU(cpu_alt);
@@ -1082,7 +1105,7 @@ function recalc(){
 
   gi('sav-badge').textContent=fmt(savings)+' USD / yr | '+savPct.toFixed(1)+'%';
   var savCats=[
-    {l:'Material Premium',v:spend_alt-spend_sbs},
+    {l:'Material Premium',v:(spend_alt+0)-(spend_sbs+sbs_carry)},
     {l:'Freight Eliminated',v:totFr},
     {l:'Tariffs and Duties',v:tariff_alt},
     {l:'Inventory and Capital',v:carry+whCost+obsCost},
