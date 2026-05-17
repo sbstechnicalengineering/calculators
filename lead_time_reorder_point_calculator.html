@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lead Time & Reorder Point Calculator — SBS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy:           #1D3557;
+      --navy-dark:      #12243a;
+      --orange:         #E87722;
+      --orange-light:   #F0913A;
+      --orange-pale:    #FDF0E5;
+      --white:          #ffffff;
+      --gray-50:        #F8F9FA;
+      --gray-100:       #F0F2F5;
+      --gray-200:       #E2E6EA;
+      --gray-300:       #CED4DA;
+      --gray-400:       #ADB5BD;
+      --gray-500:       #6C757D;
+      --gray-600:       #495057;
+      --gray-700:       #343A40;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--gray-100);
+      color: var(--gray-700);
+    }
+
+    /* ── STICKY HEADER ─────────────────────────────── */
+    .sbs-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--white);
+      border-bottom: 3px solid var(--orange);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+      padding: 0.65rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .sbs-header a { display: flex; align-items: center; }
+    .sbs-header img { height: 48px; display: block; }
+    .header-divider { width: 1px; height: 36px; background: var(--gray-200); flex-shrink: 0; }
+    .header-title { flex: 1; min-width: 0; }
+    .header-title h1 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1.1;
+      white-space: nowrap;
+    }
+    .header-title p {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      color: var(--gray-500);
+      margin-top: 2px;
+    }
+    .header-actions { display: flex; gap: 8px; flex-shrink: 0; }
+    .btn-print {
+      background: var(--orange);
+      color: var(--white);
+      border: none;
+      border-radius: 6px;
+      padding: 7px 14px;
+      font-family: 'Barlow', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .btn-print:hover { background: var(--orange-light); transform: translateY(-1px); }
+    .btn-print svg { width: 14px; height: 14px; }
+
+    /* ── TABS ──────────────────────────────────────── */
+    .tabs-bar {
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-200);
+      padding: 0 1.5rem;
+      display: flex;
+      gap: 0;
+    }
+    .tab-btn {
+      font-family: 'Barlow', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--gray-500);
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      padding: 12px 16px;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+      white-space: nowrap;
+    }
+    .tab-btn:hover { color: var(--navy); }
+    .tab-btn.active { color: var(--navy); border-bottom-color: var(--orange); }
+
+    /* ── LAYOUT ────────────────────────────────────── */
+    .app { max-width: 1220px; margin: 0 auto; padding: 24px 18px 60px; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(360px, 0.9fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    /* ── CARD ──────────────────────────────────────── */
+    .card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--gray-200);
+      background: var(--gray-50);
+    }
+    .card-header h2 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--navy);
+    }
+    .card-header p {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      color: var(--gray-500);
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+    .card-body { padding: 20px; }
+
+    /* ── SECTION TITLE ─────────────────────────────── */
+    .section-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--navy);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin: 22px 0 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+    .section-title:first-child { margin-top: 0; }
+
+    /* ── INPUTS ────────────────────────────────────── */
+    .input-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+
+    .field-label {
+      font-family: 'Barlow', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--gray-500);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    .info {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 15px; height: 15px;
+      border-radius: 50%;
+      background: #EAF3FB;
+      color: var(--navy);
+      border: 1px solid #BFD7EC;
+      font-size: 10px;
+      font-weight: 800;
+      cursor: help;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .info:hover::after {
+      content: attr(data-tip);
+      position: absolute;
+      z-index: 9999;
+      left: 50%;
+      bottom: 130%;
+      transform: translateX(-50%);
+      width: 240px;
+      background: #0f172a;
+      color: #ffffff;
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 12px;
+      line-height: 1.4;
+      font-weight: 400;
+      font-family: 'Inter', sans-serif;
+      text-transform: none;
+      letter-spacing: 0;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 6px;
+      padding: 9px 11px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      background: var(--white);
+      color: var(--gray-700);
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 3px rgba(232,119,34,0.12);
+    }
+    /* Greyed-out (overridden) inputs */
+    input.greyed, select.greyed {
+      background: var(--gray-100);
+      color: var(--gray-400);
+      border-color: var(--gray-200);
+      pointer-events: none;
+    }
+    .field-wrapper.greyed-field .field-label { color: var(--gray-300); }
+    .field-wrapper.greyed-field .field-label .info { opacity: 0.4; }
+    .overridden-badge {
+      display: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 10.5px;
+      color: var(--gray-400);
+      margin-top: 4px;
+      font-style: italic;
+    }
+    .field-wrapper.greyed-field .overridden-badge { display: block; }
+
+    .field-note { font-size: 11.5px; color: var(--gray-500); margin-top: 4px; line-height: 1.35; }
+
+    /* ── SAFETY METHOD SELECTOR ────────────────────── */
+    .method-box { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
+    .method-box label {
+      border: 1.5px solid var(--gray-200);
+      border-radius: 8px;
+      padding: 10px 12px;
+      cursor: pointer;
+      background: var(--white);
+      font-family: 'Barlow', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--gray-600);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .method-box input { width: auto; flex-shrink: 0; }
+    .method-box label:has(input:checked) {
+      background: var(--orange-pale);
+      border-color: var(--orange);
+      color: var(--navy);
+    }
+    .method-fields { animation: fadeIn 0.2s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ── ACTION BUTTONS ────────────────────────────── */
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+    .btn-primary {
+      background: var(--orange);
+      color: var(--white);
+      border: none;
+      border-radius: 6px;
+      padding: 10px 18px;
+      font-family: 'Barlow', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+      box-shadow: 0 2px 6px rgba(232,119,34,0.3);
+    }
+    .btn-primary:hover { background: var(--orange-light); transform: translateY(-1px); }
+    .btn-secondary {
+      background: var(--navy);
+      color: var(--white);
+      border: none;
+      border-radius: 6px;
+      padding: 10px 18px;
+      font-family: 'Barlow', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-secondary:hover { background: var(--navy-dark); }
+
+    /* ── RESULTS PANEL ─────────────────────────────── */
+    .results-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .metric {
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      padding: 14px;
+      background: var(--gray-50);
+    }
+    .metric.primary {
+      grid-column: 1 / -1;
+      background: linear-gradient(135deg, var(--navy) 0%, #143653 100%);
+      color: var(--white);
+      border-color: var(--navy);
+    }
+    .metric .m-label {
+      font-family: 'Barlow', sans-serif;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--gray-500);
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+    .metric.primary .m-label { color: rgba(255,255,255,0.72); }
+    .metric .m-value {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 26px;
+      font-weight: 800;
+      line-height: 1.1;
+      color: var(--gray-700);
+    }
+    .metric.primary .m-value { font-size: 38px; color: var(--white); }
+    .metric .m-sub { font-size: 11.5px; color: var(--gray-500); margin-top: 4px; line-height: 1.35; }
+    .metric.primary .m-sub { color: rgba(255,255,255,0.70); }
+
+    /* ── RECOMMENDATION BOX ────────────────────────── */
+    .rec-box {
+      margin-top: 14px;
+      padding: 14px 16px;
+      border-radius: 8px;
+      border: 1px solid #c7e7d0;
+      background: #f0fdf4;
+      color: #14532d;
+      font-family: 'Inter', sans-serif;
+      font-size: 13.5px;
+      line-height: 1.5;
+    }
+    .rec-box.warning { border-color: #fde68a; background: #fffbeb; color: #78350f; }
+    .rec-box.danger  { border-color: #fecaca; background: #fef2f2; color: #7f1d1d; }
+
+    /* ── FORMULA BOX ───────────────────────────────── */
+    .formula-box {
+      margin-top: 14px;
+      border: 1px dashed var(--gray-300);
+      background: var(--white);
+      border-radius: 8px;
+      padding: 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      color: var(--gray-600);
+      line-height: 1.55;
+    }
+    .formula-box strong { color: var(--navy); }
+
+    /* ── ASSUMPTION SUMMARY ────────────────────────── */
+    .assumption-summary {
+      margin-top: 14px;
+      padding: 12px 14px;
+      background: var(--orange-pale);
+      border: 1px solid #f5d4ae;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 12.5px;
+      color: var(--gray-700);
+      line-height: 1.6;
+    }
+    .assumption-summary strong { color: var(--navy); font-family: 'Barlow', sans-serif; font-weight: 700; }
+
+    /* ── DATA TABLE ────────────────────────────────── */
+    .data-table { width: 100%; border-collapse: collapse; font-family: 'Inter', sans-serif; font-size: 13px; }
+    .data-table th, .data-table td { border-bottom: 1px solid var(--gray-200); padding: 10px; text-align: left; }
+    .data-table th {
+      background: var(--gray-50);
+      color: var(--gray-500);
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-family: 'Barlow', sans-serif;
+      font-weight: 700;
+    }
+    .data-table tr:hover td { background: var(--gray-50); }
+    .pill {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: var(--orange-pale);
+      color: #9a4a00;
+      font-weight: 700;
+      font-size: 11px;
+      font-family: 'Barlow', sans-serif;
+    }
+
+    /* ── PROGRAM LAYOUT ────────────────────────────── */
+    .program-layout { display: grid; grid-template-columns: minmax(0,1fr) minmax(320px,0.65fr); gap: 18px; }
+    .upload-box {
+      border: 2px dashed #BFD7EC;
+      background: #EAF3FB;
+      border-radius: 10px;
+      padding: 28px;
+      text-align: center;
+    }
+    .upload-box h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+    .upload-box p { color: var(--gray-600); font-size: 14px; line-height: 1.5; margin-bottom: 18px; max-width: 600px; }
+    .fake-btn {
+      display: inline-block;
+      padding: 10px 18px;
+      border-radius: 6px;
+      font-family: 'Barlow', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: not-allowed;
+      opacity: 0.85;
+      margin: 4px;
+    }
+    .fake-btn.orange { background: var(--orange); color: var(--white); }
+    .fake-btn.navy   { background: var(--navy);   color: var(--white); }
+
+    /* ── BEST PRACTICES ────────────────────────────── */
+    .small-list { padding-left: 18px; font-family: 'Inter', sans-serif; font-size: 13.5px; color: var(--gray-700); line-height: 1.7; }
+
+    /* ── UTILITIES ─────────────────────────────────── */
+    .hidden { display: none !important; }
+
+    /* ── RESPONSIVE ────────────────────────────────── */
+    @media (max-width: 960px) {
+      .calc-grid, .program-layout { grid-template-columns: 1fr; }
+      .input-grid, .results-grid { grid-template-columns: 1fr; }
+      .method-box { grid-template-columns: 1fr; }
+      .header-title h1 { font-size: 17px; }
+    }
+
+    @media print {
+      body { background: #fff; }
+      .sbs-header { position: static; box-shadow: none; }
+      .tabs-bar, .actions { display: none; }
+      .card { box-shadow: none; }
+      .tab-panel { display: block !important; page-break-after: always; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── STICKY HEADER ─────────────────────────── -->
+  <header class="sbs-header">
+    <a href="https://shop.specialtybolt.com/" target="_blank">
+      <img id="sbsLogoPrint" src="data:image/png;base64,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" alt="SBS Specialty Bolt &amp; Screw" style="height:48px;display:block;" />
+    </a>
+    <div class="header-divider"></div>
+    <div class="header-title">
+      <h1>Lead Time &amp; Reorder Point Calculator</h1>
+      <p>Plan reorder points, safety stock, and order quantities — updated automatically as inputs change.</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-print" onclick="window.print()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        Print / Export PDF
+      </button>
+    </div>
+  </header>
+
+  <!-- ── TABS BAR ─────────────────────────────────── -->
+  <nav class="tabs-bar" aria-label="Calculator sections">
+    <button class="tab-btn active" data-tab="part">Per-Part Calculator</button>
+    <button class="tab-btn" data-tab="program">Program Level / Multiple Parts</button>
+    <button class="tab-btn" data-tab="bestpractice">Best Practices &amp; Theory</button>
+  </nav>
+
+  <main class="app">
+
+    <!-- ════════════════════════════════════════════
+         TAB 1 — PER PART CALCULATOR
+    ═══════════════════════════════════════════════ -->
+    <section id="part" class="tab-panel active">
+      <div class="calc-grid">
+
+        <!-- INPUT CARD -->
+        <div class="card">
+          <div class="card-header">
+            <h2>Input Assumptions</h2>
+            <p>Enter demand, lead time, safety stock method, and planning parameters. Outputs update automatically.</p>
+          </div>
+          <div class="card-body">
+
+            <!-- PART IDENTIFICATION -->
+            <div class="section-title">Part Identification</div>
+            <div class="input-grid">
+              <div class="field-wrapper">
+                <div class="field-label" for="partNumber">Part Number <span class="info" data-tip="Enter the customer or SBS part number being analyzed.">i</span></div>
+                <input id="partNumber" type="text" value="Part#123ABC" />
+              </div>
+              <div class="field-wrapper">
+                <div class="field-label" for="uom">Unit of Measure <span class="info" data-tip="Unit of measure used for demand, inventory, reorder point, and order quantity.">i</span></div>
+                <select id="uom">
+                  <option value="pcs">Pieces (pcs)</option>
+                  <option value="boxes">Boxes</option>
+                  <option value="bags">Bags</option>
+                  <option value="kits">Kits</option>
+                  <option value="lbs">Pounds (lbs)</option>
+                  <option value="kg">Kilograms (kg)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- DEMAND -->
+            <div class="section-title">Demand</div>
+            <div class="input-grid">
+              <div class="field-wrapper">
+                <div class="field-label" for="demandQty">Demand Quantity <span class="info" data-tip="Expected demand for the period selected below.">i</span></div>
+                <input id="demandQty" class="comma-input" inputmode="numeric" value="120,000" />
+              </div>
+              <div class="field-wrapper">
+                <div class="field-label" for="demandPeriod">Demand Period <span class="info" data-tip="Choose whether demand quantity represents annual, monthly, weekly, or daily usage. Daily demand is calculated as Demand Quantity ÷ Period Days.">i</span></div>
+                <select id="demandPeriod">
+                  <option value="365">Annual Usage (÷365)</option>
+                  <option value="30.4167">Monthly Usage (÷30.4)</option>
+                  <option value="7">Weekly Usage (÷7)</option>
+                  <option value="1">Daily Usage</option>
+                </select>
+              </div>
+              <div class="field-wrapper">
+                <div class="field-label" for="seasonality">Seasonality Factor <span class="info" data-tip="Multiplies daily demand upward for seasonal peak periods. Stable = no adjustment (×1.0). This directly increases adjusted daily demand and the reorder point.">i</span></div>
+                <select id="seasonality">
+                  <option value="1.00">Stable / Non-Seasonal (×1.00)</option>
+                  <option value="1.10">Mild Seasonality (×1.10)</option>
+                  <option value="1.25">Strong Seasonality (×1.25)</option>
+                  <option value="1.50">Peak Season / Launch Build (×1.50)</option>
+                </select>
+              </div>
+              <div class="field-wrapper">
+                <div class="field-label" for="onHand">Current On-Hand Inventory <span class="info" data-tip="Current available inventory used to estimate days until reorder point, suggested order quantity, and stockout risk level.">i</span></div>
+                <input id="onHand" class="comma-input" inputmode="numeric" value="25,000" />
+              </div>
+            </div>
+
+            <!-- LEAD TIME -->
+            <div class="section-title">Lead Time Breakdown</div>
+            <div class="input-grid">
+              <div class="field-wrapper">
+                <div class="field-label" for="productionLt">Supplier Production Lead Time (days) <span class="info" data-tip="Supplier manufacturing or production lead time in calendar days.">i</span></div>
+                <input id="productionLt" type="number" min="0" step="0.5" value="45" />
+              </div>
+              <div class="field-wrapper">
+                <div class="field-label" for="transitLt">Transit Time (days) <span class="info" data-tip="Transportation time from supplier to receiving, including ocean, air, truck, or broker delays.">i</span></div>
+                <input id="transitLt" type="number" min="0" step="0.5" value="21" />
+              </div>
+              <div class="field-wrapper">
+                <div class="field-label" for="inspectionLt">Receiving / Inspection Time (days) <span class="info" data-tip="Expected time for receiving, inspection, quality release, and system availability.">i</span></div>
+                <input id="inspectionLt" type="number" min="0" step="0.5" value="3" />
+              </div>
+              <div class="field-wrapper" id="bufferLtWrapper">
+                <div class="field-label" for="bufferLt">Internal Processing Buffer (days) <span class="info" data-tip="Additional planning buffer for approvals, scheduling, or administrative uncertainty.">i</span></div>
+                <input id="bufferLt" type="number" min="0" step="0.5" value="7" />
+                <div class="overridden-badge" id="bufferLtNote">Overridden by Avg. Lead Time Override in Service Level method</div>
+              </div>
+            </div>
+
+            <!-- SAFETY STOCK METHOD -->
+            <div class="section-title">Safety Stock Method</div>
+            <div class="method-box">
+              <label><input type="radio" name="safetyMethod" value="manual" checked /> Manual Override</label>
+              <label><input type="radio" name="safetyMethod" value="days" /> Days of Supply</label>
+              <label><input type="radio" name="safetyMethod" value="service" /> Statistical (Service Level)</label>
+            </div>
+
+            <!-- MANUAL FIELDS -->
+            <div id="manualFields" class="input-grid method-fields">
+              <div class="field-wrapper">
+                <div class="field-label" for="manualSafety">Manual Safety Stock Qty <span class="info" data-tip="A fixed safety stock quantity you specify directly. The Volatility Factor is then applied as a multiplier on top of this value — use Low risk to pass through the entered value unchanged.">i</span></div>
+                <input id="manualSafety" class="comma-input" inputmode="numeric" value="8,000" />
+              </div>
+              <div class="field-wrapper">
+                <div class="field-label" for="manualNote">Planning Note <span class="info" data-tip="Optional note explaining the basis for this safety stock assumption.">i</span></div>
+                <input id="manualNote" type="text" value="Manual safety stock assumption" />
+              </div>
+            </div>
+
+            <!-- DAYS OF SUPPLY FIELDS -->
+            <div id="daysFields" class="input-grid method-fields hidden">
+              <div class="field-wrapper">
+                <div class="field-label" for="safetyDays">Safety Stock Days of Supply <span class="info" data-tip="Number of days of demand to hold as safety stock. Safety Stock = Adjusted Daily Demand × Safety Days × Volatility Factor.">i</span></div>
+                <input id="safetyDays" type="number" min="0" step="0.5" value="20" />
+              </div>
+            </div>
+
+            <!-- SERVICE LEVEL FIELDS -->
+            <div id="serviceFields" class="input-grid method-fields hidden">
+              <div class="field-wrapper">
+                <div class="field-label" for="serviceLevel">Target Service Level <span class="info" data-tip="Sets the Z-score (σ multiplier) for the statistical safety stock formula. Higher service levels increase safety stock to reduce stockout probability. The Z-score already encodes uncertainty confidence — the Volatility Factor below is therefore not applied when using this method.">i</span></div>
+                <select id="serviceLevel">
+                  <option value="1.28">90% — Z = 1.28</option>
+                  <option value="1.65" selected>95% — Z = 1.65</option>
+                  <option value="1.88">97% — Z = 1.88</option>
+                  <option value="2.05">98% — Z = 2.05</option>
+                  <option value="2.33">99% — Z = 2.33</option>
+                </select>
+              </div>
+              <div class="field-wrapper">
+                <div class="field-label" for="demandStdDev">Daily Demand Std. Dev. <span class="info" data-tip="Standard deviation of daily demand from historical data. Use a higher value when usage history is unstable.">i</span></div>
+                <input id="demandStdDev" type="number" min="0" step="1" value="120" />
+              </div>
+              <div class="field-wrapper">
+                <div class="field-label" for="leadTimeStdDev">Lead Time Std. Dev. (days) <span class="info" data-tip="Standard deviation of total lead time. Use higher values when supplier, logistics, or quality release timing has been unreliable.">i</span></div>
+                <input id="leadTimeStdDev" type="number" min="0" step="0.5" value="6" />
+              </div>
+              <div class="field-wrapper" id="avgLtOverrideWrapper">
+                <div class="field-label" for="avgLeadTimeOverride">Avg. Lead Time Override (days) <span class="info" data-tip="Optional: if your historically observed average lead time differs from the sum of the Lead Time Breakdown above, enter it here. When filled, this value is used in the statistical formula instead of the summed lead time. The Lead Time Breakdown fields are then greyed to show they are not driving this calculation.">i</span></div>
+                <input id="avgLeadTimeOverride" type="number" min="0" step="0.5" value="" placeholder="Leave blank to use breakdown total" />
+              </div>
+            </div>
+
+            <!-- DEMAND VOLATILITY & SUPPLIER OTD -->
+            <div class="section-title">Demand Volatility &amp; Supplier Performance</div>
+            <div class="input-grid">
+
+              <!-- Demand CV% -->
+              <div class="field-wrapper" id="demandCVWrapper">
+                <div class="field-label" for="demandCV">Demand Variability — CV% <span class="info" data-tip="Coefficient of Variation: standard deviation of demand expressed as a % of average demand. CV% = (Std Dev / Mean) × 100. Used to auto-populate Daily Demand Std Dev in the Statistical method and to inform the volatility classification. Typical ranges: &lt;15% = Low, 15–30% = Medium, 30–50% = High, &gt;50% = Critical. Leave blank to enter std dev manually in the Statistical method.">i</span></div>
+                <div style="position:relative;">
+                  <input id="demandCV" type="number" min="0" max="200" step="1" placeholder="e.g. 25 for 25%" />
+                  <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-family:'Inter',sans-serif;font-size:13px;color:var(--gray-400);pointer-events:none;">%</span>
+                </div>
+                <div class="field-note" id="demandCVNote">CV% auto-sets the volatility classification and std dev below</div>
+              </div>
+
+              <!-- Volatility classification -->
+              <div class="field-wrapper" id="volatilityWrapper">
+                <div class="field-label" for="volatility">Risk Classification (Multiplier) <span class="info" data-tip="Multiplies safety stock in Manual and Days-of-Supply methods. Auto-set from CV% if entered: &lt;15%=Low(×1.00), 15–30%=Medium(×1.15), 30–50%=High(×1.30), &gt;50%=Critical(×1.50). Can also be set manually. NOT applied in Statistical method — Z-score encodes risk.">i</span></div>
+                <select id="volatility">
+                  <option value="1.00">Low — stable demand, reliable quality (×1.00)</option>
+                  <option value="1.15">Medium — some variability or forecast uncertainty (×1.15)</option>
+                  <option value="1.30">High — quality issues, stockouts, weak forecast (×1.30)</option>
+                  <option value="1.50">Critical — volatile demand, known shortages (×1.50)</option>
+                </select>
+                <div class="overridden-badge" id="volatilityNote">Not applied in Statistical method — Z-score encodes risk directly</div>
+              </div>
+
+              <!-- Supplier OTD % -->
+              <div class="field-wrapper" id="otdWrapper">
+                <div class="field-label" for="supplierOTD">Supplier On-Time Delivery (OTD) % <span class="info" data-tip="Supplier's historical on-time delivery rate. An OTD below 100% means some orders arrive late, effectively extending your planning lead time. OTD Buffer (days) = Total Lead Time × (1 − OTD/100) is added to the lead time used in the ROP calculation. Example: 90% OTD on a 76-day lead time adds 7.6 days of late-delivery buffer.">i</span></div>
+                <div style="position:relative;">
+                  <input id="supplierOTD" type="number" min="1" max="100" step="1" value="95" />
+                  <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-family:'Inter',sans-serif;font-size:13px;color:var(--gray-400);pointer-events:none;">%</span>
+                </div>
+                <div class="field-note" id="otdNote">At 95% OTD: ~5% of orders arrive late — buffer auto-added to lead time</div>
+              </div>
+
+              <!-- OTD buffer display -->
+              <div class="field-wrapper" id="otdBufferWrapper">
+                <div class="field-label">OTD Late-Delivery Buffer <span class="info" data-tip="Calculated automatically: Lead Time × (1 − OTD%). This extra days of buffer is added to your total lead time in the ROP calculation to account for the probability of late supplier deliveries. Shown here for transparency — not a manual input.">i</span></div>
+                <div style="border:1.5px solid var(--gray-200);border-radius:6px;padding:9px 11px;background:var(--gray-50);font-family:'Inter',sans-serif;font-size:14px;color:var(--gray-600);" id="otdBufferDisplay">— days</div>
+                <div class="overridden-badge" id="otdBufferOverriddenNote" style="display:none;">Not added — Avg LT Override in use; adjust override to account for OTD risk</div>
+              </div>
+
+            </div>
+
+            <!-- COST & PLANNING SETTINGS -->
+            <div class="section-title">Cost &amp; Planning Settings</div>
+            <div class="input-grid">
+              <div class="field-wrapper">
+                <div class="field-label" for="unitCost">Unit Cost ($) <span class="info" data-tip="Used to estimate dollar value of inventory at the reorder point.">i</span></div>
+                <input id="unitCost" type="number" min="0" step="0.0001" value="0.18" />
+              </div>
+              <div class="field-wrapper">
+                <div class="field-label" for="orderMultiple">Order Multiple / Pack Qty <span class="info" data-tip="Suggested order quantity is rounded up to the nearest multiple of this value.">i</span></div>
+                <input id="orderMultiple" class="comma-input" inputmode="numeric" value="1,000" />
+              </div>
+              <div class="field-wrapper" style="grid-column: 1 / -1;">
+                <div class="field-label" for="targetInventoryDays">Target Inventory Coverage (days) <span class="info" data-tip="Post-replenishment target: how many days of demand you want on hand after the order arrives. Used to calculate suggested order quantity. Suggested Order Qty = (Daily Demand × Target Days) + ROP − On-Hand, rounded up to order multiple.">i</span></div>
+                <input id="targetInventoryDays" type="number" min="0" step="1" value="90" />
+              </div>
+            </div>
+
+            <div class="actions">
+              <button type="button" class="btn-primary" onclick="calculate()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="vertical-align:middle;margin-right:5px"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3"/></svg>
+                Recalculate
+              </button>
+              <button type="button" class="btn-secondary" onclick="window.print()">Export / Print PDF</button>
+            </div>
+
+          </div><!-- /card-body -->
+        </div><!-- /input card -->
+
+        <!-- OUTPUT CARD -->
+        <aside class="card">
+          <div class="card-header">
+            <h2>Calculated Output</h2>
+            <p>Results are planning estimates. Review against supplier reliability, MOQ, open orders, and customer criticality.</p>
+          </div>
+          <div class="card-body">
+
+            <div class="results-grid">
+              <div class="metric primary">
+                <div class="m-label">Recommended Reorder Point</div>
+                <div class="m-value" id="ropOut">0 pcs</div>
+                <div class="m-sub" id="ropSub">Demand during lead time + safety stock</div>
+              </div>
+              <div class="metric">
+                <div class="m-label">Effective Lead Time</div>
+                <div class="m-value" id="leadTimeOut">0 days</div>
+                <div class="m-sub" id="leadTimeSub">Breakdown + OTD late-delivery buffer</div>
+              </div>
+              <div class="metric">
+                <div class="m-label">OTD Late-Delivery Buffer</div>
+                <div class="m-value" id="otdBufferOut">0 days</div>
+                <div class="m-sub" id="otdBufferSub">LT × (1 − OTD%)</div>
+              </div>
+              <div class="metric">
+                <div class="m-label">Adjusted Daily Demand</div>
+                <div class="m-value" id="dailyDemandOut">0</div>
+                <div class="m-sub" id="dailyDemandSub">Base demand × seasonality factor</div>
+              </div>
+              <div class="metric">
+                <div class="m-label">Demand CV%</div>
+                <div class="m-value" id="cvOut">—</div>
+                <div class="m-sub" id="cvSub">Coefficient of variation</div>
+              </div>
+              <div class="metric">
+                <div class="m-label">Safety Stock</div>
+                <div class="m-value" id="safetyStockOut">0</div>
+                <div class="m-sub" id="safetyStockSub">Method-dependent</div>
+              </div>
+              <div class="metric">
+                <div class="m-label">Inventory Exposure @ ROP</div>
+                <div class="m-value" id="exposureOut">$0</div>
+                <div class="m-sub">ROP × unit cost</div>
+              </div>
+              <div class="metric">
+                <div class="m-label">Estimated Stockout Risk</div>
+                <div class="m-value" id="riskOut">—</div>
+                <div class="m-sub" id="riskSub">Based on on-hand vs. reorder point</div>
+              </div>
+              <div class="metric">
+                <div class="m-label">Suggested Order Qty</div>
+                <div class="m-value" id="orderQtyOut">0</div>
+                <div class="m-sub" id="orderQtySub">Rounded to order multiple</div>
+              </div>
+              <div class="metric">
+                <div class="m-label">Estimated Reorder Date</div>
+                <div class="m-value" id="reorderDateOut">—</div>
+                <div class="m-sub">Based on current on-hand burn rate</div>
+              </div>
+              <div class="metric">
+                <div class="m-label">Inventory Turns (Annualized)</div>
+                <div class="m-value" id="turnsOut">—</div>
+                <div class="m-sub">Annual demand ÷ avg inventory @ ROP</div>
+              </div>
+              <div class="metric">
+                <div class="m-label">Demand During Lead Time</div>
+                <div class="m-value" id="ddltOut">0</div>
+                <div class="m-sub">Adj. daily demand × total lead time</div>
+              </div>
+            </div>
+
+            <div id="recommendation" class="rec-box" style="margin-top:14px;"></div>
+
+            <div class="assumption-summary" id="assumptionSummary" style="margin-top:14px;"></div>
+
+            <div class="formula-box" style="margin-top:14px;">
+              <strong>Core Formula</strong><br />
+              ROP = Adjusted Daily Demand × Effective Lead Time + Safety Stock<br />
+              Effective LT = (LT Breakdown + OTD Buffer) &nbsp;|&nbsp; OTD Buffer = LT × (1 − OTD%)<br /><br />
+              <strong>Safety Stock Formulas</strong><br />
+              <em>Manual:</em> SS = Manual Qty × Volatility Factor<br />
+              <em>Days of Supply:</em> SS = Adj. Daily Demand × Safety Days × Volatility Factor<br />
+              <em>Statistical:</em> SS = Z × √(LT × σ<sub>d</sub>² + d̄² × σ<sub>LT</sub>²) &nbsp;<em>(Volatility factor not applied; σ<sub>d</sub> auto-set from CV% if entered)</em><br /><br />
+              <strong>CV% → σ<sub>d</sub>:</strong> σ<sub>d</sub> = Daily Demand × (CV% / 100)
+            </div>
+
+          </div>
+        </aside>
+
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════
+         TAB 2 — PROGRAM LEVEL
+    ═══════════════════════════════════════════════ -->
+    <section id="program" class="tab-panel">
+      <div class="program-layout">
+        <div class="card">
+          <div class="card-header">
+            <h2>Program Level / Multiple Parts</h2>
+            <p>Use this section when planning across many parts, suppliers, programs, or inventory families.</p>
+          </div>
+          <div class="card-body">
+            <div class="upload-box">
+              <h3>Upload Excel Spreadsheet</h3>
+              <p>Upload part-level demand, current state inventory, ROP, ROQ, turns, lead time, supplier, and risk data so SBS can review, analyze, and make recommendations across your full program.</p>
+              <span class="fake-btn orange">Excel Upload (Coming Soon)</span>
+              <span class="fake-btn navy">Download Template (Coming Soon)</span>
+            </div>
+            <div class="section-title" style="margin-top:20px;">Recommended Spreadsheet Columns</div>
+            <table class="data-table">
+              <thead>
+                <tr><th>Column</th><th>Description</th><th>Required</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Part Number</td><td>Customer or SBS part number</td><td><span class="pill">Yes</span></td></tr>
+                <tr><td>Description</td><td>Short item description</td><td>Optional</td></tr>
+                <tr><td>Annual Usage</td><td>Estimated annual demand</td><td><span class="pill">Yes</span></td></tr>
+                <tr><td>UoM</td><td>Pieces, boxes, bags, kits, lbs, kg</td><td><span class="pill">Yes</span></td></tr>
+                <tr><td>Unit Cost</td><td>Current or estimated unit cost</td><td><span class="pill">Yes</span></td></tr>
+                <tr><td>Current State ROP</td><td>Existing reorder point</td><td><span class="pill">Yes</span></td></tr>
+                <tr><td>Current State ROQ / MOQ</td><td>Existing reorder or order quantity</td><td><span class="pill">Yes</span></td></tr>
+                <tr><td>On-Hand Inventory</td><td>Current available stock</td><td><span class="pill">Yes</span></td></tr>
+                <tr><td>Inventory Turns</td><td>Current inventory turn performance</td><td>Recommended</td></tr>
+                <tr><td>Open PO Qty / Due Date</td><td>Open order coverage and timing</td><td>Recommended</td></tr>
+                <tr><td>Supplier Production LT</td><td>Manufacturing lead time in days</td><td><span class="pill">Yes</span></td></tr>
+                <tr><td>Transit Time</td><td>Transportation time in days</td><td><span class="pill">Yes</span></td></tr>
+                <tr><td>Receiving / Inspection</td><td>Inbound processing and quality release time</td><td>Recommended</td></tr>
+                <tr><td>Seasonality</td><td>Stable, mild, strong, or peak season demand</td><td>Recommended</td></tr>
+                <tr><td>Volatility / Risk</td><td>Usage history, quality issues, stockouts, forecast confidence</td><td>Recommended</td></tr>
+                <tr><td>Target Service Level</td><td>Desired service level or criticality assumption</td><td>Recommended</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <aside class="card">
+          <div class="card-header"><h2>SBS Review Output</h2><p>Program analysis compares current state vs. recommended planning parameters across your full part mix.</p></div>
+          <div class="card-body">
+            <ul class="small-list">
+              <li>Compare current ROP vs. recommended ROP by part.</li>
+              <li>Compare current ROQ / MOQ vs. recommended order quantity.</li>
+              <li>Review on-hand inventory vs. reorder point, part by part.</li>
+              <li>Evaluate inventory turns and working capital impact.</li>
+              <li>Flag parts with quality issues, stockout history, or weak forecast confidence.</li>
+              <li>Identify high-value inventory exposure and long-lead-time risk.</li>
+              <li>Recommend safety stock by part criticality and demand volatility.</li>
+              <li>Suggest consolidation, kanban, VMI, or replenishment program improvements.</li>
+            </ul>
+            <div class="formula-box"><strong>Program-level recommendation:</strong><br />Upload current-state planning data so SBS can compare existing ROP, ROQ, on-hand inventory, turns, lead time, demand, and risk factors against recommended settings for each part.</div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════
+         TAB 3 — BEST PRACTICES
+    ═══════════════════════════════════════════════ -->
+    <section id="bestpractice" class="tab-panel">
+      <div class="card">
+        <div class="card-header">
+          <h2>Inventory Planning Best Practices &amp; Theory</h2>
+          <p>Educational reference summarizing commonly accepted inventory planning concepts, reorder point theory, and practical supply chain guidance.</p>
+        </div>
+        <div class="card-body">
+
+          <div class="section-title">Core Inventory Planning Concepts</div>
+          <div class="formula-box">
+            <strong>Reorder Point (ROP)</strong><br />
+            A reorder point too low increases stockout risk. A reorder point too high increases working capital and carrying costs.<br /><br />
+            <strong>General Formula:</strong> ROP = Average Demand During Lead Time + Safety Stock<br /><br />
+            <strong>Expanded Formula:</strong> ROP = (Daily Demand × Seasonality) × Total Lead Time + Safety Stock<br />
+            where Total Lead Time = Production LT + Transit + Inspection + Buffer
+          </div>
+
+          <div class="section-title">Safety Stock Method Selection Guide</div>
+          <div class="formula-box">
+            <strong>Manual Override</strong> — Use when you have a known target quantity, contractual minimum, or prior agreement. Apply Low volatility to pass through your value unchanged. Volatility factor scales this upward for higher risk.<br /><br />
+            <strong>Days of Supply</strong> — Use when thinking in days of coverage is intuitive. Simple and transparent. Safety Stock = Adjusted Daily Demand × Safety Days × Volatility Factor.<br /><br />
+            <strong>Statistical (Service Level)</strong> — Use when you have historical standard deviation data for both demand and lead time. The Z-score encodes the probability of stockout. Volatility factor is <em>not</em> additionally applied — the formula already incorporates variability mathematically.
+          </div>
+
+          <div class="section-title">When the Volatility Factor Applies</div>
+          <ul class="small-list">
+            <li><strong>Manual and Days-of-Supply methods:</strong> The Volatility Factor multiplies safety stock upward. Low (×1.00) passes the value through unchanged. Critical (×1.50) increases it by 50%.</li>
+            <li><strong>Statistical method:</strong> Volatility Factor is <em>not applied.</em> Risk is already encoded through the Z-score (service level) and the standard deviation inputs. Double-applying a volatility multiplier would overstate safety stock.</li>
+            <li>This is why the Volatility field is greyed out in Service Level mode — it shows you exactly what is and is not driving the output.</li>
+          </ul>
+
+          <div class="section-title">Lead Time Best Practices</div>
+          <ul class="small-list">
+            <li>Separate lead time into production, transit, receiving, and internal processing components.</li>
+            <li>Use actual historic lead time data whenever possible rather than supplier-quoted values only.</li>
+            <li>Track lead time variability, not only average lead time.</li>
+            <li>Long international supply chains generally require higher safety stock and more frequent review.</li>
+            <li>Quality containment, customs delays, and port congestion should be factored in when applicable.</li>
+          </ul>
+
+          <div class="section-title">Safety Stock Best Practices</div>
+          <ul class="small-list">
+            <li>Safety stock should increase when demand volatility or lead time variability increases.</li>
+            <li>Critical production parts typically justify higher service levels and more safety stock.</li>
+            <li>Low-cost / high-impact parts often justify additional protection relative to their carrying cost.</li>
+            <li>Use service-level calculations when historic demand and lead time variance data are available.</li>
+            <li>Review safety stock after stockouts, forecast misses, supplier quality events, or engineering changes.</li>
+            <li>Safety stock should not permanently compensate for chronic supplier performance problems.</li>
+          </ul>
+
+          <div class="section-title">Volatility / Risk Classification Guidance</div>
+          <div class="formula-box">
+            <strong>Low Risk (×1.00)</strong> — Stable demand history, consistent supplier performance, strong forecast confidence, no significant stockout history.<br /><br />
+            <strong>Medium Risk (×1.15)</strong> — Moderate demand swings, occasional supplier or logistics variability, forecast uncertainty.<br /><br />
+            <strong>High Risk (×1.30)</strong> — Significant demand variability, supplier quality concerns, repeated shortages, launch timing uncertainty, or weak forecast confidence.<br /><br />
+            <strong>Critical Risk (×1.50)</strong> — Severe supply instability, constrained capacity, recurring stockouts, launch builds, or known business continuity concerns.
+          </div>
+
+          <div class="section-title">Common Drivers of Demand Volatility</div>
+          <ul class="small-list">
+            <li>Seasonality or launch builds</li>
+            <li>Engineering changes or platform transitions</li>
+            <li>Customer forecast instability</li>
+            <li>Quality containment or scrap events</li>
+            <li>Supply chain shortages</li>
+            <li>Production schedule changes</li>
+            <li>End-of-quarter shipment spikes</li>
+          </ul>
+
+          <div class="section-title">Inventory Turn Considerations</div>
+          <ul class="small-list">
+            <li>Higher inventory turns generally reduce working capital requirements.</li>
+            <li>Very high turns with low safety stock can increase stockout risk.</li>
+            <li>Low turns may indicate excessive inventory, obsolete inventory, MOQ constraints, or inaccurate forecasts.</li>
+            <li>Inventory targets should balance service level, operational continuity, and financial objectives.</li>
+          </ul>
+
+          <div class="section-title">Recommended Review Frequency</div>
+          <table class="data-table">
+            <thead>
+              <tr><th>Inventory Type</th><th>Recommended Review Frequency</th><th>Typical Risk Level</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>High-Volume Production Parts</td><td>Weekly</td><td>High</td></tr>
+              <tr><td>Long Lead Time Imported Parts</td><td>Weekly</td><td>High</td></tr>
+              <tr><td>Low-Usage Service Parts</td><td>Monthly</td><td>Medium</td></tr>
+              <tr><td>Prototype / Engineering Parts</td><td>Per Project Milestone</td><td>Variable</td></tr>
+              <tr><td>VMI / Kanban Inventory</td><td>Daily or Weekly</td><td>Medium</td></tr>
+            </tbody>
+          </table>
+
+          <div class="section-title">References &amp; Industry Guidance</div>
+          <div class="formula-box">
+            <strong>Selected References</strong><br /><br />
+            • APICS / ASCM Supply Chain Dictionary and inventory planning guidance<br />
+            • Donald Waters — Inventory Control and Management<br />
+            • Chopra &amp; Meindl — Supply Chain Management: Strategy, Planning, and Operation<br />
+            • Silver, Pyke &amp; Peterson — Inventory Management and Production Planning and Scheduling<br />
+            • Institute for Supply Management (ISM) inventory planning practices<br />
+            • Lean manufacturing and kanban replenishment methodologies<br />
+            • General statistical safety stock methodologies commonly used in operations management
+          </div>
+
+          <div class="rec-box" style="margin-top:14px;">
+            Best practice inventory planning balances service level, operational continuity, supplier reliability, inventory turns, and working capital. Reorder points and safety stock should be reviewed periodically rather than treated as fixed values indefinitely.
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main><!-- /app -->
+
+  <script>
+    // ── UTILITIES ────────────────────────────────────
+    const $ = (id) => document.getElementById(id);
+    const fmt   = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
+    const fmt1  = new Intl.NumberFormat('en-US', { maximumFractionDigits: 1 });
+    const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+
+    // ── TAB SWITCHING ────────────────────────────────
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        $(btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    // ── SAFETY METHOD TOGGLE ─────────────────────────
+    document.querySelectorAll('input[name="safetyMethod"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        document.querySelectorAll('.method-fields').forEach(el => el.classList.add('hidden'));
+        $(radio.value + 'Fields').classList.remove('hidden');
+        updateGreyState();
+        calculate();
+      });
+    });
+
+    // ── LISTENERS FOR NEW INPUTS ─────────────────────
+    $('avgLeadTimeOverride').addEventListener('input', () => { updateGreyState(); calculate(); });
+    $('demandCV').addEventListener('input', () => { applyCV(); updateGreyState(); calculate(); });
+    $('supplierOTD').addEventListener('input', () => { updateOTDNote(); updateGreyState(); calculate(); });
+
+    // ── NUMBER PARSING ───────────────────────────────
+    function parseNum(id) {
+      const el = $(id);
+      if (!el) return 0;
+      const v = parseFloat(String(el.value).replace(/,/g, ''));
+      return Number.isFinite(v) ? v : 0;
+    }
+    function parseNumRaw(id) {
+      // Returns NaN if blank (to distinguish "not entered" from 0)
+      const el = $(id);
+      if (!el || el.value.trim() === '') return NaN;
+      const v = parseFloat(String(el.value).replace(/,/g, ''));
+      return Number.isFinite(v) ? v : NaN;
+    }
+
+    // ── COMMA FORMATTING ─────────────────────────────
+    function formatCommaInput(el) {
+      const raw = String(el.value).replace(/,/g, '').replace(/[^0-9.]/g, '');
+      if (!raw) { el.value = ''; return; }
+      const parts = raw.split('.');
+      const whole = parts[0] ? fmt.format(Number(parts[0])) : '0';
+      el.value = parts.length > 1 ? whole + '.' + parts.slice(1).join('') : whole;
+    }
+    document.querySelectorAll('.comma-input').forEach(el => {
+      el.addEventListener('blur',  () => formatCommaInput(el));
+      el.addEventListener('input', calculate);
+    });
+    document.querySelectorAll('input:not(.comma-input), select').forEach(el => {
+      el.addEventListener('input',  calculate);
+      el.addEventListener('change', calculate);
+    });
+
+    // ── CV% → AUTO-SET VOLATILITY CLASS & STD DEV ────
+    // CV thresholds: <15%=Low, 15-30%=Medium, 30-50%=High, >50%=Critical
+    function applyCV() {
+      const cvRaw = parseNumRaw('demandCV');
+      if (isNaN(cvRaw)) return; // blank — don't touch downstream fields
+      const cv = Math.max(0, cvRaw);
+      // Set volatility classification
+      const volEl = $('volatility');
+      if (cv < 15)       volEl.value = '1.00';
+      else if (cv < 30)  volEl.value = '1.15';
+      else if (cv < 50)  volEl.value = '1.30';
+      else               volEl.value = '1.50';
+      // If service level method is active, also update demandStdDev
+      // σ_d = daily demand × (CV/100); we can only do this after dailyDemand is known,
+      // so we'll do it inside calculate() instead — just flag the intent here.
+    }
+
+    // ── OTD NOTE UPDATE ──────────────────────────────
+    function updateOTDNote() {
+      const otd = parseNum('supplierOTD') || 100;
+      const ltSum = parseNum('productionLt') + parseNum('transitLt') + parseNum('inspectionLt') + parseNum('bufferLt');
+      const buffer = ltSum * (1 - otd / 100);
+      const noteEl = $('otdNote');
+      if (noteEl) {
+        if (otd >= 100) {
+          noteEl.textContent = '100% OTD — no late-delivery buffer added';
+        } else {
+          noteEl.textContent = `At ${otd}% OTD: ~${fmt1.format(buffer)} days late-delivery buffer added to lead time`;
+        }
+      }
+    }
+
+    // ── GREY-STATE LOGIC ─────────────────────────────
+    // Rules:
+    //   1. Service Level → grey Volatility multiplier (Z-score encodes risk)
+    //   2. Service Level + Avg LT Override → grey LT breakdown fields
+    //   3. Service Level + Avg LT Override → grey OTD buffer display (note only; OTD still read)
+    //   4. CV% entered → show auto-set note on volatility field
+    function updateGreyState() {
+      const method     = document.querySelector('input[name="safetyMethod"]:checked').value;
+      const isService  = method === 'service';
+      const overrideVal = parseNum('avgLeadTimeOverride');
+      const hasOverride = isService && overrideVal > 0;
+      const cvRaw      = parseNumRaw('demandCV');
+      const cvEntered  = !isNaN(cvRaw);
+
+      // 1. Volatility: grey when service level
+      const volWrapper = $('volatilityWrapper');
+      const volInput   = $('volatility');
+      const volNote    = $('volatilityNote');
+      if (isService) {
+        volWrapper.classList.add('greyed-field');
+        volInput.classList.add('greyed');
+        volNote.style.display = 'block';
+        volNote.textContent = 'Not applied in Statistical method — Z-score encodes risk directly';
+      } else {
+        volWrapper.classList.remove('greyed-field');
+        volInput.classList.remove('greyed');
+        // If CV entered, show auto-set note instead of hiding
+        if (cvEntered) {
+          volNote.style.display = 'block';
+          volNote.textContent = `Auto-set from CV% input (${cvRaw.toFixed(0)}%)`;
+        } else {
+          volNote.style.display = 'none';
+        }
+      }
+
+      // 2. LT breakdown: grey when service + override filled
+      ['productionLt','transitLt','inspectionLt','bufferLt'].forEach(fid => {
+        const inp  = $(fid);
+        const wrap = inp ? inp.closest('.field-wrapper') : null;
+        if (!inp || !wrap) return;
+        if (hasOverride) { inp.classList.add('greyed'); wrap.classList.add('greyed-field'); }
+        else             { inp.classList.remove('greyed'); wrap.classList.remove('greyed-field'); }
+      });
+      const bufNote = $('bufferLtNote');
+      if (bufNote) bufNote.style.display = hasOverride ? 'block' : 'none';
+
+      // 3. OTD buffer display: note that override supersedes it
+      const otdOverrideNote = $('otdBufferOverriddenNote');
+      if (otdOverrideNote) otdOverrideNote.style.display = hasOverride ? 'block' : 'none';
+
+      // 4. demandCV note
+      const cvNote = $('demandCVNote');
+      if (cvNote) {
+        if (isService && cvEntered) {
+          cvNote.textContent = 'CV% auto-sets std dev in Statistical method and volatility classification';
+        } else if (cvEntered) {
+          cvNote.textContent = 'CV% auto-sets the volatility classification above';
+        } else {
+          cvNote.textContent = 'CV% auto-sets the volatility classification and std dev below';
+        }
+      }
+    }
+
+    // ── HELPERS ──────────────────────────────────────
+    function selectedSafetyMethod() {
+      return document.querySelector('input[name="safetyMethod"]:checked').value;
+    }
+    function roundUpToMultiple(value, multiple) {
+      if (!multiple || multiple <= 0) return Math.ceil(value);
+      return Math.ceil(value / multiple) * multiple;
+    }
+
+    // ── MAIN CALCULATE ───────────────────────────────
+    function calculate() {
+      const uom           = $('uom').value;
+      const baseDemandQty = parseNum('demandQty');
+      const periodDays    = parseNum('demandPeriod') || 365;
+      const seasonFactor  = parseNum('seasonality') || 1;
+      const volatility    = parseNum('volatility') || 1;
+      const dailyDemand   = (baseDemandQty / periodDays) * seasonFactor;
+      const annualDemand  = dailyDemand * 365;
+      const unitCost      = parseNum('unitCost');
+      const onHand        = parseNum('onHand');
+      const orderMultiple = Math.max(1, parseNum('orderMultiple'));
+      const targetDays    = parseNum('targetInventoryDays');
+      const method        = selectedSafetyMethod();
+
+      // ── CV% INPUTS ───────────────────────────────
+      const cvRaw     = parseNumRaw('demandCV');
+      const cvEntered = !isNaN(cvRaw);
+      const cv        = cvEntered ? Math.max(0, cvRaw) : null;
+      // Derived σ_d from CV%: σ_d = daily demand × (CV/100)
+      const cvDerivedStdDev = cv !== null ? dailyDemand * (cv / 100) : null;
+
+      // If CV entered and service method active, push derived std dev into the field
+      if (method === 'service' && cvDerivedStdDev !== null) {
+        const sdEl = $('demandStdDev');
+        if (sdEl) {
+          sdEl.value = fmt1.format(cvDerivedStdDev);
+          // Grey the field to show it's driven by CV%
+          sdEl.classList.add('greyed');
+          const wrap = sdEl.closest('.field-wrapper');
+          if (wrap) {
+            wrap.classList.add('greyed-field');
+            let note = wrap.querySelector('.overridden-badge');
+            if (!note) {
+              note = document.createElement('div');
+              note.className = 'overridden-badge';
+              wrap.appendChild(note);
+            }
+            note.style.display = 'block';
+            note.textContent = `Auto-set from CV% (${cv.toFixed(0)}%): ${fmt1.format(cvDerivedStdDev)} ${uom}/day`;
+          }
+        }
+      } else {
+        // Restore demandStdDev to user-editable if CV% not driving it
+        const sdEl = $('demandStdDev');
+        if (sdEl) {
+          sdEl.classList.remove('greyed');
+          const wrap = sdEl.closest('.field-wrapper');
+          if (wrap) {
+            wrap.classList.remove('greyed-field');
+            const note = wrap.querySelector('.overridden-badge');
+            if (note) note.style.display = 'none';
+          }
+        }
+      }
+
+      // ── LEAD TIMES ───────────────────────────────
+      const ltProd    = parseNum('productionLt');
+      const ltTransit = parseNum('transitLt');
+      const ltInspect = parseNum('inspectionLt');
+      const ltBuffer  = parseNum('bufferLt');
+      const ltSum     = ltProd + ltTransit + ltInspect + ltBuffer;
+
+      // Service level avg LT override
+      const ltOverride = method === 'service' ? parseNum('avgLeadTimeOverride') : 0;
+      const ltBase     = (method === 'service' && ltOverride > 0) ? ltOverride : ltSum;
+
+      // ── OTD BUFFER ───────────────────────────────
+      // OTD buffer = ltBase × (1 − OTD/100)
+      // ONLY added when LT override is NOT in use (if override is set the user is
+      // responsible for baking OTD risk into that value; we show a note instead).
+      const otdPct       = Math.min(100, Math.max(1, parseNum('supplierOTD') || 100));
+      const hasLtOverride = method === 'service' && ltOverride > 0;
+      const otdBuffer    = hasLtOverride ? 0 : ltBase * (1 - otdPct / 100);
+      const ltForCalc    = ltBase + otdBuffer;   // effective lead time
+
+      // Update live OTD buffer display widget
+      const otdDispEl = $('otdBufferDisplay');
+      if (otdDispEl) {
+        if (hasLtOverride) {
+          otdDispEl.textContent = '— (Avg LT Override in use)';
+          otdDispEl.style.color = 'var(--gray-400)';
+        } else if (otdPct >= 100) {
+          otdDispEl.textContent = '0.0 days (100% OTD)';
+          otdDispEl.style.color = 'var(--gray-500)';
+        } else {
+          otdDispEl.textContent = `+${fmt1.format(otdBuffer)} days (${(100 - otdPct).toFixed(0)}% late risk)`;
+          otdDispEl.style.color = otdBuffer > 5 ? '#78350f' : 'var(--gray-600)';
+        }
+      }
+
+      // ── SAFETY STOCK ─────────────────────────────
+      let safetyStock = 0;
+      let safetyDesc  = '';
+
+      if (method === 'manual') {
+        safetyStock = parseNum('manualSafety') * volatility;
+        safetyDesc  = `Manual ${fmt.format(parseNum('manualSafety'))} ${uom} × volatility ×${volatility.toFixed(2)}`;
+      }
+      if (method === 'days') {
+        const safetyDays = parseNum('safetyDays');
+        safetyStock = dailyDemand * safetyDays * volatility;
+        safetyDesc  = `${safetyDays} days supply × adj. daily demand × volatility ×${volatility.toFixed(2)}`;
+      }
+      if (method === 'service') {
+        const z            = parseNum('serviceLevel');
+        // σ_d: use CV-derived value if available, else the manual field
+        const demandStdDev = (cvDerivedStdDev !== null) ? cvDerivedStdDev : parseNum('demandStdDev');
+        const ltStdDev     = parseNum('leadTimeStdDev');
+        safetyStock = z * Math.sqrt(
+          (ltForCalc * Math.pow(demandStdDev, 2)) +
+          (Math.pow(dailyDemand, 2) * Math.pow(ltStdDev, 2))
+        );
+        const sigmaSource = cvDerivedStdDev !== null ? `σ_d from CV%=${cv.toFixed(0)}%` : `σ_d=${fmt1.format(demandStdDev)}`;
+        safetyDesc = `Statistical: Z=${z} × √(LT×σ_d² + d̄²×σ_LT²) [${sigmaSource}]`;
+      }
+
+      // ── CORE OUTPUTS ─────────────────────────────
+      const ddlt        = dailyDemand * ltForCalc;
+      const rop         = Math.ceil(ddlt + safetyStock);
+      const exposure    = rop * unitCost;
+      const daysToROP   = dailyDemand > 0 ? (onHand - rop) / dailyDemand : null;
+
+      const targetQty   = dailyDemand * targetDays;
+      const rawOrderQty = targetQty + rop - onHand;
+      const suggestedQty = rawOrderQty > 0 ? roundUpToMultiple(rawOrderQty, orderMultiple) : 0;
+
+      const avgInv  = (suggestedQty / 2) + safetyStock;
+      const turns   = (avgInv > 0 && annualDemand > 0) ? annualDemand / avgInv : null;
+
+      let reorderDateStr = 'N/A';
+      if (daysToROP !== null && daysToROP > 0) {
+        const d = new Date();
+        d.setDate(d.getDate() + Math.floor(daysToROP));
+        reorderDateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      } else if (daysToROP !== null && daysToROP <= 0) {
+        reorderDateStr = 'Now / Past Due';
+      }
+
+      // ── RISK LEVEL ───────────────────────────────
+      let riskLabel = 'Low';
+      let riskClass = '';
+      let riskSub   = 'On-hand inventory is above the reorder point.';
+      let recText   = '';
+
+      // OTD risk flag
+      const otdRiskFlag = otdPct < 85;
+      const cvRiskFlag  = cv !== null && cv >= 30;
+
+      if (onHand <= rop) {
+        riskLabel = 'High'; riskClass = 'danger';
+        riskSub   = 'On-hand is at or below reorder point.';
+        recText   = `Action recommended: on-hand inventory is at or below the reorder point of ${fmt.format(rop)} ${uom}. Consider placing an order for approximately ${fmt.format(suggestedQty)} ${uom} (adjusted for MOQ, open orders, and demand timing).`;
+      } else if (daysToROP !== null && daysToROP <= 14) {
+        riskLabel = 'Medium'; riskClass = 'warning';
+        riskSub   = 'Reorder point may be reached within 14 days.';
+        recText   = `Monitor closely. On-hand inventory may reach the reorder point of ${fmt.format(rop)} ${uom} in approximately ${Math.max(0,Math.floor(daysToROP))} days. Consider placing an order for approximately ${fmt.format(suggestedQty)} ${uom}.`;
+      } else {
+        riskLabel = 'Low'; riskClass = ''; 
+        riskSub   = 'On-hand inventory is above the reorder point.';
+        recText   = `Inventory appears adequate. Reorder when on-hand approaches ${fmt.format(rop)} ${uom}. ${daysToROP !== null ? `Estimated ~${Math.floor(daysToROP)} days until reorder point at current burn rate.` : ''}`;
+      }
+
+      // Escalate risk for elevated volatility (manual/days), poor OTD, or high CV%
+      if (riskLabel === 'Low') {
+        const escalateReasons = [];
+        if (method !== 'service' && volatility >= 1.30) escalateReasons.push(`high demand volatility (×${volatility.toFixed(2)})`);
+        if (otdRiskFlag) escalateReasons.push(`low supplier OTD (${otdPct}%)`);
+        if (cvRiskFlag) escalateReasons.push(`high demand CV% (${cv.toFixed(0)}%)`);
+        if (escalateReasons.length > 0) {
+          riskLabel = 'Medium'; riskClass = 'warning';
+          riskSub   = `Elevated risk: ${escalateReasons.join('; ')}.`;
+          recText   = `Inventory level appears adequate but risk factors are elevated: ${escalateReasons.join('; ')}. Review safety stock adequacy and monitor for demand or supply disruptions. ${recText}`;
+        }
+      }
+
+      // ── OTD warning append ────────────────────────
+      if (!hasLtOverride && otdBuffer > 0) {
+        recText += ` Note: ${fmt1.format(otdBuffer)} days of late-delivery buffer have been added to lead time based on ${otdPct}% supplier OTD.`;
+      }
+
+      // ── WRITE OUTPUTS ────────────────────────────
+      $('leadTimeOut').textContent   = `${fmt1.format(ltForCalc)} days`;
+      $('leadTimeSub').textContent   = hasLtOverride
+        ? `LT override ${ltOverride}d + no OTD buffer (override in use)`
+        : otdBuffer > 0
+          ? `${fmt1.format(ltSum)}d base + ${fmt1.format(otdBuffer)}d OTD buffer`
+          : `${fmt1.format(ltSum)}d (100% OTD — no buffer)`;
+      $('otdBufferOut').textContent  = `${fmt1.format(otdBuffer)} days`;
+      $('otdBufferSub').textContent  = hasLtOverride
+        ? 'Not applied — Avg LT Override in use'
+        : `${fmt1.format(ltBase)}d × (1 − ${otdPct}%)`;
+      $('ropOut').textContent        = `${fmt.format(rop)} ${uom}`;
+      $('ropSub').textContent        = `DDLT: ${fmt.format(Math.round(ddlt))} + SS: ${fmt.format(Math.round(safetyStock))}`;
+      $('dailyDemandOut').textContent = fmt1.format(dailyDemand);
+      $('dailyDemandSub').textContent = `${fmt.format(baseDemandQty)} ${uom} / ${periodDays}d × ×${seasonFactor.toFixed(2)} season`;
+      $('cvOut').textContent         = cv !== null ? `${cv.toFixed(1)}%` : '—';
+      $('cvSub').textContent         = cv !== null
+        ? `σ_d ≈ ${fmt1.format(cvDerivedStdDev)} ${uom}/day`
+        : 'Enter CV% above to auto-populate';
+      $('safetyStockOut').textContent = fmt.format(Math.round(safetyStock));
+      $('safetyStockSub').textContent = safetyDesc;
+      $('exposureOut').textContent   = money.format(exposure);
+      $('riskOut').textContent       = riskLabel;
+      $('riskSub').textContent       = riskSub;
+      $('orderQtyOut').textContent   = fmt.format(suggestedQty);
+      $('orderQtySub').textContent   = `Target ${targetDays}d coverage; rounded to ${fmt.format(orderMultiple)} multiple`;
+      $('reorderDateOut').textContent = reorderDateStr;
+      $('ddltOut').textContent       = fmt.format(Math.round(ddlt));
+      $('turnsOut').textContent      = turns !== null ? fmt1.format(turns) + 'x' : '—';
+
+      const recEl = $('recommendation');
+      recEl.className = 'rec-box' + (riskClass ? ' ' + riskClass : '');
+      recEl.innerHTML = recText;
+
+      // ── ASSUMPTION SUMMARY ───────────────────────
+      const methodNames = { manual: 'Manual Override', days: 'Days of Supply', service: 'Statistical (Service Level)' };
+      const ltOverrideStr = hasLtOverride ? `${ltOverride}d (override, OTD not applied)` : `${fmt1.format(ltSum)}d + ${fmt1.format(otdBuffer)}d OTD buffer = ${fmt1.format(ltForCalc)}d effective`;
+      const cvStr  = cv !== null ? `${cv.toFixed(0)}% (σ_d ≈ ${fmt1.format(cvDerivedStdDev)})` : 'not entered';
+      const otdStr = `${otdPct}% OTD → +${fmt1.format(otdBuffer)}d buffer`;
+
+      const assumptionEl = $('assumptionSummary');
+      assumptionEl.innerHTML = `
+        <strong>Assumptions driving this output:</strong><br />
+        Safety method: <em>${methodNames[method]}</em> &nbsp;|&nbsp;
+        Effective lead time: <em>${ltOverrideStr}</em> &nbsp;|&nbsp;
+        Supplier OTD: <em>${otdStr}</em> &nbsp;|&nbsp;
+        Demand CV%: <em>${cvStr}</em> &nbsp;|&nbsp;
+        Seasonality: <em>×${seasonFactor.toFixed(2)}</em> &nbsp;|&nbsp;
+        Volatility: <em>${method === 'service' ? 'not applied (statistical)' : '×' + volatility.toFixed(2)}</em> &nbsp;|&nbsp;
+        Daily demand: <em>${fmt1.format(dailyDemand)} ${uom}/day</em>
+      `;
+
+      // keep OTD note in sync
+      updateOTDNote();
+    }
+
+    // ── INIT ─────────────────────────────────────────
+    updateGreyState();
+    calculate();
+  </script>
+</body>
+</html>
