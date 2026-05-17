@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Rivet Nut Selector & Application Advisor — SBS</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --navy:#1D3557;
+  --navy-dark:#12243a;
+  --orange:#E87722;
+  --orange-light:#F0913A;
+  --orange-pale:#FDF0E5;
+  --white:#ffffff;
+  --gray-50:#F8F9FA;
+  --gray-100:#F0F2F5;
+  --gray-200:#E2E6EA;
+  --gray-300:#CED4DA;
+  --gray-400:#ADB5BD;
+  --gray-500:#6C757D;
+  --gray-600:#495057;
+  --gray-700:#343A40;
+  --active-green:#1A8A4A;
+  --active-bg:#E8F5EE;
+  --line:#E2E6EA;
+  --text:#343A40;
+  --muted:#6C757D;
+  --topbar-h:64px;
+  --nav-h:44px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--gray-50);color:var(--text);font-size:14px}
+
+/* ── STICKY TOPBAR ── */
+.topbar{
+  position:sticky;top:0;z-index:300;
+  background:#fff;
+  border-bottom:3px solid var(--orange);
+  box-shadow:0 2px 8px rgba(0,0,0,.10);
+  display:flex;align-items:center;gap:16px;
+  padding:0 1.5rem;
+  height:var(--topbar-h);
+}
+.topbar-logo img{height:46px;display:block}
+.topbar-divider{width:1px;height:36px;background:var(--gray-200);flex-shrink:0}
+.topbar-title strong{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:22px;font-weight:800;color:var(--navy);display:block;line-height:1.1
+}
+.topbar-title span{font-size:11px;color:var(--gray-500);font-family:'Inter',sans-serif}
+.topbar-spacer{flex:1}
+.topbar-actions{display:flex;gap:8px;align-items:center}
+
+/* ── STICKY NAV TABS ── */
+.nav-bar{
+  position:sticky;top:var(--topbar-h);z-index:200;
+  background:var(--navy);
+  display:flex;align-items:stretch;
+  height:var(--nav-h);
+  box-shadow:0 2px 6px rgba(0,0,0,.18);
+}
+.nav-tab{
+  font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;
+  color:rgba(255,255,255,.75);
+  padding:0 20px;
+  display:flex;align-items:center;gap:7px;
+  cursor:pointer;border:0;background:transparent;
+  border-right:1px solid rgba(255,255,255,.08);
+  transition:background .15s,color .15s;
+  letter-spacing:.02em;
+  white-space:nowrap;
+}
+.nav-tab:hover{background:rgba(255,255,255,.08);color:#fff}
+.nav-tab.active{
+  background:var(--orange);
+  color:#fff;
+  box-shadow:inset 0 -3px 0 rgba(255,255,255,.25);
+}
+.nav-tab .tab-icon{font-size:14px;opacity:.85}
+.nav-spacer{flex:1}
+
+/* ── BUTTONS ── */
+.btn{font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;padding:7px 14px;border-radius:6px;cursor:pointer;border:0;display:inline-flex;align-items:center;gap:5px;transition:all .15s}
+.btn-orange{background:var(--orange);color:#fff;box-shadow:0 2px 6px rgba(232,119,34,.3)}
+.btn-orange:hover{background:var(--orange-light);transform:translateY(-1px)}
+.btn-navy{background:var(--navy);color:#fff}
+.btn-navy:hover{background:var(--navy-dark)}
+.btn-sm{padding:5px 10px;font-size:11px}
+
+/* ── LAYOUT ── */
+.main{display:grid;grid-template-columns:420px 1fr;min-height:calc(100vh - var(--topbar-h) - var(--nav-h))}
+.sidebar{background:#fff;border-right:1px solid var(--line);padding:16px;overflow-y:auto}
+
+/* ── INPUT CARD ── */
+.input-card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;box-shadow:0 1px 5px rgba(0,0,0,.05)}
+.input-card h2{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:800;color:var(--navy);margin-bottom:3px}
+.input-card p{font-size:11px;color:var(--muted);margin-bottom:14px}
+label{display:flex;align-items:center;gap:5px;font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;color:var(--navy);margin:10px 0 4px}
+.info-icon{width:13px;height:13px;border:1px solid var(--gray-400);border-radius:50%;display:inline-flex;justify-content:center;align-items:center;font-size:9px;color:var(--gray-500);cursor:help;flex-shrink:0}
+select,input[type=number],input[type=text]{
+  width:100%;height:34px;border:1px solid var(--gray-300);border-radius:6px;padding:0 10px;
+  background:#fff;font-family:'Inter',sans-serif;font-size:12px;color:var(--text);
+  appearance:none;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236C757D' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 10px center;
+}
+select:focus,input:focus{outline:2px solid var(--orange);outline-offset:-1px;border-color:transparent}
+input[type=number]{background-image:none}
+.input-unit{display:flex}
+.input-unit input{border-radius:6px 0 0 6px;width:calc(100% - 44px)}
+.input-unit span{height:34px;min-width:44px;padding:0 8px;border:1px solid var(--gray-300);border-left:0;border-radius:0 6px 6px 0;display:flex;align-items:center;justify-content:center;background:var(--gray-50);font-size:11px;color:var(--gray-600);white-space:nowrap}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.divider{height:1px;background:var(--line);margin:14px 0}
+.about-box{margin-top:14px;padding:12px;background:var(--orange-pale);border:1px solid rgba(232,119,34,.25);border-radius:8px}
+.about-box h3{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;color:var(--navy);margin-bottom:5px}
+.about-box p{font-size:11px;line-height:1.55;color:#5a3a0a}
+.reset-link{font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;color:var(--orange);cursor:pointer;text-decoration:underline}
+
+/* ── CONTENT PANEL ── */
+.content{padding:16px 20px 40px;min-width:0}
+.panel{display:none}
+.panel.active{display:block}
+
+/* ── SECTION HEADERS ── */
+.section-hdr{background:var(--orange);color:#fff;border-radius:6px;padding:7px 14px;display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.section-hdr::before{content:'';width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.6);flex-shrink:0}
+.section-hdr span{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+.section-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;color:var(--navy);margin-bottom:4px}
+.section-sub{font-size:12px;color:var(--muted);margin-bottom:14px}
+
+/* ── KPIs ── */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:8px;padding:12px;display:flex;align-items:center;gap:10px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.kpi-icon{font-size:24px;line-height:1}
+.kpi small{font-family:'Barlow',sans-serif;font-size:9px;font-weight:700;color:var(--navy);display:block;letter-spacing:.05em}
+.kpi strong{font-size:24px;font-weight:800;font-family:'Barlow Condensed',sans-serif;color:var(--navy);line-height:1;margin:2px 0}
+.kpi em{font-size:10px;color:var(--muted);font-style:normal}
+
+/* ── CONTENT HEADER ── */
+.content-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;gap:12px}
+.content-top h1{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;color:var(--navy)}
+.content-top p{font-size:11px;color:var(--muted);margin-top:2px}
+.sort-row{display:flex;align-items:center;gap:8px;font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;color:var(--navy);flex-shrink:0}
+.sort-row select{width:160px}
+
+/* ── RESULT CARDS ── */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px}
+.card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px;box-shadow:0 1px 5px rgba(0,0,0,.05);position:relative;transition:box-shadow .15s}
+.card.selected{border-color:var(--orange);box-shadow:0 0 0 2px rgba(232,119,34,.25),0 2px 8px rgba(0,0,0,.08)}
+.fit-badge{position:absolute;right:10px;top:10px;border-radius:999px;color:#fff;padding:3px 9px;font-family:'Barlow',sans-serif;font-size:9px;font-weight:800;letter-spacing:.03em}
+.best{background:var(--active-green)}.possible{background:#E87722}.good{background:var(--gray-500)}.not{background:#C0392B}
+.card-series{font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:800;color:var(--navy);margin:0 0 1px 2px}
+.card-sub{font-size:11px;color:var(--gray-600);margin:0 0 9px 2px}
+.card-visual{display:flex;gap:10px;margin-bottom:9px}
+.vis-box{width:80px;flex-shrink:0;border:1px dashed var(--gray-300);border-radius:7px;overflow:hidden;background:var(--gray-50);display:flex;flex-direction:column}
+.vis-label{background:var(--navy);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:800;text-align:center;padding:3px 0;letter-spacing:.05em}
+.vis-inner{flex:1;display:flex;align-items:center;justify-content:center;padding:6px}
+.card-desc{font-size:11px;line-height:1.55;color:var(--text);flex:1}
+.tool-line{margin-top:5px;font-family:'Barlow',sans-serif;font-size:10px;font-weight:700;color:var(--navy)}
+.spec-tbl{width:100%;border-collapse:collapse;border-radius:6px;overflow:hidden;border:1px solid var(--line);margin-bottom:8px}
+.spec-tbl th,.spec-tbl td{border:1px solid var(--line);padding:4px 6px;font-size:9px;text-align:center}
+.spec-tbl th{background:var(--gray-100);font-family:'Barlow',sans-serif;font-weight:700;color:var(--navy)}
+.ratings{display:flex;gap:12px;align-items:center;font-size:10px;font-family:'Barlow',sans-serif;font-weight:700;color:var(--navy)}
+.bars{display:inline-flex;gap:2px;margin:0 3px}
+.bar{width:8px;height:10px;background:var(--gray-200);border-radius:1px}
+.bar.on-o{background:var(--orange)}.bar.on-n{background:var(--navy)}
+
+/* ── COMPARE CHECKBOX ── */
+.compare-row{display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px solid var(--line)}
+.compare-chk{display:flex;align-items:center;gap:5px;cursor:pointer;font-family:'Barlow',sans-serif;font-size:10px;font-weight:700;color:var(--navy)}
+.compare-chk input{accent-color:var(--orange);width:14px;height:14px;cursor:pointer}
+
+/* ── COMPARE TRAY ── */
+.compare-tray{
+  position:fixed;bottom:0;left:0;right:0;z-index:400;
+  background:var(--navy);
+  border-top:3px solid var(--orange);
+  box-shadow:0 -4px 20px rgba(0,0,0,.25);
+  padding:10px 20px;
+  display:flex;align-items:center;gap:12px;
+  transform:translateY(100%);
+  transition:transform .25s ease;
+}
+.compare-tray.visible{transform:translateY(0)}
+.tray-label{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;color:#fff;white-space:nowrap;letter-spacing:.05em}
+.tray-slots{display:flex;gap:8px;flex:1;overflow-x:auto}
+.tray-slot{
+  min-width:130px;height:42px;border-radius:7px;
+  border:2px dashed rgba(255,255,255,.25);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;color:rgba(255,255,255,.4);
+}
+.tray-slot.filled{
+  background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.3);
+  color:#fff;justify-content:space-between;padding:0 10px;
+}
+.tray-slot .slot-name{font-size:12px;font-weight:800;color:#fff}
+.tray-slot .slot-sub{font-size:9px;color:rgba(255,255,255,.6);font-weight:400}
+.tray-slot .slot-remove{cursor:pointer;color:rgba(255,255,255,.5);font-size:14px;line-height:1;flex-shrink:0}
+.tray-slot .slot-remove:hover{color:#fff}
+.tray-actions{display:flex;gap:8px;flex-shrink:0}
+
+/* ── COMPARE MODAL ── */
+.modal-overlay{
+  position:fixed;inset:0;z-index:500;
+  background:rgba(0,0,0,.55);
+  display:none;align-items:flex-start;justify-content:center;
+  padding:20px;overflow-y:auto;
+}
+.modal-overlay.open{display:flex}
+.modal{
+  background:#fff;border-radius:12px;
+  width:100%;max-width:1100px;
+  box-shadow:0 20px 60px rgba(0,0,0,.35);
+  overflow:hidden;
+}
+.modal-head{
+  background:var(--navy);padding:16px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.modal-head h2{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;color:#fff}
+.modal-close{background:rgba(255,255,255,.15);border:0;color:#fff;width:32px;height:32px;border-radius:6px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.modal-close:hover{background:rgba(255,255,255,.25)}
+.modal-body{overflow-x:auto;padding:0}
+.cmp-tbl{width:100%;border-collapse:collapse;min-width:600px}
+.cmp-tbl .row-hdr{
+  background:var(--gray-50);font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;color:var(--navy);
+  padding:8px 14px;border-bottom:1px solid var(--line);border-right:1px solid var(--line);
+  white-space:nowrap;width:160px;
+}
+.cmp-tbl .col-hdr{
+  background:var(--navy);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;
+  padding:12px 14px;text-align:center;border-right:1px solid rgba(255,255,255,.12);
+}
+.cmp-tbl td{
+  padding:8px 14px;border-bottom:1px solid var(--line);border-right:1px solid var(--line);
+  font-size:11px;text-align:center;vertical-align:middle;
+}
+.cmp-tbl tr:nth-child(even) td{background:var(--gray-50)}
+.cmp-tbl .winner{background:var(--active-bg)!important;font-weight:700;color:var(--active-green)}
+
+/* ── REFERENCE TABLE ── */
+.ref-wrap{overflow-x:auto;border-radius:8px;border:1px solid var(--line);background:#fff}
+.ref-tbl{width:100%;border-collapse:collapse;min-width:900px}
+.ref-tbl th{background:var(--navy);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.06em;padding:9px 10px;text-align:left;border-right:1px solid rgba(255,255,255,.1)}
+.ref-tbl td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:7px 10px;font-size:11px;vertical-align:top}
+.ref-tbl tr:nth-child(even) td{background:var(--gray-50)}
+.ref-tbl tr:hover td{background:var(--orange-pale)}
+.series-badge{display:inline-block;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;color:var(--navy);background:var(--gray-100);border:1px solid var(--gray-300);border-radius:4px;padding:2px 7px}
+
+/* ── PRACTICE CARDS ── */
+.practice-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.practice-card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px;box-shadow:0 1px 5px rgba(0,0,0,.04)}
+.practice-card h3{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;color:var(--navy);margin-bottom:6px;display:flex;align-items:center;gap:7px}
+.practice-card h3::before{content:'';width:4px;height:14px;background:var(--orange);border-radius:2px;flex-shrink:0}
+.practice-card p{font-size:11px;line-height:1.6;color:var(--gray-600)}
+
+/* ── DATA CARDS ── */
+.data-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;margin-bottom:18px}
+.data-card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px}
+.data-card h3{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;color:var(--navy);margin-bottom:6px}
+.data-card p,.data-card ul{font-size:11px;line-height:1.6;color:var(--gray-600)}
+.data-card ul{padding-left:14px}
+.data-card li{margin-bottom:3px}
+.test-tbl-wrap{overflow-x:auto;border-radius:8px;border:1px solid var(--line)}
+.test-tbl{width:100%;border-collapse:collapse;min-width:800px;font-size:10px}
+.test-tbl th{background:var(--navy);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;padding:7px 10px;text-align:center;border-right:1px solid rgba(255,255,255,.1)}
+.test-tbl td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:5px 10px;text-align:center}
+.test-tbl tr:nth-child(even) td{background:var(--gray-50)}
+.plating-tbl-wrap{overflow-x:auto;border-radius:8px;border:1px solid var(--line)}
+.plating-tbl{width:100%;border-collapse:collapse;min-width:700px;font-size:10px}
+.plating-tbl th{background:var(--navy);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;padding:7px 10px;text-align:left;border-right:1px solid rgba(255,255,255,.1)}
+.plating-tbl td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:5px 10px}
+.plating-tbl tr:nth-child(even) td{background:var(--gray-50)}
+
+/* ── WARN BANNER ── */
+.warn-banner{background:#FEF3E2;border:1px solid #f5c842;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:11px;color:#7a4800;line-height:1.5}
+.warn-banner strong{color:#B7610A}
+
+/* Sidebar hidden when non-selector tab is active */
+.main.sidebar-hidden{grid-template-columns:0 1fr}
+.main.sidebar-hidden .sidebar{display:none}
+
+@media(max-width:1050px){.main{grid-template-columns:1fr}.sidebar{border-right:0;border-bottom:1px solid var(--line)}.kpis{grid-template-columns:1fr 1fr}}
+@media(max-width:1050px){.main.sidebar-hidden{grid-template-columns:1fr}}
+@media(max-width:680px){.row2,.kpis,.cards{grid-template-columns:1fr}.nav-tab span.tab-txt{display:none}}
+</style>
+</head>
+<body>
+
+<!-- ── STICKY TOPBAR ── -->
+<header class="topbar">
+  <a href="https://shop.specialtybolt.com/" target="_blank" class="topbar-logo">
+    <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCABfATwDASIAAhEBAxEB/8QAHQAAAQQDAQEAAAAAAAAAAAAABwAFBgkDBAgBAv/EAFAQAAEDAwEEAwwGBgcFCQEAAAECAwQABREGBxIhMQgTURQWIkFWYXGBkZTR0hUyVZWhsTdCVJOiwRcjM1JidLIkcnWChDQ1NkNGU2SDhbP/xAAaAQACAwEBAAAAAAAAAAAAAAACAwABBAUG/8QANhEAAQMCAwUGBQMEAwAAAAAAAQACAwQRBRIhExQxUWEiM0FScbEGYoGRoRWC8DJCcvHB0eH/2gAMAwEAAhEDEQA/AOy6VIjIIPjqE6q0xqFzfkWHUMtB59zuucPUr41nqZnxNzMYXdBxT6eJkrsrnhvqptSrnu8XTWVrkmPcZ9xYcB/WWQD6D46bzqXUB53md++Neef8UxMOV0ZBXdZ8OSPFxILLpSlXNPfBflcPpief/vV8a3IL2sJ6wmJIvDxP91xfxqm/FDHmzYiVbvhx7Rd0gC6KyO2lkdooLW7SW0CZuqcmy4yD43ZagR6s5qQwdn90QnfumrZiccw06rHtJroRYnUy/wBNOR6kD3WGXD6eLjOPoCfZEfeHaPbXoIPIg1DG7XpS0ALnXx909si4K/IEVkd13pC2o6pqaFgf+0hS8+utYrmM78tb+5Zdze/uQ537VL6VDmZtZtKCRGt8p4+IqwkH+dMkza1clgiJbI7J8RWsq/DhWaXH6CP++/oCtEeCVr/7LepCMNIkDmcUBJm0TVco7qJiGM+JlofzzUp0fprUl8Ui4aiuk9qKeKWetKVODzgchSYMdbVSbOnjLj9AE2bBXU7M88gA+5RSBBGQQR5qVY4rDMZhDDDYbbQMJSKYdpOqoui9FXLUkpPWJiNFSG8431nglPtrvNBNh4riuIFz4KRUsjtFV4at207SdUT3XF6hmw2VqJRGgqLSUDsBT4R9ZqO99+vPKbUfvz3xreKB3iVhNc3wCsxyO0UsjtFVnd9+vPKbUfvz3xpd9+vPKbUfvz3xq9wPmVb8PKrMcjtFKqzu+/XnlNqP357404WfabtIsb6ZEXVd6SQeUh5TqT5sLyKo0DvAqCub4hWQ0qEnRn2qPbSdMyUXRtpq8W9SUyOrGEupPJYHi5caaembdbnadmMaRarhLgvKnISXI7ym1EY5ZSQayiE7TZnitRlGzzjgjjkdopZHaKrKTrbWqlBKdWX9RPIC4O/NWTvv155Taj9+e+Na9wPmWXfx5VZjkdopZHaKrO779eeU2o/fnvjS779eeU2o/fnvjU3A+ZTfh5VZjkdopZFVnd9+vPKbUfvz3xrLbto2vrbKS/G1fe0uJORvzFrHrCiQfZVbg7zKb8OSsspUCeirtguG0CPMsOoi2q8QWg6h9Cd3r2sgEkeJQJHLnmt3pSbWpuzqzQ7fYw0bxcd4occG8GW081Y8ZyQBWbYP2mz8Vq2zMmfwRpyKWR2iq2rntI2jXh9UiTqy+OKJ49TIW2n2IwK0++/XnlNqP35741p3B3mWXfm8lZjkdopZHaKrO779eeU2o/fnvjS779eeU2o/fnvjV7gfMpvw8qsxyO0UqrO78NeA/wDifUfvz3xqVaI257R9KXBla73JucVCh1kSeesC0+Mbx8IHz5qjQOtoVYrm31CsHpUz6J1BD1XpO2ait+e558dLyUnmknmk+cHI9VPFYSLGxW0G4uEqxvyI7Ay8+00P8awPzr7UkKSUqGQRg0P9YbOUXELkWuc807z6l1wqQfRnlWSrlniZmhZmPK9lqpYoZH5ZX5RztdP2oLxpB9lUS7zYDqSPqqUFH1Y5UOJCdmcaS44ldwlccpbTnd9GaiN8sd0ssgs3GI4yc4CsZSr0Gm6vC12MySvtJC0Ecxcr2VHhMcTLxyuIPI6IhI1ppa3pP0VpNrf/ALzxBz+dY5W1O9qSEw4cOKkcgElXwqA1v2+y3aeoJh26S9nkQ2cH18qytxStf2Yjbo0AewWl2G0je1IL9XEn3Kdpuu9UylEqujjYP6raQBTLJulyk57ouEp3PMKdUR7KlVt2aajlBKpCGYaDzLi8keoU7s6A07AR1l61K0Sk+EhtQA+NN3HEqgXkuB8xt7pe+YfBpHa/yi/shnWeLDlylYjRnnjnHgIJontytl9mI6tru1YOQrdLmD68Un9qVsioUi1WPdPiJISD6QKgwynj7+oaPTVQ4jO/uYCfXRRK26A1RN4i3lhPa8oJqT23ZI8rBuN0QgY+qyjJ/GmyftT1A8f9mZixh2BO9+dR+fq/Uk0KS/dpG4rmlKt0fhTQ/CIeDXPPXQf8JRZik3FzWDpqUW7PozSun5CJLi0LfQOCpLgwD2gU4TNaaaikoVdGnFg43GsqUT6BQCjouF2mNxmy/LfWcJSVFRox7P8AQMazJROuaUSJ5GUpPFLXo7T567GGYhLUHZ0cIY3xP8tcrlYhRRQDPVSlzvAfy+imsGQmXFbkJbcbSsZCXE7qsecUFums+trYutCDgOXBlKvR4VG+gd02W1r2MFaRkIuDJV5vrV7GmuJG3XlKnu3WXPvQ9jRpe2eOzKjtSGzCeO46gKTnwfEa7h+gLF9i233VHwrh/odSGI22iM7IebZb7ieG84oJH6vjNdyfTFo+1YPvCPjWitvtNFnorbPVY/oCxfYtt91R8KX0BYvsW2+6o+FZPpi0fasH3hHxpfTFo+1YPvCPjWTtLXosf0BYvsW2+6o+FATptWOMnZ9ZU2m0MpkLuyU4ixgFqHVOcPBGTR/+mLR9qwfeEfGsjT1vnFCmnYsotneSUqSvdPaOyjjeWODkMjA9pauYehPpLVdi1Fdrnd7NMgW6XACWXH0boWvfSeAPHlmpX04/0VRP+II/I0faAPTkONlcMdtwR+RpzJDJOHFJfGI4C0Lmzo2MMyNtmm2ZDLbzSpJCkLSFJPgnmDXf/wBAWL7FtvuqPhVf/RukMRdtem35T7TDKJJKnHFhKU+CeZPAV373y6c8oLT7438aZXXzi3JLorZDfmvv6AsX2LbfdUfCl9AWL7FtvuqPhXx3y6c8oLT7438aXfLpzygtPvjfxrF2ls7K+zYLERg2S2+6o+FcndObS9kst203dLTbo8J2c3IbkBhsISvq+r3TgcM+Ga6u75tOeUFp98b+NcldN/WFi1BfLBZ7NPZnOWxD65LjKwpCS51e6nI4E4QScdorTSZtqFmq8uyKY+hQ4pG2htAJAXBfBHbwz/KtzpyvrXtahxyTuNWtspHYStefyFfXQdtEuVtRlXZDSu5YMFYccxwCl4SlOe3mfUax9ORpaNrsV0g7q7U0AfQtefzrZpvX0WTXdvqiV0ILXbJuz26OzLdEkrTPwFOspWQN3tIroD6AsX2LbfdUfCgF0HZ8GLs8uiJM2Mwoz8gOOpST4PnNdA/TFo+1YPvCPjWCpvtXLdT22QWP6AsX2LbfdUfCl9AWL7FtvuqPhWT6YtH2rB94R8aX0xaPtWD7wj40ntJ2ixHT1gPOx2z3RHwrirpRaYuE7bvcYOnbE86ksxgluJG8EKLSf7owK7a+mLR9qQfeEfGtiOIq1KkxwypTmN5xGCVY5ZI502GYxOzJU0QlbZDrox2a96f2N2mz6ggvQZsdx/LLv1kpU6pQ/wBVEulSpT3ZnF3NNY3K0DklXw860ygredQ2kfrLUAPxr7pq1Jp+23+J1E9okj6jiDhSPQaTKXhhLBc9dE2MMLgHmw+6075qDSXUKj3O4QXm1DBRnrPyzQvuS9nDU1x5hm4yEnkyg7qPUedY9XbO7vZ9+RDBnxBx3kDw0jzp8fpFQsgg4PA14TFcSqC/LPC0EcLi/wCeBXtMNw+AMzQykg8jb8eCmzes7PbyPofSsJogY33zvqrXl7RdSvILbMhmKg8gy0E49dRGnK22C9XIjuK1yngeSg2Qn2nhXMbX1knYjJHRot7LoOoqSPtPA9XG/uvJ19vM5WZdzlOnzuGm9SlKOVKKj2k1N7fsx1A8kOTXIsFvxlxzeI9Q4fjTm1ovRttAVedUNvKHNDTiR+Ayab+l1svakFurjb31S/1Gkj7MZv0aL+2iGlbUG23CcoCHCkSMnGW2yR7aJjV52Y2YjuSAZi08l9SVnPpWRXknavFZSUW2x7o8RccAHsA/nTW4bSR9/UD9tz+Us19S/uYD9dFGbZs41PMwVxW4qe15Yz7BmpRbdkjY43G6rV/hZRj8TmmOdtS1G/8A9nREij/A3vH+LNMM7WGpZmeuvEoA80oVuj2CnNlweDgxzz10/wCvZKdHis3FzWDpqjXYdO6e0shTjAaZWsYU8+4N4+s8qyTdX6ahkpeu8Yq7EHf/ACzXPK3pUlwJW668tRwAVEkmirs52fCP1d1vrQU9wU1GUOCPOrz+autQYtNUuENHCGtH2H2suZW4ZFA3a1UpcT9z97oi22Y3PholModS2vinrE7pI7cVHdrekUa40BdNOKWlt2Q3lhZ5JcHFJ/l66lYAAwBgClXrGFzbEnVeYeGuuLaKtPVOgta6SuLsa6WK5R1Nkjrm2lKbUO0LTwxTJi8dk/8Ajq0RaWXSULSheOaSAcVj7jh/sjH7sV0BXnxaueaEeDlV/i8dk/8AjpYvHZP/AI6tA7jh/sjH7sUu44f7Ix+7FXv/AMqm4/Mqv8Xjsn/x1kYuN+ty0vNTLjFUD4Kg4tPGrPO44f7Ix+7FAHpyxmG9ltuW0y22fpRHFKAP/LXRx1gkcG5eKCSkLGl2bgvOh/tTu+r40/TOo5apk6C2Ho8hf11t5wQo+MgkVsdOQZ2Vwz2XBH5Ggx0J3VI2ypbBwHILwV58DNGjpx/oqif8QR+Rpb2BlSLJjHl9MbrjC1QJ1zuDMG2RnpUt5W600ykqWo9gAqTf0cbRvJK++7Lp26M/6ctL/wCaP+lVWIU+pqTE4ABIp6YStJJVbP8ARxtG8kr77sul/RxtG8kr77surJqVZ9/dyWjcW81WydnG0XBzpK+4/wAsumaLDas9/bj6stVybabIL0b+weI/5hw9lWf1y30+LXEFu0zeUsoTL696OpYGCpBSFAHtwQcek02GrMj8pHFKmpBG3MDwRT6N102e3DQ/VaAiiE2yod2RnOL6XCOaz+t5j5qinS62WXXW1rgX3Tsfum5W5KkORwQFOtHjw84I5emgr0KrrJhbZWre24oMXCG826nPA7qSsH2pruY8OdZpbwTXBWiK08Niqv5tn1JaHFMS7ZdYKwcFLjK2+PsrBi8dk/8Ajq0JTMZ8BammXQeRKQa+e44f7Ix+7FO3/m1K3H5lV/i8dk/+Oli8dk/+OrQO44f7Ix+7FLuOH+yMfuxU3/5VNx+ZVf4vH/z/AOOnTTms9X6Vubcy13q4Q5DZB3S4rBHYUngQass7jh/sjH7sVw10z222ttchLTaUJ7iY4JGB9WnQ1ImdlLUqanMLcwcuu9jGshr3ZxatSqQluQ+goktp5JdQSlWPMSMjzEVMaAvQYdW5sdmoUchq9PIT5h1TKvzJo9VzJmhshAXRhcXMBKValxuVvtrYXPmx4qTyLrgTn0Z51t1gnQ4k+OqPNjNSGlc0OJBFIfmynJx6pzMuYZuHRRqdtD0nFyPpEyFDxMtKV+OMfjQ/1PqbRVzmd1J01Jdez4SutDAX/vbuc1JdS7K4MneeskgxHOfUuZUg+g8x+NDS/aavVkd3J8FxCc4DiRvIV6CK8Zi9TibRlmjbl5gXH5uvW4XT4e43iec3Imx/Fk6ta0RC/wC6NOWiERyWpsuuD/mJrXm661VKBCrs60nsZSlv8hmmu32O8TziHbZT3nS2SKkdv2aamk4U8yxEQfG64OHqGTXIjdiM4tHmt0Fh+LBdSRtBCbyZb9dT+blRSXPnS1b0qZIfPa44VfnWvRIa2dWmHg3nUzDZ8aGgB+JP8q3GYGzO2H+sMmesdoWsfwgCiGD1BN5nNb6uH/qH9VgAtE0u9B/pCtIKjhIJPmp2t2mr/cMGJaJjiTyV1ZSn2nhRKa1tpi2cLVpqQCOSm4qUZ9fOtaVtQuSsiJpxaR4i4tR/AD+dObh1DH3s9/8AEH3SnV9Y/uobepHsmG3bLtSSMGSYkNPj33N5XsTn86klu2RwkYNwuz7p8aWWwge05pjlbQdaP5DMNpgeLcjKJHtJpplai11LBC5dxAPibb3P9IFaGvwmH+mJzz1/2PZIc3E5eMjW+n8Pui1Y9Fabsr6ZUaHvPo+q684VEefjwHsp1l3m0RM91XSGzjxLeSD+dc/Li6nuLqW3W7pJUs4AcK1ZProlaG2bx4PVz76EyJPNLHNCPT2n8K61BiMkp2VLThrfEnQfgLmVtBHENpUz5jyGp90QIUqPMjpkRXA60r6qwOB9FcrdNHWOrrFq23Wu0X+4W6BIhdYtqM8WwtW9gklOCa6uSAlISkAADAA8VALpibNrrrCxQL9YYq5c62BSXWGxla2jx8EeMg+KvXUhAeM68vVAlhyJk6CUqRKtGpnpUh19xUpslbiyonwe010zkdoqsGDctT6dW7Hg3C72lSlf1qGHnGckdoBGa2u/XW/lbqH7xe+atstGZHlwKxRVYjYGkKzTI7RSyO0VWV36638rdQ/eL3zUu/XW/lbqH7xe+al7g7zJm/jyqzXI7RXP3TpUP6K7cO26o/8A5rrkvv11v5W6h+8XvmrXuF51Tfm0RLhdbzdEBW8hp+Q48ArlkAk8aOKjLHhxPBBJWB7C23FFfoUtKXtnacA4NwnifWnFGnpx/oqif8QR+Rpo6GWzS8adTP1df4TkJ2WyGIbLqcL3MglZHizgAeunnpwp3tlMYgEkT0flQPeHVIsjYwtpjdc1dGf9OWl/80f9KqsQyO2qsbfKnW+Y3MgSJESS0ctvMrKFoPaFDiKfe/vXnljqP7ye+an1FMZXAgpFPUiJtiFZjkdtLI7arO7+9eeWOo/vJ75qXf3rzyx1H95PfNSNwd5k/f28lZjkdtcs9Pe7wlQdNWRD6FzA87JW2DkoRuhIJ7MknHoNc6d/evD/AOsdR/eT3zU2IjXy/wBy3gzcLnNfUAVELdcWfTxJpkNJs3hxKXNV7RhaBxRO6HYUdu9pIGcR5Pq/qV0xbXtda1uWtL7bbjqW6uxI9xkMtxu6FJbSlLigBujA5AeKuh+iTsdu2kX39X6ojmLcH2epiRFfXaQfrKV2E4xjszmhT0qdl19smvbhqW325+TZrk51/WsoKgy4frJVjlk8c+ejbKx059EDo3tgHqurNhSs7INMEqye4U5yfOam2R2iqx42qtYwY6IkbUd9jMtDdQ03NdQlA7AAcCvvv11v5W6h+8XvmpLqEkk3Tm1wAAsrNcjtFLI7RVZXfrrfyt1D94vfNS79db+VuofvF75qrcHeZXv48qs1yO0Vwr00/wBNsj/Isf6aGvfrrfyt1D94vfNWKJA1ZrO9NttM3W93F7CEqWVvLI8WVHPAU6CmMLsxKTPU7ZuUBde9BZtSNj05ShgOXt5SfOOpZH5g0fKg+wvRjmgtmNq09JKVTUJU9LKTkdaslShnx4yE5/w1OK50zg6QkLowtLWAFKlWvc5se222VcJa9yPFZW86rGcISkqJ9gNRrRGq7rqVmFPOl5MG1TmO6I8pyS2olBGUEoHEbwINLDSRdGXAGylteLQlaSlaQpJ8RGRUN1DrWdB1g9pq1aakXaSxb0z3VIkIbAQVlOBvczkVsQ9cW+Zs6e1pHjPmOww445HVhLiVNkhaD4sggiryGyrOLqVgADAGBSIBGCAR56jGjtRXq+ojyZel3rbCkMJfafXLbcyFAFI3U8RwNa991qqPqU6csVlk3u5NNhySlpxLbcdJ5b61cAT2VMhvZTOLXUtDTY5NoHqr3dT/AHR7KZPpyZG0nNvd2s7sF2Gy68uL1yXFFKATwUOHHFbun7m3eLFCuzTamm5bCXkpUeKQoZwarLZXmut/A7KVQvZ3tDtutLld4UOHIjKt7g3FOkYkNEkJdRj9UlJ9lPE3UjEbW9v0sqM4p6dCelpeBG6kNqQkgjnk749lWWEGxVB4IunylTfqCZcINvL9ttS7nICgAwl1LZI8ZyrhwqLaD1zddVS30p0lJhRI0x6FIkOS21dW60cKG6OJGeGagaSLqFwBspzSqKJ1xbmbvqC2XNly3u2VlMlRdUMPsEf2iPNkEHz076Tuzl909Du7kB6B3U31iGHiN9KT9UnHaMHHnqFpGpUDgeCdKVRrXmqlaYbtqWbY7cZNxlpiMNIdS34ZGckq4AcK80ZqwX+fc7XKtj9suVsWlMiO4tKxhQylQUngQamU2upmF7J3uFks1xXv3C0QJiv7z8ZCz+IrTOkNJnnpeye4NfLTG9ruXLulxh6Z0zLvjVtWWpMhD6GkdYObaN76xHmp50Zqm36psBu0FDrXVrW0/HdGHGXEcFIUO0GrIcAqBaSvrvO0j5LWP7va+Wl3naR8lrH93tfLX1obULOqtKwNQR47kdqY3vpbcIKk8SOOPRUe1xrq7aYuMZhekJUuNMnswIkhEttIddd+qMHiBnIyeyrAeTZQlgF1IBo/SQ5aXsg/6Br5a2oFhscB0OwLNbojg/WZioQfaBX3Ypc+bb0v3K2KtsgqILCnUuEDxHeTw41o641Gxpawquj8dySS62w0yggFxxxQSkZPAcSOJoe0TZX2QLp8rVuVut9zYEe5QIs1kHeDchlLic9uFAimjROphqNq4JcgOQZVulmLIZU4lwBYSFcFJ4EYUKkNUQQVYIITH3naR8lrH93tfLS7ztI+S1j+72vlpm07rebqGatVo01JftLcxcVU9UhCRlBwpQQfCwDTlrbVsXTSYbAiSLjcp7hbhwY4HWOkcSePAJA5k0dn3sguy11n7ztI+S1j+72vlpd52kfJax/d7Xy17pu6Xue68i7acctKUJSptSpSHQvOcjweRH86iE3am7FjXq5nSs1yzWWe5DmTESGyU7it1Sw39YpGc1AHk2ChLALlS8aP0kDkaWsY/wDz2vlpwt9sttuSU2+3xIgPMMMpRn2CmPXerkaZtFsnM2525OXKexBjMtuJQVLezuklXADhW/Ybld5kSQ7dLC5a3G/7NtUlDvWDHanl66oh1rlEMt7BPFIgEEEAg8waHFz2t2mBsyg64dtstTct/qBDSR1qFhakrB8Xg7iifMKk6tVRVawt+nIzDkhyXBXOU8gjcabBAST/ALxVwqFjh4Kg9p8VtSNMaakOFyRp60OrPNS4TaifWRWI6P0keelrGf8AoGvlp7pt1Vd2rBpyfenmVvNwmFPKbQQCoDxDNUC46BWQOJWr3naR8lrH93tfLXo0fpIctL2Qf9A18tN2r9bxtOaATq92BIksqbaWI7RHWHrMYA8/GlI15ahYbDeYiFy4t6mNRGiggFtS0qOVejdIIorP4obsTl3o6U8mLJ7g18tOMCBAt7ZbgQo0RB/VZaSgewCmXW2rYumhCjiHIuVzuDhbhQYwHWPEDKjx4JSBzJrY03c73PdeRd9OuWlKEpU2pUpDocznI8HkRj8aEh1rlEC29gnulSpUKJat3dis2mY9NbLkVthankBBWVICSVDdHPhnh46EOhnYdt2jWi1bPrjc5em5DUhVyhPtOdzwQE5bLalgFJKsJ3RnhRor5Q2hGdxCU54nAxmja6wIQObcgoUah09d7zt2mGFebjZo5040hciM0D1n9evKN5QwDxzw40/6r07DsGxm82GzsvKabt7wQOK3HFKyST4yokk1OsDOccaR4jBq9odOirZjXqhdsac061HtseFfb7KuBt7aXIswvFtshA3gApIAweHOsVuubWg9pOp16hYktW++PNy4lwQwpxsbqN0tqKQSkjxUVQhCTkJSD5hSWhC07q0pUOwjNQvuT1UDLAdFFdSXSHqDZnfZdoW5Jadt8lDZ6pSSo9WoYCVAH8Kj9ynXGz7A4iIEZ83R+3Mw47YbO8l10BAJHMYyT6qJSUpSndSkBPYBwpEAjGBgVQcB4Ky0nxQOsenNVaD1no+4XB+HNt7kYWN4QoykqbSQVtqXzz4QIz4t6pLrm4xbJto03drj17cFNmmsqeQwtxKVqcZISd0HBIB9lE0gHmAa8UlKvrJB9IojLc3IQ7OwsFqWW6Qrzbm7hbnVOxnCQlSm1IJwcHgoA8x2VDNiUd+PbNTCQw40V6nuK0haSneSXeChnmD21PwABgAAeakAByGKDNYEI8uoKF22fTse66p0W+YrznW3MRZpaBwuMUlZQ5j9XeSnnRQSAlISkAADAA8VekA8xypVC4kAclA2xJ5oX9IBlpxjS65LktiI1eW1SH4wVvtI3T4QKQSPTWHYmwI2qdTotPd0rT7qm3WJ05Cg888R4Y3lgKUkcMcKKq0pWMLSFDsIzSSAkYSAB2Ci2nYyodn2syEezy/wtARbtpnVDcqJIZuD8iO8IzjiZbbiytJSUg5PHGDTxsdt89u1akvkyG7CF+uj8+PGcThbbagEp3h4iQnOPPRDW2hZBWhKiOWRnFfVR0l76cVGstbXghTsF1RZ42hLBpuQ7JZuqWy0phyI6nCsk4JKcfjTvtpjvyGtHdQw471erbe4vcQVbqQpWVHHIDtqehtsHIQkHtxX0QDzGaheM2YBQMOXKSlQy2+oMyBZrTcTKZ05Nmbt1kxW1KcaSElTf1QSkb4TlQ5UTa8UlKklKkhQPMEULHZTdE5uYWQN2N3G6o1bC0syp1qyW1uQtuciOttF2JxulW8PrpySSeZHCjmTgZNeBCEgAJSAOWByr2re7MbqmNyiyBtzk2q3asiStm8y5t3SXc0puFqDDojLQVEOLUFJ3UEc8g8ak+0jumw7R9Pa1dhSJlqjxXoMvqGy4uPvkEObo4kcMHFEkNthZWEJCjzIHE19EAjBGRRbTVVs9Eyaa1VYtRuPIs8xUkspBcJYcQBnOOKkjJ4UDbrpe8OaW1vempN1W1G1LIku2Yg9RPYS8CpJTjJynJyOeBXRbbbbYw2hKAf7oxXuBgjAwedU2TIdFHR5xqhbt9Q1M0fpd3/bGoadQwHnnIqFdYyyN4qWN0EjA8eOFSbZtIsTsKYzZLxdbmhDiVOrnlwqSSOABWkcOB5VLClJGCkEdhFJKUp+qkD0Cqz9nKrydrMgLZ9MTJ+0i+aNmwXhZLc9OubDikHq3FS2kpShJ5ZSXHzT50dol1l/SN9vkV5iVFYYsjPWoKSURwQpQz4lKI4+PFF/AznAz20gAOQAo3SkiyFsQBum203qJc7hcoUZEgLtzoZeUtspSpRTnwT+twpp2tNOPbNNQtMtrccXBcCUITkk45ACpOlKUklKQMnJwOdekAjBGRSwbG4TCLiyGO0CJIe2N2ZhuO6t1C7cVNpQSoYWjOR5qiestP3bTWu7Ha7bDfkacud9ZuDYbSSITyUrDieHJKt4EefNHogEYIGKRAPMA4o2ykJbogUNNoxkWDaVp7WzsKTMtLEN+3yyw2XFRi4pKku7o4kcMHHKpjprVVi1Gt5FmmKk9QElwlhxAGc44qSMngeVPRAIwRkV8ttttjDaEoH+EYoS4EWKMNIKbtO3yFfWJT0JMhKYst2I51zRbJW2cKIzzT2Hx0514kBPIAZOeFe0JRBf/9k=" alt="SBS Specialty Bolt &amp; Screw"/>
+  </a>
+  <div class="topbar-divider"></div>
+  <div class="topbar-title">
+    <strong>RIVET NUT SELECTOR</strong>
+    <span>&amp; APPLICATION ADVISOR — Specialty Bolt &amp; Screw</span>
+  </div>
+  <div class="topbar-spacer"></div>
+  <div class="topbar-actions">
+    <button class="btn btn-orange btn-sm" onclick="window.print()">⇩ Export / Print</button>
+  </div>
+</header>
+
+<!-- ── STICKY NAV BAR (tabs) ── -->
+<nav class="nav-bar">
+  <button class="nav-tab active" id="tab-selector" onclick="showPanel(event,'selectorPanel','tab-selector')">
+    <span class="tab-icon">🔍</span><span class="tab-txt">Selector</span>
+  </button>
+  <button class="nav-tab" id="tab-series" onclick="showPanel(event,'seriesPanel','tab-series')">
+    <span class="tab-icon">≡</span><span class="tab-txt">Series Reference</span>
+  </button>
+  <button class="nav-tab" id="tab-practice" onclick="showPanel(event,'practicePanel','tab-practice')">
+    <span class="tab-icon">📋</span><span class="tab-txt">Best Practice</span>
+  </button>
+  <button class="nav-tab" id="tab-data" onclick="showPanel(event,'dataPanel','tab-data')">
+    <span class="tab-icon">📊</span><span class="tab-txt">Test &amp; Plating Data</span>
+  </button>
+  <div class="nav-spacer"></div>
+  <button class="nav-tab" id="compareNavBtn" onclick="openCompare()" style="display:none;background:rgba(232,119,34,.15);color:var(--orange-light)">
+    <span class="tab-icon">⚖</span><span class="tab-txt">Compare (<span id="compareCount">0</span>)</span>
+  </button>
+</nav>
+
+<!-- ── MAIN LAYOUT ── -->
+<main class="main">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="input-card">
+      <h2>APPLICATION INPUTS</h2>
+      <p>Select your requirements to filter and rank rivet nut series</p>
+
+      <label>Unit System <span class="info-icon" title="Choose metric or inch">i</span></label>
+      <select id="unitSys" onchange="unitChange()">
+        <option value="metric">Metric (mm)</option>
+        <option value="inch">Inch (in)</option>
+      </select>
+
+      <div class="row2">
+        <div>
+          <label>Thread Size <span class="info-icon" title="Internal thread designation">i</span></label>
+          <select id="threadSize">
+            <option value="">Any</option>
+            <optgroup label="Metric" id="metricThreads">
+              <option>M3</option><option>M4</option><option>M5</option>
+              <option selected>M6</option><option>M8</option><option>M10</option><option>M12</option>
+            </optgroup>
+            <optgroup label="Inch UNC" id="inchThreads" style="display:none">
+              <option>6-32</option><option>8-32</option><option>10-24</option>
+              <option>1/4-20</option><option>5/16-18</option><option>3/8-16</option><option>1/2-13</option>
+            </optgroup>
+          </select>
+        </div>
+        <div>
+          <label>Grip (Stack Thickness) <span class="info-icon" title="Total thickness of materials being joined">i</span></label>
+          <div class="input-unit">
+            <input type="number" id="gripVal" value="2.5" min="0.1" step="0.1"/>
+            <span id="gripUnit">mm</span>
+          </div>
+        </div>
+      </div>
+
+      <label>Base Material <span class="info-icon" title="Affects pull-out and body style selection">i</span></label>
+      <select id="baseMat">
+        <option value="steel">Steel sheet</option>
+        <option value="aluminum">Aluminum sheet</option>
+        <option value="plastic">Plastic / Composite / Fiberglass</option>
+        <option value="painted">Painted / Pre-coated sheet</option>
+        <option value="wood">Wood / Plywood</option>
+        <option value="any">Any / Not specified</option>
+      </select>
+
+      <div class="row2">
+        <div>
+          <label>Hole Shape <span class="info-icon" title="Round holes for round/knurled; hex holes for hex body">i</span></label>
+          <select id="holeShape">
+            <option value="round">Round</option>
+            <option value="hex">Hex (punched)</option>
+            <option value="blind">Blind hole</option>
+            <option value="standard">Standard / pre-drilled</option>
+          </select>
+        </div>
+        <div>
+          <label>Installation Tool <span class="info-icon" title="Determines compatible series">i</span></label>
+          <select id="toolType">
+            <option value="any">Any</option>
+            <option value="spinpull">Spin-Pull only</option>
+            <option value="spinspin">Spin-Spin compatible</option>
+            <option value="hand">Hand tool</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div>
+          <label>Head Style Priority</label>
+          <select id="headPref">
+            <option value="any">Any</option>
+            <option value="lowprofile">Low Profile / Flush</option>
+            <option value="reduced">Reduced / Near-Flush</option>
+            <option value="large">Large / Max Bearing</option>
+            <option value="countersunk">Countersunk</option>
+            <option value="sealed">Sealed</option>
+          </select>
+        </div>
+        <div>
+          <label>Anti-Spin Priority</label>
+          <select id="spinPrio">
+            <option value="any">Any</option>
+            <option value="highest">Highest (Hex body)</option>
+            <option value="high">High (Knurled)</option>
+            <option value="medium">Medium</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div>
+          <label>Pull-Out Priority</label>
+          <select id="pullPrio">
+            <option value="any">Any</option>
+            <option value="highest">Highest (Heavy-wall)</option>
+            <option value="high">High</option>
+            <option value="standard">Standard</option>
+          </select>
+        </div>
+        <div>
+          <label>Corrosion Requirement</label>
+          <select id="corrReq">
+            <option value="standard">Standard (Zinc, Indoor)</option>
+            <option value="enhanced">Enhanced (ZnNi / TinZn)</option>
+            <option value="sealed">Sealed head required</option>
+            <option value="stainless">Stainless steel body</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <label style="margin:0">Body Wall Type</label>
+        <span class="reset-link" onclick="resetAll()">↻ Reset All</span>
+      </div>
+      <select id="wallType">
+        <option value="any">Any (Thinwall or Heavywall)</option>
+        <option value="thinwall">Thinwall / American Standard</option>
+        <option value="heavywall">Heavywall / European Standard</option>
+        <option value="thickwall">Thickwall (IRL / Large Head)</option>
+        <option value="swaging">Swaging (ISR / ISN)</option>
+      </select>
+
+      <button class="btn btn-orange" style="width:100%;margin-top:12px;height:38px;font-size:12px" onclick="runSelector()">🔍 UPDATE RECOMMENDATIONS</button>
+
+      <div class="about-box">
+        <h3>HOW RESULTS ARE RANKED</h3>
+        <p>Series are ranked by pull-out strength and anti-spin suitability for your hole shape, material, and tool type. Check up to 4 series to compare side-by-side. Always validate with sample installations in the actual parent material.</p>
+      </div>
+    </div>
+  </aside>
+
+  <!-- CONTENT -->
+  <section class="content">
+
+    <!-- SELECTOR PANEL -->
+    <div id="selectorPanel" class="panel active">
+      <div class="content-top">
+        <div>
+          <h1 class="section-title">RECOMMENDED RIVET NUT OPTIONS</h1>
+          <p id="resultCount" class="section-sub">Showing best matches for your inputs</p>
+        </div>
+        <div class="sort-row">
+          <span>Sort:</span>
+          <select id="sortBy" onchange="runSelector()">
+            <option value="best">Best Match</option>
+            <option value="pullout">Highest Pull-Out</option>
+            <option value="antispin">Highest Anti-Spin</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi"><div class="kpi-icon">🏆</div><div><small>BEST FIT</small><strong id="kpi1">—</strong><em>top recommendations</em></div></div>
+        <div class="kpi"><div class="kpi-icon">↑</div><div><small>MAX PULL-OUT</small><strong id="kpi2">5/5</strong><em>strength rating</em></div></div>
+        <div class="kpi"><div class="kpi-icon">🔒</div><div><small>MAX ANTI-SPIN</small><strong id="kpi3">5/5</strong><em>resistance rating</em></div></div>
+        <div class="kpi"><div class="kpi-icon">≡</div><div><small>SERIES SHOWN</small><strong id="kpi4">—</strong><em>matching series</em></div></div>
+      </div>
+
+      <div class="cards" id="cards"></div>
+    </div>
+
+    <!-- SERIES REFERENCE PANEL -->
+    <div id="seriesPanel" class="panel">
+      <div class="section-hdr"><span>Complete Series Reference</span></div>
+      <div class="warn-banner">
+        <strong>Note:</strong> Covers American Standard (IKF, IKR, IRL, IRR, ISR, ISN, IHF, IPB, IPN) and European/Heavywall (NKL, NKR, NKC, NSL, NHL, NHR) families, plus specialty series (JK, JF). AVK equivalents shown where applicable.
+      </div>
+      <div class="ref-wrap">
+        <table class="ref-tbl">
+          <thead>
+            <tr>
+              <th>Series</th><th>Standard</th><th>Wall</th><th>Body</th><th>Head</th>
+              <th>Best Application</th><th>Thread Sizes</th>
+              <th>Pull-Out</th><th>Anti-Spin</th><th>Tool</th><th>AVK Equiv.</th>
+            </tr>
+          </thead>
+          <tbody id="seriesRows"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- BEST PRACTICE PANEL -->
+    <div id="practicePanel" class="panel">
+      <div class="section-hdr"><span>Engineering Best Practice</span></div>
+      <div class="warn-banner"><strong>Source:</strong> RivetKing catalog design considerations and AVK Engineering Manual EM-6. Always validate with prototype installations in your actual parent material before production release.</div>
+      <div class="practice-grid">
+        <div class="practice-card"><h3>A. Grip Range — Actual vs. Theoretical</h3><p>Always measure the <em>actual</em> assembled stack — not nominal sheet thicknesses. Burrs, formed edges, paint or coating buildup, and bends can change the effective grip significantly. Select a part code whose grip range comfortably brackets your measured stack.</p></div>
+        <div class="practice-card"><h3>B. Hole Size &amp; Shape</h3><p>Round bodies require round holes; hex and half-hex bodies require matching hex holes for anti-spin function. Calculate manufacturing tolerances plus paint/coating buildup to ensure the hole stays within specification.</p></div>
+        <div class="practice-card"><h3>C. Tool Clearance (Axial Access)</h3><p>The installation tool must have straight axial access from above the hole. Select tooling during design — don't leave it to production. Poor alignment causes weak joints and rapid mandrel wear.</p></div>
+        <div class="practice-card"><h3>D. Head Clearance (Footprint)</h3><p>Ensure the head flange can seat flat with no interference from brackets, bends, extrusions, or adjacent hardware. Lay out the head diameter plus tolerances on the drawing. This is the most common oversight in product design.</p></div>
+        <div class="practice-card"><h3>E. Blind-Side Clearance</h3><p>The rivet nut collapses to form a backside flange. Ensure adequate clearance behind the sheet for the bulge to form and seat. Validate with trial installations — the collapsed height is shorter than the pre-installed height.</p></div>
+        <div class="practice-card"><h3>F. Parent Material Density</h3><p>Plastics, composites, and soft aluminum require experimentation. For soft materials, quad-fold (IPB/IPN) or pre-bulbed (A-R) styles provide superior pull-out. Always perform trial installations in actual production material.</p></div>
+        <div class="practice-card"><h3>G. Mating Fastener Selection</h3><p>Standard series (IKF, IKR, IRL, A-L, A-K) are designed for Grade 5 / Metric Class 8.8–9.8 mating screws. The A-T swaging series supports Grade 8 / Class 12.9. Never use prevailing-torque screws with round-body inserts.</p></div>
+        <div class="practice-card"><h3>H. Assembly Torque &amp; Joint Design</h3><p>The mating part must contact the insert head (not float over the hole). A gap between mating part and insert head allows the threaded nut portion to rotate or pull through. Mating part hole should be ~1.0 mm smaller than the insert head diameter.</p></div>
+        <div class="practice-card"><h3>I. Galvanic Corrosion</h3><p>Avoid pairing dissimilar metals without isolation. An aluminum insert in a steel structure accelerates corrosion of the less-noble metal. For mixed-metal assemblies consider stainless steel inserts, isolating washers, or compatible platings.</p></div>
+        <div class="practice-card"><h3>J. Corrosion Protection &amp; Plating</h3><p>Standard zinc/yellow trivalent finishes provide ~120 hours SST to white rust. Enhanced finishes (Zinc-Nickel, Tin-Zinc trivalent) extend to 458–1000+ hours. Do <strong>not</strong> reprocess rivet nuts — plating thickness and lubricity affect installation torque and grip behavior.</p></div>
+        <div class="practice-card"><h3>K. Air Supply (Pneumatic Tools)</h3><p>Pneumatic spin-spin tools (ARO) require 90–110 PSI dynamic air pressure at 25 SCFM. Use minimum 5/16″ ID hose and fittings, an inline oiler/separator, and a pressure regulator. Set pressure with the tool running, not static.</p></div>
+        <div class="practice-card"><h3>L. Production Release Checklist</h3><p>Before releasing to production, document: parent material and grade, hole process (punch or drill), tool model and setting, pull-out test result, spin-out result, assembly torque window, and installation stroke/force.</p></div>
+      </div>
+    </div>
+
+    <!-- TEST / PLATING DATA PANEL -->
+    <div id="dataPanel" class="panel">
+      <div class="section-hdr"><span>Test Data &amp; Plating Reference</span></div>
+      <div class="warn-banner"><strong>Data Source:</strong> AVK Engineering Manual EM-6, pages 44 &amp; 46. Values are averages — actual performance depends on parent material, hole size, insert material, plating, tool settings, and installation quality.</div>
+
+      <p class="section-title" style="font-size:15px;margin-bottom:8px">A-L / A-K Series — Pull-Out &amp; Push-Out in Steel Sheet (lbs / kN)</p>
+      <div class="test-tbl-wrap" style="margin-bottom:18px">
+        <table class="test-tbl">
+          <thead>
+            <tr>
+              <th rowspan="2">Thread</th>
+              <th colspan="3">PULL-OUT (lbs) Steel</th>
+              <th colspan="3">PUSH-OUT (lbs) Steel</th>
+              <th>Spin-Out (in-lbs) .062"</th>
+              <th>Assy Torque Gr5 (in-lbs)</th>
+            </tr>
+            <tr><th>.030"</th><th>.062"</th><th>.090"</th><th>.030"</th><th>.062"</th><th>.090"</th><th>—</th><th>—</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><b>6-32</b></td><td>310</td><td>850</td><td>1570</td><td>320</td><td>830</td><td>1450</td><td>12</td><td>12</td></tr>
+            <tr><td><b>8-32</b></td><td>310</td><td>850</td><td>1570</td><td>320</td><td>830</td><td>1450</td><td>22</td><td>22</td></tr>
+            <tr><td><b>10-24</b></td><td>460</td><td>1020</td><td>1730</td><td>440</td><td>1000</td><td>1700</td><td>32</td><td>32</td></tr>
+            <tr><td><b>1/4-20</b></td><td>510</td><td>1270</td><td>2090</td><td>490</td><td>1180</td><td>1920</td><td>75</td><td>75</td></tr>
+            <tr><td><b>5/16-18</b></td><td>520</td><td>1370</td><td>2380</td><td>500</td><td>1350</td><td>2230</td><td>156</td><td>156</td></tr>
+            <tr><td><b>3/8-16</b></td><td>520</td><td>1370</td><td>2380</td><td>500</td><td>1350</td><td>2230</td><td>276</td><td>276</td></tr>
+            <tr><td><b>1/2-13</b></td><td>—</td><td>2000</td><td>3040</td><td>—</td><td>1830</td><td>2940</td><td>660</td><td>660</td></tr>
+            <tr><td><b>M4</b></td><td>1.4 kN</td><td>3.8 kN</td><td>7.0 kN</td><td>1.4 kN</td><td>3.7 kN</td><td>6.5 kN</td><td>2.5 Nm</td><td>2.5 Nm</td></tr>
+            <tr><td><b>M5</b></td><td>2.0 kN</td><td>4.5 kN</td><td>7.7 kN</td><td>2.0 kN</td><td>4.5 kN</td><td>7.6 kN</td><td>5.0 Nm</td><td>5.0 Nm</td></tr>
+            <tr><td><b>M6</b></td><td>2.3 kN</td><td>5.7 kN</td><td>9.3 kN</td><td>2.2 kN</td><td>5.3 kN</td><td>8.5 kN</td><td>8.6 Nm</td><td>8.6 Nm</td></tr>
+            <tr><td><b>M8</b></td><td>2.3 kN</td><td>6.1 kN</td><td>10.6 kN</td><td>2.2 kN</td><td>6.0 kN</td><td>9.9 kN</td><td>21.0 Nm</td><td>21.0 Nm</td></tr>
+            <tr><td><b>M10</b></td><td>2.3 kN</td><td>6.1 kN</td><td>10.6 kN</td><td>2.2 kN</td><td>6.0 kN</td><td>9.9 kN</td><td>42.0 Nm</td><td>42.0 Nm</td></tr>
+            <tr><td><b>M12</b></td><td>—</td><td>8.9 kN</td><td>13.5 kN</td><td>—</td><td>8.1 kN</td><td>13.1 kN</td><td>72.0 Nm</td><td>72.0 Nm</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="section-title" style="font-size:15px;margin-bottom:8px">Standard Plating Finishes (AVK EM-6 Plating Chart)</p>
+      <div class="plating-tbl-wrap" style="margin-bottom:18px">
+        <table class="plating-tbl">
+          <thead><tr><th>Code</th><th>Type</th><th>Spec</th><th>Thickness</th><th>Color</th><th>SST White</th><th>SST Red</th><th>RoHS</th></tr></thead>
+          <tbody>
+            <tr><td>3T</td><td>Zinc Trivalent</td><td>ASTM-B-633, Fe/Zn 8µ</td><td>.0003" min</td><td>Silver</td><td>120 hrs</td><td>300 hrs</td><td>✓</td></tr>
+            <tr><td>4T</td><td>Yellow Zinc Trivalent</td><td>ASTM-B-633, Fe/Zn 8µ, yellow</td><td>.0003" min</td><td>Yellow</td><td>120 hrs</td><td>300 hrs</td><td>✓</td></tr>
+            <tr><td>9T</td><td>Tin-Zinc Trivalent</td><td>ESP-P-004, 8µ</td><td>.0003" min</td><td>Dull Gold</td><td>458–800 hrs</td><td>500+ hrs</td><td>✓</td></tr>
+            <tr><td>10</td><td>Zinc Nickel</td><td>AVK ESP-P-006</td><td>.0003" min</td><td>Silver-Gray</td><td>240 hrs</td><td>400+ hrs</td><td>✓</td></tr>
+            <tr><td>SZN</td><td>Zinc Nickel 800 hr</td><td>RivetKing ZnNi</td><td>.0003" min</td><td>Silver</td><td>800 hrs</td><td>840+ hrs</td><td>✓</td></tr>
+            <tr><td>SZ</td><td>Zinc Clear</td><td>ASTM-B-633 RoHS</td><td>.0003" min</td><td>Silver</td><td>48 hrs</td><td>—</td><td>✓</td></tr>
+            <tr><td>SY</td><td>Zinc Yellow</td><td>ASTM-B-633 RoHS</td><td>.0003" min</td><td>Yellow</td><td>72 hrs</td><td>—</td><td>✓</td></tr>
+            <tr><td>3P</td><td>18-8 Stainless Plain</td><td>Passivated</td><td>—</td><td>Silver</td><td>1000+ hrs</td><td>—</td><td>✓</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="data-grid">
+        <div class="data-card"><h3>Test Definitions</h3>
+          <ul>
+            <li><strong>Pull-out:</strong> Force to extract insert; parent restrained by hold-down ring 3× body diameter</li>
+            <li><strong>Push-out:</strong> Force to push insert through from back</li>
+            <li><strong>Spin-out:</strong> Torque to rotate installed insert without influencing clamp load</li>
+            <li><strong>Assembly torque:</strong> Suggested for Grade 5 / Class 8.8–9.8 mating hardware (dry)</li>
+          </ul>
+        </div>
+        <div class="data-card"><h3>Thread Class</h3>
+          <p>Standard rivet nuts are manufactured to Unified 2B/2B per ASME B1.1 (inch) and 6H per ASME B1.13M (metric). Swaging series (A-T, ISR, ISN) are manufactured oversized to compensate for thread shrinkage during swaging.</p>
+        </div>
+        <div class="data-card"><h3>Cautions</h3>
+          <ul>
+            <li>Do NOT reprocess rivet nuts — plating + wax affect installation</li>
+            <li>Test in actual application material</li>
+            <li>Cadmium plating is non-RoHS — confirm regulatory acceptability</li>
+            <li>PVC foam seals not recommended for petroleum-based liquids</li>
+          </ul>
+        </div>
+        <div class="data-card"><h3>Corrosion Upgrade Path</h3>
+          <p>Standard → <strong>Zinc Clear (SZ/3T)</strong>: 48–120 hrs SST<br>
+          Upgrade → <strong>Yellow Zinc Trivalent (SY/4T)</strong>: ~120 hrs<br>
+          Enhanced → <strong>Zinc Nickel (SZN/10)</strong>: 800+ hrs<br>
+          Premium → <strong>Tin-Zinc Trivalent (9T)</strong>: 458–800 hrs<br>
+          Max → <strong>Stainless body</strong>: 1000+ hrs</p>
+        </div>
+      </div>
+    </div>
+
+  </section>
+</main>
+
+<!-- ── COMPARE TRAY ── -->
+<div class="compare-tray" id="compareTray">
+  <span class="tray-label">⚖ COMPARE</span>
+  <div class="tray-slots" id="traySlots"></div>
+  <div class="tray-actions">
+    <button class="btn btn-orange btn-sm" onclick="openCompare()">Compare Now</button>
+    <button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="clearCompare()">Clear All</button>
+  </div>
+</div>
+
+<!-- ── COMPARE MODAL ── -->
+<div class="modal-overlay" id="compareModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>SIDE-BY-SIDE COMPARISON</h2>
+      <button class="modal-close" onclick="closeCompare()">✕</button>
+    </div>
+    <div class="modal-body">
+      <table class="cmp-tbl" id="cmpTable"></table>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── SERIES DATABASE ─────────────────────────────────────────────────
+// Source: RivetKing catalog + AVK EM-6
+const SERIES = [
+  {
+    id:"IKF", name:"IKF SERIES®", sub:"Low Profile Head · Knurled Body",
+    standard:"American", wall:"Thinwall",
+    body:"Round knurled", head:"Low profile (near-flush)",
+    bestUse:"General-purpose thinwall; low head clearance needed",
+    threads:"M4–M12 / #6-32 – 1/2-13 UNC",
+    pull:3, spin:3, sealed:false, blind:false, plastic:false,
+    toolCompat:["spinpull","spinspin"],
+    holeShape:["round"],
+    avk:"A-L (low profile variant)",
+    descLong:"Thinwall rivet nut with a low profile head (nearly flush). Knurled body provides moderate anti-spin resistance. Compatible with both spin-spin and spin-pull tools. Open-end and closed-end versions available."
+  },
+  {
+    id:"IKR", name:"IKR SERIES®", sub:"Reduced Head · Knurled Body",
+    standard:"American", wall:"Thinwall",
+    body:"Round knurled", head:"Reduced / virtually flush",
+    bestUse:"Near-flush installation without countersink prep",
+    threads:"M4–M10 / #6-32 – 3/8-16 UNC",
+    pull:2, spin:3, sealed:false, blind:false, plastic:false,
+    toolCompat:["spinpull","spinspin"],
+    holeShape:["round"],
+    avk:"A-K",
+    descLong:"Thinwall rivet nut with a reduced head for virtually flush installation. No countersink preparation required. Knurled body provides moderate spin resistance."
+  },
+  {
+    id:"IRL", name:"IRL SERIES®", sub:"Large Head · Smooth Body · Heavy Duty",
+    standard:"American", wall:"Thickwall",
+    body:"Round smooth, thick wall", head:"Large (wide bearing surface)",
+    bestUse:"Heavy-duty structural applications requiring maximum pull-out",
+    threads:"M3–M12 / 4-40 – 1/2-13 UNC",
+    pull:5, spin:2, sealed:false, blind:false, plastic:false,
+    toolCompat:["spinpull"],
+    holeShape:["round"],
+    avk:"R-N Series",
+    descLong:"Thick-wall heavy-duty rivet nut with a large diameter head for maximum pull-out and joint endurance. Smooth body provides lower anti-spin. Spin-pull tools only (NOT spin-spin). Three grip codes per thread size."
+  },
+  {
+    id:"IRR", name:"IRR SERIES™", sub:"Reduced Head · Smooth Body · Standard Holes",
+    standard:"American", wall:"Thinwall",
+    body:"Round smooth", head:"Reduced",
+    bestUse:"Pre-drilled or pre-punched standard hole sizes; drop-in replacement",
+    threads:"M3–M8 / #6-32 – 3/8-24 UNF",
+    pull:2, spin:1, sealed:false, blind:false, plastic:false,
+    toolCompat:["spinpull","spinspin"],
+    holeShape:["round","standard"],
+    avk:"A-O",
+    descLong:"Designed to fit common standard hole sizes found in pre-designed hardware. Avoids the need for off-standard hole diameters. Smooth body = lowest anti-spin."
+  },
+  {
+    id:"IHF", name:"IHF SERIES™", sub:"Half Hex Body · Low Profile Head",
+    standard:"American", wall:"Thinwall",
+    body:"Half-hex", head:"Low profile (wide)",
+    bestUse:"Hex-hole applications with low torque-to-set requirement",
+    threads:"M4–M12 / #6-32 – 1/2-13 UNC",
+    pull:3, spin:4, sealed:false, blind:false, plastic:false,
+    toolCompat:["spinpull","spinspin"],
+    holeShape:["hex"],
+    avk:"A-H (half-hex variant)",
+    descLong:"Half-hex body for hexagon holes. Torque to set is lower than full-hex heavy-wall inserts. Wide low-profile head allows near-flush installation. Spin-spin or spin-pull tools."
+  },
+  {
+    id:"ISR", name:"ISR SERIES™", sub:"Swaging · Straight Knurl · For Metals · Unlimited Grip",
+    standard:"American", wall:"Swaging",
+    body:"Swaged/straight knurl", head:"Reduced",
+    bestUse:"Metals of any thickness above 0.030 in; blind holes; large grip range",
+    threads:"4-40 – 1/2-13 UNC (metric on request)",
+    pull:3, spin:4, sealed:false, blind:true, plastic:false,
+    toolCompat:["spinspin"],
+    holeShape:["round","blind"],
+    avk:"A-T",
+    descLong:"Swaging series with unlimited maximum grip — works in any material thickness above 0.030\". Hole size varies by material thickness. NOT for use in plastics (use ISN for soft materials). Spin-spin tools only."
+  },
+  {
+    id:"ISN", name:"ISN SERIES®", sub:"Swaging · Diamond Knurl · For Plastics & Soft Materials",
+    standard:"American", wall:"Swaging",
+    body:"Swaged/diamond knurl", head:"Reduced",
+    bestUse:"Plastics, fiberglass, plywood — unlimited grip range above 0.062 in",
+    threads:"#6-32 – 3/8-16 UNC (metric on request)",
+    pull:3, spin:4, sealed:false, blind:true, plastic:true,
+    toolCompat:["spinspin"],
+    holeShape:["round","blind"],
+    avk:"A-W",
+    descLong:"Diamond-knurl swaging rivet nut for materials softer than itself. Works in plastics, fiberglass, and plywood. Minimum material thickness 0.062\". Unlimited maximum grip."
+  },
+  {
+    id:"IPB", name:"IPB SERIES™", sub:"Quadrafold™ · Pre-Bulbed · For Soft/Thin Materials",
+    standard:"American", wall:"Thinwall",
+    body:"Quad-fold pre-bulbed", head:"Large",
+    bestUse:"Soft materials requiring maximum pull-out — plastics, thin sheet, composites",
+    threads:"M5–M8 / #10-24 – 5/16-18 UNC",
+    pull:5, spin:3, sealed:false, blind:false, plastic:true,
+    toolCompat:["spinspin"],
+    holeShape:["round"],
+    avk:"A-R (pre-bulbed)",
+    descLong:"Pre-bulbed quad-fold design expands to ~3× hole diameter behind material. Exceptional pull-out in plastics and thin sheet. Pre-bulbed version requires spin-spin tools. Straight-shank version (IPN) requires spin-pull tools only."
+  },
+  {
+    id:"IPN", name:"IPN SERIES™", sub:"Quadrafold™ · Straight Shank · For Soft/Thin Materials",
+    standard:"American", wall:"Thinwall",
+    body:"Quad-fold straight shank", head:"Large",
+    bestUse:"Soft materials requiring maximum pull-out — install with spin-pull tool",
+    threads:"M5–M8 / #10-24 – 5/16-18 UNC",
+    pull:5, spin:3, sealed:false, blind:false, plastic:true,
+    toolCompat:["spinpull"],
+    holeShape:["round"],
+    avk:"A-R (straight shank)",
+    descLong:"Straight-shank quad-fold design. Requires spin-pull tool for installation. Same high pull-out performance in plastics and thin sheet as IPB."
+  },
+  {
+    id:"NKL", name:"NKL SERIES™", sub:"Knurled Body · Large Head · European Heavywall",
+    standard:"European", wall:"Heavywall",
+    body:"Round knurled, heavy wall", head:"Large",
+    bestUse:"European standard applications requiring high pull-out and good anti-spin",
+    threads:"M3–M12 / #6-32 – 1/2-13 UNC",
+    pull:4, spin:4, sealed:false, blind:false, plastic:false,
+    toolCompat:["spinpull"],
+    holeShape:["round"],
+    avk:"—",
+    descLong:"Heavywall European-style rivet nut with large head and knurled body. Higher pull-out than standard thinwall. Increased body and head thickness versus American Standard."
+  },
+  {
+    id:"NKR", name:"NKR SERIES™", sub:"Knurled Body · Reduced Head · European Heavywall",
+    standard:"European", wall:"Heavywall",
+    body:"Round knurled, heavy wall", head:"Reduced",
+    bestUse:"High pull-out with lower head height; European standard",
+    threads:"M3–M12 / #6-32 – 1/2-13 UNC",
+    pull:4, spin:4, sealed:false, blind:false, plastic:false,
+    toolCompat:["spinpull"],
+    holeShape:["round"],
+    avk:"—",
+    descLong:"Heavywall European rivet nut with reduced head. Provides high pull-out with minimal head protrusion."
+  },
+  {
+    id:"NKC", name:"NKC SERIES™", sub:"Knurled Body · Countersunk Head · European Heavywall",
+    standard:"European", wall:"Heavywall",
+    body:"Round knurled, heavy wall", head:"Countersunk (flush)",
+    bestUse:"Flush installation in countersunk hole; high strength",
+    threads:"M4–M8",
+    pull:4, spin:4, sealed:false, blind:false, plastic:false,
+    toolCompat:["spinpull"],
+    holeShape:["round"],
+    avk:"—",
+    descLong:"Thick countersunk head for flush installation. Knurled body in a round hole. High strength, Spin-Pull tools recommended."
+  },
+  {
+    id:"NSL", name:"NSL SERIES™", sub:"Smooth Body · Serrated Large Head · European Heavywall",
+    standard:"European", wall:"Heavywall",
+    body:"Round smooth, heavy wall", head:"Large serrated",
+    bestUse:"High pull-out with serrated head reducing spin-out",
+    threads:"M4–M12",
+    pull:4, spin:3, sealed:false, blind:false, plastic:false,
+    toolCompat:["spinpull"],
+    holeShape:["round"],
+    avk:"—",
+    descLong:"Heavy-wall smooth body with a serrated large head. The serrations resist spin-out without requiring a hex hole. Good pull-out from large head bearing surface."
+  },
+  {
+    id:"NHL", name:"NHL SERIES™", sub:"Full Hex Body · Large Head · European Heavywall",
+    standard:"European", wall:"Heavywall",
+    body:"Full hex, heavy wall", head:"Large",
+    bestUse:"Maximum anti-spin and pull-out; structural applications",
+    threads:"M4–M12 / 8-32 – 3/8-16 UNC",
+    pull:5, spin:5, sealed:false, blind:false, plastic:false,
+    toolCompat:["spinpull"],
+    holeShape:["hex"],
+    avk:"A-H (large head)",
+    descLong:"Top-tier heavywall European rivet nut. Full hex body in a hex hole delivers maximum spin-out resistance. Large head provides maximum pull-out bearing surface. Spin-pull tools required."
+  },
+  {
+    id:"NHR", name:"NHR SERIES™", sub:"Full Hex Body · Reduced Head · European Heavywall",
+    standard:"European", wall:"Heavywall",
+    body:"Full hex, heavy wall", head:"Reduced",
+    bestUse:"Maximum anti-spin with lower head height",
+    threads:"M4–M12 / 8-32 – 3/8-16 UNC",
+    pull:4, spin:5, sealed:false, blind:false, plastic:false,
+    toolCompat:["spinpull"],
+    holeShape:["hex"],
+    avk:"A-H (reduced head)",
+    descLong:"Full hex heavy-wall rivet nut with reduced head. Maximum anti-spin resistance with lower head profile than NHL."
+  },
+  {
+    id:"JK", name:"JK SERIES™", sub:"JK Nut · Stamped · For Non-Load Applications",
+    standard:"American", wall:"Specialty",
+    body:"Stamped full-hex", head:"Large",
+    bestUse:"Non-load bearing: paperboard, cardboard, thin plastics",
+    threads:"M4–M8 / #6-32 – 5/16-18 UNC",
+    pull:1, spin:3, sealed:false, blind:false, plastic:true,
+    toolCompat:["spinpull","spinspin"],
+    holeShape:["round"],
+    avk:"—",
+    descLong:"Low-cost alternative to IPB for non-load bearing applications. Ideal for paperboard, cardboard, or thin plastics. Can be coated in vinyl for weather resistance. Not for structural use."
+  },
+  {
+    id:"JF", name:"JF SERIES™", sub:"Rubber Nut · Removable · Vibration Isolating",
+    standard:"American", wall:"Specialty",
+    body:"Rubber / EPDM / Neoprene", head:"Flange",
+    bestUse:"Removable fastener; vibration isolation; utility vehicles, compressors",
+    threads:"M3–M10 / #6-32 – 3/8-16 UNC",
+    pull:2, spin:2, sealed:false, blind:false, plastic:true,
+    toolCompat:["hand"],
+    holeShape:["round"],
+    avk:"—",
+    descLong:"Rubber nut installed with the mating bolt/screw itself — no tool required. Removable by removing the fastener. Vibration isolation for mirrors, panels, engines. Material options: Brass/EPDM, Brass/Neoprene, Stainless/EPDM."
+  }
+];
+
+// ── SCORING & SELECTOR ──────────────────────────────────────────────
+function scoreProduct(p, inputs) {
+  let score = 0;
+  let fit = "good";
+
+  // Tool compatibility
+  if (inputs.toolType !== "any") {
+    if (!p.toolCompat.includes(inputs.toolType)) {
+      fit = "not"; score -= 100;
+    } else {
+      score += 20;
+    }
+  }
+
+  // Hole shape
+  if (inputs.holeShape !== "any") {
+    if (p.holeShape.includes(inputs.holeShape)) {
+      score += 25;
+      if (inputs.holeShape === "hex" && (p.id === "NHL" || p.id === "NHR" || p.id === "IHF")) score += 10;
+    } else {
+      score -= 30;
+      if (fit !== "not") fit = "possible";
+    }
+  }
+
+  // Plastic suitability
+  if (inputs.baseMat === "plastic" || inputs.baseMat === "wood") {
+    if (p.plastic) score += 30;
+    else { score -= 15; if (fit === "best" || fit === "good") fit = "possible"; }
+  }
+
+  // Blind hole
+  if (inputs.holeShape === "blind") {
+    if (p.blind) score += 25;
+    else { score -= 20; if (fit !== "not") fit = "possible"; }
+  }
+
+  // Wall type
+  if (inputs.wallType !== "any") {
+    const map = {thinwall:"Thinwall",heavywall:"Heavywall",thickwall:"Thickwall",swaging:"Swaging"};
+    if (p.wall === map[inputs.wallType]) score += 15;
+    else { score -= 10; }
+  }
+
+  // Pull-out priority
+  if (inputs.pullPrio === "highest" && p.pull < 4) { score -= 15; if (fit==="good")fit="possible";}
+  if (inputs.pullPrio === "highest" && p.pull >= 5) score += 20;
+  if (inputs.pullPrio === "high" && p.pull >= 3) score += 10;
+  score += p.pull * 5;
+
+  // Anti-spin
+  if (inputs.spinPrio === "highest" && p.spin < 5) { score -= 15; if (fit==="good")fit="possible";}
+  if (inputs.spinPrio === "highest" && p.spin === 5) score += 20;
+  if (inputs.spinPrio === "high" && p.spin >= 3) score += 10;
+  score += p.spin * 4;
+
+  // Head preference
+  if (inputs.headPref !== "any") {
+    const headMap = {lowprofile:["Low Profile","Low profile"],reduced:["Reduced","Countersunk","Reduced / Near-Flush","Reduced / virtually flush"],
+      large:["Large"],countersunk:["Countersunk"],sealed:["Sealed"]};
+    const wanted = headMap[inputs.headPref] || [];
+    const match = wanted.some(w => p.head.toLowerCase().includes(w.toLowerCase()));
+    if (match) score += 20;
+    else score -= 5;
+  }
+
+  // Corrosion
+  if (inputs.corrReq === "stainless" && !p.descLong.toLowerCase().includes("stainless")) { score -= 5; }
+  if (inputs.corrReq === "sealed" && !p.sealed) { score -= 10; if(fit==="good")fit="possible"; }
+
+  // Determine fit level
+  if (fit !== "not") {
+    if (score >= 90) fit = "best";
+    else if (score >= 50) fit = "possible";
+    else fit = "good";
+  }
+
+  return { ...p, score, fit };
+}
+
+function runSelector() {
+  const inputs = {
+    unitSys: document.getElementById("unitSys").value,
+    threadSize: document.getElementById("threadSize").value,
+    gripVal: parseFloat(document.getElementById("gripVal").value) || 2.5,
+    baseMat: document.getElementById("baseMat").value,
+    holeShape: document.getElementById("holeShape").value,
+    toolType: document.getElementById("toolType").value,
+    headPref: document.getElementById("headPref").value,
+    spinPrio: document.getElementById("spinPrio").value,
+    pullPrio: document.getElementById("pullPrio").value,
+    corrReq: document.getElementById("corrReq").value,
+    wallType: document.getElementById("wallType").value,
+    sortBy: document.getElementById("sortBy").value,
+  };
+
+  let scored = SERIES.map(p => scoreProduct(p, inputs));
+
+  if (inputs.sortBy === "pullout") scored.sort((a,b) => b.pull - a.pull || b.score - a.score);
+  else if (inputs.sortBy === "antispin") scored.sort((a,b) => b.spin - a.spin || b.score - a.score);
+  else scored.sort((a,b) => {
+    const fv = {best:4,possible:3,good:2,not:1};
+    return (fv[b.fit]-fv[a.fit]) || b.score - a.score;
+  });
+
+  const visible = scored.filter(p => p.fit !== "not");
+  const bestCount = visible.filter(p => p.fit === "best").length;
+
+  document.getElementById("kpi1").textContent = bestCount;
+  document.getElementById("kpi4").textContent = visible.length;
+  document.getElementById("resultCount").textContent = `${visible.length} series shown — ${bestCount} best fit`;
+
+  const container = document.getElementById("cards");
+  container.innerHTML = "";
+  scored.forEach(p => {
+    const el = document.createElement("article");
+    el.className = "card";
+    el.innerHTML = `
+      <div class="fit-badge ${p.fit}">${p.fit.toUpperCase().replace("POSSIBLE","POSSIBLE FIT").replace("BEST","BEST FIT").replace("GOOD","GOOD FIT").replace("NOTFULL","NOT").replace(/^NOT$/,"NOT RECOMMENDED")}</div>
+      <div class="card-series">${p.name}</div>
+      <div class="card-sub">${p.sub}</div>
+      <div class="card-visual">
+        <div class="vis-box">
+          <div class="vis-label">${p.id}</div>
+          <div class="vis-inner">${buildSVG(p)}</div>
+        </div>
+        <div class="card-desc">
+          ${p.descLong}
+          <div class="tool-line">Tool: ${p.toolCompat.map(t=>({spinpull:"Spin-Pull",spinspin:"Spin-Spin",hand:"Hand Tool"})[t]).join(" / ")}</div>
+          ${p.avk && p.avk !== "—" ? `<div class="tool-line" style="color:var(--muted)">AVK equiv: ${p.avk}</div>` : ""}
+        </div>
+      </div>
+      <table class="spec-tbl">
+        <thead><tr><th>Body</th><th>Head</th><th>Thread Range</th><th>Standard</th></tr></thead>
+        <tbody><tr><td>${p.body}</td><td>${p.head}</td><td>${p.threads}</td><td>${p.standard} / ${p.wall}</td></tr></tbody>
+      </table>
+      <div class="ratings">
+        <span>Pull-Out ${barHTML(p.pull,"o")} ${p.pull}/5</span>
+        <span>Anti-Spin ${barHTML(p.spin,"n")} ${p.spin}/5</span>
+      </div>
+    `;
+    container.appendChild(el);
+  });
+}
+
+function barHTML(n, type) {
+  let s = '<span class="bars">';
+  for (let i = 1; i <= 5; i++) s += `<span class="bar${i<=n?" on-"+type:""}"></span>`;
+  return s + "</span>";
+}
+
+function buildSVG(p) {
+  // Simplified SVG rivet nut illustration
+  const isHex = p.body.toLowerCase().includes("hex");
+  const isLarge = p.head.toLowerCase().includes("large");
+  const isReduced = p.head.toLowerCase().includes("reduced");
+  const isSlotted = p.body.toLowerCase().includes("fold") || p.body.toLowerCase().includes("quad");
+  const isRubber = p.id === "JF";
+
+  const headW = isLarge ? 36 : isReduced ? 22 : 28;
+  const bodyW = isHex ? 18 : 16;
+  const bodyH = 42;
+  const cx = 44;
+
+  if (isRubber) return `<svg viewBox="0 0 44 70" width="44" height="70" xmlns="http://www.w3.org/2000/svg">
+    <rect x="${cx-18}" y="8" width="36" height="6" rx="3" fill="#2c2c2c"/>
+    <rect x="${cx-10}" y="14" width="20" height="38" rx="4" fill="#444"/>
+    <rect x="${cx-7}" y="20" width="14" height="12" rx="2" fill="#e8c44a" opacity=".7"/>
+  </svg>`;
+
+  const shape = isHex
+    ? `<polygon points="${cx},${14} ${cx+bodyW},${18} ${cx+bodyW},${14+bodyH-8} ${cx},${14+bodyH} ${cx-bodyW},${14+bodyH-8} ${cx-bodyW},${18}" fill="url(#gMetal)"/>`
+    : `<rect x="${cx-bodyW/2}" y="14" width="${bodyW}" height="${bodyH}" rx="3" fill="url(#gMetal)"/>`;
+
+  const headShape = `<rect x="${cx-headW/2}" y="6" width="${headW}" height="${isReduced?5:8}" rx="2" fill="#8a9ab2"/>`;
+  const thread = `<circle cx="${cx}" cy="18" r="${isHex?5:4}" fill="#222" opacity=".7"/>`;
+  const knurl = p.body.toLowerCase().includes("knurl") || p.body.toLowerCase().includes("swag")
+    ? `<line x1="${cx-bodyW/2+2}" y1="30" x2="${cx+bodyW/2-2}" y2="30" stroke="#fff" stroke-width="1" opacity=".4"/>
+       <line x1="${cx-bodyW/2+2}" y1="36" x2="${cx+bodyW/2-2}" y2="36" stroke="#fff" stroke-width="1" opacity=".4"/>
+       <line x1="${cx-bodyW/2+2}" y1="42" x2="${cx+bodyW/2-2}" y2="42" stroke="#fff" stroke-width="1" opacity=".4"/>`
+    : "";
+  const slots = isSlotted
+    ? `<rect x="${cx-9}" y="28" width="4" height="20" rx="2" fill="#111" opacity=".3"/>
+       <rect x="${cx+5}" y="28" width="4" height="20" rx="2" fill="#111" opacity=".3"/>`
+    : "";
+
+  return `<svg viewBox="0 0 88 70" width="64" height="70" xmlns="http://www.w3.org/2000/svg">
+    <defs><linearGradient id="gMetal" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#9aabb8"/><stop offset="50%" stop-color="#e8edf2"/><stop offset="100%" stop-color="#8a9ab2"/>
+    </linearGradient></defs>
+    ${headShape}${shape}${knurl}${slots}${thread}
+    <rect x="${cx-bodyW/2}" y="${14+bodyH}" width="${bodyW}" height="4" rx="2" fill="#7a8a9a" opacity=".6"/>
+  </svg>`;
+}
+
+// ── SERIES REFERENCE TABLE ───────────────────────────────────────────
+function buildSeriesTable() {
+  const tbody = document.getElementById("seriesRows");
+  tbody.innerHTML = SERIES.map(p => `
+    <tr>
+      <td><span class="series-badge">${p.id}</span></td>
+      <td>${p.standard}</td>
+      <td>${p.wall}</td>
+      <td>${p.body}</td>
+      <td>${p.head}</td>
+      <td>${p.bestUse}</td>
+      <td style="white-space:nowrap">${p.threads}</td>
+      <td style="text-align:center">${barHTML(p.pull,"o")} ${p.pull}/5</td>
+      <td style="text-align:center">${barHTML(p.spin,"n")} ${p.spin}/5</td>
+      <td>${p.toolCompat.map(t=>({spinpull:"Spin-Pull",spinspin:"Spin-Spin",hand:"Hand"})[t]).join(", ")}</td>
+      <td style="font-size:10px;color:var(--muted)">${p.avk||"—"}</td>
+    </tr>
+  `).join("");
+}
+
+// ── UI HELPERS ───────────────────────────────────────────────────────
+// showPanel is defined below — stub removed to avoid duplicate
+
+function unitChange() {
+  const m = document.getElementById("unitSys").value === "metric";
+  document.getElementById("gripUnit").textContent = m ? "mm" : "in";
+  document.getElementById("gripVal").value = m ? "2.5" : "0.10";
+  document.getElementById("metricThreads").style.display = m ? "" : "none";
+  document.getElementById("inchThreads").style.display = m ? "none" : "";
+  document.getElementById("metricThreads").disabled = !m;
+  document.getElementById("inchThreads").disabled = m;
+}
+
+function resetAll() {
+  document.getElementById("unitSys").value = "metric";
+  document.getElementById("threadSize").value = "";
+  document.getElementById("gripVal").value = "2.5";
+  document.getElementById("gripUnit").textContent = "mm";
+  document.getElementById("baseMat").value = "steel";
+  document.getElementById("holeShape").value = "round";
+  document.getElementById("toolType").value = "any";
+  document.getElementById("headPref").value = "any";
+  document.getElementById("spinPrio").value = "any";
+  document.getElementById("pullPrio").value = "any";
+  document.getElementById("corrReq").value = "standard";
+  document.getElementById("wallType").value = "any";
+  document.getElementById("metricThreads").style.display = "";
+  document.getElementById("inchThreads").style.display = "none";
+  unitChange();
+  runSelector();
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────
+buildSeriesTable();
+runSelector();
+
+
+// ── COMPARE LOGIC ──────────────────────────────────────────────────
+const MAX_COMPARE = 4;
+let compareSet = new Set();
+
+function toggleCompare(id) {
+  if (compareSet.has(id)) {
+    compareSet.delete(id);
+  } else {
+    if (compareSet.size >= MAX_COMPARE) {
+      alert('Maximum 4 series can be compared at once. Remove one first.');
+      return false;
+    }
+    compareSet.add(id);
+  }
+  updateCompareTray();
+  updateCompareCheckboxes();
+  return true;
+}
+
+function updateCompareCheckboxes() {
+  document.querySelectorAll('.compare-chk input').forEach(chk => {
+    const id = chk.dataset.id;
+    chk.checked = compareSet.has(id);
+    const card = chk.closest('.card');
+    if (card) card.classList.toggle('selected', compareSet.has(id));
+  });
+}
+
+function updateCompareTray() {
+  const tray = document.getElementById('compareTray');
+  const slots = document.getElementById('traySlots');
+  const navBtn = document.getElementById('compareNavBtn');
+  const count = document.getElementById('compareCount');
+
+  count.textContent = compareSet.size;
+
+  if (compareSet.size === 0) {
+    tray.classList.remove('visible');
+    navBtn.style.display = 'none';
+    return;
+  }
+  tray.classList.add('visible');
+  navBtn.style.display = 'flex';
+
+  const items = [...compareSet].map(id => SERIES.find(s => s.id === id)).filter(Boolean);
+  // Fill 4 slots
+  slots.innerHTML = '';
+  for (let i = 0; i < MAX_COMPARE; i++) {
+    const p = items[i];
+    const slot = document.createElement('div');
+    slot.className = 'tray-slot' + (p ? ' filled' : '');
+    if (p) {
+      slot.innerHTML = `<div><div class="slot-name">${p.id}</div><div class="slot-sub">${p.sub.substring(0,32)}…</div></div><span class="slot-remove" onclick="toggleCompare('${p.id}')">✕</span>`;
+    } else {
+      slot.textContent = `Slot ${i+1}`;
+    }
+    slots.appendChild(slot);
+  }
+}
+
+function clearCompare() {
+  compareSet.clear();
+  updateCompareTray();
+  updateCompareCheckboxes();
+}
+
+function openCompare() {
+  if (compareSet.size < 2) { alert('Select at least 2 series to compare.'); return; }
+  const items = [...compareSet].map(id => SERIES.find(s => s.id === id)).filter(Boolean);
+  buildCompareTable(items);
+  document.getElementById('compareModal').classList.add('open');
+}
+
+function closeCompare() {
+  document.getElementById('compareModal').classList.remove('open');
+}
+
+function buildCompareTable(items) {
+  const rows = [
+    {label:'Series',       fn: p => `<strong>${p.id}</strong>`},
+    {label:'Name',         fn: p => p.name},
+    {label:'Standard',     fn: p => p.standard},
+    {label:'Wall Type',    fn: p => p.wall},
+    {label:'Body',         fn: p => p.body},
+    {label:'Head',         fn: p => p.head},
+    {label:'Tool',         fn: p => p.toolCompat.map(t=>({spinpull:'Spin-Pull',spinspin:'Spin-Spin',hand:'Hand'})[t]).join(', ')},
+    {label:'Thread Range', fn: p => p.threads},
+    {label:'For Plastics', fn: p => p.plastic ? '✓ Yes' : '—'},
+    {label:'Blind Hole',   fn: p => p.blind ? '✓ Yes' : '—'},
+    {label:'Pull-Out',     fn: p => barHTML(p.pull,'o')+' '+p.pull+'/5', compare:'pull'},
+    {label:'Anti-Spin',    fn: p => barHTML(p.spin,'n')+' '+p.spin+'/5', compare:'spin'},
+    {label:'AVK Equiv.',   fn: p => p.avk||'—'},
+    {label:'Best Use',     fn: p => `<span style="font-size:10px">${p.bestUse}</span>`},
+  ];
+
+  let html = '<thead><tr><th class="row-hdr">Attribute</th>';
+  items.forEach(p => { html += `<th class="col-hdr">${p.id}<br><span style="font-size:10px;font-family:Inter,sans-serif;font-weight:400;opacity:.8">${p.sub}</span></th>`; });
+  html += '</tr></thead><tbody>';
+
+  rows.forEach(row => {
+    html += `<tr><td class="row-hdr">${row.label}</td>`;
+    let vals = items.map(p => row.compare ? p[row.compare] : null);
+    let maxVal = row.compare ? Math.max(...vals) : null;
+    items.forEach((p,i) => {
+      const isWinner = row.compare && vals[i] === maxVal && maxVal > 0 && items.length > 1;
+      html += `<td class="${isWinner?'winner':''}">${row.fn(p)}</td>`;
+    });
+    html += '</tr>';
+  });
+  html += '</tbody>';
+  document.getElementById('cmpTable').innerHTML = html;
+}
+
+// ── OVERRIDE runSelector to include compare checkbox ──────────────
+const _origRunSelector = runSelector;
+runSelector = function() {
+  const inputs = {
+    unitSys: document.getElementById("unitSys").value,
+    threadSize: document.getElementById("threadSize").value,
+    gripVal: parseFloat(document.getElementById("gripVal").value) || 2.5,
+    baseMat: document.getElementById("baseMat").value,
+    holeShape: document.getElementById("holeShape").value,
+    toolType: document.getElementById("toolType").value,
+    headPref: document.getElementById("headPref").value,
+    spinPrio: document.getElementById("spinPrio").value,
+    pullPrio: document.getElementById("pullPrio").value,
+    corrReq: document.getElementById("corrReq").value,
+    wallType: document.getElementById("wallType").value,
+    sortBy: document.getElementById("sortBy").value,
+  };
+
+  let scored = SERIES.map(p => scoreProduct(p, inputs));
+  if (inputs.sortBy === "pullout") scored.sort((a,b) => b.pull - a.pull || b.score - a.score);
+  else if (inputs.sortBy === "antispin") scored.sort((a,b) => b.spin - a.spin || b.score - a.score);
+  else scored.sort((a,b) => {const fv={best:4,possible:3,good:2,not:1};return(fv[b.fit]-fv[a.fit])||b.score-a.score;});
+
+  const visible = scored.filter(p => p.fit !== "not");
+  const bestCount = visible.filter(p => p.fit === "best").length;
+  document.getElementById("kpi1").textContent = bestCount;
+  document.getElementById("kpi4").textContent = visible.length;
+  document.getElementById("resultCount").textContent = `${visible.length} series shown — ${bestCount} best fit`;
+
+  const container = document.getElementById("cards");
+  container.innerHTML = "";
+  scored.forEach(p => {
+    const fitLabel = {best:'BEST FIT',possible:'POSSIBLE FIT',good:'GOOD FIT',not:'NOT RECOMMENDED'}[p.fit];
+    const el = document.createElement("article");
+    el.className = "card" + (compareSet.has(p.id) ? " selected" : "");
+    el.innerHTML = `
+      <div class="fit-badge ${p.fit}">${fitLabel}</div>
+      <div class="card-series">${p.name}</div>
+      <div class="card-sub">${p.sub}</div>
+      <div class="card-visual">
+        <div class="vis-box">
+          <div class="vis-label">${p.id}</div>
+          <div class="vis-inner">${buildSVG(p)}</div>
+        </div>
+        <div class="card-desc">
+          ${p.descLong}
+          <div class="tool-line">Tool: ${p.toolCompat.map(t=>({spinpull:'Spin-Pull',spinspin:'Spin-Spin',hand:'Hand Tool'})[t]).join(' / ')}</div>
+          ${p.avk && p.avk!=='—'?`<div class="tool-line" style="color:var(--muted)">AVK equiv: ${p.avk}</div>`:''}
+        </div>
+      </div>
+      <table class="spec-tbl">
+        <thead><tr><th>Body</th><th>Head</th><th>Threads</th><th>Standard</th></tr></thead>
+        <tbody><tr><td>${p.body}</td><td>${p.head}</td><td>${p.threads}</td><td>${p.standard}/${p.wall}</td></tr></tbody>
+      </table>
+      <div class="ratings">
+        <span>Pull-Out ${barHTML(p.pull,'o')} ${p.pull}/5</span>
+        <span>Anti-Spin ${barHTML(p.spin,'n')} ${p.spin}/5</span>
+      </div>
+      <div class="compare-row">
+        <label class="compare-chk">
+          <input type="checkbox" data-id="${p.id}" ${compareSet.has(p.id)?'checked':''} onchange="toggleCompare('${p.id}')"/>
+          Compare
+        </label>
+        <span style="font-size:9px;color:var(--muted)">${compareSet.size}/4 selected</span>
+      </div>
+    `;
+    container.appendChild(el);
+  });
+};
+
+// Tab switch — hide sidebar when not on Selector tab
+function showPanel(ev, id, tabId) {
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  document.getElementById(id).classList.add('active');
+  // Show sidebar only on Selector tab
+  const mainEl = document.querySelector('.main');
+  if (id === 'selectorPanel') {
+    mainEl.classList.remove('sidebar-hidden');
+  } else {
+    mainEl.classList.add('sidebar-hidden');
+  }
+}
+
+// Init
+buildSeriesTable();
+runSelector();
+
+// Close modal on overlay click
+document.getElementById('compareModal').addEventListener('click', function(e){
+  if(e.target === this) closeCompare();
+});
+</script>
+</body>
+</html>
