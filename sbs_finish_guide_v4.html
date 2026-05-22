@@ -214,6 +214,42 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-
 .std-table a:hover{color:var(--orange);}
 .no-url{color:var(--gray-400);font-style:italic;font-size:12px;}
 
+/* ── BEST PRACTICE TAB ── */
+.badge-amber{background:var(--withdrawn-bg);color:var(--withdrawn-amber);}
+.bp-hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-dark) 100%);padding:2.5rem 2rem;border-radius:10px;margin-bottom:1.5rem;color:var(--white);}
+.bp-hero-title{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:800;color:var(--white);margin-bottom:8px;}
+.bp-hero-sub{font-family:'Inter',sans-serif;font-size:14px;color:rgba(255,255,255,0.72);line-height:1.6;max-width:680px;}
+.bp-hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--orange);color:var(--white);font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;margin-bottom:12px;}
+.bp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;margin-bottom:1.5rem;}
+.bp-card{background:var(--white);border-radius:10px;border:1.5px solid var(--gray-200);padding:18px 20px;position:relative;overflow:hidden;}
+.bp-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:var(--orange);}
+.bp-card-step{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);margin-bottom:6px;}
+.bp-card-title{font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:800;color:var(--navy);margin-bottom:8px;}
+.bp-card-body{font-family:'Inter',sans-serif;font-size:12.5px;color:var(--gray-600);line-height:1.65;}
+.bp-card-body ul{padding-left:16px;margin-top:6px;}
+.bp-card-body li{margin-bottom:4px;}
+.bp-card-body strong{color:var(--gray-700);}
+.bp-section-hdr{background:var(--orange);color:var(--white);font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:7px 14px;border-radius:6px 6px 0 0;display:flex;align-items:center;gap:8px;margin-top:1.5rem;margin-bottom:0;}
+.bp-matrix{background:var(--white);border:1.5px solid var(--gray-200);border-top:none;border-radius:0 0 10px 10px;overflow:hidden;margin-bottom:1.5rem;}
+.bp-matrix-table{width:100%;border-collapse:collapse;font-size:12px;}
+.bp-matrix-table th{background:var(--gray-50);font-family:'Barlow',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--gray-500);padding:8px 12px;text-align:left;border-bottom:1px solid var(--gray-200);}
+.bp-matrix-table td{padding:9px 12px;border-bottom:1px solid var(--gray-100);font-family:'Inter',sans-serif;font-size:12px;color:var(--gray-700);vertical-align:top;}
+.bp-matrix-table tr:last-child td{border-bottom:none;}
+.bp-matrix-table tr:hover td{background:var(--gray-50);}
+.bp-rating{display:flex;gap:3px;}
+.bp-dot{width:9px;height:9px;border-radius:50%;background:var(--gray-200);}
+.bp-dot.on{background:var(--orange);}
+.tradeoff-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;}
+.tradeoff-card{background:var(--white);border-radius:10px;border:1.5px solid var(--gray-200);padding:16px 18px;}
+.tradeoff-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:var(--navy);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.tradeoff-title svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2;}
+.tradeoff-title.pro{color:var(--active-green);}
+.tradeoff-title.con{color:var(--obsolete-red);}
+.tradeoff-item{font-family:'Inter',sans-serif;font-size:12px;color:var(--gray-600);padding:5px 0;border-bottom:1px solid var(--gray-100);line-height:1.5;}
+.tradeoff-item:last-child{border-bottom:none;}
+.tradeoff-item strong{color:var(--gray-700);}
+@media(max-width:640px){.tradeoff-grid{grid-template-columns:1fr;}}
+
 /* ── PRINT ── */
 @media print{
   #sbs-header,#tabs-bar,#filter-bar,#material-bar,#compare-banner,#beta-overlay,#loading-screen{display:none!important;}
@@ -301,6 +337,10 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-
   <button class="tab-btn" data-sbs-action="switchTab" data-tab="about">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
     About &amp; Standards
+  </button>
+  <button class="tab-btn" data-sbs-action="switchTab" data-tab="bestpractice">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+    Best Practice
   </button>
   <span id="result-count"></span>
 </nav>
@@ -391,35 +431,201 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-
   <div class="tab-pane" id="tab-about">
     <div class="about-card">
       <h3>About This Tool</h3>
-      <p>The SBS Finish Guide is an internal engineering reference for selecting, comparing, and specifying fastener surface finishes. Data is sourced from a Google Sheets flat file — no code changes are needed to add or update finishes.</p>
-      <p>To request a new finish, correction, or addition, contact your SBS administrator and edit the Google Sheet directly.</p>
+      <p>The SBS Finish Guide is an internal engineering reference for selecting, comparing, and specifying fastener surface finishes. Use the linked consensus standards on each finish card and in the table below for complete technical requirements and specification details.</p>
     </div>
     <div class="about-card">
-      <h3>Referenced Standards &amp; Links</h3>
-      <p>Paste URLs into the <code>STANDARD_URLS</code> object in the script section once you have them. The table below shows all standards currently referenced.</p>
+      <h3>Referenced Standards</h3>
       <table class="std-table" id="standards-table">
-        <thead><tr><th>Standard</th><th>Description</th><th>Link</th></tr></thead>
+        <thead><tr><th>Standard</th><th>Description</th></tr></thead>
         <tbody id="standards-tbody"></tbody>
       </table>
     </div>
-    <div class="about-card">
-      <h3>Data Source Configuration</h3>
-      <p>This tool reads from two Google Sheets tabs published as CSV. To configure:</p>
-      <ul style="padding-left:18px;font-size:13.5px;line-height:2;color:var(--gray-600);">
-        <li>Open the Google Sheet → <strong>File → Share → Publish to web</strong></li>
-        <li>Publish each tab as <strong>CSV format</strong> and copy the URL</li>
-        <li>Paste into <code>SHEET_FINISHES_URL</code> and <code>SHEET_CODES_URL</code> at top of script</li>
-      </ul>
-    </div>
-    <div class="about-card">
-      <h3>Google Sheet Column Reference</h3>
-      <p><strong>Sheet 1 — Finishes</strong> (one row per finish):</p>
-      <p><code>id | category | name | subtitle | description | he | rohs_note | cost | standard | callout | note | color | img_url | materials</code></p>
-      <p style="margin-top:10px;"><strong>Sheet 2 — Codes</strong> (one row per spec code):</p>
-      <p><code>finish_id | code | thk | conversion | white | red | rohs</code></p>
-      <p style="margin-top:10px;color:var(--gray-500);font-size:12.5px;"><strong>color</strong> values: silver | yellow | black | olive | chrome | gray &nbsp;·&nbsp; <strong>materials</strong>: comma-separated list e.g. <code>steel,stainless</code> &nbsp;·&nbsp; <strong>img_url</strong>: full GitHub raw URL to finish photo</p>
-    </div>
   </div>
+
+  <div class="tab-pane" id="tab-bestpractice">
+    <div class="bp-hero">
+      <div class="bp-hero-badge">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        Engineering Best Practice
+      </div>
+      <div class="bp-hero-title">Finish Selection Decision Framework</div>
+      <div class="bp-hero-sub">A structured approach to selecting the right surface finish for fastener applications. Work through the decision criteria in order of priority to identify the best solution for your specific environment and requirements.</div>
+    </div>
+
+    <div class="bp-grid">
+      <div class="bp-card">
+        <div class="bp-card-step">Step 1</div>
+        <div class="bp-card-title">Define the Environment</div>
+        <div class="bp-card-body">Start with the harshest condition the fastener will face throughout its service life.
+          <ul>
+            <li><strong>Indoor / dry:</strong> Minimal protection needed. Zinc clear or black oxide often sufficient.</li>
+            <li><strong>High humidity / mild outdoor:</strong> Zinc clear or yellow trivalent with sealant (96+ hr salt spray).</li>
+            <li><strong>Automotive / under-hood:</strong> Zinc Nickel or Geomet 321. Must survive thermal cycling.</li>
+            <li><strong>Marine / severe corrosion:</strong> Geomet 720+, Zinc Nickel 12ES, or stainless with passivation.</li>
+            <li><strong>Chemical / acid exposure:</strong> Consult SBS engineering. Organic coatings or speciality platings required.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="bp-card">
+        <div class="bp-card-step">Step 2</div>
+        <div class="bp-card-title">Confirm Base Material</div>
+        <div class="bp-card-body">The fastener material constrains which finishes are safe and effective.
+          <ul>
+            <li><strong>Low-carbon steel:</strong> All zinc electroplate options applicable. HE risk managed by baking.</li>
+            <li><strong>High-hardness / PC 10.9, 12.9:</strong> Avoid standard zinc electroplate. Use Geomet 321, Zinc-Tin, or mechanical zinc (no HE risk).</li>
+            <li><strong>Case-hardened tapping screws:</strong> Geomet 321 + ML preferred to prevent cold welding.</li>
+            <li><strong>Stainless steel:</strong> Passivation standard. Electropolish for galling risk. RIE 4037A for black aesthetic.</li>
+            <li><strong>Aluminum:</strong> Anodize. Never apply zinc electroplate directly to aluminum.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="bp-card">
+        <div class="bp-card-step">Step 3</div>
+        <div class="bp-card-title">Check Regulatory Requirements</div>
+        <div class="bp-card-body">Regulatory compliance can immediately eliminate options.
+          <ul>
+            <li><strong>RoHS / ELV (automotive, EU):</strong> Eliminates all Cr6 (hexavalent) finishes. Use trivalent (Cr3) or non-chrome alternatives only.</li>
+            <li><strong>REACH / SVHC:</strong> Cadmium and hexavalent chrome are SVHC. Avoid entirely unless military exemption applies.</li>
+            <li><strong>Torque-tension spec (K-factor):</strong> Dry film lubricants and topcoats (Geomet PLUS ML/VL) give tighter CoF range. Specify CoF target in callout.</li>
+            <li><strong>Food / medical / NSF:</strong> Consult SBS for FDA-compliant coating options.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="bp-card">
+        <div class="bp-card-step">Step 4</div>
+        <div class="bp-card-title">Assess Hydrogen Embrittlement Risk</div>
+        <div class="bp-card-body">HE can cause delayed fracture with no visible warning. It is critical for high-strength fasteners.
+          <ul>
+            <li><strong>HE occurs during:</strong> Acid pre-treatment (pickling) and electroplating. Atomic hydrogen diffuses into steel lattice.</li>
+            <li><strong>Most susceptible:</strong> Steels above 39 HRC (approx. Grade 10.9+), case-hardened, and spring steel.</li>
+            <li><strong>Prevention:</strong> Bake at 190–220°C within 4 hrs of plating (ASTM F519 / ISO 4042).</li>
+            <li><strong>Preferred alternatives:</strong> Geomet 321, Mechanical Zinc, Zinc-Tin. Zero HE risk from process.</li>
+            <li><strong>Note:</strong> Zinc-Nickel has lower HE risk than plain zinc due to plating permeability, but is not zero.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="bp-card">
+        <div class="bp-card-step">Step 5</div>
+        <div class="bp-card-title">Consider Torque and Assembly</div>
+        <div class="bp-card-body">Coating thickness and lubricity directly affect the torque-tension relationship.
+          <ul>
+            <li><strong>Thread tolerance:</strong> Thick coatings (HDG, heavy zinc) may require over-tapped nuts or special clearances.</li>
+            <li><strong>Coefficient of Friction (CoF):</strong> Dry zinc can have CoF 0.12–0.20. Wax or PLUS ML topcoats target 0.09–0.16.</li>
+            <li><strong>Galling risk (stainless):</strong> Use wax lube, nickel strike, electropolish, or Molykote for A2/A4 fasteners in stainless assemblies.</li>
+            <li><strong>Re-use:</strong> Geomet 321 with ML topcoat maintains CoF through multiple installation cycles. Plain zinc degrades.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="bp-card">
+        <div class="bp-card-step">Step 6</div>
+        <div class="bp-card-title">Balance Cost vs. Performance</div>
+        <div class="bp-card-body">Over-engineering is as costly as under-engineering. Match the finish to the actual service life requirement.
+          <ul>
+            <li><strong>$ (Zinc Clear 3–5µm):</strong> Interior, dry, non-critical. Short service life acceptable.</li>
+            <li><strong>$$ (Zinc Yellow with sealant, Mechanical Zinc):</strong> Outdoor, moderate exposure, 5–10 yr life.</li>
+            <li><strong>$$$ (Zinc Nickel, Geomet 321):</strong> Automotive, 10+ yr, or high-hardness requirements.</li>
+            <li><strong>$$$$ (Zinc Nickel 12ES, GEOBLACK):</strong> Premium aesthetics + extreme corrosion. Marine, luxury automotive, architecture.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="bp-section-hdr"><span class="section-dot"></span>Finish Performance Matrix</div>
+    <div class="bp-matrix">
+      <table class="bp-matrix-table">
+        <thead>
+          <tr><th>Finish</th><th>Corrosion Resist.</th><th>HE Risk</th><th>RoHS</th><th>Cost</th><th>Best For</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Zinc Clear (Cr3 Trivalent)</td><td><div class="bp-rating"><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot"></div><div class="bp-dot"></div><div class="bp-dot"></div></div></td><td><span class="badge he-yes">Yes</span></td><td><span class="badge rohs-yes">Yes</span></td><td><span class="cost-dots">$$</span></td><td>Interior, general purpose</td></tr>
+          <tr><td>Zinc Yellow (Cr3 Trivalent)</td><td><div class="bp-rating"><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot"></div><div class="bp-dot"></div></div></td><td><span class="badge he-yes">Yes</span></td><td><span class="badge rohs-yes">Yes</span></td><td><span class="cost-dots">$$</span></td><td>Outdoor, moderate exposure</td></tr>
+          <tr><td>Black Zinc (Cr3 + Sealant)</td><td><div class="bp-rating"><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot"></div><div class="bp-dot"></div></div></td><td><span class="badge he-yes">Yes</span></td><td><span class="badge rohs-yes">Yes</span></td><td><span class="cost-dots">$$</span></td><td>Black aesthetic, moderate protection</td></tr>
+          <tr><td>Zinc Nickel Clear (12B+S)</td><td><div class="bp-rating"><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot"></div></div></td><td><span class="badge badge-amber">Low</span></td><td><span class="badge rohs-yes">Yes</span></td><td><span class="cost-dots">$$$</span></td><td>Automotive, high-cycle assemblies</td></tr>
+          <tr><td>Black Zinc Nickel (12ES)</td><td><div class="bp-rating"><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot on"></div></div></td><td><span class="badge badge-amber">Low</span></td><td><span class="badge rohs-yes">Yes</span></td><td><span class="cost-dots">$$$</span></td><td>Premium black, 1000+ hr protection</td></tr>
+          <tr><td>Geomet 321 + ML Clear</td><td><div class="bp-rating"><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot on"></div></div></td><td><span class="badge he-no">None</span></td><td><span class="badge rohs-yes">Yes</span></td><td><span class="cost-dots">$$$$</span></td><td>High-hardness, automotive critical</td></tr>
+          <tr><td>Mechanical Zinc (Clear)</td><td><div class="bp-rating"><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot"></div><div class="bp-dot"></div><div class="bp-dot"></div></div></td><td><span class="badge he-no">None</span></td><td><span class="badge rohs-yes">Yes</span></td><td><span class="cost-dots">$$</span></td><td>Washers, HE-sensitive parts</td></tr>
+          <tr><td>Hot Dip Galvanized</td><td><div class="bp-rating"><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot"></div></div></td><td><span class="badge he-no">None</span></td><td><span class="badge rohs-yes">Yes</span></td><td><span class="cost-dots">$$</span></td><td>Structural, outdoor, large fasteners</td></tr>
+          <tr><td>Passivation (Stainless)</td><td><div class="bp-rating"><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot"></div><div class="bp-dot"></div></div></td><td><span class="badge he-no">None</span></td><td><span class="badge rohs-yes">Yes</span></td><td><span class="cost-dots">$</span></td><td>Stainless steel standard treatment</td></tr>
+          <tr><td>Cadmium</td><td><div class="bp-rating"><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot on"></div><div class="bp-dot"></div></div></td><td><span class="badge he-yes">Yes</span></td><td><span class="badge rohs-no">No</span></td><td><span class="cost-dots">$$$$</span></td><td>Military only. Avoid in commercial.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bp-section-hdr" style="margin-top:1.5rem;"><span class="section-dot"></span>Key Trade-offs by Finish Type</div>
+    <div style="background:var(--white);border:1.5px solid var(--gray-200);border-top:none;border-radius:0 0 10px 10px;padding:1.25rem 1.5rem;margin-bottom:1.5rem;">
+      <div class="tradeoff-grid">
+        <div class="tradeoff-card">
+          <div class="tradeoff-title pro"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Zinc Electroplate: Pros</div>
+          <div class="tradeoff-item">Low cost, widely available from many suppliers</div>
+          <div class="tradeoff-item">Wide range of colors and thicknesses available</div>
+          <div class="tradeoff-item">Cr3 (trivalent) versions are RoHS compliant</div>
+          <div class="tradeoff-item">Sealant topcoats push performance above 96 hr salt spray</div>
+          <div class="tradeoff-item">Good base for paint and adhesive bonding</div>
+        </div>
+        <div class="tradeoff-card">
+          <div class="tradeoff-title con"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Zinc Electroplate: Cons</div>
+          <div class="tradeoff-item"><strong>Hydrogen Embrittlement risk</strong> on hardened steel (&gt;39 HRC)</div>
+          <div class="tradeoff-item">Thinner sacrificial layer than Geomet or HDG</div>
+          <div class="tradeoff-item">Performance degrades rapidly with scratches or damage</div>
+          <div class="tradeoff-item">CoF variability makes torque-tension control difficult</div>
+          <div class="tradeoff-item">Cr6 versions no longer acceptable in most applications</div>
+        </div>
+        <div class="tradeoff-card">
+          <div class="tradeoff-title pro"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Zinc Flake (Geomet): Pros</div>
+          <div class="tradeoff-item">Zero HE risk: safe for all hardness levels including 12.9</div>
+          <div class="tradeoff-item">Excellent corrosion resistance: 720+ hr standard salt spray</div>
+          <div class="tradeoff-item">Consistent CoF with topcoat selection (PLUS ML, VL, XL)</div>
+          <div class="tradeoff-item">RoHS and REACH compliant, chrome-free</div>
+          <div class="tradeoff-item">Good re-use performance vs. electroplate</div>
+        </div>
+        <div class="tradeoff-card">
+          <div class="tradeoff-title con"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Zinc Flake (Geomet): Cons</div>
+          <div class="tradeoff-item">Premium cost relative to electroplate</div>
+          <div class="tradeoff-item">Limited color options (silver/black; no true yellow)</div>
+          <div class="tradeoff-item">Minimum batch sizes may be required by applicators</div>
+          <div class="tradeoff-item">Fewer approved applicators than zinc electroplate</div>
+          <div class="tradeoff-item">Washers may stick together during dip-spin process</div>
+        </div>
+        <div class="tradeoff-card">
+          <div class="tradeoff-title pro"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Zinc Nickel: Pros</div>
+          <div class="tradeoff-item">Superior corrosion resistance vs. plain zinc (500–1080 hr)</div>
+          <div class="tradeoff-item">Black version combines aesthetics and performance</div>
+          <div class="tradeoff-item">Reduced (not zero) HE risk due to plating permeability</div>
+          <div class="tradeoff-item">Preferred in European automotive OEM specifications</div>
+          <div class="tradeoff-item">RoHS compliant with trivalent passivation</div>
+        </div>
+        <div class="tradeoff-card">
+          <div class="tradeoff-title con"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Zinc Nickel: Cons</div>
+          <div class="tradeoff-item">Higher cost than plain zinc electroplate</div>
+          <div class="tradeoff-item"><strong>NOT recommended on PC 12.9 or case-hardened parts</strong> due to residual HE risk</div>
+          <div class="tradeoff-item">Plating bath management is more complex than zinc</div>
+          <div class="tradeoff-item">Fewer applicators than standard zinc plate</div>
+          <div class="tradeoff-item">Nickel is SVHC in EU; process handling requirements apply</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bp-section-hdr" style="margin-top:0;"><span class="section-dot"></span>Quick Reference: Finish Selection by Application</div>
+    <div class="bp-matrix">
+      <table class="bp-matrix-table">
+        <thead>
+          <tr><th>Application</th><th>Recommended Finish</th><th>Why</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>General hardware, Grade 5/8, indoor</td><td>Zinc Clear Cr3 (Fe/Zn 5AN)</td><td>Low cost, RoHS, adequate protection for environment</td></tr>
+          <tr><td>Outdoor structural, Grade 5/8</td><td>Zinc Yellow Cr3 + Sealant (Fe/Zn 8CNS)</td><td>96+ hr white rust, RoHS, visible yellow for inspection</td></tr>
+          <tr><td>Automotive body, Grade 10.9</td><td>Geomet 321 + PLUS ML</td><td>No HE risk on high-hardness, 720 hr salt spray, controlled CoF</td></tr>
+          <tr><td>High-hardness tapping screw</td><td>Geomet 321 + PLUS ML</td><td>Prevents cold welding, no HE, consistent drive torque</td></tr>
+          <tr><td>Black premium aesthetic + protection</td><td>Black Zinc Nickel (Fe/Zn-Ni 8ES)</td><td>840 hr salt spray, RoHS, premium black appearance</td></tr>
+          <tr><td>Stainless fastener, standard</td><td>Passivation (ASTM A967)</td><td>Restores oxide layer, removes free iron, standard requirement</td></tr>
+          <tr><td>Stainless in stainless assembly</td><td>Passivation + Wax Lube</td><td>Mitigates galling risk on stainless-to-stainless thread engagement</td></tr>
+          <tr><td>Washer (HE sensitive)</td><td>Mechanical Zinc (ISO 12683)</td><td>No HE from process, adequate protection, cost effective</td></tr>
+          <tr><td>Marine / salt water exposure</td><td>Stainless A4 + Passivation</td><td>Stainless provides inherent corrosion resistance without coating</td></tr>
+          <tr><td>Military / extreme environment</td><td>Consult SBS Engineering</td><td>Application-specific; cadmium, special organics, or specialty alloys</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div><!-- end tab-bestpractice -->
 </div>
 
 <!-- COMPARE BANNER -->
@@ -710,9 +916,10 @@ function buildStandardsTable() {
   stds.forEach(function(s){
     var url = STANDARD_URLS[s] || '';
     var desc = STANDARD_DESCS[s] || '';
-    var linkCell = url ? '<a href="'+url+'" target="_blank" rel="noopener">'+s+'</a>' : ('<span class="no-url">URL pending</span>');
-    var tr = '<tr><td>'+s+'</td><td style="color:var(--gray-600);">'+desc+'</td><td>'+linkCell+'</td></tr>';
-    tbody.innerHTML += tr;
+    var stdCell = url
+      ? '<a href="'+url+'" target="_blank" rel="noopener" class="std-link">'+s+'</a>'
+      : '<span title="URL not yet configured">'+s+'</span>';
+    tbody.innerHTML += '<tr><td>'+stdCell+'</td><td style="color:var(--gray-600);">'+desc+'</td></tr>';
   });
 }
 
@@ -781,14 +988,37 @@ function buildCompareTable() {
   document.getElementById('compare-table').innerHTML = thead+tbody;
 }
 
+// ── IMAGE URL RESOLVER ─────────────────────────────────────────
+// Converts Google Drive share/view URLs to direct-embeddable format.
+// Accepts any of these input patterns and returns a working img src:
+//   https://drive.google.com/file/d/FILE_ID/view
+//   https://drive.google.com/file/d/FILE_ID/view?usp=sharing
+//   https://drive.google.com/open?id=FILE_ID
+//   https://drive.google.com/uc?id=FILE_ID   (already direct — passed through)
+//   Any other URL                             (passed through unchanged)
+//   Empty / falsy                             (returns placeholder)
+function resolveImgUrl(url) {
+  if (!url) return PLACEHOLDER_IMG;
+  // Already a direct uc?export= URL — use as-is
+  if (url.indexOf('drive.google.com/uc') > -1) return url;
+  // Pattern: /file/d/FILE_ID/
+  var m = url.match(/\/file\/d\/([^\/\?]+)/);
+  if (m) return 'https://drive.google.com/uc?export=view&id=' + m[1];
+  // Pattern: open?id= or uc?id=
+  var m2 = url.match(/[?&]id=([^&]+)/);
+  if (m2) return 'https://drive.google.com/uc?export=view&id=' + m2[1];
+  // Not a Drive URL — use as-is (GitHub raw, etc.)
+  return url;
+}
+
 // ── CARD BUILDER ───────────────────────────────────────────────
 function buildCard(f) {
   var he = heInfo(f);
   var rohsClass = (f.rohs_note === 'Yes') ? 'badge rohs-yes' : 'badge rohs-no';
   var inCmp = compareSet[f.id];
 
-  // Finish image
-  var imgSrc = f.img_url || PLACEHOLDER_IMG;
+  // Finish image — auto-convert Google Drive /view URLs to direct embeddable format
+  var imgSrc = resolveImgUrl(f.img_url);
   var imgAlt = f.name + ' finish sample';
   var imgHtml = '<div class="finish-img-wrap"><img class="finish-img" src="'+imgSrc+'" alt="'+imgAlt+'" onerror="this.src=\''+PLACEHOLDER_IMG+'\'" loading="lazy"></div>';
 
