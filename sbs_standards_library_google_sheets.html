@@ -590,20 +590,60 @@ function showErrorState(msg) {
 }
 
 async function loadData() {
-  if (!SHEET_CSV_URL || SHEET_CSV_URL === 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRPRk0YVxJoPvg4SSBW4pdwfGzYTta_RnWflTm2wuCRf8GXrdL3ZgC3apo9LrgHeCpZec7grRwK3eCX/pub?output=csv') {
+  if (!SHEET_CSV_URL || SHEET_CSV_URL === 'YOUR_PUBLISHED_SHEET_CSV_URL_HERE') {
     showErrorState('No Google Sheet URL configured. Set SHEET_CSV_URL in the script.');
     return;
   }
   showLoadingState('Loading standards from Google Sheets…');
+
+  // Try fetching directly first (works when hosted on a server or GitHub Pages).
+  // If that fails due to CORS (common when opening as a local file), fall back
+  // to a public CORS proxy so the tool works offline / from the file system too.
+  async function tryFetch(url) {
+    try {
+      const r = await fetch(url, { cache: 'no-store' });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return await r.text();
+    } catch(e) {
+      return null;
+    }
+  }
+
+  let text = null;
+
+  // 1. Direct fetch (preferred — no third-party dependency)
+  text = await tryFetch(SHEET_CSV_URL);
+
+  // 2. CORS proxy fallback (needed when opening HTML as a local file)
+  if (!text) {
+    const proxy = 'https://corsproxy.io/?' + encodeURIComponent(SHEET_CSV_URL);
+    text = await tryFetch(proxy);
+  }
+
+  // 3. Second proxy fallback
+  if (!text) {
+    const proxy2 = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(SHEET_CSV_URL);
+    text = await tryFetch(proxy2);
+  }
+
+  if (!text) {
+    showErrorState(
+      'Could not fetch Google Sheet data.<br><br>' +
+      '<strong>If opening this file directly from your desktop:</strong> browsers block ' +
+      'cross-origin requests from local files. Host the HTML on a simple web server, or ' +
+      'use the Chrome extension <em>Web Server for Chrome</em> / run ' +
+      '<code>python -m http.server</code> in the same folder.<br><br>' +
+      'Check the browser console (F12) for the exact error.'
+    );
+    return;
+  }
+
   try {
-    const res = await fetch(SHEET_CSV_URL);
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const text = await res.text();
     ALL_DATA = parseCSV(text);
-    if (ALL_DATA.length === 0) throw new Error('No data rows found in sheet');
+    if (ALL_DATA.length === 0) throw new Error('CSV parsed but returned 0 rows — check sheet headers match expected format.');
     applyFilters();
   } catch(e) {
-    showErrorState(e.message);
+    showErrorState('Parsing error: ' + e.message);
   }
 }
 
