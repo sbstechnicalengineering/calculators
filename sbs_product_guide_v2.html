@@ -72,7 +72,10 @@ main{flex:1;padding:20px 24px;min-width:0;}
 .cbody{padding:14px 14px 10px;display:flex;flex-direction:column;flex:1;gap:5px;}
 .cbcat{font-family:'Inter',sans-serif;font-size:10px;color:var(--gray-400);text-transform:uppercase;letter-spacing:.5px;line-height:1.3;}
 .ctitle{font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:800;line-height:1.15;color:var(--navy);}
-.cdesc{font-family:'Inter',sans-serif;font-size:12px;color:var(--gray-500);line-height:1.55;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.cdesc{font-family:'Inter',sans-serif;font-size:12px;color:var(--gray-500);line-height:1.55;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.cdesc.expanded{display:block;-webkit-line-clamp:unset;overflow:visible;}
+.dxbtn{width:18px;height:18px;border-radius:50%;background:var(--orange-pale);border:1.5px solid var(--orange);display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--orange);cursor:pointer;flex-shrink:0;line-height:1;transition:background .15s,transform .15s;user-select:none;}
+.dxbtn:hover{background:var(--orange);color:var(--white);}
 .cstds{margin-top:auto;padding-top:8px;border-top:1px solid var(--gray-200);display:flex;flex-wrap:wrap;gap:4px;}
 .stag{font-family:'Barlow',sans-serif;font-size:10px;font-weight:600;background:var(--gray-100);color:var(--gray-500);padding:2px 7px;border-radius:4px;white-space:nowrap;text-decoration:none;display:inline-block;border:1px solid var(--gray-200);transition:all .15s;}
 a.stag{background:#EBF1FB;color:#1D4DB8;border-color:#C3D4F5;}
@@ -302,9 +305,20 @@ function init() {
     }
 
     PRODUCTS = products;
+    // Standards sheet may use display headers or raw field names
+    var STDS_COL_MAP = {
+      'Standard Code':                    'standard',
+      'Document URL (Google Drive / PDF)': 'link',
+      'standard': 'standard',
+      'link': 'link'
+    };
     STDS = {};
     for (var j = 0; j < stdsRaw.length; j++) {
-      var sr = normaliseRow(stdsRaw[j]);
+      var sr = {};
+      for (var k in stdsRaw[j]) {
+        if (!stdsRaw[j].hasOwnProperty(k)) continue;
+        sr[STDS_COL_MAP[k] || k] = stdsRaw[j][k] || '';
+      }
       if (sr.standard) STDS[sr.standard] = sr.link || '';
     }
     TREE = buildTree(PRODUCTS);
@@ -498,14 +512,39 @@ function render() {
     var bctx = cp.length > 1 ? cp.slice(0, cp.length - 1).join(' › ') : '';
     var bcEl = mk('div', 'cbcat');
     bcEl.appendChild(tx(bctx));
+    var titleRow = mk('div', 'ctitle-row');
+    titleRow.style.cssText = 'display:flex;align-items:flex-start;justify-content:space-between;gap:6px;';
     var titleEl = mk('div', 'ctitle');
+    titleEl.style.flex = '1';
     titleEl.appendChild(tx(p.id));
-    body.appendChild(bcEl);
-    body.appendChild(titleEl);
+    titleRow.appendChild(titleEl);
 
+    var descEl = null;
     if (p.desc) {
-      var descEl = mk('div', 'cdesc');
+      descEl = mk('div', 'cdesc');
       descEl.appendChild(tx(p.desc));
+      // Only show + button if text is long enough to be clamped
+      if (p.desc.length > 80) {
+        var dxBtn = mk('button', 'dxbtn');
+        dxBtn.setAttribute('title', 'Expand description');
+        dxBtn.setAttribute('aria-label', 'Expand description');
+        dxBtn.appendChild(tx('＋'));
+        dxBtn.addEventListener('click', (function(btn, el) {
+          return function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var expanded = el.classList.toggle('expanded');
+            btn.textContent = expanded ? '－' : '＋';
+          };
+        })(dxBtn, descEl));
+        titleRow.appendChild(dxBtn);
+      }
+    }
+
+    body.appendChild(bcEl);
+    body.appendChild(titleRow);
+
+    if (descEl) {
       body.appendChild(descEl);
     }
 
