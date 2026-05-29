@@ -62,9 +62,10 @@ main{flex:1;padding:20px 24px;min-width:0;}
 .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--orange);transform:scaleX(0);transform-origin:left;transition:transform .2s;border-radius:10px 10px 0 0;}
 .card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.12);border-color:var(--orange);}
 .card:hover::before{transform:scaleX(1);}
-.cimg{background:var(--gray-50);height:160px;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--gray-200);overflow:hidden;}
-.cimg img{max-width:85%;max-height:85%;object-fit:contain;transition:transform .2s;}.cimg img[data-isph]{opacity:0.55;filter:sepia(1) saturate(3) hue-rotate(330deg) brightness(1.1);max-width:60%;max-height:60%;}
+.cimg{background:var(--gray-50);height:160px;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--gray-200);overflow:visible;position:relative;}
+.cimg img{max-width:85%;max-height:85%;object-fit:contain;transition:transform .28s ease;}.cimg img[data-isph]{opacity:0.55;filter:sepia(1) saturate(3) hue-rotate(330deg) brightness(1.1);max-width:60%;max-height:60%;}
 .card:hover .cimg img{transform:scale(1.06);}
+.cimg img.zoom-active{transform:scale(1.5)!important;z-index:10;position:relative;}
 .noimgtxt{font-family:'Barlow Condensed',sans-serif;font-size:13px;color:var(--gray-300);}
 .cbody{padding:14px 14px 10px;display:flex;flex-direction:column;flex:1;gap:5px;}
 .cbcat{font-family:'Inter',sans-serif;font-size:10px;color:var(--gray-400);text-transform:uppercase;letter-spacing:.5px;line-height:1.3;}
@@ -408,6 +409,16 @@ function makeStdTag(std) {
   return el;
 }
 
+function resolveImgUrl(url) {
+  if (!url) return PH_SRC;
+  // Google Drive: convert any share/view link to a direct embeddable URL
+  // Handles: /file/d/FILE_ID/view, /open?id=FILE_ID, /uc?id=FILE_ID
+  var m = url.match(/\/d\/([a-zA-Z0-9_-]{10,})\//);
+  if (!m) m = url.match(/[?&]id=([a-zA-Z0-9_-]{10,})/);
+  if (m) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w400';
+  return url;
+}
+
 function render() {
   var grid  = document.getElementById('grid');
   var empty = document.getElementById('empty');
@@ -462,7 +473,7 @@ function render() {
 
     var imgWrap = mk('div', 'cimg');
     var imgEl = document.createElement('img');
-    imgEl.setAttribute('src', p.img || PH_SRC);
+    imgEl.setAttribute('src', resolveImgUrl(p.img));
     imgEl.setAttribute('alt', p.id);
     imgEl.setAttribute('loading', 'lazy');
     imgEl.setAttribute('data-ph', '1');
@@ -471,6 +482,13 @@ function render() {
       this.setAttribute('src', PH_SRC);
       this.setAttribute('data-isph', '1');
     };
+    imgEl.addEventListener('mouseover', function(e) {
+      e.stopPropagation();
+      this.classList.add('zoom-active');
+    });
+    imgEl.addEventListener('mouseout', function() {
+      this.classList.remove('zoom-active');
+    });
     imgWrap.appendChild(imgEl);
 
     var body = mk('div', 'cbody');
