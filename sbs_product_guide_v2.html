@@ -259,7 +259,39 @@ function init() {
       return;
     }
 
-    PRODUCTS = prodRows;
+    // Map display-label column headers → internal field names
+    var COL_MAP = {
+      'ID (Name)':        'id',
+      'Category Path':    'cat',
+      'Image URL':        'img',
+      'Description':      'desc',
+      'Standards':        'standards',
+      'Shop URL':         'url',
+      // Also accept the raw field names in case the sheet uses them
+      'id':'id','cat':'cat','img':'img','desc':'desc','standards':'standards','url':'url'
+    };
+    var mapped = [];
+    for (var i = 0; i < prodRows.length; i++) {
+      var src = prodRows[i];
+      // Skip the Excel "note" row (col A starts with ↑)
+      var firstVal = src['ID (Name)'] || src['id'] || '';
+      if (firstVal.indexOf('↑') === 0) continue;
+      var obj = {};
+      for (var k in src) {
+        if (src.hasOwnProperty(k)) {
+          var mapped_key = COL_MAP[k] || k;
+          obj[mapped_key] = src[k];
+        }
+      }
+      // Only keep rows that have at least an id and cat
+      if (obj.id && obj.cat) mapped.push(obj);
+    }
+    if (!mapped.length) {
+      showError('No valid product rows found after parsing. Check column headers in the sheet match expected names.');
+      return;
+    }
+
+    PRODUCTS = mapped;
     STDS = {};
     for (var i = 0; i < stdsRows.length; i++) {
       if (stdsRows[i].standard) STDS[stdsRows[i].standard] = stdsRows[i].link || '';
