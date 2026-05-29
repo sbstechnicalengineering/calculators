@@ -251,50 +251,58 @@ function init() {
     : Promise.resolve('standard,link\n');
 
   Promise.all([p1, p2]).then(function(results) {
-    var prodRows = csvToObjects(results[0]);
-    var stdsRows = csvToObjects(results[1]);
+    var prodRaw = csvToObjects(results[0]);
+    var stdsRaw = csvToObjects(results[1]);
 
-    if (!prodRows.length) {
-      showError('Products sheet returned no data. Check the CSV URL and that the sheet is published.');
+    if (!prodRaw.length) {
+      showError('Products sheet returned no data.', 'Check the CSV URL and that the sheet is published.');
       return;
     }
 
-    // Map display-label column headers → internal field names
+    // ---------- Normalise column names ----------
+    // The sheet may use display labels or raw field names.
+    // We detect which set is in use from the first row keys.
     var COL_MAP = {
-      'ID (Name)':        'id',
-      'Category Path':    'cat',
-      'Image URL':        'img',
-      'Description':      'desc',
-      'Standards':        'standards',
-      'Shop URL':         'url',
-      // Also accept the raw field names in case the sheet uses them
-      'id':'id','cat':'cat','img':'img','desc':'desc','standards':'standards','url':'url'
+      'ID (Name)':     'id',
+      'Category Path': 'cat',
+      'Image URL':     'img',
+      'Description':   'desc',
+      'Standards':     'standards',
+      'Shop URL':      'url'
     };
-    var mapped = [];
-    for (var i = 0; i < prodRows.length; i++) {
-      var src = prodRows[i];
-      // Skip the Excel "note" row (col A starts with ↑)
-      var firstVal = src['ID (Name)'] || src['id'] || '';
-      if (firstVal.indexOf('↑') === 0) continue;
-      var obj = {};
+
+    function normaliseRow(src) {
+      var out = {};
       for (var k in src) {
-        if (src.hasOwnProperty(k)) {
-          var mapped_key = COL_MAP[k] || k;
-          obj[mapped_key] = src[k];
-        }
+        if (!src.hasOwnProperty(k)) continue;
+        out[COL_MAP[k] || k] = src[k] || '';
       }
-      // Only keep rows that have at least an id and cat
-      if (obj.id && obj.cat) mapped.push(obj);
+      return out;
     }
-    if (!mapped.length) {
-      showError('No valid product rows found after parsing. Check column headers in the sheet match expected names.');
+
+    var products = [];
+    for (var i = 0; i < prodRaw.length; i++) {
+      var row = normaliseRow(prodRaw[i]);
+      // Skip blank rows, header echo rows, and the instructional note row
+      if (!row.id) continue;
+      if (row.id === 'id' || row.id === 'ID (Name)') continue;
+      if (!row.cat) continue;
+      // Skip any row whose cat doesn't look like a real category path
+      // (the note row has no cat value)
+      products.push(row);
+    }
+
+    if (!products.length) {
+      showError('No valid product rows found.',
+        'First row keys seen: ' + Object.keys(prodRaw[0]).join(', '));
       return;
     }
 
-    PRODUCTS = mapped;
+    PRODUCTS = products;
     STDS = {};
-    for (var i = 0; i < stdsRows.length; i++) {
-      if (stdsRows[i].standard) STDS[stdsRows[i].standard] = stdsRows[i].link || '';
+    for (var j = 0; j < stdsRaw.length; j++) {
+      var sr = normaliseRow(stdsRaw[j]);
+      if (sr.standard) STDS[sr.standard] = sr.link || '';
     }
     TREE = buildTree(PRODUCTS);
 
@@ -306,10 +314,9 @@ function init() {
   }).catch(function(err) {
     showError(
       'Failed to load data: ' + err.message,
-      'Make sure the Google Sheet is published to the web as CSV. \n' +
+      'Make sure the Google Sheet is published to the web as CSV.\n' +
       'File → Share → Publish to web → select the sheet tab → CSV → Publish.\n\n' +
-      'Note: the browser must be able to reach docs.google.com. If you see a CORS error, \n' +
-      'make sure the sheet is truly public (Anyone with the link → Viewer).'
+      'CORS note: the sheet must be truly public (Anyone with the link → Viewer).'
     );
   });
 }
