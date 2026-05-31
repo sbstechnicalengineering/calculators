@@ -1355,51 +1355,58 @@ function buildBoltSections(stdId, sm, vals) {
     out += eavSection('Dimensional Data', rows, sm.name, sm.standardUrl);
   }
 
-  // 3. MECHANICAL PROPERTIES — derive mechStdId from grade string
+  // 3. MECHANICAL PROPERTIES — always show material/grade; enrich with lookup data if available
   const gradeNorm = normalizeGradeKey(grade);
   const mechStdId = deriveMechStd(gradeNorm, material);
   const mechKey   = mechStdId ? `${mechStdId}|grade:${gradeNorm}|size:${sz}` : '';
   const m = mechKey ? (MECH_MAP[mechKey] || {}) : {};
-  if (Object.keys(m).length) {
-    let rows = eavRow('Grade / Class', grade);
-    rows    += eavRow('Typical Materials', m.TypicalMaterials);
-    rows    += eavRow('Hardness',          m.Hardness);
-    rows    += eavRow('Proof Load',        m.ProofLoad);
-    rows    += eavRow('Tensile Load Min',  m.TensileLoad_Min);
-    rows    += eavRow('Tensile Strength Min', m.TensileStrength_Min);
-    rows    += eavRow('Yield Strength Min', m.YieldStrength_Min);
-    rows    += eavRow('Tightening Torque', m.TighteningTorque);
-    rows    += eavRow('Calculated Pretension', m.CalculatedPretension);
+  {
+    // Always render material + grade — lookup data added when available
+    let rows = eavRow('Material', material);
+    rows    += eavRow('Grade / Class', grade);
+    rows    += eavRow('Typical Materials',    m.TypicalMaterials    || '');
+    rows    += eavRow('Hardness',             m.Hardness            || '');
+    rows    += eavRow('Proof Load',           m.ProofLoad           || '');
+    rows    += eavRow('Tensile Load Min',     m.TensileLoad_Min     || '');
+    rows    += eavRow('Tensile Strength Min', m.TensileStrength_Min || '');
+    rows    += eavRow('Yield Strength Min',   m.YieldStrength_Min   || '');
+    rows    += eavRow('Tightening Torque',    m.TighteningTorque    || '');
+    rows    += eavRow('Calculated Pretension',m.CalculatedPretension|| '');
     out += eavSection('Physical Requirements', rows, mechStdId || '', '');
   }
 
-  // 4. FINISH DATA
-  if (finish) {
-    const fc  = Object.keys(FINISH_MAP).find(k =>
+  // 4. FINISH DATA — always show finish type + finish; enrich with lookup data if available
+  const finishType = vals.finish_type || '';
+  if (finishType || finish || finThick) {
+    const fc = Object.keys(FINISH_MAP).find(k =>
       FINISH_MAP[k].name === finish || k === finish ||
       (finThick && finThick.startsWith(k)));
-    const fm  = fc ? FINISH_MAP[fc] : null;
+    const fm = fc ? FINISH_MAP[fc] : null;
+    let rows = eavRow('Finish Type', finishType);
+    rows    += eavRow('Finish',      finish || (fm ? fm.name : ''));
     if (fm) {
-      let rows = eavRow('Finish',         fm.name);
-      rows    += eavRow('Specification',  fm.standard);
-      rows    += eavRow('K Factor',       fm.kFactor);
-      rows    += eavRow('Thickness',      fm.thickMin && fm.thickMax ? fm.thickMin + '–' + fm.thickMax + ' µm' : (finThick||''));
-      rows    += eavRow('RoHS Compliant', fm.rohs);
-      rows    += eavRow('HE Risk',        fm.heRisk);
-      rows    += eavRow('Salt Spray (White / Red)', fm.saltWhite && fm.saltRed ? fm.saltWhite + ' / ' + fm.saltRed + ' hr' : '');
-      rows    += eavRow('Best Code',      fm.bestCode);
+      rows += eavRow('Specification',  fm.standard);
+      rows += eavRow('K Factor',       fm.kFactor);
+      rows += eavRow('Thickness',      fm.thickMin && fm.thickMax
+                       ? fm.thickMin + '–' + fm.thickMax + ' µm' : (finThick || ''));
+      rows += eavRow('RoHS Compliant', fm.rohs);
+      rows += eavRow('HE Risk',        fm.heRisk);
+      rows += eavRow('Salt Spray (White / Red)', fm.saltWhite && fm.saltRed
+                       ? fm.saltWhite + ' / ' + fm.saltRed + ' hr' : '');
+      rows += eavRow('Best Code',      fm.bestCode);
       out += eavSection('Finish Data', rows, fm.standard, '');
     } else {
-      out += eavSection('Finish Data', eavRow('Finish', finish + (finThick ? ' — ' + finThick : '')), '', '');
+      rows += eavRow('Finish Thickness / Sealer', finThick);
+      out += eavSection('Finish Data', rows, '', '');
     }
   }
 
-  // 5. CHEMICAL PROPERTIES
+  // 5. CHEMICAL PROPERTIES — always show material name; enrich with lookup data if available
   const chemCode = deriveChemCode(material, gradeNorm);
   const chemKey  = chemCode ? `CHEM|material:${chemCode}` : '';
   const ch       = chemKey ? (CHEM_MAP[chemKey] || {}) : {};
-  if (Object.keys(ch).length) {
-    const matName = ch['MaterialName'] || material;
+  if (material) {  // always render if material is specified
+    const matName = ch['MaterialName'] || material.replace(' - user specified', '') || '';
     const std     = ch['Standard']    || '';
     let rows = eavRow('Material Name', matName);
     rows    += eavRow('Governing Standard', std);
@@ -1735,6 +1742,103 @@ function closeImgZoom() {
 // Close zoom on Escape key
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeImgZoom(); });
 
+// ── URL Parameter Pre-population ─────────────────────────────────────────────
+// Supports the following query params (all optional, can combine):
+//   ?standard=ASME_B182_FLBOLT          — select by StandardID
+//   ?standard=ASME+B18.2.1+Hex+Flange   — select by partial standard name
+//   ?type=Flange+Bolts                   — pre-select Type of Part
+//   ?uom=Inch                            — pre-select Unit of Measure
+//   ?material=Carbon+Steel               — pre-select Material field
+//   ?grade=SAE+J429%3A+Grade+5           — pre-select Material Grade
+//   ?size=1%2F4                          — pre-select Thread Size / Size
+//   ?tab=compare                         — open Compare tab instead of TDS
+//
+// iframe embed example:
+//   <iframe src="tool.html?standard=ASME_B182_FLBOLT&material=Carbon+Steel&grade=SAE+J429%3A+Grade+5&size=1%2F4">
+function applyURLParams() {
+  const p = new URLSearchParams(window.location.search);
+  if (!p.toString()) return;
+
+  // Tab
+  const tab = p.get('tab');
+  if (tab && ['tds','compare','bp'].includes(tab)) switchTab(tab);
+
+  // UOM
+  const uom = p.get('uom');
+  if (uom) {
+    const uomSel = document.getElementById('uomFilter');
+    if (uomSel) { uomSel.value = uom; onUomChange(); }
+  }
+
+  // Type of Part
+  const type = p.get('type');
+  if (type) {
+    const typeSel = document.getElementById('typeOfPart');
+    // Try exact match first, then case-insensitive
+    const opt = [...typeSel.options].find(o =>
+      o.value === type || o.value.toLowerCase() === type.toLowerCase());
+    if (opt) { typeSel.value = opt.value; onTypeChange(); }
+  }
+
+  // Standard — match by StandardID or partial name
+  const stdParam = p.get('standard');
+  if (stdParam) {
+    const stdSel = document.getElementById('standard');
+    // Try StandardID lookup first
+    const smById = STANDARD_MAP[stdParam];
+    if (smById) {
+      // Make sure the standard is visible in the dropdown
+      populateStandardDropdown('standard',
+        getStandardsForCat(document.getElementById('typeOfPart').value,
+                           document.getElementById('uomFilter').value), smById.name);
+      stdSel.value = smById.name;
+    } else {
+      // Try matching by name (partial, case-insensitive)
+      const match = Object.values(STANDARD_MAP).find(sm =>
+        sm.name.toLowerCase().includes(stdParam.toLowerCase()) ||
+        stdParam.toLowerCase().includes(sm.id.toLowerCase()));
+      if (match) {
+        populateStandardDropdown('standard',
+          getStandardsForCat(document.getElementById('typeOfPart').value,
+                             document.getElementById('uomFilter').value), match.name);
+        stdSel.value = match.name;
+      }
+    }
+    onStandardChange();
+  }
+
+  // Field-level params — set after section 2 is built
+  // Use a small delay to ensure the field grid has rendered
+  if (p.get('material') || p.get('grade') || p.get('size') ||
+      p.get('threadSize') || p.get('tpi')) {
+    setTimeout(() => {
+      const fieldMap = {
+        material:   'f_material',
+        grade:      'f_grade',
+        size:       'f_size',
+        threadSize: 'f_threadSize',
+        tpi:        'f_tpi',
+        length:     'f_length',
+        finish:     'f_finish',
+        finish_type:'f_finish_type',
+      };
+      for (const [param, elId] of Object.entries(fieldMap)) {
+        const val = p.get(param);
+        if (!val) continue;
+        const el = document.getElementById(elId);
+        if (!el) continue;
+        // Find matching option (exact or case-insensitive)
+        const opt = [...(el.options || [])].find(o =>
+          o.value === val || o.value.toLowerCase() === val.toLowerCase());
+        if (opt) {
+          el.value = opt.value;
+          el.dispatchEvent(new Event('change')); // trigger cascades
+        }
+      }
+    }, 150);
+  }
+}
+
 (async function boot() {
   setLoaderProgress(5);
   try {
@@ -1742,6 +1846,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeImgZoom
     rebuildUI();
     const t = dataLoadedAt.toLocaleTimeString();
     document.getElementById('dataFreshness').innerHTML = 'Data loaded: <span>' + t + '</span>';
+    applyURLParams();
     hideAppLoader();
   } catch(e) {
     setLoaderProgress(0);
