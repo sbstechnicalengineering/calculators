@@ -1100,7 +1100,12 @@ function buildTDSHtml(stdId, sm, vals) {
 
   // ── Image panel ───────────────────────────────────────────────
   if (sm.partImg) {
-    tds += `<div class="tds-image-panel"><img class="tds-part-img" src="${sm.partImg}" alt="Part Drawing" onclick="this.classList.toggle('zoomed')"></div>`;
+    const imgSrc = resolveImgUrl(sm.partImg);
+    tds += `<div class="tds-image-panel">
+      <img class="tds-part-img" src="${imgSrc}" alt="Part Drawing"
+        onclick="this.classList.toggle('zoomed')"
+        onerror="this.parentElement.innerHTML=driveImgFallback('${imgSrc}')">
+    </div>`;
   } else {
     tds += `<div class="tds-image-panel"><div class="tds-img-placeholder-single">
       <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="var(--gray-300)" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
@@ -1131,6 +1136,40 @@ function buildTDSHtml(stdId, sm, vals) {
     </div>
   </div></div>`;
   return tds;
+}
+
+// ── Image URL resolver — converts any Google Drive share/view URL to embeddable thumbnail ──
+function resolveImgUrl(url) {
+  if (!url) return '';
+  // Already a thumbnail URL — leave as-is
+  if (url.includes('drive.google.com/thumbnail')) return url;
+  // Extract file ID from any Drive URL format:
+  //   /file/d/FILE_ID/view
+  //   /open?id=FILE_ID
+  //   /uc?id=FILE_ID or /uc?export=view&id=FILE_ID
+  let id = null;
+  const patterns = [
+    /\/file\/d\/([a-zA-Z0-9_-]+)/,
+    /[?&]id=([a-zA-Z0-9_-]+)/,
+  ];
+  for (const re of patterns) {
+    const m = url.match(re);
+    if (m) { id = m[1]; break; }
+  }
+  if (id) return `https://drive.google.com/thumbnail?id=${id}&sz=w400`;
+  // Not a Drive URL — return as-is (CDN, direct, etc.)
+  return url;
+}
+
+function driveImgFallback(src) {
+  // Extract file ID to offer a direct Drive link
+  const m = src.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  const link = m ? `https://drive.google.com/file/d/${m[1]}/view` : src;
+  return `<div class="tds-img-placeholder-single">
+    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--gray-300)" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+    <div class="tds-img-label">Image could not load</div>
+    <a href="${link}" target="_blank" style="font-size:11px;color:var(--orange);">Open in Google Drive ↗</a>
+  </div>`;
 }
 
 // ── EAV table helpers ─────────────────────────────────────────
