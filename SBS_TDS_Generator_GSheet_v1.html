@@ -170,12 +170,22 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-
 .tds-img-wrap.sec2-wrap{margin-bottom:0;margin-top:16px;}
 .tds-part-img{max-width:340px;max-height:220px;object-fit:contain;border:1px solid var(--gray-200);
   border-radius:8px;cursor:zoom-in;transition:all 0.25s ease;display:block;}
-/* Zoomed: fixed overlay covering full tool width */
+/* Zoomed state: image fills the full-width modal box */
 .tds-part-img.zoomed{
-  position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
-  max-width:min(90vw,960px);max-height:85vh;width:auto;height:auto;
-  border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,0.6);
-  z-index:1000;cursor:zoom-out;border:3px solid var(--white);}
+  position:fixed;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:92vw;
+  height:86vh;
+  max-width:none;
+  max-height:none;
+  object-fit:contain;
+  background:#fff;
+  border-radius:10px;
+  box-shadow:0 24px 80px rgba(0,0,0,0.7);
+  z-index:1000;
+  cursor:zoom-out;
+  border:4px solid var(--white);}
 /* Dim backdrop when zoomed */
 .img-backdrop{display:none;position:fixed;inset:0;background:rgba(18,36,58,0.75);
   backdrop-filter:blur(3px);z-index:999;cursor:zoom-out;}
@@ -1212,7 +1222,7 @@ function resolveImgUrl(url) {
     const m = url.match(re);
     if (m) { id = m[1]; break; }
   }
-  if (id) return `https://drive.google.com/thumbnail?id=${id}&sz=w400`;
+  if (id) return `https://drive.google.com/thumbnail?id=${id}&sz=w2000`;
   // Not a Drive URL — return as-is (CDN, direct, etc.)
   return url;
 }
