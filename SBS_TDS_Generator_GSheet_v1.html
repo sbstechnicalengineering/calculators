@@ -121,6 +121,16 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-
 .field-group input[type=text]{background-image:none;padding-right:11px;}
 .field-group select:focus,.field-group input[type=text]:focus{outline:none;border-color:var(--orange);}
 .field-group select:disabled{background-color:var(--gray-50);color:var(--gray-400);cursor:not-allowed;}
+/* "Other - User Specified" inline text box */
+.other-input-wrap{display:none;margin-top:6px;position:relative;}
+.other-input-wrap.visible{display:block;}
+.other-input-wrap input{width:100%;padding:8px 11px;border:1.5px solid var(--orange);
+  border-radius:6px;font-size:13px;font-family:'Inter',sans-serif;color:var(--gray-700);
+  background:var(--orange-pale);transition:border-color 0.15s;}
+.other-input-wrap input:focus{outline:none;border-color:#c4591a;}
+.other-input-wrap input::placeholder{color:var(--orange-light);font-style:italic;}
+.other-input-label{font-size:10px;color:var(--orange);font-weight:600;
+  letter-spacing:0.5px;margin-bottom:3px;text-transform:uppercase;}
 .btn-row{display:flex;justify-content:flex-start;padding-top:4px;}
 .not-built{background:var(--gray-50);border-radius:8px;padding:20px;font-size:13px;
   color:var(--gray-500);text-align:center;line-height:1.7;margin:4px 0;}
@@ -156,9 +166,20 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-
 .optional-strip .field-group label{font-size:10px;}
 .optional-strip .field-group input{font-size:13px;padding:7px 10px;background-image:none;padding-right:10px;}
 .tds-image-panel{display:flex;justify-content:center;margin-bottom:18px;}
+.tds-img-wrap{display:flex;justify-content:center;margin-bottom:18px;}
+.tds-img-wrap.sec2-wrap{margin-bottom:0;margin-top:16px;}
 .tds-part-img{max-width:340px;max-height:220px;object-fit:contain;border:1px solid var(--gray-200);
-  border-radius:8px;cursor:zoom-in;transition:transform 0.2s;}
-.tds-part-img.zoomed{max-width:100%;max-height:none;cursor:zoom-out;}
+  border-radius:8px;cursor:zoom-in;transition:all 0.25s ease;display:block;}
+/* Zoomed: fixed overlay covering full tool width */
+.tds-part-img.zoomed{
+  position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  max-width:min(90vw,960px);max-height:85vh;width:auto;height:auto;
+  border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,0.6);
+  z-index:1000;cursor:zoom-out;border:3px solid var(--white);}
+/* Dim backdrop when zoomed */
+.img-backdrop{display:none;position:fixed;inset:0;background:rgba(18,36,58,0.75);
+  backdrop-filter:blur(3px);z-index:999;cursor:zoom-out;}
+.img-backdrop.active{display:block;}
 .tds-img-placeholder-single{display:flex;flex-direction:column;align-items:center;gap:8px;
   padding:24px 40px;background:var(--gray-50);border-radius:8px;border:1px dashed var(--gray-300);}
 .tds-img-label{font-size:12px;font-weight:600;color:var(--gray-400);}
@@ -249,6 +270,7 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-
   <div class="app-loader-error" id="loaderError"></div>
 </div>
 
+<div class="img-backdrop" id="imgBackdrop" onclick="closeImgZoom()"></div>
 <div id="loadingOverlay">
   <div class="spinner"></div>
   <div class="loading-text">Generating Technical Data Sheet…</div>
@@ -966,7 +988,18 @@ function buildSection2(sm) {
       <a href="https://shop.specialtybolt.com/technical/technical-data-sheets" target="_blank">Submit a TDS Request</a></div>`;
     return;
   }
-  let html = '<div class="field-grid" id="fieldGrid">';
+  // ── Part image in Section 2 ─────────────────────────────────
+  let html = '';
+  if (sm.partImg) {
+    const imgSrc = resolveImgUrl(sm.partImg);
+    html += `<div class="tds-img-wrap sec2-wrap">
+      <img class="tds-part-img" src="${imgSrc}" alt="Part Drawing"
+        title="Click to zoom"
+        onclick="toggleImgZoom(this)"
+        onerror="this.parentElement.innerHTML=driveImgFallback('${imgSrc}')">
+    </div>`;
+  }
+  html += '<div class="field-grid" id="fieldGrid">';
   fields.forEach(f => {
     const tip = f.tooltipOv || f.tooltip || '';
     html += `<div class="field-group">
@@ -974,10 +1007,24 @@ function buildSection2(sm) {
     if (f.type === 'text') {
       html += `<input type="text" id="f_${f.fieldKey}" placeholder="Enter ${f.label}…">`;
     } else {
-      html += `<select id="f_${f.fieldKey}" ${f.depOn ? 'disabled' : ''}>
+      html += `<select id="f_${f.fieldKey}" ${f.depOn ? 'disabled' : ''}
+        onchange="handleOtherSelect(this, 'fother_${f.fieldKey}')">
         <option value="">-- Select ${f.label} --</option>`;
-      if (!f.depOn && f.opts) html += buildOptionsHtml(f.opts);
+      if (!f.depOn && f.opts) {
+        html += buildOptionsHtml(f.opts);
+        // Add "Other" option for independent fields (no depOn)
+        html += `<option value="__OTHER__">Other — User Specified</option>`;
+      }
       html += `</select>`;
+      // Hidden text input revealed when "Other" is selected (independent fields only)
+      if (!f.depOn) {
+        html += `<div class="other-input-wrap" id="fother_${f.fieldKey}">
+          <div class="other-input-label">Specify value</div>
+          <input type="text" id="fotherval_${f.fieldKey}"
+            placeholder="Enter custom ${f.label}…"
+            oninput="syncOtherValue(this, 'f_${f.fieldKey}')">
+        </div>`;
+      }
     }
     html += `</div>`;
   });
@@ -1022,7 +1069,15 @@ function getFieldValues(stdId) {
   const vals = {};
   (FIELDS_MAP[stdId] || []).forEach(f => {
     const el = document.getElementById('f_' + f.fieldKey);
-    if (el) vals[f.fieldKey] = el.value;
+    if (!el) return;
+    if (el.value === '__OTHER__') {
+      // Read the custom text input; append " - user specified"
+      const customEl = document.getElementById('fotherval_' + f.fieldKey);
+      const raw = customEl ? customEl.value.trim() : '';
+      vals[f.fieldKey] = raw ? raw + ' - user specified' : '';
+    } else {
+      vals[f.fieldKey] = el.value;
+    }
   });
   return vals;
 }
@@ -1101,13 +1156,14 @@ function buildTDSHtml(stdId, sm, vals) {
   // ── Image panel ───────────────────────────────────────────────
   if (sm.partImg) {
     const imgSrc = resolveImgUrl(sm.partImg);
-    tds += `<div class="tds-image-panel">
+    tds += `<div class="tds-img-wrap">
       <img class="tds-part-img" src="${imgSrc}" alt="Part Drawing"
-        onclick="this.classList.toggle('zoomed')"
+        title="Click to zoom"
+        onclick="toggleImgZoom(this)"
         onerror="this.parentElement.innerHTML=driveImgFallback('${imgSrc}')">
     </div>`;
   } else {
-    tds += `<div class="tds-image-panel"><div class="tds-img-placeholder-single">
+    tds += `<div class="tds-img-wrap"><div class="tds-img-placeholder-single">
       <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="var(--gray-300)" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
       <div class="tds-img-label">Part Drawing / 3D Model</div>
       <div class="tds-img-sub">Add PartImg URL to Sheet 1 to display here.</div>
@@ -1512,6 +1568,51 @@ function switchTab(id) {
 // ════════════════════════════════════════════════════════════════
 //  BOOT
 // ════════════════════════════════════════════════════════════════
+// ── "Other — User Specified" field helpers ───────────────────────────────────
+function handleOtherSelect(sel, wrapperId) {
+  const wrap = document.getElementById(wrapperId);
+  if (!wrap) return;
+  if (sel.value === '__OTHER__') {
+    wrap.classList.add('visible');
+    const input = wrap.querySelector('input');
+    if (input) { input.value = ''; input.focus(); }
+  } else {
+    wrap.classList.remove('visible');
+    // Clear the text box value when switching away
+    const input = wrap.querySelector('input');
+    if (input) input.value = '';
+  }
+}
+function syncOtherValue(input, selectId) {
+  // Keep the select visually showing "Other — User Specified"
+  const sel = document.getElementById(selectId);
+  if (sel && sel.value !== '__OTHER__') sel.value = '__OTHER__';
+}
+
+// ── Image zoom ───────────────────────────────────────────────────────────────
+function toggleImgZoom(img) {
+  const backdrop = document.getElementById('imgBackdrop');
+  if (img.classList.contains('zoomed')) {
+    img.classList.remove('zoomed');
+    backdrop.classList.remove('active');
+    document.body.style.overflow = '';
+  } else {
+    // Close any other zoomed images first
+    document.querySelectorAll('.tds-part-img.zoomed').forEach(i => i.classList.remove('zoomed'));
+    img.classList.add('zoomed');
+    backdrop.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+}
+function closeImgZoom() {
+  document.querySelectorAll('.tds-part-img.zoomed').forEach(i => i.classList.remove('zoomed'));
+  const backdrop = document.getElementById('imgBackdrop');
+  backdrop.classList.remove('active');
+  document.body.style.overflow = '';
+}
+// Close zoom on Escape key
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeImgZoom(); });
+
 (async function boot() {
   setLoaderProgress(5);
   try {
