@@ -1022,19 +1022,17 @@ function buildSection2(sm) {
         <option value="">-- Select ${f.label} --</option>`;
       if (!f.depOn && f.opts) {
         html += buildOptionsHtml(f.opts);
-        // Add "Other" option for independent fields (no depOn)
-        html += `<option value="__OTHER__">Other — User Specified</option>`;
       }
+      // ALL dropdown fields get "Other — User Specified" (independent and dependent)
+      html += `<option value="__OTHER__">Other — User Specified</option>`;
       html += `</select>`;
-      // Hidden text input revealed when "Other" is selected (independent fields only)
-      if (!f.depOn) {
-        html += `<div class="other-input-wrap" id="fother_${f.fieldKey}">
-          <div class="other-input-label">Specify value</div>
-          <input type="text" id="fotherval_${f.fieldKey}"
-            placeholder="Enter custom ${f.label}…"
-            oninput="syncOtherValue(this, 'f_${f.fieldKey}')">
-        </div>`;
-      }
+      // ALL dropdown fields get the hidden free-text box
+      html += `<div class="other-input-wrap" id="fother_${f.fieldKey}">
+        <div class="other-input-label">Specify value</div>
+        <input type="text" id="fotherval_${f.fieldKey}"
+          placeholder="Enter custom ${f.label}…"
+          oninput="syncOtherValue(this, 'f_${f.fieldKey}')">
+      </div>`;
     }
     html += `</div>`;
   });
@@ -1050,24 +1048,53 @@ function buildSection2(sm) {
   // Wire cascade dependencies
   fields.forEach(f => {
     if (!f.depOn) return;
-    const parentId = 'f_' + f.depOn.replace(/ /g,'_');
-    const childId  = 'f_' + f.fieldKey;
-    const parentEl = document.getElementById(parentId);
-    const childEl  = document.getElementById(childId);
+    const parentId  = 'f_' + f.depOn.replace(/ /g,'_');
+    const childId   = 'f_' + f.fieldKey;
+    const childWrap = 'fother_' + f.fieldKey;
+    const parentEl  = document.getElementById(parentId);
+    const childEl   = document.getElementById(childId);
     if (!parentEl || !childEl) return;
     const depMap = parseCascadeDepVal(f.depVal);
     parentEl.addEventListener('change', function() {
-      const pv   = this.value;
+      const pv        = this.value;
+      const childWrapEl = document.getElementById(childWrap);
+
+      // Reset child first
       childEl.innerHTML = `<option value="">-- Select ${f.label} --</option>`;
-      if (!pv) { childEl.disabled = true; return; }
+      childEl.innerHTML += `<option value="__OTHER__">Other — User Specified</option>`;
+      if (childWrapEl) childWrapEl.classList.remove('visible');
+
+      if (!pv) {
+        childEl.disabled = true;
+        return;
+      }
+
+      // Parent is "Other — User Specified": bypass dropdown, go straight to text input
+      if (pv === '__OTHER__') {
+        childEl.disabled = true;
+        childEl.value = '__OTHER__';
+        if (childWrapEl) {
+          childWrapEl.classList.add('visible');
+          const inp = childWrapEl.querySelector('input');
+          if (inp) { inp.value = ''; inp.focus(); }
+        }
+        return;
+      }
+
+      // Normal cascade: populate child dropdown options
       const opts = depMap[pv] || [];
       if (opts.length) {
-        childEl.innerHTML += buildCascadeOptionsHtml(opts);
+        // Insert options before the "Other" option (last)
+        const otherOpt = childEl.querySelector('option[value="__OTHER__"]');
+        const frag = document.createDocumentFragment();
+        const tmp  = document.createElement('select');
+        tmp.innerHTML = buildCascadeOptionsHtml(opts);
+        while (tmp.firstChild) frag.appendChild(tmp.firstChild);
+        childEl.insertBefore(frag, otherOpt);
         childEl.disabled = false;
-        if (opts.filter(o => !o.match(/^\|\|.+\|\|$/)).length === 1) {
-          const only = opts.find(o => !o.match(/^\|\|.+\|\|$/));
-          if (only) childEl.value = only;
-        }
+        // Auto-select if only one real option
+        const real = opts.filter(o => !o.match(/^\|\|.+\|\|$/));
+        if (real.length === 1) childEl.value = real[0];
       } else {
         childEl.disabled = true;
       }
@@ -1080,8 +1107,11 @@ function getFieldValues(stdId) {
   (FIELDS_MAP[stdId] || []).forEach(f => {
     const el = document.getElementById('f_' + f.fieldKey);
     if (!el) return;
-    if (el.value === '__OTHER__') {
-      // Read the custom text input; append " - user specified"
+    // "Other" selected OR select is disabled but text box is visible (parent was Other)
+    const wrapEl   = document.getElementById('fother_' + f.fieldKey);
+    const isOther  = el.value === '__OTHER__' ||
+                     (wrapEl && wrapEl.classList.contains('visible'));
+    if (isOther) {
       const customEl = document.getElementById('fotherval_' + f.fieldKey);
       const raw = customEl ? customEl.value.trim() : '';
       vals[f.fieldKey] = raw ? raw + ' - user specified' : '';
