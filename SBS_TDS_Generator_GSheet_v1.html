@@ -756,14 +756,18 @@ function buildIndexes() {
   }
 
   // ── CHEM_MAP ─────────────────────────────────────────────────
+  // Chemical sheet uses EAV with the ConfigKey only on the first row of each material block.
+  // Carry the last seen ConfigKey forward for subsequent property rows.
   CHEM_MAP = {};
+  let lastChemKey = '';
   for (const row of DB.chemical) {
-    const ck = row['ConfigKey'];
-    if (!ck) continue;
-    if (!CHEM_MAP[ck]) CHEM_MAP[ck] = {};
-    const name = row['Element_Name'];
-    const val  = row['Element_Value'];
-    if (name && val !== undefined) CHEM_MAP[ck][name] = val;
+    const ck = (row['ConfigKey'] || '').trim();
+    if (ck) lastChemKey = ck;
+    if (!lastChemKey) continue;
+    if (!CHEM_MAP[lastChemKey]) CHEM_MAP[lastChemKey] = {};
+    const name = (row['Element_Name'] || '').trim();
+    const val  = (row['Element_Value'] || '').trim();
+    if (name && val) CHEM_MAP[lastChemKey][name] = val;
   }
 }
 
@@ -1311,7 +1315,7 @@ function buildBoltSections(stdId, sm, vals) {
   let out = '';
   const sz      = vals.threadSize || '';
   const tpiRaw  = vals.tpi || '';
-  const tpi     = tpiRaw.split(' ')[0];
+  const tpi     = tpiRaw.replace(/\s*\(.*\)/, '').trim().split(' ')[0];
   const grade   = vals.grade   || '';
   const material= vals.material|| '';
   const finish  = vals.finish  || '';
@@ -1352,8 +1356,9 @@ function buildBoltSections(stdId, sm, vals) {
   }
 
   // 3. MECHANICAL PROPERTIES — derive mechStdId from grade string
-  const mechStdId = deriveMechStd(grade, material);
-  const mechKey   = mechStdId ? `${mechStdId}|grade:${grade}|size:${sz}` : '';
+  const gradeNorm = normalizeGradeKey(grade);
+  const mechStdId = deriveMechStd(gradeNorm, material);
+  const mechKey   = mechStdId ? `${mechStdId}|grade:${gradeNorm}|size:${sz}` : '';
   const m = mechKey ? (MECH_MAP[mechKey] || {}) : {};
   if (Object.keys(m).length) {
     let rows = eavRow('Grade / Class', grade);
@@ -1389,7 +1394,43 @@ function buildBoltSections(stdId, sm, vals) {
     }
   }
 
-  // 5. PATCH
+  // 5. CHEMICAL PROPERTIES
+  const chemCode = deriveChemCode(material, gradeNorm);
+  const chemKey  = chemCode ? `CHEM|material:${chemCode}` : '';
+  const ch       = chemKey ? (CHEM_MAP[chemKey] || {}) : {};
+  if (Object.keys(ch).length) {
+    const matName = ch['MaterialName'] || material;
+    const std     = ch['Standard']    || '';
+    let rows = eavRow('Material Name', matName);
+    rows    += eavRow('Governing Standard', std);
+    // Element ranges — pair min/max into single rows
+    const elements = {};
+    for (const [k, v] of Object.entries(ch)) {
+      if (k === 'MaterialName' || k === 'Standard' || k === 'ApplicationNote' ||
+          k === 'AlloyNote') continue;
+      const base = k.replace(/_min$|_max$/, '');
+      if (!elements[base]) elements[base] = {};
+      if (k.endsWith('_min')) elements[base].min = v;
+      else if (k.endsWith('_max')) elements[base].max = v;
+      else elements[base].val = v;
+    }
+    for (const [el, vals2] of Object.entries(elements)) {
+      const label = el + ' (% wt)';
+      if (vals2.min !== undefined && vals2.max !== undefined)
+        rows += eavRow(label, vals2.min + ' – ' + vals2.max);
+      else if (vals2.max !== undefined)
+        rows += eavRow(label + ' max', vals2.max);
+      else if (vals2.val !== undefined)
+        rows += eavRow(el, vals2.val);
+    }
+    if (ch['ApplicationNote'])
+      rows += eavRow('Application Note', ch['ApplicationNote']);
+    if (ch['AlloyNote'])
+      rows += eavRow('Typical Alloy Designations', ch['AlloyNote']);
+    out += eavSection('Chemical Properties', rows, std, '');
+  }
+
+  // 6. PATCH
   if (patch && patch !== 'None') {
     let rows = eavRow('Pre-Applied Thread Retention', patch);
     out += eavSection('Thread Retention', rows, '', '');
@@ -1398,16 +1439,57 @@ function buildBoltSections(stdId, sm, vals) {
   return out;
 }
 
-function deriveMechStd(grade, material) {
-  const g = grade.toUpperCase();
-  if (g.includes('SAE J429') || g.includes('GRADE 8') || g.includes('GRADE 5') || g.includes('GRADE 2')) return 'SAE_J429';
-  if (g.includes('ISO 898'))   return 'ISO_898_1';
-  if (g.includes('ISO 3506') || g.includes('F593') || g.includes('A2') || g.includes('A4')) return 'ASTM_F593';
-  if (g.includes('ASTM A307')) return 'SAE_J429';
-  const ml = material.toLowerCase();
-  if (ml.includes('stainless')) return 'ASTM_F593';
+// ── Grade key normalizer ─────────────────────────────────────────────────────
+function normalizeGradeKey(grade) {
+  if (!grade) return '';
+  return grade
+    .replace(/^SAE J429:\s*/i,    '')
+    .replace(/^ASTM F593:\s*/i,   '')
+    .replace(/^ASTM A307:\s*/i,   '')
+    .replace(/^ASTM A354:\s*/i,   '')
+    .replace(/^ASTM A449:\s*/i,   '')
+    .replace(/^ISO 898-?1?:\s*/i, '')
+    .replace(/^ISO 898:\s*/i,     '')
+    .replace(/^ISO 3506-?1?:\s*/i,'')
+    .replace(/^DIN 267:\s*/i,     '')
+    .trim();
+}
+
+// ── Material → chemical code mapper ──────────────────────────────────────────
+function deriveChemCode(material, gradeNorm) {
+  const m = (material || '').toLowerCase();
+  const g = (gradeNorm || '').toUpperCase();
+  if (m.includes('stainless')) {
+    if (g.includes('316') || g.includes('A4')) return '316SS';
+    if (g.includes('302'))                     return '302SS';
+    return '304SS';
+  }
+  if (m === 'alloy steel' || g.includes('GRADE 8')) return 'ALLOY_STEEL_G8';
+  if (m === 'carbon steel' || g.includes('GRADE 2') || g.includes('GRADE 5')) return 'CARBON_STEEL';
+  if (m.includes('brass') || m.includes('aluminum')) return null;
+  return 'CARBON_STEEL';
+}
+
+function deriveMechStd(gradeNorm, material) {
+  // gradeNorm has already had the standards prefix stripped by normalizeGradeKey()
+  const g  = gradeNorm.toUpperCase();
+  const ml = (material || '').toLowerCase();
+  // Stainless — check material first so A2/A4 grade labels still route correctly
+  if (ml.includes('stainless') || g.includes('A2') || g.includes('A4') ||
+      g.includes('F593') || g.includes('ISO 3506') || g.includes('GROUP'))
+    return 'ASTM_F593';
+  // SAE J429 grade tokens after stripping
+  if (g.includes('GRADE 2') || g.includes('GRADE 5') || g.includes('GRADE 8') ||
+      g.includes('A307') || g.includes('A354') || g.includes('A449'))
+    return 'SAE_J429';
+  // Metric
+  if (g.includes('8.8') || g.includes('10.9') || g.includes('12.9') ||
+      g.includes('ISO 898') || g === '4.6' || g === '4.8' || g === '5.8')
+    return 'ISO_898_1';
+  if (g.includes('ISO 3506') || g.includes('A4-80') || g.includes('A2-70'))
+    return 'ISO_3506_1';
   if (ml === 'brass' || ml === 'aluminum') return null;
-  return 'SAE_J429';
+  return 'SAE_J429';  // default for carbon/alloy steel
 }
 
 function buildWasherSections(stdId, sm, vals) {
