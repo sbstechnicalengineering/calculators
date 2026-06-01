@@ -1,87 +1,105 @@
+<!--
+  SBS Materials & Grades Guide | Copyright (c) 2024 Specialty Bolt & Screw, Inc.
+  Fingerprint: SBS-MAT-GRADES-v1 | https://shop.specialtybolt.com/
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Materials &amp; Grades Guide | SBS Specialty Bolt &amp; Screw</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
-
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --orange: #E8760A;
-    --orange-light: #F59332;
-    --bg: #FFFFFF;
-    --bg2: #F7F5F2;
-    --bg3: #EFECE8;
-    --dark: #1A1A1A;
-    --text: #1A1A1A;
-    --muted: #7A7570;
-    --border: #E0DDD8;
+    --navy:           #1D3557;
+    --navy-dark:      #12243a;
+    --orange:         #E87722;
+    --orange-light:   #F0913A;
+    --orange-pale:    #FDF0E5;
+    --white:          #ffffff;
+    --gray-50:        #F8F9FA;
+    --gray-100:       #F0F2F5;
+    --gray-200:       #E2E6EA;
+    --gray-300:       #CED4DA;
+    --gray-400:       #ADB5BD;
+    --gray-500:       #6C757D;
+    --gray-600:       #495057;
+    --gray-700:       #343A40;
   }
 
-  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+  body { background: var(--gray-100); color: var(--gray-700); font-family: 'Inter', sans-serif; min-height: 100vh; }
 
-  .page { max-width: 1060px; margin: 0 auto; padding: 56px 40px 80px; }
+  /* ── STICKY HEADER ── */
+  .sbs-header {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--white);
+    border-bottom: 3px solid var(--orange);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+    padding: 0.65rem 1.5rem;
+    display: flex; align-items: center; gap: 1rem;
+  }
+  .sbs-header a.logo-link { display: flex; align-items: center; flex-shrink: 0; }
+  .sbs-header img.sbs-logo { height: 48px; display: block; }
+  .header-divider { width: 1px; height: 36px; background: var(--gray-200); flex-shrink: 0; }
+  .header-titles { display: flex; flex-direction: column; justify-content: center; }
+  .header-tool-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px; font-weight: 800;
+    color: var(--navy); line-height: 1.1; letter-spacing: 0.01em;
+  }
+  .header-subtitle {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px; color: var(--gray-500); margin-top: 2px;
+  }
 
-  .header { margin-bottom: 52px; animation: fadeUp 0.6s ease both; }
-  .eyebrow {
-    font-family: 'DM Mono', monospace; font-size: 10.5px; letter-spacing: 0.22em;
-    color: var(--orange); text-transform: uppercase; margin-bottom: 14px;
-    display: flex; align-items: center; gap: 10px;
-  }
-  .eyebrow::after { content:''; height:1px; width:40px; background:var(--orange); opacity:0.5; }
-  .main-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(60px, 8vw, 96px);
-    line-height: 0.95; letter-spacing: 0.01em; color: var(--dark);
-  }
-  .main-title span { color: var(--orange); }
+  /* ── PAGE BODY ── */
+  .page { max-width: 1060px; margin: 0 auto; padding: 40px 40px 80px; }
 
   .section-label {
-    font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.2em;
-    text-transform: uppercase; color: var(--muted); margin-bottom: 16px;
-    animation: fadeUp 0.6s 0.08s ease both;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--gray-500);
+    margin-bottom: 14px;
   }
 
-  /* Standards Grid — NO overflow:hidden so tooltips can escape */
+  /* ── STANDARDS GRID ── */
   .standards-grid {
     display: grid;
     grid-template-columns: 148px 1fr 1fr;
-    border: 1px solid var(--border);
-    border-radius: 12px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 10px;
     margin-bottom: 44px;
-    animation: fadeUp 0.6s 0.12s ease both;
-    position: relative;
-    z-index: 1;
+    position: relative; z-index: 1;
+    overflow: visible;
+    background: var(--gray-200);
+    gap: 1px;
   }
 
   .g-cell {
-    padding: 15px 22px;
-    border-right: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    background: var(--bg);
+    padding: 14px 20px;
+    background: var(--white);
   }
-  .g-cell:nth-child(3n) { border-right: none; }
-  .g-cell.no-bot { border-bottom: none; }
-
-  /* Round the outer corners manually */
-  .g-cell:nth-child(1) { border-radius: 12px 0 0 0; }
-  .g-cell:nth-child(3) { border-radius: 0 12px 0 0; }
-  .g-cell:nth-child(13) { border-radius: 0 0 0 12px; } /* last row col 1 */
-  .g-cell:nth-child(15) { border-radius: 0 0 12px 0; } /* last row col 3 */
+  .g-cell:first-child { border-radius: 10px 0 0 0; }
+  .g-cell:nth-child(3) { border-radius: 0 10px 0 0; }
+  .g-cell.last-row-col1 { border-radius: 0 0 0 10px; }
+  .g-cell.last-row-col3 { border-radius: 0 0 10px 0; }
 
   .g-head {
-    background: var(--bg2) !important;
-    font-family: 'DM Mono', monospace; font-size: 10.5px; letter-spacing: 0.14em;
-    text-transform: uppercase; color: var(--orange); display: flex; align-items: center;
+    background: var(--gray-50) !important;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--orange);
+    display: flex; align-items: center;
   }
-  .g-head:first-child { background: var(--bg) !important; }
+  .g-head:first-child { background: var(--white) !important; }
 
   .g-label {
-    background: var(--bg2) !important;
-    font-weight: 600; font-size: 13px;
-    color: var(--dark); display: flex; align-items: center;
+    background: var(--gray-50) !important;
+    font-family: 'Barlow', sans-serif;
+    font-weight: 700; font-size: 13px;
+    color: var(--navy); display: flex; align-items: center;
   }
 
   /* std-wrap is the hover target */
@@ -93,21 +111,22 @@
   }
   .std-link:hover { transform: translateX(3px); }
   .std-link:hover .std-code { color: var(--orange-light); }
-  .std-link:hover .std-desc { color: var(--dark); }
+  .std-link:hover .std-desc { color: var(--gray-700); }
 
   .std-code {
-    font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px; font-weight: 700;
     color: var(--orange); display: flex; align-items: center; gap: 5px;
-    transition: color 0.18s;
+    transition: color 0.18s; letter-spacing: 0.02em;
   }
-  .std-code::after { content:'↗'; font-size:10px; opacity:0.55; }
-  .std-desc { font-size: 11px; color: var(--muted); margin-top: 3px; line-height: 1.4; transition: color 0.18s; }
+  .std-code svg { opacity: 0.55; flex-shrink: 0; }
+  .std-desc { font-family: 'Inter', sans-serif; font-size: 11px; color: var(--gray-500); margin-top: 3px; line-height: 1.4; transition: color 0.18s; }
 
-  /* Tooltip — fixed positioning via JS so it always clears everything */
+  /* Tooltip — fixed positioning via JS */
   .std-tooltip {
     position: fixed;
-    width: 280px;
-    background: var(--dark);
+    width: 288px;
+    background: var(--navy);
     color: #F0EDE8;
     border-radius: 10px;
     padding: 16px 18px;
@@ -116,7 +135,7 @@
     transition: opacity 0.18s;
     z-index: 9999;
     box-shadow: 0 12px 40px rgba(0,0,0,0.28);
-    top: 0; left: 0; /* positioned by JS */
+    top: 0; left: 0;
   }
   .std-tooltip.visible { opacity: 1; pointer-events: all; }
 
@@ -125,64 +144,72 @@
     position: absolute;
     bottom: 100%; left: 20px;
     border: 6px solid transparent;
-    border-bottom-color: var(--dark);
+    border-bottom-color: var(--navy);
   }
-  .std-tooltip.flip-arrow::before {
-    left: auto; right: 20px;
-  }
-  /* Arrow pointing down (tooltip is above the link) */
+  .std-tooltip.flip-arrow::before { left: auto; right: 20px; }
   .std-tooltip.above::before {
     bottom: auto; top: 100%;
     border-bottom-color: transparent;
-    border-top-color: var(--dark);
+    border-top-color: var(--navy);
   }
-  .std-tooltip.above.flip-arrow::before {
-    left: auto; right: 20px;
-  }
+  .std-tooltip.above.flip-arrow::before { left: auto; right: 20px; }
 
   .stt-badge {
-    font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.14em;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 9px; font-weight: 700; letter-spacing: 0.14em;
     text-transform: uppercase; color: var(--orange); margin-bottom: 6px;
   }
-  .stt-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: #fff; line-height: 1; margin-bottom: 8px; }
-  .stt-desc { font-size: 11.5px; line-height: 1.55; color: #B8B5B0; margin-bottom: 12px; }
+  .stt-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px; font-weight: 800; color: #fff; line-height: 1; margin-bottom: 8px; letter-spacing: 0.01em;
+  }
+  .stt-desc { font-family: 'Inter', sans-serif; font-size: 11.5px; line-height: 1.55; color: #B8C4CF; margin-bottom: 12px; }
   .stt-links { display: flex; flex-direction: column; gap: 6px; }
   .stt-link {
-    display: flex; align-items: center; gap: 6px;
-    font-size: 11px; line-height: 1.3;
+    display: flex; align-items: center; gap: 7px;
+    font-family: 'Inter', sans-serif; font-size: 11px; line-height: 1.3;
     text-decoration: none; transition: color 0.15s;
     pointer-events: all;
   }
+  .stt-link svg { flex-shrink: 0; }
   .stt-link-primary { color: var(--orange-light); font-weight: 600; }
   .stt-link-primary:hover { color: #fff; }
-  .stt-link-secondary { color: #888; }
-  .stt-link-secondary:hover { color: #bbb; }
-  .stt-divider { height: 1px; background: rgba(255,255,255,0.08); margin: 10px 0; }
+  .stt-link-secondary { color: #7A98B0; }
+  .stt-link-secondary:hover { color: #b0c8d8; }
+  .stt-divider { height: 1px; background: rgba(255,255,255,0.10); margin: 10px 0; }
 
-  /* Tools */
-  .tools-section { animation: fadeUp 0.6s 0.2s ease both; position: relative; z-index: 1; }
+  /* ── TOOLS SECTION ── */
+  .tools-section { position: relative; z-index: 1; }
   .tools-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
 
   .tool-wrap { position: relative; }
   .tool-card {
     display: flex; flex-direction: column; align-items: flex-start;
-    background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
-    padding: 20px 16px; text-decoration: none; color: var(--dark);
+    background: var(--white);
+    border: 1.5px solid var(--gray-200); border-radius: 10px;
+    padding: 18px 16px; text-decoration: none; color: var(--gray-700);
     transition: all 0.2s; cursor: pointer; position: relative; overflow: hidden; height: 100%;
   }
   .tool-card::before {
     content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
     background: var(--orange); opacity: 0; transition: opacity 0.2s;
   }
-  .tool-card:hover { background: #fff; border-color: rgba(232,118,10,0.4); transform: translateY(-3px); box-shadow: 0 6px 24px rgba(0,0,0,0.09); }
+  .tool-card:hover {
+    border-color: rgba(232,119,34,0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(29,53,87,0.10);
+  }
   .tool-card:hover::before { opacity: 1; }
-  .tool-icon { font-size: 22px; margin-bottom: 10px; display: block; }
-  .tool-name { font-weight: 600; font-size: 12px; line-height: 1.35; color: var(--dark); }
+  .tool-icon-wrap { margin-bottom: 10px; color: var(--navy); }
+  .tool-name {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600; font-size: 12px; line-height: 1.35; color: var(--gray-700);
+  }
 
   .tool-tooltip {
     position: absolute; bottom: calc(100% + 10px); left: 50%;
     transform: translateX(-50%) translateY(6px);
-    width: 240px; background: var(--dark); color: #F0EDE8;
+    width: 240px; background: var(--navy); color: #F0EDE8;
     border-radius: 10px; padding: 16px 18px;
     pointer-events: none; opacity: 0;
     transition: opacity 0.2s, transform 0.2s;
@@ -191,38 +218,59 @@
   .tool-tooltip::after {
     content: ''; position: absolute; top: 100%; left: 50%;
     transform: translateX(-50%); border: 6px solid transparent;
-    border-top-color: var(--dark);
+    border-top-color: var(--navy);
   }
   .tool-wrap:hover .tool-tooltip { opacity: 1; transform: translateX(-50%) translateY(0); }
-  .tool-wrap:first-child .tool-tooltip, .tool-wrap:nth-child(2) .tool-tooltip {
-    left: 0; transform: translateX(0) translateY(6px);
-  }
-  .tool-wrap:first-child .tool-tooltip::after, .tool-wrap:nth-child(2) .tool-tooltip::after { left: 24px; transform: none; }
-  .tool-wrap:first-child:hover .tool-tooltip, .tool-wrap:nth-child(2):hover .tool-tooltip { transform: translateX(0) translateY(0); }
-  .tool-wrap:last-child .tool-tooltip, .tool-wrap:nth-last-child(2) .tool-tooltip {
-    left: auto; right: 0; transform: translateX(0) translateY(6px);
-  }
-  .tool-wrap:last-child .tool-tooltip::after, .tool-wrap:nth-last-child(2) .tool-tooltip::after { left: auto; right: 24px; transform: none; }
-  .tool-wrap:last-child:hover .tool-tooltip, .tool-wrap:nth-last-child(2):hover .tool-tooltip { transform: translateX(0) translateY(0); }
+  .tool-wrap:first-child .tool-tooltip,
+  .tool-wrap:nth-child(2) .tool-tooltip { left: 0; transform: translateX(0) translateY(6px); }
+  .tool-wrap:first-child .tool-tooltip::after,
+  .tool-wrap:nth-child(2) .tool-tooltip::after { left: 24px; transform: none; }
+  .tool-wrap:first-child:hover .tool-tooltip,
+  .tool-wrap:nth-child(2):hover .tool-tooltip { transform: translateX(0) translateY(0); }
+  .tool-wrap:last-child .tool-tooltip,
+  .tool-wrap:nth-last-child(2) .tool-tooltip { left: auto; right: 0; transform: translateX(0) translateY(6px); }
+  .tool-wrap:last-child .tool-tooltip::after,
+  .tool-wrap:nth-last-child(2) .tool-tooltip::after { left: auto; right: 24px; transform: none; }
+  .tool-wrap:last-child:hover .tool-tooltip,
+  .tool-wrap:nth-last-child(2):hover .tool-tooltip { transform: translateX(0) translateY(0); }
 
-  .tt-title { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--orange); letter-spacing: 0.05em; margin-bottom: 7px; font-weight: 500; }
-  .tt-body { font-size: 11.5px; line-height: 1.55; color: #C8C5C0; }
+  .tt-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px; font-weight: 700; color: var(--orange);
+    letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 7px;
+  }
+  .tt-body { font-family: 'Inter', sans-serif; font-size: 11.5px; line-height: 1.55; color: #B8C4CF; }
 
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
+  /* ── RESPONSIVE ── */
+  @media (max-width: 700px) {
+    .sbs-header { flex-wrap: wrap; }
+    .page { padding: 24px 16px 60px; }
+    .standards-grid { grid-template-columns: 100px 1fr 1fr; }
+    .tools-grid { grid-template-columns: repeat(2, 1fr); }
+    .header-tool-title { font-size: 18px; }
   }
 </style>
 </head>
 <body>
 
-<div class="page">
-  <div class="header">
-    <div class="eyebrow">Specialty Bolt &amp; Screw · Technical Reference</div>
-    <h1 class="main-title">Materials<br>&amp; <span>Grades</span></h1>
-  </div>
+<!-- Hidden logo for print -->
+<img id="sbsLogoPrint" src="data:image/png;base64,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" style="display:none;" alt="">
 
-  <p class="section-label">Common Fastener Material Standards</p>
+<!-- HEADER -->
+<header class="sbs-header" id="sbsHeader">
+  <a href="https://shop.specialtybolt.com/" target="_blank" class="logo-link">
+    <img class="sbs-logo" src="data:image/png;base64,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" alt="SBS Specialty Bolt &amp; Screw">
+  </a>
+  <div class="header-divider"></div>
+  <div class="header-titles">
+    <div class="header-tool-title">Materials &amp; Grades Guide</div>
+    <div class="header-subtitle">Common Fastener Material Standards and Engineering Tools</div>
+  </div>
+</header>
+
+<div class="page">
+
+  <p class="section-label" style="margin-top:8px;">Common Fastener Material Standards</p>
   <div class="standards-grid" id="stdGrid">
     <div class="g-cell g-head"></div>
     <div class="g-cell g-head">Inch Series</div>
@@ -233,7 +281,9 @@
     <div class="g-cell">
       <div class="std-wrap" data-tip="tip-sae">
         <a class="std-link" href="https://drive.google.com/file/d/1fA8SIRK_CAwd3iBnXbpDfjzzdcVPRUv7/view?usp=sharing" target="_blank">
-          <div class="std-code">SAE J429</div>
+          <div class="std-code">SAE J429
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </div>
           <div class="std-desc">Mechanical and material requirements for inch series fasteners used in automotive</div>
         </a>
       </div>
@@ -241,7 +291,9 @@
     <div class="g-cell">
       <div class="std-wrap" data-tip="tip-iso898" data-flip="true">
         <a class="std-link" href="https://drive.google.com/file/d/19ZxXgLwiVyqnCcAUM0l28GbGGaelraRi/view?usp=sharing" target="_blank">
-          <div class="std-code">ISO 898-1</div>
+          <div class="std-code">ISO 898-1
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </div>
           <div class="std-desc">Mechanical properties of fasteners made of carbon steel and alloy steel</div>
         </a>
       </div>
@@ -252,7 +304,9 @@
     <div class="g-cell">
       <div class="std-wrap" data-tip="tip-f593">
         <a class="std-link" href="https://drive.google.com/file/d/1wkcbUgnh0XuWW32bK5GSK872JzSewgqW/view?usp=sharing" target="_blank">
-          <div class="std-code">ASTM F593</div>
+          <div class="std-code">ASTM F593
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </div>
           <div class="std-desc">Stainless steel bolts, hex cap screws and studs</div>
         </a>
       </div>
@@ -260,132 +314,182 @@
     <div class="g-cell">
       <div class="std-wrap" data-tip="tip-iso3506" data-flip="true">
         <a class="std-link" href="https://drive.google.com/file/d/1SUEPIFmDwjoksZng6N7mGKovkzbxvs5J/view?usp=sharing" target="_blank">
-          <div class="std-code">ISO 3506-1</div>
+          <div class="std-code">ISO 3506-1
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </div>
           <div class="std-desc">Mechanical properties of corrosion-resistant stainless steel fasteners</div>
         </a>
       </div>
     </div>
 
     <!-- High Temp -->
-    <div class="g-cell g-label no-bot">Stainless Steel<br><span style="font-weight:400;font-size:11px;color:var(--muted);">High Temp</span></div>
-    <div class="g-cell no-bot">
+    <div class="g-cell g-label last-row-col1">Stainless Steel<br><span style="font-family:'Inter',sans-serif;font-weight:400;font-size:11px;color:var(--gray-500);">High Temp</span></div>
+    <div class="g-cell">
       <div class="std-wrap" data-tip="tip-a193">
         <a class="std-link" href="https://drive.google.com/file/d/1A3qLXeYgsdl2t_ijSci0oR1tpxjJtypl/view?usp=sharing" target="_blank">
-          <div class="std-code">ASTM A193</div>
+          <div class="std-code">ASTM A193
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </div>
           <div class="std-desc">Bolts in high temperature service</div>
         </a>
       </div>
     </div>
-    <div class="g-cell no-bot" style="display:flex;align-items:center;">
-      <span style="font-size:12px;color:#ccc;">—</span>
+    <div class="g-cell last-row-col3" style="display:flex;align-items:center;">
+      <span style="font-family:'Inter',sans-serif;font-size:12px;color:var(--gray-300);">Not applicable</span>
     </div>
   </div>
 
   <!-- Tooltip templates (hidden) -->
   <template id="tip-sae">
-    <div class="stt-badge">Inch · Steel</div>
+    <div class="stt-badge">Inch Series &middot; Steel</div>
     <div class="stt-title">SAE J429</div>
     <div class="stt-desc">Defines mechanical and material requirements for externally threaded inch-series fasteners used in automotive and general applications. Covers grade designations 1 through 8, including proof load, yield, and tensile strength requirements.</div>
     <div class="stt-divider"></div>
     <div class="stt-links">
-      <a class="stt-link stt-link-primary" href="https://drive.google.com/file/d/1fA8SIRK_CAwd3iBnXbpDfjzzdcVPRUv7/view?usp=sharing" target="_blank">📄 SBS Technical Data Sheet ↗</a>
-      <a class="stt-link stt-link-secondary" href="https://shop.specialtybolt.com/technical/consensusstandardslibrary" target="_blank">📚 Find original in SBS Standards Library ↗</a>
+      <a class="stt-link stt-link-primary" href="https://drive.google.com/file/d/1fA8SIRK_CAwd3iBnXbpDfjzzdcVPRUv7/view?usp=sharing" target="_blank">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        SBS Technical Data Sheet
+      </a>
+      <a class="stt-link stt-link-secondary" href="https://shop.specialtybolt.com/technical/consensusstandardslibrary" target="_blank">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        Find original in SBS Standards Library
+      </a>
     </div>
   </template>
   <template id="tip-iso898">
-    <div class="stt-badge">Metric · Steel</div>
+    <div class="stt-badge">Metric Series &middot; Steel</div>
     <div class="stt-title">ISO 898-1</div>
     <div class="stt-desc">Specifies mechanical properties of bolts, screws, and studs made of carbon steel and alloy steel. Defines property class designations (e.g. 8.8, 10.9, 12.9) and corresponding minimum tensile, yield, and proof load values.</div>
     <div class="stt-divider"></div>
     <div class="stt-links">
-      <a class="stt-link stt-link-primary" href="https://drive.google.com/file/d/19ZxXgLwiVyqnCcAUM0l28GbGGaelraRi/view?usp=sharing" target="_blank">📄 SBS Technical Data Sheet ↗</a>
-      <a class="stt-link stt-link-secondary" href="https://shop.specialtybolt.com/technical/consensusstandardslibrary" target="_blank">📚 Find original in SBS Standards Library ↗</a>
+      <a class="stt-link stt-link-primary" href="https://drive.google.com/file/d/19ZxXgLwiVyqnCcAUM0l28GbGGaelraRi/view?usp=sharing" target="_blank">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        SBS Technical Data Sheet
+      </a>
+      <a class="stt-link stt-link-secondary" href="https://shop.specialtybolt.com/technical/consensusstandardslibrary" target="_blank">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        Find original in SBS Standards Library
+      </a>
     </div>
   </template>
   <template id="tip-f593">
-    <div class="stt-badge">Inch · Stainless Steel</div>
+    <div class="stt-badge">Inch Series &middot; Stainless Steel</div>
     <div class="stt-title">ASTM F593</div>
     <div class="stt-desc">Covers stainless steel bolts, hex cap screws, and studs in inch sizes. Specifies alloy groups (e.g. 304, 316), condition designations, and mechanical property requirements including tensile and yield strength.</div>
     <div class="stt-divider"></div>
     <div class="stt-links">
-      <a class="stt-link stt-link-primary" href="https://drive.google.com/file/d/1wkcbUgnh0XuWW32bK5GSK872JzSewgqW/view?usp=sharing" target="_blank">📄 SBS Technical Data Sheet ↗</a>
-      <a class="stt-link stt-link-secondary" href="https://shop.specialtybolt.com/technical/consensusstandardslibrary" target="_blank">📚 Find original in SBS Standards Library ↗</a>
+      <a class="stt-link stt-link-primary" href="https://drive.google.com/file/d/1wkcbUgnh0XuWW32bK5GSK872JzSewgqW/view?usp=sharing" target="_blank">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        SBS Technical Data Sheet
+      </a>
+      <a class="stt-link stt-link-secondary" href="https://shop.specialtybolt.com/technical/consensusstandardslibrary" target="_blank">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        Find original in SBS Standards Library
+      </a>
     </div>
   </template>
   <template id="tip-iso3506">
-    <div class="stt-badge">Metric · Stainless Steel</div>
+    <div class="stt-badge">Metric Series &middot; Stainless Steel</div>
     <div class="stt-title">ISO 3506-1</div>
     <div class="stt-desc">Specifies mechanical properties for corrosion-resistant stainless steel bolts, screws, and studs. Covers property classes A2-70, A2-80, A4-70, and A4-80 with requirements for tensile strength, elongation, and hardness.</div>
     <div class="stt-divider"></div>
     <div class="stt-links">
-      <a class="stt-link stt-link-primary" href="https://drive.google.com/file/d/1SUEPIFmDwjoksZng6N7mGKovkzbxvs5J/view?usp=sharing" target="_blank">📄 SBS Technical Data Sheet ↗</a>
-      <a class="stt-link stt-link-secondary" href="https://shop.specialtybolt.com/technical/consensusstandardslibrary" target="_blank">📚 Find original in SBS Standards Library ↗</a>
+      <a class="stt-link stt-link-primary" href="https://drive.google.com/file/d/1SUEPIFmDwjoksZng6N7mGKovkzbxvs5J/view?usp=sharing" target="_blank">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        SBS Technical Data Sheet
+      </a>
+      <a class="stt-link stt-link-secondary" href="https://shop.specialtybolt.com/technical/consensusstandardslibrary" target="_blank">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        Find original in SBS Standards Library
+      </a>
     </div>
   </template>
   <template id="tip-a193">
-    <div class="stt-badge">Inch · Stainless Steel · High Temp</div>
+    <div class="stt-badge">Inch Series &middot; Stainless Steel &middot; High Temp</div>
     <div class="stt-title">ASTM A193</div>
     <div class="stt-desc">Covers alloy-steel and stainless steel bolting for high-temperature or high-pressure service. Includes grades B7, B7M, B8, B8M, and related alloys with requirements for mechanical properties and heat treatment.</div>
     <div class="stt-divider"></div>
     <div class="stt-links">
-      <a class="stt-link stt-link-primary" href="https://drive.google.com/file/d/1A3qLXeYgsdl2t_ijSci0oR1tpxjJtypl/view?usp=sharing" target="_blank">📄 SBS Technical Data Sheet ↗</a>
-      <a class="stt-link stt-link-secondary" href="https://shop.specialtybolt.com/technical/consensusstandardslibrary" target="_blank">📚 Find original in SBS Standards Library ↗</a>
+      <a class="stt-link stt-link-primary" href="https://drive.google.com/file/d/1A3qLXeYgsdl2t_ijSci0oR1tpxjJtypl/view?usp=sharing" target="_blank">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        SBS Technical Data Sheet
+      </a>
+      <a class="stt-link stt-link-secondary" href="https://shop.specialtybolt.com/technical/consensusstandardslibrary" target="_blank">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        Find original in SBS Standards Library
+      </a>
     </div>
   </template>
 
   <!-- Tools -->
-  <p class="section-label" style="animation-delay:0.18s;">Engineering Calculators &amp; Tools</p>
+  <p class="section-label" style="margin-bottom:14px;">Engineering Calculators and Tools</p>
   <div class="tools-grid tools-section">
+
     <div class="tool-wrap">
       <a href="https://shop.specialtybolt.com/technical/torque-tension-calculator" target="_blank" class="tool-card">
-        <span class="tool-icon">⚙️</span>
-        <div class="tool-name">Torque, Tension &amp; Clamp Load Calculator</div>
+        <span class="tool-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        </span>
+        <div class="tool-name">Torque, Tension and Clamp Load Calculator</div>
       </a>
       <div class="tool-tooltip">
-        <div class="tt-title">Torque, Tension &amp; Clamp Load</div>
-        <div class="tt-body">Helps estimate the relationship between tightening torque, resulting bolt tension, and clamp load in a threaded joint. Supports more informed fastener selection and assembly decisions by showing how factors such as fastener size, friction, and tightening conditions influence joint preload, reliability, and performance.</div>
+        <div class="tt-title">Torque, Tension and Clamp Load</div>
+        <div class="tt-body">Helps estimate the relationship between tightening torque, resulting bolt tension, and clamp load in a threaded joint. Supports more informed fastener selection and assembly decisions.</div>
       </div>
     </div>
+
     <div class="tool-wrap">
       <a href="https://shop.specialtybolt.com/tool/material-strength" target="_blank" class="tool-card">
-        <span class="tool-icon">🔩</span>
+        <span class="tool-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M12 5v14M5 12l7-7 7 7"/><path d="M5 19h14"/></svg>
+        </span>
         <div class="tool-name">Strength Requirements</div>
       </a>
       <div class="tool-tooltip">
         <div class="tt-title">Strength Requirements</div>
-        <div class="tt-body">Helps estimate the relationship between tightening torque, resulting bolt tension, and clamp load in a threaded joint. Supports more informed fastener selection and assembly decisions by showing how factors such as fastener size, friction, and tightening conditions influence joint preload, reliability, and performance.</div>
+        <div class="tt-body">Reference mechanical property requirements by grade and material. Quickly confirm proof load, yield, and tensile values for common fastener specifications.</div>
       </div>
     </div>
+
     <div class="tool-wrap">
       <a href="https://shop.specialtybolt.com/tool/hardness" target="_blank" class="tool-card">
-        <span class="tool-icon">💎</span>
+        <span class="tool-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M9 3h6l1 9H8L9 3z"/><path d="M8 12c0 3.314 1.79 6 4 6s4-2.686 4-6"/><path d="M5 21h14"/></svg>
+        </span>
         <div class="tool-name">Hardness Conversion</div>
       </a>
       <div class="tool-tooltip">
         <div class="tt-title">Hardness Conversion</div>
-        <div class="tt-body">Convert between common hardness scales such as Rockwell (HRC, HRB), Vickers (HV), and Brinell (HB). Provides quick, reliable comparisons to support material selection, specification alignment, and quality verification across different standards and testing methods.</div>
+        <div class="tt-body">Convert between common hardness scales such as Rockwell (HRC, HRB), Vickers (HV), and Brinell (HB). Quick, reliable comparisons across different standards and testing methods.</div>
       </div>
     </div>
+
     <div class="tool-wrap">
       <a href="https://shop.specialtybolt.com/tool/chemical-requirements" class="tool-card">
-        <span class="tool-icon">🧪</span>
+        <span class="tool-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/><text x="14" y="17" font-size="5.5" font-weight="700" fill="currentColor" font-family="sans-serif" stroke="none" text-anchor="middle">Fe</text></svg>
+        </span>
         <div class="tool-name">Chemical Requirements</div>
       </a>
       <div class="tool-tooltip">
         <div class="tt-title">Chemical Requirements</div>
-        <div class="tt-body">Provides guidance on chemical composition and material restrictions for fasteners and components. Helps users understand applicable specifications, material limits, and compliance requirements such as alloy content or restricted substances, supporting proper material selection, regulatory compliance, and consistent product performance.</div>
+        <div class="tt-body">Provides guidance on chemical composition and material restrictions for fasteners. Helps users understand applicable specifications, material limits, and compliance requirements.</div>
       </div>
     </div>
+
     <div class="tool-wrap">
       <a href="https://shop.specialtybolt.com/tool/material-conversion" target="_blank" class="tool-card">
-        <span class="tool-icon">↔️</span>
+        <span class="tool-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
+        </span>
         <div class="tool-name">Material Standards Conversion</div>
       </a>
       <div class="tool-tooltip">
-        <div class="tt-title">Materials Standards Conversion</div>
-        <div class="tt-body">Cross-reference equivalent material grades across different international standards such as ASTM, SAE, ISO, DIN, and JIS. Enables quick comparison of mechanical properties and compositions, supporting global sourcing, engineering validation, and confident material substitution decisions.</div>
+        <div class="tt-title">Material Standards Conversion</div>
+        <div class="tt-body">Cross-reference equivalent material grades across ASTM, SAE, ISO, DIN, and JIS. Enables quick comparison of mechanical properties and compositions for global sourcing and material substitution.</div>
       </div>
     </div>
+
   </div>
 </div>
 
@@ -393,64 +497,36 @@
 <div class="std-tooltip" id="floatingTip"></div>
 
 <script>
-  const floatingTip = document.getElementById('floatingTip');
-  let hideTimer = null;
-
-  document.querySelectorAll('.std-wrap').forEach(wrap => {
-    const templateId = wrap.dataset.tip;
-    const isFlip = wrap.dataset.flip === 'true';
-    const tpl = document.getElementById(templateId);
-    if (!tpl) return;
-
-    wrap.addEventListener('mouseenter', () => {
-      clearTimeout(hideTimer);
-      floatingTip.innerHTML = tpl.innerHTML;
-      floatingTip.classList.toggle('flip-arrow', isFlip);
-
-      // Position
-      const rect = wrap.getBoundingClientRect();
-      const tipW = 280;
-      const gap = 10;
-      const arrowH = 6;
-
-      // Try to place below; if off-screen, place above
-      let top = rect.bottom + gap + arrowH;
-      let above = false;
-      if (top + 200 > window.innerHeight) {
-        top = rect.top - gap - arrowH; // will be adjusted after measuring
-        above = true;
-      }
-
-      let left = isFlip
-        ? rect.right - tipW
-        : rect.left;
-
-      // Clamp horizontal
-      left = Math.max(8, Math.min(left, window.innerWidth - tipW - 8));
-
-      floatingTip.style.left = left + 'px';
-      floatingTip.style.top = top + 'px';
-      floatingTip.classList.toggle('above', above);
-      floatingTip.classList.add('visible');
-
-      // After render, fix "above" top using actual height
-      if (above) {
-        requestAnimationFrame(() => {
-          const h = floatingTip.offsetHeight;
-          floatingTip.style.top = (rect.top - h - gap - arrowH) + 'px';
-        });
-      }
-    });
-
-    wrap.addEventListener('mouseleave', () => {
-      hideTimer = setTimeout(() => floatingTip.classList.remove('visible'), 120);
-    });
+var floatingTip = document.getElementById('floatingTip');
+var hideTimer = null;
+document.querySelectorAll('.std-wrap').forEach(function(wrap) {
+  var templateId = wrap.dataset.tip;
+  var isFlip = wrap.dataset.flip === 'true';
+  var tpl = document.getElementById(templateId);
+  if (!tpl) return;
+  wrap.addEventListener('mouseenter', function() {
+    clearTimeout(hideTimer);
+    floatingTip.innerHTML = tpl.innerHTML;
+    floatingTip.classList.toggle('flip-arrow', isFlip);
+    var rect = wrap.getBoundingClientRect();
+    var tipW = 288;
+    var gap = 10;
+    var arrowH = 6;
+    var top = rect.bottom + gap + arrowH;
+    var above = false;
+    if (top + 200 > window.innerHeight) { top = rect.top - gap - arrowH; above = true; }
+    var left = isFlip ? rect.right - tipW : rect.left;
+    left = Math.max(8, Math.min(left, window.innerWidth - tipW - 8));
+    floatingTip.style.left = left + 'px';
+    floatingTip.style.top = top + 'px';
+    floatingTip.classList.toggle('above', above);
+    floatingTip.classList.add('visible');
+    if (above) { requestAnimationFrame(function() { var h = floatingTip.offsetHeight; floatingTip.style.top = (rect.top - h - gap - arrowH) + 'px'; }); }
   });
-
-  floatingTip.addEventListener('mouseenter', () => clearTimeout(hideTimer));
-  floatingTip.addEventListener('mouseleave', () => {
-    hideTimer = setTimeout(() => floatingTip.classList.remove('visible'), 120);
-  });
+  wrap.addEventListener('mouseleave', function() { hideTimer = setTimeout(function() { floatingTip.classList.remove('visible'); }, 120); });
+});
+floatingTip.addEventListener('mouseenter', function() { clearTimeout(hideTimer); });
+floatingTip.addEventListener('mouseleave', function() { hideTimer = setTimeout(function() { floatingTip.classList.remove('visible'); }, 120); });
 </script>
 </body>
 </html>
