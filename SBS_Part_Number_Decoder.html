@@ -1,0 +1,1433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SBS Part Number Creator &amp; Decoder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1D3557;--navy-dark:#12243a;
+  --orange:#E87722;--orange-light:#F0913A;--orange-pale:#FDF0E5;
+  --white:#ffffff;
+  --gray-50:#F8F9FA;--gray-100:#F0F2F5;--gray-200:#E2E6EA;
+  --gray-300:#CED4DA;--gray-400:#ADB5BD;--gray-500:#6C757D;
+  --gray-600:#495057;--gray-700:#343A40;
+  --active-green:#1A8A4A;--active-bg:#E8F5EE;
+  /* Aliases for existing code */
+  --bg:var(--gray-50);--surface:var(--white);
+  --ink:var(--navy);--ink2:var(--gray-600);--ink3:var(--gray-400);
+  --accent:var(--orange);--accent-bg:var(--orange-pale);--accent-border:#F4C9A0;
+  --blue:var(--navy);--blue-bg:#EBF0FA;--blue-border:#B3C8E8;
+  --green:var(--active-green);--green-bg:var(--active-bg);--green-border:#A8D9BC;
+  --border:var(--gray-200);--border2:var(--gray-300);
+  --mono:'Barlow',monospace;--sans:'Inter',sans-serif;
+  --r:6px;--rl:8px;--shadow:0 2px 8px rgba(0,0,0,.10)
+}
+body{font-family:var(--sans);background:var(--gray-50);color:var(--ink);min-height:100vh;font-size:14px;line-height:1.5}
+.wrap{max-width:800px;margin:0 auto;padding:1.5rem 1.5rem 4rem}
+
+/* Header */
+.hdr{display:flex;align-items:center;gap:14px;margin-bottom:1.75rem;padding:0.65rem 1.5rem;background:var(--white);border-bottom:3px solid var(--orange);position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.10);margin-left:-1.5rem;margin-right:-1.5rem;width:calc(100% + 3rem)}
+.hdr-icon{width:42px;height:42px;background:var(--navy);border-radius:var(--rl);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hdr-icon svg{width:22px;height:22px;fill:none;stroke:#fff;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.hdr-title{font-size:22px;font-weight:800;letter-spacing:-.01em;font-family:"Barlow Condensed",sans-serif;color:var(--navy);text-transform:uppercase}
+.hdr-sub{font-size:11px;color:var(--gray-500);margin-top:2px;font-family:"Inter",sans-serif}
+.hdr-badge{margin-left:auto;font-size:10px;font-family:"Barlow",sans-serif;font-weight:700;padding:4px 12px;border:1px solid var(--gray-300);border-radius:20px;color:var(--gray-500);letter-spacing:.08em;white-space:nowrap;text-transform:uppercase}
+
+/* Tabs */
+.tabs{display:flex;gap:3px;background:var(--gray-100);border-radius:var(--rl);padding:3px;margin-bottom:1.5rem;border:1px solid var(--gray-200)}
+.tab{flex:1;padding:8px 10px;border:none;background:transparent;border-radius:6px;font-family:"Barlow",sans-serif;font-size:13px;font-weight:600;color:var(--gray-500);cursor:pointer;transition:all .15s;text-align:center;white-space:nowrap}
+.tab.active{background:var(--white);color:var(--navy);font-weight:700;box-shadow:var(--shadow)}
+.tab:hover:not(.active){color:var(--navy)}
+
+/* Progress */
+.prog{display:flex;gap:3px;margin-bottom:1.25rem}
+.prog-dot{height:3px;flex:1;border-radius:2px;background:var(--border);transition:background .25s}
+.prog-dot.on{background:var(--accent)}
+
+/* Step card */
+.step{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:1rem 1.2rem;margin-bottom:8px;animation:fadeUp .2s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.step-top{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.step-n{font-family:"Barlow Condensed",sans-serif;font-size:11px;font-weight:700;color:var(--orange);background:var(--orange-pale);border:1px solid var(--accent-border);border-radius:4px;padding:2px 8px;letter-spacing:.05em}
+.step-lbl{font-size:13px;font-weight:600;font-family:"Barlow",sans-serif;color:var(--navy)}
+.step-hint{font-size:11px;color:var(--ink3);margin-left:auto}
+
+/* Chips */
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border:1px solid var(--border2);border-radius:20px;background:var(--bg);font-family:var(--sans);font-size:13px;color:var(--ink2);cursor:pointer;transition:all .12s;white-space:nowrap;user-select:none}
+.chip:hover{border-color:var(--ink);color:var(--ink)}
+.chip.on{background:var(--orange);border-color:var(--orange);color:#fff;font-weight:600}
+.chip.on-blue{background:var(--blue-bg);border-color:var(--blue);color:var(--blue);font-weight:500}
+.chip-dot{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.6;flex-shrink:0}
+
+/* Code list */
+.code-list{display:flex;flex-direction:column;gap:3px;max-height:260px;overflow-y:auto;padding-right:2px}
+.code-list::-webkit-scrollbar{width:4px}
+.code-list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.citem{display:flex;align-items:center;gap:10px;padding:7px 10px;border:1px solid transparent;border-radius:var(--r);cursor:pointer;transition:all .1s}
+.citem:hover{background:var(--bg);border-color:var(--border)}
+.citem.on{background:var(--orange-pale);border-color:var(--orange)}
+.cbadge{font-family:var(--mono);font-size:12px;font-weight:500;background:var(--ink);color:#fff;padding:3px 7px;border-radius:4px;min-width:38px;text-align:center;flex-shrink:0}
+.citem.on .cbadge{background:var(--accent)}
+.cname{font-size:13px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ctags{display:flex;gap:3px;flex-shrink:0}
+.ctag{font-size:10px;padding:2px 5px;border-radius:3px;font-family:var(--mono)}
+.ctag-ss{background:var(--blue-bg);color:var(--blue)}
+.ctag-st{background:var(--bg);color:var(--ink2);border:1px solid var(--border)}
+.ctag-p{background:var(--orange-pale);color:var(--orange)}
+
+/* Search input */
+.srch-wrap{position:relative;margin-bottom:8px}
+.srch-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;stroke:var(--ink3);fill:none;stroke-width:1.5;pointer-events:none}
+input[type=text],input[type=search],select{width:100%;padding:8px 12px 8px 32px;border:1px solid var(--border2);border-radius:var(--r);background:var(--bg);font-family:var(--sans);font-size:13px;color:var(--ink);outline:none;transition:border-color .15s;-webkit-appearance:none}
+input[type=text]:focus,input[type=search]:focus,select:focus{border-color:var(--orange);background:#fff}
+input[type=text]::placeholder,input[type=search]::placeholder{color:var(--ink3)}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239B9890' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px;cursor:pointer}
+.no-icon{padding-left:12px}
+
+/* Thread size grid */
+.thread-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.thread-grid .field-label{font-size:11px;color:var(--ink3);margin-bottom:4px;font-weight:500;letter-spacing:.03em;text-transform:uppercase}
+
+/* Part number display bar */
+.pn-bar{background:var(--navy);border-radius:var(--rl);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:4px}
+.pn-label{font-size:10px;color:rgba(255,255,255,.4);margin-bottom:5px;font-family:var(--mono);letter-spacing:.06em}
+.pn-val{font-family:var(--mono);font-size:19px;font-weight:500;color:#fff;letter-spacing:.06em;display:flex;flex-wrap:wrap;align-items:center;gap:0}
+.seg{display:inline-block;padding:2px 4px;border-radius:3px;transition:background .2s}
+.seg-on{background:var(--accent)}
+.seg-dim{opacity:.3}
+.pn-actions{display:flex;gap:6px;flex-shrink:0}
+.btn{padding:7px 13px;border:none;border-radius:var(--r);font-family:var(--sans);font-size:12px;font-weight:500;cursor:pointer;transition:all .12s;text-decoration:none;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.btn-ghost{background:rgba(255,255,255,.15);color:rgba(255,255,255,.9);font-family:"Barlow",sans-serif;font-weight:600}
+.btn-ghost:hover{background:rgba(255,255,255,.22);color:#fff}
+.btn-primary{background:var(--orange);color:#fff;font-family:"Barlow",sans-serif;font-weight:700;box-shadow:0 2px 6px rgba(232,119,34,0.3)}
+.btn-primary:hover{background:var(--orange-light);transform:translateY(-1px)}
+.btn-outline{background:var(--white);border:1px solid var(--gray-300);color:var(--gray-600);font-family:"Barlow",sans-serif;font-weight:600}
+.btn-outline:hover{border-color:var(--navy);color:var(--navy)}
+.btn-green{background:var(--green);color:#fff}
+.btn-green:hover{background:#145e2d}
+
+/* Info banner */
+.banner{border:1px solid;border-radius:var(--rl);padding:11px 14px;display:flex;align-items:flex-start;gap:10px;margin-top:8px;font-size:13px}
+.banner svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.5;flex-shrink:0;margin-top:1px}
+.banner a{font-weight:500;text-decoration:none}
+.banner a:hover{text-decoration:underline}
+.banner-blue{background:var(--blue-bg);border-color:var(--blue-border);color:var(--blue)}
+.banner-blue a{color:var(--blue)}
+.banner-green{background:var(--green-bg);border-color:var(--green-border);color:var(--green)}
+.banner-green a{color:var(--green)}
+.banner-orange{background:var(--orange-pale);border-color:var(--accent-border);color:var(--orange)}
+
+/* Decode segments */
+.d-segs{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}
+.d-seg{border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.d-seg-top{font-family:var(--mono);font-size:13px;font-weight:500;padding:5px 10px;color:#fff;letter-spacing:.04em}
+.d-seg-lbl{font-size:10px;color:var(--ink2);padding:4px 10px;background:var(--bg)}
+.ds-prefix .d-seg-top{background:#1A5CD4}
+.ds-code .d-seg-top{background:var(--orange)}
+.ds-mat .d-seg-top{background:#2A7A3C}
+.ds-size .d-seg-top{background:#5C5A54}
+.ds-finish .d-seg-top{background:#6B3CC7}
+.ds-suffix .d-seg-top{background:#8B6914}
+.ds-thread .d-seg-top{background:#1A6B8A}
+.ds-length .d-seg-top{background:#2D5A1B}
+.ds-supplier .d-seg-top{background:#1A5CD4}
+.ds-catnum .d-seg-top{background:#0F6B6B}
+
+/* Ref table */
+.rtbl{width:100%;border-collapse:collapse;font-size:12px}
+.rtbl th{text-align:left;font-weight:500;color:var(--ink2);padding:6px 8px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:11px;letter-spacing:.04em}
+.rtbl td{padding:6px 8px;border-bottom:1px solid var(--border);vertical-align:top}
+.rtbl tr:last-child td{border-bottom:none}
+.rtbl tr:hover td{background:var(--bg)}
+.mc{font-family:var(--mono);font-size:12px;font-weight:500}
+
+/* Suffix chips */
+.sfx-grp{margin-bottom:10px}
+.sfx-grp-lbl{font-size:10px;font-weight:500;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}
+.sfx-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border:1px solid var(--border2);border-radius:20px;background:var(--bg);font-size:12px;color:var(--ink2);cursor:pointer;transition:all .12s;margin:0 4px 4px 0;user-select:none}
+.sfx-chip:hover{border-color:var(--ink);color:var(--ink)}
+.sfx-chip.on{background:var(--blue-bg);border-color:var(--blue);color:var(--blue)}
+.sfx-code{font-family:var(--mono);font-size:11px;font-weight:500}
+
+/* Supplier list */
+.sup-list{display:flex;flex-direction:column;gap:3px;max-height:320px;overflow-y:auto}
+.sup-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid transparent;border-radius:var(--r);cursor:pointer;transition:all .1s}
+.sup-item:hover{background:var(--bg);border-color:var(--border)}
+.sup-item.on{background:var(--blue-bg);border-color:var(--blue)}
+.sup-code{font-family:var(--mono);font-size:11px;font-weight:500;background:var(--ink);color:#fff;padding:3px 7px;border-radius:4px;flex-shrink:0;letter-spacing:.03em}
+.sup-item.on .sup-code{background:var(--blue)}
+.sup-name{font-size:13px;font-weight:500;flex:1}
+.sup-spec{font-size:11px;color:var(--ink3);margin-left:auto;white-space:nowrap}
+
+/* Mat row */
+.mat-row{display:flex;align-items:center;gap:10px;padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);cursor:pointer;transition:all .1s;margin-bottom:3px}
+.mat-row:hover{background:var(--bg)}
+.mat-row.on{background:var(--orange-pale);border-color:var(--orange)}
+
+/* Link helper */
+.lnk{color:var(--blue);cursor:pointer;font-family:var(--mono);font-size:11px}
+.lnk:hover{text-decoration:underline}
+
+/* Reset */
+.reset-row{margin-top:10px;text-align:right}
+.hidden{display:none!important}
+
+/* Responsive */
+@media(max-width:580px){
+  .wrap{padding:1rem 1rem 3rem}
+  .pn-val{font-size:15px}
+  .hdr-badge,.tab-ref-lbl{display:none}
+  .thread-grid{grid-template-columns:1fr}
+  .pn-bar{flex-direction:column;align-items:flex-start}
+  .pn-actions{width:100%;justify-content:flex-end}
+}
+
+  /* ── Beta Banner ──────────────────────────────────────────────── */
+  .beta-modal-overlay{
+    position:fixed;inset:0;background:rgba(29,53,87,0.72);
+    z-index:9999;display:flex;align-items:center;justify-content:center;
+    padding:1rem;backdrop-filter:blur(3px);
+    animation:fadeIn .25s ease;
+  }
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .beta-modal{
+    background:#fff;border-radius:12px;max-width:480px;width:100%;
+    box-shadow:0 8px 40px rgba(29,53,87,0.25);overflow:hidden;
+    animation:slideUp .3s ease;
+  }
+  @keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+  .beta-modal-header{
+    background:var(--navy);padding:1.25rem 1.5rem;
+    display:flex;align-items:center;gap:12px;
+  }
+  .beta-modal-header svg{width:28px;height:28px;flex-shrink:0}
+  .beta-modal-title{
+    font-family:"Barlow Condensed",sans-serif;font-size:20px;font-weight:800;
+    color:#fff;text-transform:uppercase;letter-spacing:.04em;
+  }
+  .beta-modal-sub{
+    font-family:"Inter",sans-serif;font-size:11px;color:rgba(255,255,255,.65);
+    margin-top:2px;
+  }
+  .beta-badge{
+    margin-left:auto;background:var(--orange);color:#fff;
+    font-family:"Barlow",sans-serif;font-size:10px;font-weight:800;
+    padding:3px 10px;border-radius:20px;letter-spacing:.1em;text-transform:uppercase;
+    flex-shrink:0;
+  }
+  .beta-modal-body{padding:1.5rem;}
+  .beta-modal-body p{
+    font-family:"Inter",sans-serif;font-size:13.5px;line-height:1.65;
+    color:var(--gray-700);margin-bottom:0.85rem;
+  }
+  .beta-modal-body p:last-of-type{margin-bottom:0;}
+  .beta-modal-body strong{color:var(--navy);}
+  .beta-modal-body .beta-internal{
+    background:var(--orange-pale);border:1px solid var(--accent-border);
+    border-left:3px solid var(--orange);border-radius:6px;
+    padding:10px 14px;margin-bottom:1rem;
+    font-family:"Barlow",sans-serif;font-size:13px;font-weight:600;
+    color:var(--navy);display:flex;align-items:center;gap:8px;
+  }
+  .beta-modal-body .beta-internal svg{width:16px;height:16px;flex-shrink:0;stroke:var(--orange)}
+  .beta-modal-footer{
+    padding:1rem 1.5rem 1.5rem;display:flex;flex-direction:column;gap:8px;
+  }
+  .beta-btn-primary{
+    width:100%;padding:10px 16px;background:var(--navy);color:#fff;border:none;
+    border-radius:7px;font-family:"Barlow",sans-serif;font-size:14px;font-weight:700;
+    cursor:pointer;transition:background .15s;
+  }
+  .beta-btn-primary:hover{background:var(--navy-dark);}
+  .beta-btn-secondary{
+    width:100%;padding:9px 16px;background:transparent;
+    border:1px solid var(--gray-300);border-radius:7px;
+    font-family:"Inter",sans-serif;font-size:12px;font-weight:500;
+    color:var(--gray-500);cursor:pointer;transition:all .15s;
+    display:flex;align-items:center;justify-content:center;gap:6px;
+  }
+  .beta-btn-secondary:hover{border-color:var(--orange);color:var(--orange);}
+  .beta-btn-secondary svg{width:14px;height:14px;stroke:currentColor;fill:none;flex-shrink:0}
+
+  /* ── Persistent beta ribbon ───────────────────────────────────── */
+  .beta-ribbon{
+    background:var(--navy);color:rgba(255,255,255,.9);
+    font-family:"Barlow",sans-serif;font-size:11px;font-weight:600;
+    padding:5px 1.5rem;display:flex;align-items:center;gap:8px;
+    letter-spacing:.01em;
+  }
+  .beta-ribbon .rb-badge{
+    background:var(--orange);color:#fff;font-size:9px;font-weight:800;
+    padding:2px 7px;border-radius:20px;letter-spacing:.1em;text-transform:uppercase;
+  }
+  .beta-ribbon a{
+    color:var(--orange-light);text-decoration:none;font-weight:700;
+    margin-left:auto;
+  }
+  .beta-ribbon a:hover{text-decoration:underline;}
+  .beta-ribbon a svg{width:12px;height:12px;display:inline;vertical-align:middle;stroke:currentColor;fill:none;margin-left:3px;}
+
+  /* ── Feedback button (persistent) ────────────────────────────── */
+  .feedback-btn{
+    display:inline-flex;align-items:center;gap:7px;
+    padding:8px 16px;border-radius:7px;
+    background:var(--orange);color:#fff;border:none;
+    font-family:"Barlow",sans-serif;font-size:12px;font-weight:700;
+    cursor:pointer;text-decoration:none;
+    box-shadow:0 2px 6px rgba(232,119,34,0.30);
+    transition:background .15s,transform .12s;
+    letter-spacing:.01em;
+  }
+  .feedback-btn:hover{background:var(--orange-light);transform:translateY(-1px);}
+  .feedback-btn svg{width:14px;height:14px;stroke:#fff;fill:none;flex-shrink:0;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .feedback-bar{
+    background:var(--gray-50);border:1px solid var(--gray-200);border-radius:8px;
+    padding:10px 16px;display:flex;align-items:center;gap:10px;
+    margin-bottom:1rem;
+  }
+  .feedback-bar-text{
+    font-family:"Inter",sans-serif;font-size:12px;color:var(--gray-500);flex:1;
+  }
+  .feedback-bar-text strong{color:var(--navy);}
+  .feedback-bar-bottom{
+    margin-top:2rem;margin-bottom:0;
+    background:var(--navy);border-radius:8px;
+    padding:14px 16px;display:flex;align-items:center;gap:12px;
+  }
+  .feedback-bar-bottom .feedback-bar-text{color:rgba(255,255,255,.75);}
+  .feedback-bar-bottom .feedback-bar-text strong{color:#fff;}
+  .feedback-bar-bottom .feedback-btn{
+    background:#fff;color:var(--navy);box-shadow:none;
+  }
+  .feedback-bar-bottom .feedback-btn svg{stroke:var(--navy)}
+  .feedback-bar-bottom .feedback-btn:hover{background:var(--orange-pale);color:var(--orange)}
+  .feedback-bar-bottom .feedback-btn:hover svg{stroke:var(--orange)}
+</style>
+</head>
+<body>
+<!-- ── Beta modal ──────────────────────────────────────────────── -->
+<div class="beta-modal-overlay" id="betaOverlay">
+  <div class="beta-modal" role="dialog" aria-modal="true" aria-labelledby="betaTitle">
+    <div class="beta-modal-header">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="12,2 15.5,7 21,8.5 17,13 17.5,19 12,16.5 6.5,19 7,13 3,8.5 8.5,7"/>
+        <circle cx="12" cy="11" r="2.2" fill="#fff" stroke="none"/>
+      </svg>
+      <div>
+        <div class="beta-modal-title" id="betaTitle">SBS Part Number Creator &amp; Decoder</div>
+        <div class="beta-modal-sub">Specialty Bolt &amp; Screw &mdash; Engineering Tools</div>
+      </div>
+      <span class="beta-badge">&#946; Beta</span>
+    </div>
+    <div class="beta-modal-body">
+      <div class="beta-internal">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        <span>SBS Internal Use Only &mdash; Not for distribution</span>
+      </div>
+      <p>This tool is currently <strong>under active development</strong>. Part number patterns, decode logic, and supplier data are continuously being refined.</p>
+      <p>If you spot an error, a missing code, or have a suggestion to improve the tool, please use the feedback form below &mdash; your input directly shapes the next version.</p>
+      <p style="font-size:12px;color:var(--gray-500);">By clicking <strong>I Understand, Let Me In</strong> you confirm you are an SBS employee or authorised user.</p>
+    </div>
+    <div class="beta-modal-footer">
+      <button class="beta-btn-primary" onclick="closeBetaModal()">I Understand, Let Me In &rarr;</button>
+      <button class="beta-btn-secondary" onclick="openFeedback()">
+        <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Submit feedback or report an issue
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Persistent beta ribbon ──────────────────────────────────── -->
+<div class="beta-ribbon" id="betaRibbon">
+  <span class="rb-badge">&#946; Beta</span>
+  <span>SBS Internal Use Only &mdash; Tool under active development</span>
+  <a href="#" onclick="openFeedback();return false;">
+    Report issue / suggest improvement
+    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+  </a>
+</div>
+
+<div class="wrap">
+  <!-- Feedback bar top -->
+  <div class="feedback-bar">
+    <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--orange);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <span class="feedback-bar-text"><strong>Beta:</strong> Found an error or have a suggestion? Help us improve this tool.</span>
+    <button class="feedback-btn" onclick="openFeedback()">
+      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Send Feedback
+    </button>
+  </div>
+
+<!-- Header -->
+<div class="hdr">
+  <div class="hdr-icon">
+    <svg viewBox="0 0 24 24"><polygon points="12,2 15.5,7 21,8.5 17,13 17.5,19 12,16.5 6.5,19 7,13 3,8.5 8.5,7" fill="none" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.5" fill="#fff"/></svg>
+  </div>
+  <div>
+    <div class="hdr-title">SBS Part Number Creator &amp; Decoder</div>
+    <div class="hdr-sub">Find, Build &amp; Decode standard SBS part numbers</div>
+  </div>
+  <div class="hdr-badge">SBS ENGINEERING</div>
+</div>
+
+<!-- Tabs -->
+<div class="tabs" role="tablist">
+  <button class="tab active" onclick="setMode('find')" id="tab-find">&#128269; Find a part</button>
+  <button class="tab" onclick="setMode('build')" id="tab-build">&#9881; Build part #</button>
+  <button class="tab" onclick="setMode('decode')" id="tab-decode">&#128202; Decode</button>
+  <button class="tab" onclick="setMode('ref')" id="tab-ref">&#128216; Reference</button>
+</div>
+
+<!-- ══ FIND ══════════════════════════════════════════════════════════════ -->
+<div id="panel-find">
+  <div class="prog" id="find-prog"></div>
+
+  <!-- S1: Standard or Catalog -->
+  <div class="step" id="fs1">
+    <div class="step-top"><span class="step-n">01</span><span class="step-lbl">Standard SBS part or catalog / OEM supplier part?</span></div>
+    <div class="chips">
+      <div class="chip" onclick="fPickType(this,'std')"><span class="chip-dot"></span>Standard SBS catalog part</div>
+      <div class="chip" onclick="fPickType(this,'oem')"><span class="chip-dot"></span>Catalog / OEM supplier part</div>
+    </div>
+  </div>
+
+  <!-- S2a: Family (std) -->
+  <div class="step hidden" id="fs2-std">
+    <div class="step-top"><span class="step-n">02</span><span class="step-lbl">Part family</span></div>
+    <div class="chips" id="f-family-chips"></div>
+  </div>
+
+  <!-- S2b: Supplier picker (oem) -->
+  <div class="step hidden" id="fs2-oem">
+    <div class="step-top"><span class="step-n">02</span><span class="step-lbl">Select supplier</span><span class="step-hint" id="f-sup-count"></span></div>
+    <div class="srch-wrap">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="search" id="f-sup-search" placeholder="Search supplier name or code&hellip;" oninput="fFilterSuppliers()">
+    </div>
+    <div class="sup-list" id="f-sup-list"></div>
+  </div>
+
+  <!-- S3: Measurement -->
+  <div class="step hidden" id="fs3">
+    <div class="step-top"><span class="step-n">03</span><span class="step-lbl">Measurement system</span></div>
+    <div class="chips">
+      <div class="chip" onclick="fPickMeasure(this,'inch')"><span class="chip-dot"></span>Inch &mdash; e.g. 1/4-20</div>
+      <div class="chip" onclick="fPickMeasure(this,'metric')"><span class="chip-dot"></span>Metric &mdash; e.g. M6</div>
+      <div class="chip" onclick="fPickMeasure(this,'')"><span class="chip-dot"></span>Either / unsure</div>
+    </div>
+  </div>
+
+  <!-- S4: Thread size -->
+  <div class="step hidden" id="fs4">
+    <div class="step-top"><span class="step-n">04</span><span class="step-lbl">Thread size &amp; pitch</span><span class="step-hint">Optional &mdash; skip to browse all</span></div>
+    <div class="thread-grid" id="f-thread-grid">
+      <!-- populated by JS based on measure -->
+    </div>
+    <div id="f-length-wrap" class="hidden" style="margin-top:10px">
+      <div style="font-size:11px;color:var(--ink3);margin-bottom:4px;font-weight:500;letter-spacing:.03em;text-transform:uppercase">Length</div>
+      <select id="f-length-sel" class="no-icon" style="max-width:220px"></select>
+    </div>
+    <div style="margin-top:10px;display:flex;justify-content:flex-end;gap:8px">
+      <button class="btn btn-outline" onclick="fSkipThread()">Skip &rarr;</button>
+      <button class="btn btn-primary" onclick="fApplyThread()">Apply thread &rarr;</button>
+    </div>
+  </div>
+
+  <!-- S5: Material -->
+  <div class="step hidden" id="fs5">
+    <div class="step-top"><span class="step-n">05</span><span class="step-lbl">Material</span></div>
+    <div class="chips">
+      <div class="chip" onclick="fPickMat(this,'ss')"><span class="chip-dot"></span>Stainless A2 (304)</div>
+      <div class="chip" onclick="fPickMat(this,'ss316')"><span class="chip-dot"></span>Stainless A4 (316)</div>
+      <div class="chip" onclick="fPickMat(this,'alloy')"><span class="chip-dot"></span>Alloy / high-strength</div>
+      <div class="chip" onclick="fPickMat(this,'steel')"><span class="chip-dot"></span>Steel</div>
+      <div class="chip" onclick="fPickMat(this,'')"><span class="chip-dot"></span>Any / unsure</div>
+    </div>
+  </div>
+
+  <!-- S6: Code picker -->
+  <div class="step hidden" id="fs6">
+    <div class="step-top"><span class="step-n">06</span><span class="step-lbl">Select part type</span><span class="step-hint" id="f-code-count"></span></div>
+    <div class="srch-wrap">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="search" id="f-code-search" placeholder="Search by name or 3-letter code&hellip;" oninput="fFilterCodes()">
+    </div>
+    <div class="code-list" id="f-code-list"></div>
+  </div>
+
+  <!-- S7: Result -->
+  <div class="step hidden" id="fs7">
+    <div class="step-top"><span class="step-n">07</span><span class="step-lbl">Your part number pattern</span></div>
+    <div class="pn-bar">
+      <div>
+        <div class="pn-label">PART NUMBER PATTERN</div>
+        <div class="pn-val" id="f-pn-val"></div>
+      </div>
+      <div class="pn-actions">
+        <button class="btn btn-ghost" onclick="copyText('f-pn-raw')">&#128203; Copy</button>
+        <a class="btn btn-primary" id="f-ecat-link" href="#" target="_blank" rel="noopener">E-Catalog &#8599;</a>
+      </div>
+    </div>
+    <div class="banner banner-blue" id="f-info-std" style="margin-top:8px">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span id="f-info-text"></span>
+    </div>
+    <div class="banner banner-green" id="f-info-oem" style="margin-top:8px;display:none">
+      <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      <span id="f-oem-text"></span>
+    </div>
+  </div>
+  <span id="f-pn-raw" style="display:none"></span>
+  <div class="reset-row hidden" id="f-reset"><button class="btn btn-outline" onclick="resetMode('find')">&#8635; Start over</button></div>
+</div>
+
+<!-- ══ BUILD ══════════════════════════════════════════════════════════════ -->
+<div id="panel-build" class="hidden">
+  <div class="prog" id="build-prog"></div>
+
+  <!-- B1: Type -->
+  <div class="step" id="bs1">
+    <div class="step-top"><span class="step-n">01</span><span class="step-lbl">Standard part or catalog / OEM part?</span></div>
+    <div class="chips">
+      <div class="chip" onclick="bPickType(this,'std')"><span class="chip-dot"></span>Standard SBS catalog part</div>
+      <div class="chip" onclick="bPickType(this,'oem')"><span class="chip-dot"></span>Catalog / OEM supplier part</div>
+    </div>
+  </div>
+
+  <!-- B2: Measurement -->
+  <div class="step hidden" id="bs2">
+    <div class="step-top"><span class="step-n">02</span><span class="step-lbl">Measurement system</span></div>
+    <div class="chips">
+      <div class="chip" onclick="bPickMeasure(this,'inch')"><span class="chip-dot"></span>Inch</div>
+      <div class="chip" onclick="bPickMeasure(this,'metric')"><span class="chip-dot"></span>Metric</div>
+    </div>
+  </div>
+
+  <!-- B2b: OEM supplier -->
+  <div class="step hidden" id="bs2-oem">
+    <div class="step-top"><span class="step-n">02</span><span class="step-lbl">OEM supplier</span></div>
+    <div class="srch-wrap">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="search" id="b-sup-search" placeholder="Search supplier&hellip;" oninput="bFilterSuppliers()">
+    </div>
+    <div class="sup-list" id="b-sup-list"></div>
+    <div style="margin-top:8px">
+      <div style="font-size:11px;color:var(--ink3);margin-bottom:4px">Or enter supplier code manually (5 chars):</div>
+      <div style="display:flex;gap:8px">
+        <input type="text" id="b-oem-manual" class="no-icon" placeholder="e.g. SHERE" maxlength="5" style="max-width:140px;font-family:var(--mono);text-transform:uppercase" oninput="this.value=this.value.toUpperCase();bOemManualUpdate()">
+        <input type="text" id="b-oem-catnum" class="no-icon" placeholder="Supplier catalog # (optional)" style="flex:1;font-family:var(--mono)">
+      </div>
+    </div>
+    <div class="reset-row"><button class="btn btn-primary" onclick="bApplyOem()">Use this supplier &rarr;</button></div>
+  </div>
+
+  <!-- B3: Family -->
+  <div class="step hidden" id="bs3">
+    <div class="step-top"><span class="step-n">03</span><span class="step-lbl">Part family</span></div>
+    <div class="chips" id="b-family-chips"></div>
+  </div>
+
+  <!-- B4: 3-letter code -->
+  <div class="step hidden" id="bs4">
+    <div class="step-top"><span class="step-n">04</span><span class="step-lbl">3-letter code</span><span class="step-hint" id="b-code-count"></span></div>
+    <div class="srch-wrap">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="search" id="b-code-search" placeholder="Search codes&hellip;" oninput="bFilterCodes()">
+    </div>
+    <div class="code-list" id="b-code-list"></div>
+  </div>
+
+  <!-- B5: Material -->
+  <div class="step hidden" id="bs5">
+    <div class="step-top"><span class="step-n">05</span><span class="step-lbl">Material / grade code</span><span class="step-hint">4th char of part #</span></div>
+    <div id="b-mat-list"></div>
+  </div>
+
+  <!-- B6: Thread size -->
+  <div class="step hidden" id="bs6">
+    <div class="step-top"><span class="step-n">06</span><span class="step-lbl">Thread size &amp; pitch</span><span class="step-hint">Optional</span></div>
+    <div class="thread-grid" id="b-thread-grid"></div>
+    <div id="b-length-wrap" class="hidden" style="margin-top:10px">
+      <div style="font-size:11px;color:var(--ink3);margin-bottom:4px;font-weight:500;letter-spacing:.03em;text-transform:uppercase">Length <span style="font-weight:300;text-transform:none">(bolts &amp; screws)</span></div>
+      <select id="b-length-sel" class="no-icon" style="max-width:220px"></select>
+    </div>
+    <div style="margin-top:10px;font-size:11px;color:var(--ink3)">
+      Inch: 3/4-10 &times; 1-1/2&quot; &rarr; <span style="font-family:var(--mono)">75C150CGB</span> &nbsp;&bull;&nbsp; Metric: M8&times;1.25&times;60mm &rarr; <span style="font-family:var(--mono)">.8C60MCB</span> &nbsp;&bull;&nbsp; Metric: M6&times;1.0&times;20mm &rarr; <span style="font-family:var(--mono)">M06100020</span>
+    </div>
+  </div>
+
+  <!-- B7: Finish -->
+  <div class="step hidden" id="bs7">
+    <div class="step-top"><span class="step-n">07</span><span class="step-lbl">Finish</span></div>
+    <div class="chips" id="b-finish-chips"></div>
+  </div>
+
+  <!-- B8: Suffixes -->
+  <div class="step hidden" id="bs8">
+    <div class="step-top"><span class="step-n">08</span><span class="step-lbl">Special suffixes <span style="font-weight:300">(select all that apply)</span></span></div>
+    <div id="b-sfx-wrap"></div>
+  </div>
+
+  <!-- B9: Result -->
+  <div class="step hidden" id="bs9">
+    <div class="step-top"><span class="step-n">09</span><span class="step-lbl">Constructed part number</span></div>
+    <div class="pn-bar">
+      <div>
+        <div class="pn-label">PART NUMBER</div>
+        <div class="pn-val" id="b-pn-val"></div>
+      </div>
+      <div class="pn-actions">
+        <button class="btn btn-ghost" onclick="copyText('b-pn-raw')">&#128203; Copy</button>
+        <a class="btn btn-primary" id="b-ecat-link" href="#" target="_blank">E-Catalog &#8599;</a>
+      </div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:7px;margin-top:10px" id="b-breakdown"></div>
+  </div>
+  <span id="b-pn-raw" style="display:none"></span>
+  <div class="reset-row"><button class="btn btn-outline" onclick="resetMode('build')">&#8635; Start over</button></div>
+</div>
+
+<!-- ══ DECODE ══════════════════════════════════════════════════════════════ -->
+<div id="panel-decode" class="hidden">
+  <div class="step">
+    <div class="step-top"><span class="step-n">01</span><span class="step-lbl">Paste an SBS part number</span></div>
+    <div style="display:flex;gap:8px">
+      <div class="srch-wrap" style="flex:1;margin-bottom:0">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="dec-input" placeholder="e.g.  HCS8025C100-Z &nbsp;&nbsp; .HNN1M10P &nbsp;&nbsp; /SHERE1234ABC" oninput="doDecode()" style="font-family:var(--mono);font-size:13px;letter-spacing:.03em;text-transform:uppercase">
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--ink3);margin-top:7px;display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+      Examples:
+      <span class="lnk" onclick="setEx('HCS8025C100-Z')">HCS8025C100-Z</span>
+      <span class="lnk" onclick="setEx('.FLN1M10P'">.FLN1M10P</span>
+      <span class="lnk" onclick="setEx('FLN8025C-Z')">FLN8025C-Z</span>
+      <span class="lnk" onclick="setEx('/SHERE1234ABC')">/SHERE1234ABC</span>
+      <span class="lnk" onclick="setEx('/PANDU42PANDTM1S4C')">/PANDUIT ex.</span>
+      <span class="lnk" onclick="setEx('DPN025/H6')">DPN025/H6</span>
+    </div>
+  </div>
+  <div id="dec-result" class="hidden">
+    <div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--orange);border-radius:var(--rl);overflow:hidden">
+      <div style="background:var(--orange-pale);padding:9px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)">
+        <svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:none;stroke:var(--orange);stroke-width:2;flex-shrink:0"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        <span style="font-size:12px;font-weight:500;color:var(--orange)">Decoded &mdash; <span id="dec-title" style="font-family:var(--mono)"></span></span>
+      </div>
+      <div style="padding:14px;background:var(--surface)">
+        <div class="d-segs" id="dec-segs"></div>
+        <div id="dec-detail" style="font-size:13px;color:var(--ink2);line-height:1.75;border-top:1px solid var(--border);padding-top:11px"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ REFERENCE ══════════════════════════════════════════════════════════ -->
+<div id="panel-ref" class="hidden">
+  <div class="step">
+    <div class="step-top"><span class="step-n">MAT</span><span class="step-lbl">Material codes (4th character)</span></div>
+    <table class="rtbl"><thead><tr><th>Code</th><th>Material</th><th>Grade</th><th>Note</th></tr></thead><tbody>
+      <tr><td class="mc">S</td><td>Stainless steel</td><td>A2-70 / A2-80 (304)</td><td>General corrosion resistance</td></tr>
+      <tr><td class="mc">3</td><td>Stainless 316</td><td>A4-70 / A4-80</td><td>Marine / chemical</td></tr>
+      <tr><td class="mc">8</td><td>Alloy steel</td><td>Grade 8 (inch) / Class 8.8 (metric)</td><td>High strength</td></tr>
+      <tr><td class="mc">1</td><td>Alloy steel</td><td>ISO 898-1 Class 10.9</td><td>Metric high strength</td></tr>
+      <tr><td class="mc">2</td><td>Alloy steel</td><td>ISO 898-1 Class 12.9</td><td>Metric ultra-high strength</td></tr>
+      <tr><td class="mc">5</td><td>Alloy steel</td><td>SAE Grade 5</td><td>Inch medium strength</td></tr>
+      <tr><td class="mc">&mdash;</td><td>Steel (default)</td><td>ASTM A307 / A574</td><td>Assumed when no code present</td></tr>
+    </tbody></table>
+  </div>
+  <div class="step">
+    <div class="step-top"><span class="step-n">FIN</span><span class="step-lbl">Finish codes</span></div>
+    <table class="rtbl"><thead><tr><th>Code</th><th>Finish</th></tr></thead><tbody>
+      <tr><td class="mc">-Z &nbsp;<span style="color:var(--gray-400);font-weight:400">or</span>&nbsp; Z</td><td>Clear zinc electroplate</td></tr>
+      <tr><td class="mc">-Y &nbsp;<span style="color:var(--gray-400);font-weight:400">or</span>&nbsp; Y</td><td>Yellow zinc electroplate</td></tr>
+      <tr><td class="mc">P</td><td>Plain (no finish)</td></tr>
+      <tr><td class="mc">Q &nbsp;<span style="color:var(--gray-400);font-weight:400">or</span>&nbsp; -Q</td><td>Black zinc</td></tr>
+      <tr><td class="mc">B</td><td>Black oxide</td></tr>
+      <tr><td class="mc">TZ</td><td>Trivalent clear zinc (Cr&sup3;)</td></tr>
+      <tr><td class="mc">G</td><td>Hot-dip galvanized</td></tr>
+    </tbody></table>
+  </div>
+  <div class="step">
+    <div class="step-top"><span class="step-n">TRD</span><span class="step-lbl">Thread indicators (inch)</span></div>
+    <table class="rtbl"><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody>
+      <tr><td class="mc">C</td><td>Coarse thread (UNC) &mdash; e.g. 025<strong>C</strong>100 = 1/4-20&times;1&quot;</td></tr>
+      <tr><td class="mc">F</td><td>Fine thread (UNF) &mdash; e.g. 025<strong>F</strong>100 = 1/4-28&times;1&quot;</td></tr>
+      <tr><td class="mc">FT</td><td>Full thread (suffix position)</td></tr>
+      <tr><td class="mc">PT</td><td>Partial thread</td></tr>
+    </tbody></table>
+  </div>
+  <div class="step">
+    <div class="step-top"><span class="step-n">PFX</span><span class="step-lbl">Prefixes &amp; part types</span></div>
+    <table class="rtbl"><thead><tr><th>Prefix</th><th>Meaning</th></tr></thead><tbody>
+      <tr><td class="mc">(none)</td><td>Standard <strong>Inch</strong> part</td></tr>
+      <tr><td class="mc">.</td><td>Standard <strong>Metric</strong> part</td></tr>
+      <tr><td class="mc">/XXXXX</td><td>OEM/catalog supplier part &mdash; next 5 chars = supplier code, remainder = catalog #</td></tr>
+      <tr><td class="mc">/KIT</td><td>Kit of parts (bagged / packaged)</td></tr>
+    </tbody></table>
+  </div>
+  <div class="step">
+    <div class="step-top"><span class="step-n">SFX</span><span class="step-lbl">Suffix codes</span></div>
+    <table class="rtbl"><thead><tr><th>Suffix</th><th>Meaning</th><th>Group</th></tr></thead><tbody>
+      <tr><td class="mc">/N</td><td>Nylon / Nylok patch (IFI 124/524)</td><td>Locking</td></tr>
+      <tr><td class="mc">/NP</td><td>Nylon pellet</td><td>Locking</td></tr>
+      <tr><td class="mc">/SB</td><td>Blue Scotchgrip threadlocker</td><td>Locking</td></tr>
+      <tr><td class="mc">/SY</td><td>Yellow Scotchgrip</td><td>Locking</td></tr>
+      <tr><td class="mc">/SGP</td><td>Green Scotchgrip (heavy) per print</td><td>Locking</td></tr>
+      <tr><td class="mc">/SL</td><td>Shou Long manufacturer equivalent (not a locking feature)</td><td>Admin</td></tr>
+      <tr><td class="mc">/EL, /EP</td><td>Electropolished</td><td>Surface</td></tr>
+      <tr><td class="mc">/CL</td><td>Cleaned by SBS per customer req.</td><td>Surface</td></tr>
+      <tr><td class="mc">/KO</td><td>Kolsterized heat treated</td><td>Surface</td></tr>
+      <tr><td class="mc">/FT</td><td>Fully threaded</td><td>Feature</td></tr>
+      <tr><td class="mc">/LH</td><td>Left-hand thread</td><td>Feature</td></tr>
+      <tr><td class="mc">/DR</td><td>Drilled (e.g. for cotter pin)</td><td>Feature</td></tr>
+      <tr><td class="mc">/UC</td><td>Thread undercut</td><td>Feature</td></tr>
+      <tr><td class="mc">/KN</td><td>Knurled head</td><td>Feature</td></tr>
+      <tr><td class="mc">/H6</td><td>Pin tolerance H6</td><td>Tolerance</td></tr>
+      <tr><td class="mc">/M6</td><td>Pin tolerance m6</td><td>Tolerance</td></tr>
+      <tr><td class="mc">/SP</td><td>Special variation</td><td>Admin</td></tr>
+      <tr><td class="mc">/PR</td><td>Per-print (customer print required)</td><td>Admin</td></tr>
+    </tbody></table>
+  </div>
+  <div class="step">
+    <div class="step-top"><span class="step-n">SUP</span><span class="step-lbl">Common OEM / catalog supplier codes</span></div>
+    <table class="rtbl"><thead><tr><th>Code</th><th>Supplier</th><th>Specialty</th></tr></thead><tbody id="ref-sup-table"></tbody></table>
+  </div>
+  <div class="banner banner-blue" style="margin-top:8px">
+    <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+    Full catalog: <a href="https://shop.specialtybolt.com" target="_blank" rel="noopener">shop.specialtybolt.com</a>
+  </div>
+</div>
+
+  <!-- Feedback bar bottom -->
+  <div class="feedback-bar feedback-bar-bottom">
+    <svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:rgba(255,255,255,.6);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <span class="feedback-bar-text"><strong>Help shape the next version.</strong> If you found an error, a missing code, or have a suggestion, we want to hear from you.</span>
+    <button class="feedback-btn" onclick="openFeedback()">
+      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Send Feedback
+    </button>
+  </div>
+
+</div><!-- /wrap -->
+
+
+
+<script>
+
+
+// ── Data ─────────────────────────────────────────────────────────────────
+const CODES = [{"c":"AAC","t":"A/A CLOSED-END RIVET ALUM/ALUM","p":1,"ss":1,"st":1,"f":"Rivets"},{"c":"AAP","t":"A/A\" BLIND RIVET ALUM/ALUM","p":1,"ss":1,"st":1,"f":"Rivets"},{"c":"ABD","t":"ALUM BRAZIER DR RIVET (W/PIN)","p":1,"ss":0,"st":0,"f":"Rivets"},{"c":"ABR","t":"ALUM BRAZIER HD RIVETS","p":1,"ss":0,"st":0,"f":"Rivets"},{"c":"ACN","t":"ACORN NUT","p":1,"ss":1,"st":1,"f":"Nuts"},{"c":"ACO","t":"ACME THREAD COUPLING NUT","p":0,"ss":0,"st":0,"f":"Nuts"},{"c":"ACR","t":"ALUM \"COUNTERSUNK\" RIVETS","p":0,"ss":0,"st":0,"f":"Rivets"},{"c":"AHN","t":"ACME HEX NUT","p":0,"ss":0,"st":0,"f":"Nuts"},{"c":"AJN","t":"ACME HEX JAM NUT","p":0,"ss":0,"st":0,"f":"Nuts"},{"c":"ALD","t":"ALUM LINER DR RIVET (W/PIN)","p":0,"ss":0,"st":0,"f":"Rivets"},{"c":"ALN","t":"ALLENUTS","p":1,"ss":1,"st":1,"f":"Nuts"},{"c":"ALS","t":"ACCOUSTICAL LAG SCREW","p":0,"ss":0,"st":0,"f":"Screws"},{"c":"AMR","t":"MUSHROOM HD RIVET  \"2117 ALUM\"","p":0,"ss":1,"st":1,"f":"Rivets"},{"c":"ANS","t":"ACORN NUT SOLID","p":1,"ss":null,"st":1,"f":"Nuts"},{"c":"ASA","t":"ACORN SLEEVE ANCHOR","p":1,"ss":1,"st":1,"f":"Anchors & Inserts"},{"c":"ASC","t":"ALUM/STEEL CLOSED END RIVET","p":1,"ss":1,"st":1,"f":"Rivets"},{"c":"ASM","t":"ALUM/STEEL MULTI-GRIP RIVET","p":1,"ss":1,"st":1,"f":"Rivets"},{"c":"ASP","t":"A/S\" BLIND RIVET ALUM/STEEL","p":1,"ss":1,"st":1,"f":"Rivets"},{"c":"ASR","t":"ANCHOR SHACKLE \"ROUND PIN\"","p":0,"ss":0,"st":0,"f":"Pins"},{"c":"ASS","t":"ANCHOR SHACKLES \"SCREW PIN\"","p":0,"ss":0,"st":0,"f":"Screws"},{"c":"AST","t":"-A/S\" T-RIVET  ALUM/STEEL","p":1,"ss":0,"st":0,"f":"Rivets"},{"c":"ASW","t":"STRUCTURAL WASHERS F436","p":0,"ss":1,"st":1,"f":"Washers"},{"c":"ATR","t":"FT ACME THREADED ROD","p":0,"ss":0,"st":0,"f":"Studs & Threaded Rod"},{"c":"BAB","t":"BNT ANC BLT 1 NUT&WSHR","p":0,"ss":0,"st":0,"f":"Nuts"},{"c":"BAN","t":"BREAK AWAY NUTS","p":0,"ss":0,"st":0,"f":"Nuts"},{"c":"BSR","t":"BUTTON HD SOLID RIVET","p":0,"ss":1,"st":1,"f":"Rivets"},{"c":"BTS","t":"BRASS TIP SET SCREW","p":1,"ss":null,"st":null,"f":"Screws"},{"c":"BWM","t":"SL BINDING WASHER HD M/S","p":0,"ss":null,"st":null,"f":"Washers"},{"c":"CAA","t":"CAPSULE ANCHOR (SPIN-IN TYPE)","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"CAN","t":"HEX CASTLE NUT","p":1,"ss":null,"st":null,"f":"Nuts"},{"c":"CAS","t":"CHEMICAL ANCHOR STUD","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"CBP","t":"C/B BLIND RIVET COPPER/BRASS","p":0,"ss":null,"st":null,"f":"Rivets"},{"c":"CBR","t":"ROUND HD RIBB NECK CARR BOLT","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"CBS","t":"COUNTR-BOR SCREW","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"CCP","t":"COTTERLESS CLEVIS PIN","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"CDS","t":"COARSE DRYWALL SCREW","p":1,"ss":null,"st":null,"f":"Screws"},{"c":"CFU","t":"COMBO FILLISTER THD FORM SCREW","p":1,"ss":null,"st":null,"f":"Screws"},{"c":"CGB","t":"CARRIAGE BOLT","p":1,"ss":null,"st":null,"f":"Bolts"},{"c":"CLP","t":"CLEVIS PIN","p":1,"ss":null,"st":null,"f":"Pins"},{"c":"COI","t":"CONNECTOR INSERT","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"CON","t":"X 5/8 HEX COUPLING NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"COP","t":"COTTER PIN","p":1,"ss":null,"st":null,"f":"Pins"},{"c":"CPH","t":"COTTER PIN \"HAMMERLOCK\"","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"CQ7","t":"SQ/PHIL QUICK SCREW T/17","p":1,"ss":null,"st":null,"f":"Screws"},{"c":"CSF","t":"FL HD CONCRETE SCREW W/BIT","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"CSH","t":"HX HD CONCRETE SCREW W/BIT","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"CSK","t":"CONCRETE SCREW KIT","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"CSP","t":"C/S\" BLIND RIVET COPPER/STEEL","p":0,"ss":null,"st":null,"f":"Rivets"},{"c":"CSR","t":"COUNTERSUNK SOLID RIVET","p":0,"ss":null,"st":null,"f":"Rivets"},{"c":"DET","t":"DOUBLE END STUD","p":0,"ss":null,"st":null,"f":"Studs & Threaded Rod"},{"c":"DHP","t":"DRILLED HOLLOW PIN *PER PRT*","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"DIA","t":"DROP-IN ANCHOR","p":1,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"DLS","t":"DRYWALL LAMINATING SCREW","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"DOS","t":"DOWEL SCREW","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"DPO","t":"DOWEL PIN  (.001 OVERSIZED)","p":1,"ss":null,"st":null,"f":"Pins"},{"c":"DPP","t":"PULL DOWEL PIN","p":1,"ss":null,"st":null,"f":"Pins"},{"c":"DPS","t":"DOWEL PIN STANDARD","p":1,"ss":null,"st":null,"f":"Pins"},{"c":"DRP","t":"DETENT RING PINS","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"DTS","t":"DRYWALL TEK SCREW","p":1,"ss":null,"st":null,"f":"Screws"},{"c":"EBL","t":"LAG SCREW EYEBOLT","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"EBM","t":"O.A.L. EYEBOLT-MACH THRD W/NUT","p":1,"ss":null,"st":null,"f":"Bolts"},{"c":"EBN","t":"O.A.L EYEBOLT-MACH THRD","p":1,"ss":null,"st":null,"f":"Bolts"},{"c":"EBS","t":"O.A.L. EYEBOLT w/NUT","p":1,"ss":null,"st":null,"f":"Bolts"},{"c":"EDL","t":"EXTRA DUTY LOCKWASHER","p":0,"ss":null,"st":null,"f":"Washers"},{"c":"ELB","t":"ELEVATOR BOLT","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"ENB","t":"FORGED EYE NUT BLANK","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"END","t":"FORGED EYE NUT DRILLED&TAPPED","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"ENR","t":"FORGED EYE NUT REGULAR","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"ESB","t":"ES BOLT W/SECURNG COLLAR BN484","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"ESQ","t":"ESCUTCHION PIN","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"ESR","t":"ESCUTCHION PIN","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"EUF","t":"\"EXTRA THICK\" USS FLAT WASHER","p":0,"ss":null,"st":null,"f":"Washers"},{"c":"EZA","t":"E-Z ANCHOR","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"FBS","t":"FLANGED BUTTON SOC CAP SCREWcc","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"FBW","t":"FINISHED BEVELED WASHER","p":1,"ss":null,"st":null,"f":"Washers"},{"c":"FCS","t":"FLUSH HD SELF CLINCHING STUD","p":0,"ss":null,"st":null,"f":"Studs & Threaded Rod"},{"c":"FDS","t":"FINE DRYWALL SCREW","p":1,"ss":null,"st":null,"f":"Screws"},{"c":"FEB","t":"FORGED EYEBOLT","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"FEW","t":"FENDER WASHERS","p":1,"ss":null,"st":null,"f":"Washers"},{"c":"FIW","t":"FINISHING WASHER","p":1,"ss":null,"st":null,"f":"Washers"},{"c":"FJN","t":"FLEXLOC JAM NUT","p":1,"ss":null,"st":null,"f":"Nuts"},{"c":"FKT","t":"FL KNURL THUMB SCREW  DIN 653","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"FLA","t":"FEMALE LIBERY ANCHOR","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"FLN","t":"FLEXLOC NUT(EQUIV)","p":1,"ss":null,"st":null,"f":"Nuts"},{"c":"FLW","t":"FLAT WASHER","p":1,"ss":null,"st":null,"f":"Washers"},{"c":"FPM","t":"PHIL FLAT PIN HD SECURITY M/S","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"FQS","t":"PHIL FLAT QUICK SCREW","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"FRN","t":"FLAT HD RIVET NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"FSA","t":"FLAT HD (PHIL) SLEEVE ANCHOR","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"FSD","t":"FLAT SPLIT DRIVE ANCHOR","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"FSE","t":"FORGD SHLDR EYEBOLT","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"FSR","t":"FLAT HD SOLID RIVET","p":0,"ss":null,"st":null,"f":"Rivets"},{"c":"FSS","t":"\"FLAT PT\" SQUARE HD SET SCREW","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"FST","t":"FLAT HD SEMI-TUBULLAR RIVET","p":0,"ss":null,"st":null,"f":"Rivets"},{"c":"FT1","t":"F/T STUD 1ST/1ST","p":0,"ss":null,"st":null,"f":"Studs & Threaded Rod"},{"c":"FTO","t":"F/T STUD OAL/C.E.","p":0,"ss":null,"st":null,"f":"Studs & Threaded Rod"},{"c":"FTS","t":"F/T STUD OAL SHEARED ENDS","p":0,"ss":null,"st":null,"f":"Studs & Threaded Rod"},{"c":"FW3","t":"STRUCTURAL WASHER A325","p":1,"ss":null,"st":null,"f":"Washers"},{"c":"FWN","t":"C. F. WING NUT","p":1,"ss":null,"st":null,"f":"Nuts"},{"c":"FWS","t":"FORGED WING SCREW","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"FWT","t":"FLANGED WELD SCREW","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"GER","t":"GRIPPING EXT.RING(5555 SERIES)","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"GP2","t":"GROOVE PIN TYPE 24","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"GP6","t":"GROOVE PIN TYPE 67","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"GPA","t":"GROOVE PIN TYPE A/1","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"GPB","t":"GROOVE PIN TYPE B/2","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"GPC","t":"GROOVE PIN TYPE C/3","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"GPD","t":"GROOVE PIN TYPE D/4","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"GPE","t":"GROOVE PIN TYPE E/5","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"GPG","t":"GROOVE PIN TYPE G/67","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"GPH","t":"GROOVE PIN TYPE H/2A","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"GPU","t":"GROOVE PIN TYPE U/3H","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"HAB","t":"HANGER BOLT","p":1,"ss":null,"st":null,"f":"Bolts"},{"c":"HAC","t":"HAIRPIN CLIP","p":1,"ss":null,"st":null,"f":"Pins"},{"c":"HCA","t":"HI-CROWN ACORN NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"HCL","t":"HIGH COLLAR LOCK WASHERS","p":1,"ss":null,"st":null,"f":"Washers"},{"c":"HCP","t":"HAMMERLOCK COTTER PIN","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"HCS","t":"HEX CAP SCREW","p":1,"ss":null,"st":null,"f":"Screws"},{"c":"HDA","t":"HAMMER DRIVE ANCHOR","p":1,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"HDP","t":"HAMMER DRIVE PIN/SPLIT DRIVE","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"HEB","t":"FINISHED HEX BOLT","p":1,"ss":null,"st":null,"f":"Bolts"},{"c":"HEN","t":"HEX NUT","p":1,"ss":null,"st":null,"f":"Nuts"},{"c":"HFB","t":"HEX FLANGE BOLT","p":1,"ss":null,"st":null,"f":"Bolts"},{"c":"HFL","t":"HVY FLEXLOC NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"HFM","t":"SERRATED HEX FLANGE LKNUT","p":1,"ss":null,"st":null,"f":"Nuts"},{"c":"HFN","t":"HEX FLANGE NUT","p":1,"ss":null,"st":null,"f":"Nuts"},{"c":"HHB","t":"HVY HEX BOLT","p":1,"ss":null,"st":null,"f":"Bolts"},{"c":"HHC","t":"HVY HEX CAP SCREW","p":1,"ss":null,"st":null,"f":"Screws"},{"c":"HHI","t":"HEX HI-NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"HHJ","t":"HVY HEX JAM NUT","p":1,"ss":null,"st":null,"f":"Nuts"},{"c":"HHN","t":"HVY HX NUT","p":1,"ss":null,"st":null,"f":"Nuts"},{"c":"HHS","t":"HEAVY HEX SCREW","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"HHT","t":"HVY HEX TAP BOLT","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"HIP","t":"OVAL HANDLE HITCH PIN","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"HJF","t":"HVY HEX JAM FLEXLOC NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"HJN","t":"HEX JAM NUT","p":1,"ss":null,"st":null,"f":"Nuts"},{"c":"HLH","t":"LEFT-HAND \"HEAVY\" HEX NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"HLI","t":"HOLLOW WALL ANCHOR - LONG HEX","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"HLJ","t":"LEFT-HAND \"HVY\" HEX \"JAM\" NUT","p":1,"ss":null,"st":null,"f":"Nuts"},{"c":"HLN","t":"STOVER CONE LKNUT GR-C (8)","p":1,"ss":null,"st":null,"f":"Nuts"},{"c":"HLS","t":"HEX LAG SCREW","p":1,"ss":null,"st":null,"f":"Screws"},{"c":"HMN","t":"HEX M/S NUT","p":1,"ss":null,"st":null,"f":"Nuts"},{"c":"HN3","t":"A325 HVY HEX NUT","p":1,"ss":null,"st":null,"f":"Nuts"},{"c":"HNI","t":"HVY HEX NYL INSERT LKNUT","p":1,"ss":null,"st":null,"f":"Nuts"},{"c":"HNJ","t":"HVY HEX NYL INSERT JAM NUT","p":1,"ss":null,"st":null,"f":"Nuts"},{"c":"HNS","t":"HEX M/S NUT \"SMALL PAT\"","p":1,"ss":null,"st":null,"f":"Nuts"},{"c":"HOW","t":"HOLLOW WALL ANCHORS","p":1,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"HPC","t":"HAIRPIN COTTER PIN","p":1,"ss":null,"st":null,"f":"Pins"},{"c":"HPD","t":"HAIRPIN CLIP","p":1,"ss":null,"st":null,"f":"Pins"},{"c":"HRT","t":"HAND RIVET TOOL","p":0,"ss":null,"st":null,"f":"Rivets"},{"c":"HSH","t":"HOLLOW WALL ANCHOR -SHORT HEX","p":1,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"HSL","t":"HOLLOW WALL ANCHOR - \"SLD\"","p":1,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"HSQ","t":"HVY SQUARE NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"HTB","t":"HEX TAP BOLT","p":1,"ss":null,"st":null,"f":"Bolts"},{"c":"HTL","t":"HEAVY TOP LOCKNUT","p":1,"ss":null,"st":null,"f":"Nuts"},{"c":"HW3","t":"SL HEX WASHER T/23","p":0,"ss":null,"st":null,"f":"Washers"},{"c":"HWH","t":"UNSL HEX WHSR HI-LOW SCREW","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"HWL","t":"HOLLOW WALL ANCHOR - \"LD\"","p":1,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"HWN","t":"HOLLOW WALL ANCHOR - \"LONG\"","p":1,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"HWP","t":"SL HEX WASHER SELF PIERCING","p":1,"ss":null,"st":null,"f":"Washers"},{"c":"HWS","t":"HOLLOW WALL ANCHOR - \"SD\"","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"HWU","t":"HOLLOW WALL ANCHOR  \"SHORT\"","p":1,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"HXL","t":"HOLLOW WALL ANCHOR  \"X-LONG\"","p":1,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"HXS","t":"HOLLOW WALL ANCHOR  \"X-SHORT\"","p":1,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"IEL","t":"INT/EXT LOCKWASHER","p":1,"ss":null,"st":null,"f":"Washers"},{"c":"ITH","t":"INT TOOTH LOCK WASHER \"HEAVY\"","p":1,"ss":null,"st":null,"f":"Washers"},{"c":"ITT","t":"INT. THREAD TAPER PIN","p":1,"ss":null,"st":null,"f":"Pins"},{"c":"JAN","t":"MOLLY #8S JN  JACK NUT (EQUIV)","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"JNL","t":"JACK NUT LONG","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"JNS","t":"JACK NUT SHORT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"JNX","t":"JACK NUT X-LONG","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"KEN","t":"\"KEPS\" LOCK NUT","p":1,"ss":null,"st":null,"f":"Nuts"},{"c":"KNS","t":"KEPS NUT \"SMALL PATERN\"","p":1,"ss":null,"st":null,"f":"Nuts"},{"c":"KSS","t":"\"KNURL PT\" SQ HD SET SCREW","p":1,"ss":null,"st":null,"f":"Screws"},{"c":"KTF","t":"FLAT HEAD KAPTOGGLE","p":1,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"KTM","t":"MUSHROOM HEAD KAPTOGGLE","p":1,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"KTN","t":"KNURLED THUMB NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"KTR","t":"KAPTOGGLE (3/8-2 1/2 GRIP)","p":1,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"KTS","t":"KNURLED THUMB SCREW","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"LEB","t":"LAG EYEBOLT","p":1,"ss":null,"st":null,"f":"Bolts"},{"c":"LFN","t":"LARGE FLANGE NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"LFS","t":"LARGE FLANGE BOLT W/SERRATIONS","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"LHJ","t":"LEFT-HAND HEX JAM NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"LHM","t":"LEFT-HAND HEX M/S NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"LHN","t":"LEFT-HAND HEX NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"LMN","t":"LEFT-HAND HEX M/S NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"LOW","t":"SPLIT LOCKWASHER","p":1,"ss":null,"st":null,"f":"Washers"},{"c":"MAN","t":"ACORN  NUT   DIN 1587","p":1,"ss":null,"st":null,"f":"Nuts"},{"c":"MBC","t":"SPRING COTTER (BOLT) BN915","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"MBE","t":"BENT EYEBOLT BN1006","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"MBG","t":"SOC BUTTON HD FLNG SCREW 10.9","p":1,"ss":null,"st":null,"f":"Screws"},{"c":"MCB","t":"CARR BOLT DIN-603","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"MCJ","t":"HEX CASTLE JAM NUT CL.8 DIN937","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MCL","t":"1-PC CLAMPING RING LIGHT BN325","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"MCN","t":"HEX CASTLE NUT DIN 935 CL6","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MCO","t":"HEX CAP NUT-LOW TYPE DIN917","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MCP","t":"COTTER PIN  DIN 94","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"MCQ","t":"CLEVIS PIN W/O HOLE DIN 1434","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"MCS","t":"SPIRAL PIN (MED) DIN-ISO 8750","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"MCU","t":"SL SET SCREW CONE PT DIN553","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"MCV","t":"CAGE NUT BN3307","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MCW","t":"CONICAL SPRING WASHER SN212745","p":0,"ss":null,"st":null,"f":"Washers"},{"c":"MCY","t":"HEX COUPLING NUT DIN 6334","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MDA","t":"DISC SPR WASHER DIN 2093","p":0,"ss":null,"st":null,"f":"Washers"},{"c":"MDC","t":"DOWEL PIN ISO 2338B m6","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"MDD","t":"PULL DOWEL PIN  DIN 7979-D","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"MDH","t":"\"HARDENED\" DOWEL PIN D6325 h6","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"MDL","t":"NYL INS DOMED LCK NUT DIN 986","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MDP","t":"SL SET SCREW FULL DOG PT D417","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"MDS","t":"THRDED STUD  DIN 939FO","p":0,"ss":null,"st":null,"f":"Studs & Threaded Rod"},{"c":"MDT","t":"DBL END STUD D938","p":0,"ss":null,"st":null,"f":"Studs & Threaded Rod"},{"c":"MEA","t":"EYE BOLT TYPE B DIN 444","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"MEB","t":"MACH EYEBOLT-FORGED","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"MED","t":"ES BOLT W/SECURING CLR BN484","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"MEU","t":"MACHINERY EYEBOLT \"UNTHREADED\"","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"MFE","t":"HEX FLNGE LOCKNUT D6923","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MFH","t":"HEX FLANGE LOCKNUT DIN 6923","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MFI","t":"FINISHING WASHER SN213912","p":0,"ss":null,"st":null,"f":"Washers"},{"c":"MFK","t":"HX FEM STANDOFF BN3319","p":0,"ss":null,"st":null,"f":"Standoffs & Spacers"},{"c":"MFL","t":"PREV TORQUE FLNG LCKNUT D6927","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MFO","t":"FLANGE NUT/SMALL HD JIS B1189","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MFR","t":"PHIL FLAT \"PT\" SCREW BN13576","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"MFW","t":"FLAT WASHER DIN 125A","p":0,"ss":null,"st":null,"f":"Washers"},{"c":"MFX","t":"FINISHING WASHER  VSM13912","p":0,"ss":null,"st":null,"f":"Washers"},{"c":"MFY","t":"FLANGE SOC SCREW 12.9 BN1392","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"MG4","t":"GROOVE PIN DIN 1474","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"MGP","t":"GROOVE PIN  DIN 1473","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"MHD","t":"\"HARDENED\"DOWEL PIN m6 DIN6325","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"MHE","t":"MET HOLLOW SCREW DIN7643 BN454","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"MHH","t":"HVY HEX NUT BN40091","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MHJ","t":"HEX FITTING BOLT DIN 610","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"MHK","t":"HIGH KNURLED NUT DIN 466 CL 5","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MHL","t":"HI-COLLAR LOCKWASHER  DIN 7980","p":0,"ss":null,"st":null,"f":"Washers"},{"c":"MHM","t":"HEX NUT DIN 555","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MHN","t":"HEX NUT DIN 934 CL 8","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MHS","t":"HVY DUTY SPRING PIN BN879","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"MHW","t":"FLAT WSHR (HVY PIN)   DIN 7349","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"MHY","t":"HVY DTY SPRG TENSION PIN BN686","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"MIN","t":"X 1.8 INSERT NUT BN201","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MIT","t":"ENSAT THREADED INSERT TYPE 309","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"MJC","t":"HEX JAM CASTLE NUT DIN 979","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MJL","t":"\"LEFT-HAND\" HX JAM NUT DIN439B","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MJN","t":"HEX JAM NUT DIN 439B","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MKN","t":"KEPS LOCK NUT BN1364","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MKT","t":"KNURLED THUMB SCREW  DIN 464","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"MLE","t":"LIFTING EYEBOLT  DIN 580","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"MLF","t":"LIFTING EYENUT  DIN 582","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MLH","t":"HVY NYL INS LKNUT DIN 982","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MLI","t":"MALE LIBERTY ANCHOR","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"MLK","t":"LOW KNURLED NUT DIN467 CL 5","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MLN","t":"NYL INS LOCKNUT DIN 985 CL 8","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MLR","t":"RIBBED LOCKWASHER BN 791","p":0,"ss":null,"st":null,"f":"Washers"},{"c":"MLW","t":"LOCK WASHER DIN-127B","p":0,"ss":null,"st":null,"f":"Washers"},{"c":"MMF","t":"(M6 HX) M/F STANDOFF BN7375","p":0,"ss":null,"st":null,"f":"Standoffs & Spacers"},{"c":"MMS","t":"MALE/FEMALE STANDOFF BN 3318","p":0,"ss":null,"st":null,"f":"Standoffs & Spacers"},{"c":"MMT","t":"TAPER PIN UNHARD/MACH. I/2339B","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"MMU","t":"HEX STANDOFF BN3319","p":0,"ss":null,"st":null,"f":"Standoffs & Spacers"},{"c":"MNA","t":"HEX NUT DIN 970/ISO 4032","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MNF","t":"NYL INS FLANGE LCKNUT DIN6926","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MNH","t":"HVY HEX NUT ISO 4033 / BN 131","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MNK","t":"SLOTTED SHAFT NUT DIN 981","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MNL","t":"\"LEFT-HAND\" HEX NUT  DIN 934 L","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MNQ","t":"HVY HX LOCKNUT 6 D980M","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MNR","t":"HEX FLANGE NUT BN 860","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MNS","t":"MAGNETIC NUTSETTER   1/4\" HEX","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MNT","t":"NYLON TIP SET SCREW","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"MNU","t":"SQUARE NUT DIN562","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MNV","t":"SLOTTED ROUND NUT DIN1804W","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MNW","t":"WHEEL NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MNZ","t":"SLOT ROUND NUT DIN 546","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MPL","t":"ALLMETAL PREV LKNUT D980V","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MPN","t":"PAL NUT DIN7967","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MPQ","t":"PHIL PAN PT SCREW BN13577","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"MPS","t":"METRIC PLASTIC SCREW CHECKER","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"MPU","t":"SPIRAL PIN(MEDIUM) ISO 8750","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"MRA","t":"RIBBED LOCKWASHER BN13292","p":0,"ss":null,"st":null,"f":"Washers"},{"c":"MRD","t":"CTSNK HD RIVET 90DEG SN213126","p":0,"ss":null,"st":null,"f":"Rivets"},{"c":"MRG","t":"ROUND HD GROOVE PIN  DIN 1476","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"MRL","t":"ROLL PIN (LIGHT TYPE) DIN 7346","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"MRN","t":"SLOTTED RING NUT DIN 70852","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MRR","t":"ROUND HD RIVET-SOLID DIN660","p":0,"ss":null,"st":null,"f":"Rivets"},{"c":"MRT","t":"SPRING HEX LOCKNUT DIN 980V","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MRU","t":"RAMPA TEE NUT TYPE TS BN-241","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MRV","t":"X 10 NYL ROUND SPACER BN5281","p":0,"ss":null,"st":null,"f":"Standoffs & Spacers"},{"c":"MRW","t":"FLAT WASHER DIN 440","p":0,"ss":null,"st":null,"f":"Washers"},{"c":"MS1","t":"STRUCTURAL BOLT DIN 6914 10.9","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"MS4","t":"SOC CAP SCREW ISO4762","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"MS8","t":"SQUARE WELD NUT DIN 928","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MSA","t":"MACHINE SCREW ANCHOR","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"MSB","t":"MACH. SHLDR EYEBOLT FORGED","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"MSJ","t":"HEX FLANGE BOLT W/SERR BN73","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"MSK","t":"SL SET SCREW  P/T   DIN 427","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"MSM","t":"HEX SLOTTED NUT CL 8 DIN 935","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MSN","t":"SERR HEX FLANGE NUT CL8 BN190","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MSO","t":"SQUARE NUT  DIN 557","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MSP","t":"METRIC SPRING PIN  DIN 1481","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"MSQ","t":"SOCKET SCREW PLUG DIN 908","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"MSX","t":"SQUARE HD SET SCREW  DIN 479","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"MSY","t":"SPIRAL PIN (HVY) DIN 7344","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"MTA","t":"TORX PAN HEAD \"PT\" SCREW","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"MTB","t":"T-BOLT  CL 4.6 DIN 186-A","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"MTC","t":"TURNBUCKLE NUT DIN1479 STL-ZNC","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MTE","t":"THREADED TAPER PIN  DIN 7977","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"MTF","t":"12PT FLANGE SCREW 12.9","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"MTG","t":"T-SLOT NUT DIN 508 CL 10","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MTH","t":"TAPER PIN HARD.I/2339A-BN1209","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"MTI","t":"TAPER PIN INT THREAD  DIN 7978","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"MTJ","t":"THREADED INSERT \"SHORT\" BN 905","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"MTK","t":"THUMB SCREW KNOB  BN 5364 POM","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"MTL","t":"THREADED INSERT \"LONG\"  BN 906","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"MTN","t":"METRIC T-NUT  BN 226","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MTP","t":"THREADED PIN DIN 976B","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"MTQ","t":"HEX THIN NUT DIN 936","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MTR","t":"mtr THREADED ROD DIN 975","p":0,"ss":null,"st":null,"f":"Studs & Threaded Rod"},{"c":"MTS","t":"FULL THREAD STUD**","p":0,"ss":null,"st":null,"f":"Studs & Threaded Rod"},{"c":"MTU","t":"TAPER PIN UNHARD/GROUND DIN 1","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"MTV","t":"THUMB SCREW KNOB","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"MTW","t":"EXT TAB WASHER DIN-432","p":0,"ss":null,"st":null,"f":"Washers"},{"c":"MTX","t":"UNHRDND GRND TAPER PIN DIN 258","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"MTY","t":"TUBULAR RIVET DIN 7340A","p":0,"ss":null,"st":null,"f":"Rivets"},{"c":"MUB","t":"U-BOLT DIN 3570A","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"MUD","t":"UNHARDENED DOWEL PIN I2338B h8","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"MUN","t":"TYPE-U NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MVN","t":"HX FLANGE NUT VERB RIPP BN2798","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MW2","t":"2 PROJ SPOT WELD NUT MFC#14200","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MWD","t":"CAR BODY WASHER  BN 732","p":0,"ss":null,"st":null,"f":"Washers"},{"c":"MWH","t":"FLAT WASHER  THICK \"BN 737\"","p":0,"ss":null,"st":null,"f":"Washers"},{"c":"MWL","t":"SPRING LOCK WASHER D74361C","p":0,"ss":null,"st":null,"f":"Washers"},{"c":"MWM","t":"COLD FORMED WING NUT BN644","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MWN","t":"SPOT WELD NUT BN194","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MWO","t":"COLD FORGED WING NUT DIN-315","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MWP","t":"HEX WELD NUT  DIN 929","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MWQ","t":"WING NUT  BN 644","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MWR","t":"C.F. WING NUT  CL 5  BN 213","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"MWT","t":"WING SCREW  DIN 316   GT","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"MWU","t":"MALLEABLE WING SCREW","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"MWV","t":"SHIM WASHER DIN988/BN748","p":0,"ss":null,"st":null,"f":"Washers"},{"c":"MWW","t":"SPRING WAVE WASHER DIN-137B","p":0,"ss":null,"st":null,"f":"Washers"},{"c":"MWX","t":"CONSTRUCTION WASHER DIN 7989A","p":0,"ss":null,"st":null,"f":"Washers"},{"c":"MWY","t":"STRUCTURAL WASHER DIN 6916","p":0,"ss":null,"st":null,"f":"Washers"},{"c":"NAF","t":"FLAT HD NYLON ANCHOR","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"NAM","t":"MUSHROOM HD NYLON ANCHOR","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"NAR","t":"ROUND HD NYLON ANCHOR","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"NCL","t":"NYLON INSERT CLINCH LOCKNUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"NCN","t":"NYLON INS CAP LOCKNUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"NIF","t":"NYLON INS FLANGE LOCKNUT","p":1,"ss":null,"st":null,"f":"Nuts"},{"c":"NIJ","t":"NYL INS JAM LOCK NUT","p":1,"ss":null,"st":null,"f":"Nuts"},{"c":"NIL","t":"NYL INS LOCK NUT","p":1,"ss":null,"st":null,"f":"Nuts"},{"c":"NIW","t":"NYLON INSERT WING-NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"NLL","t":"NYLON INS LOCKNUT LEFT-HAND","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"NTT","t":"NYLON TIP THUMB SCREW TYPE P","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"ONT","t":"OVAL NECK TRACK BOLT W/N & LW","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"OSR","t":"OVAL HD SEMI-TUBULAR RIVET","p":1,"ss":null,"st":null,"f":"Rivets"},{"c":"OSS","t":"\"OVAL PT\" SQ HD SET SCREW","p":1,"ss":null,"st":null,"f":"Screws"},{"c":"P1B","t":"P-1  PHILLIP INSERT BIT","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"P2B","t":"P-2 PHIL INSERT BIT","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"P3B","t":"P-3  PHILLIP INSERT BIT","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"PAK","t":"PLASTIC ANCHOR KIT","p":1,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"PBD","t":"PHIL BUGLE DECK SCREW","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"PDW","t":"PIN DRIVE WEDGE ANCHOR  TYPE C","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"PFD","t":"PHIL FLAT PIN HD SECURITY T/A","p":1,"ss":null,"st":null,"f":"Pins"},{"c":"PFP","t":"PHIL FLAT PARTICLE BOARD SCREW","p":1,"ss":null,"st":null,"f":"Screws"},{"c":"PHB","t":"PENTA HEAD BOLT","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"PHR","t":"PNEUMATIC HYDRAULIC RIVETER","p":0,"ss":null,"st":null,"f":"Rivets"},{"c":"PIC","t":"PIN CONNECTOR","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"PIN","t":"PIN TERMINAL-BLUE","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"PLB","t":"PLOW BOLT #3 HEAD","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"POP","t":"PHIL OVAL PARTICLE BOARD SCREW","p":1,"ss":null,"st":null,"f":"Screws"},{"c":"PPD","t":"PHIL PAN PIN HD SECURITY T/A","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"PPG","t":"PLASTIC PLUG ANCHOR","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"PQS","t":"PHIL FLAT QUICK SCREW","p":1,"ss":null,"st":null,"f":"Screws"},{"c":"PSA","t":"PLASTIC SCREW ANCHOR\"CONICAL\"*","p":1,"ss":null,"st":null,"f":"Screws"},{"c":"PSC","t":"PLASTIC SCREW CHECKER","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"PSH","t":"#2 PH/#2 SQ PAN HI-LO SCREW","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"PST","t":"PHIL SQ  PAN TEK SCREW","p":1,"ss":null,"st":null,"f":"Screws"},{"c":"PTV","t":"PIN HEAD TORX TEK","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"Q2B","t":"QUADREX INSERT BIT","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"RBN","t":"ROUND BALL NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"RBW","t":"ROUND-BASE WELD NUT  PLN BASE","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"RBX","t":"ROUND RIVET BACK-UP WSHR","p":0,"ss":null,"st":null,"f":"Rivets"},{"c":"RHW","t":"RIGHT-HAND WHEEL NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"RIN","t":"RIVNUT-CREATIVE #49288/EQUIV","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"RKB","t":"ROUND THUMB SCREW KNOB BLACK","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"RKR","t":"ROUND THUMB SCREW KNOB RED","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"RLJ","t":"REV HEX JAM LOCKNUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"RLN","t":"REV HEX LOCK NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"RLP","t":"ROUND LOCK PIN","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"RNT","t":"RIVET-NUTTER TOOL #200-RNC","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"RPA","t":"RIBBED PLASTIC ANCHOR","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"RSA","t":"ROUND HD SLEEVE ANCHOR","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"RSB","t":"RAWL SET BOLT","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"RSR","t":"ROUND HD SOLID RIVET","p":0,"ss":null,"st":null,"f":"Rivets"},{"c":"RWN","t":"RND BASE WELD NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"SAN","t":"ACORN NUT \"2-PC\" SMALL PATTERN","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"SB3","t":"A325 STRUCT BOLT W/NUT","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"SB4","t":"A490 STRU BOLT W/NUT","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"SBC","t":"SET BOLT ANCHOR","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"SBO","t":"OAL SPADE BOLT *PER DRAWING*","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"SCC","t":"FLUSH HD CLNCNG CAPTIVE STUD","p":0,"ss":null,"st":null,"f":"Studs & Threaded Rod"},{"c":"SCD","t":"SCREW DOWEL","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"SCE","t":"STNLSS/STNLSS CLOSED END RIVET","p":0,"ss":null,"st":null,"f":"Rivets"},{"c":"SCS","t":"SOC CAP SCREW","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"SCW","t":"SQUARE CONE WASHER","p":0,"ss":null,"st":null,"f":"Washers"},{"c":"SDA","t":"SELF-DRILLING ANCHOR","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"SEC","t":"SET SCREW COLLAR","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"SFN","t":"SLOTTED FLAT NUT BN224","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"SFW","t":"SAE FLAT WASHER","p":0,"ss":null,"st":null,"f":"Washers"},{"c":"SHB","t":"SQUARE HEAD BOLT","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"SHJ","t":"SLOTTED HEX JAM NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"SHN","t":"SLOTTED HEX NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"SHP","t":"SLOTTED HVY HEX NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"SHS","t":"SQ HD SET SCREW","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"SHU","t":"SQUARE HEAD TAP BOLT","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"SHX","t":"SERRATED HEX NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"SJS","t":"SOC JAM SCREW","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"SKP","t":"SOC PIN-HEAD KEY","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"SKT","t":"SLOTTED KNURLED THUMB SCREW","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"SLA","t":"SLEEVE ANCHORS","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"SLB","t":"\"POUNDS\" SAE FLAT WASHERS","p":0,"ss":null,"st":null,"f":"Washers"},{"c":"SLC","t":"SLOTTED SET SCREW CONE PT","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"SLG","t":"SLOTTED SET SCREW \"FLAT POINT\"","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"SLH","t":"LOW SOC CAP SCREW","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"SLN","t":"STOVER LOCK NUT GR-C","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"SLP","t":"SQUARE LOCK PIN","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"SLS","t":"SLOTTED SET SCREW","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"SMN","t":"SQUARE M/S NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"SNC","t":"SHORT NECK CARR BOLT","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"SPH","t":"SPIROL SPRING PIN-\"HEAVY DUTY\"","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"SPK","t":"\"SUPER\" PLASTIC ANCHOR","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"SPP","t":"SPRING PIN","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"SQB","t":"SQUARE INSERT BIT","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"SQL","t":"SQUARE HEAD LAG SCREW","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"SQN","t":"SQUARE NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"SSB","t":"SHAKER SCREEN BOLT (F/T)","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"SSE","t":"6-PT SPLINE SET SCREW CUP PT","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"SSP","t":"S/S\"BLIND RIVET STEEL/STEEL","p":0,"ss":null,"st":null,"f":"Rivets"},{"c":"SSQ","t":"SPIROL SPRING PIN","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"SSS","t":"SOC SHLDR SCREW","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"SSW","t":"STANDARD SHOULDER WASHER","p":0,"ss":null,"st":null,"f":"Washers"},{"c":"STB","t":"STEP BOLT","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"STP","t":"ST/ST\"BLND RIVET STNLSS/STNLSS","p":0,"ss":null,"st":null,"f":"Rivets"},{"c":"STS","t":"ST/S\"  BLIND RIVET SS/STEEL","p":0,"ss":null,"st":null,"f":"Rivets"},{"c":"STV","t":"SILVER TIP SET SCREW","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"SWB","t":"SWING BOLT","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"SWL","t":"SWAGE LOCKING NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"SWN","t":"STAMPED WING NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"SWS","t":"STAMPED WING SCREW","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"TAP","t":"TAPER PIN","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"TAT","t":"T/A PLASTIC TOGGLER","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"TBF","t":"FLAT HEAD TOGGLE BOLTS","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"TBM","t":"MUSHROOM HEAD TOGGLE BOLTS *","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"TBR","t":"ROUND HEAD TOGGLE BOLTS","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"TBT","t":"T/B PLASTIC TOGGLER","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"TBU","t":"T-30 TORX BUTTON SECRTY SCREW","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"TC3","t":"A325 T-C BOLT W/NUT & WSHR","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"TC4","t":"A490 T-C BOLT W/NUT & WSHR","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"TCT","t":"T/C PLASTIC TOGGLER","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"TEN","t":"\"TEE\" NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"TFN","t":"TOPLOCK FLANGE NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"TFS","t":"TORX FLOOR BOARD SCREW","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"THS","t":"THREAD INSERT (EQUIV)","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"THT","t":"TH TOGGLER","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"TJN","t":"TOP LOCK JAM NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"TKB","t":"TEE THUMB SCREW KNOB BLACK","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"TKR","t":"TEE THUMB SCREW KNOB RED","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"TLN","t":"TOP-LOCK HEX NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"TMS","t":"TORX MAGNETIC SCREWDRIVER SET","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"TNB","t":"BALL STUD DIN 71803, TYPE C","p":0,"ss":null,"st":null,"f":"Studs & Threaded Rod"},{"c":"TNP","t":"TEE NUT \"PROPELLER TYPE\"","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"TOW","t":"TOGGLE WINGS","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"TPH","t":"\"HEAVY\" THUMB SCREW TYPE \"P\"","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"TPW","t":"TORX PAN WASHER HEAD M/S","p":0,"ss":null,"st":null,"f":"Washers"},{"c":"TRD","t":"FT THREADED ROD","p":0,"ss":null,"st":null,"f":"Studs & Threaded Rod"},{"c":"TRL","t":"FT LEFT-HAND THREADED ROD","p":0,"ss":null,"st":null,"f":"Studs & Threaded Rod"},{"c":"TRM","t":"X 1 METER FT THREADED ROD","p":0,"ss":null,"st":null,"f":"Studs & Threaded Rod"},{"c":"TS1","t":"MALLEABLE THUMB SCREW (#601)","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"TS7","t":"MALLEABLE THUMB SCREW #607","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"TSC","t":"TORX SOCKET CAP SCREW cc","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"TSD","t":"T-SLOT BOLT","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"TSL","t":"LEFT-HAND FULL THRD STUD","p":0,"ss":null,"st":null,"f":"Studs & Threaded Rod"},{"c":"TSN","t":"T-SLOT NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"TSP","t":"THUMB SCREW TYPE \"P\"","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"TSR","t":"TRUSS HEAD SOLID RIVET","p":0,"ss":null,"st":null,"f":"Rivets"},{"c":"TSS","t":"THUMB SCREW TYPE \"S\"","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"TST","t":"TRUSS HD SEMI-TUBULAR RIVET","p":0,"ss":null,"st":null,"f":"Rivets"},{"c":"TTG","t":"TAMPRUF TRI-GROOVE SCREW","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"TTN","t":"THREADED TAPER PIN \"W/NUT\"","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"TTP","t":"THREADED TAPER PIN","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"TTT","t":"T-20 TORX TRUSS PT SCREW","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"TWP","t":"T-NUT \"WITHOUT PRONGS\"","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"UCP","t":"UNIVERSAL CLEVIS PIN","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"UDR","t":"UNIVERSAL HD DRIVE RIVET W/PIN","p":0,"ss":null,"st":null,"f":"Rivets"},{"c":"VDP","t":"VENTED DOWEL PIN","p":0,"ss":null,"st":null,"f":"Pins"},{"c":"VFW","t":"VENTED FLAT WASHER","p":0,"ss":null,"st":null,"f":"Washers"},{"c":"VSL","t":"VENTED SPLIT LOCKWASHER","p":0,"ss":null,"st":null,"f":"Washers"},{"c":"VSS","t":"VENTED SOC SHLDR SCREW","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"WBW","t":"WSHR-BASED WING NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"WEA","t":"WEDGE ANCHORS","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"WEB","t":"WELDED EYEBOLT-514W","p":0,"ss":null,"st":null,"f":"Bolts"},{"c":"WEN","t":"WELD NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"WFT","t":"F/T ARC WELD STUD","p":0,"ss":null,"st":null,"f":"Studs & Threaded Rod"},{"c":"WIA","t":"\"WEJ-IT\" ANCHOR","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"WIN","t":"WIRE NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"WLN","t":"WELL NUT","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"WNM","t":"WING NUT MALLEABLE","p":0,"ss":null,"st":null,"f":"Nuts"},{"c":"WS7","t":"MALLEABLE WING SCREW (#607)","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"WSA","t":"WILSON SLEEVE ANCHOR","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"WSF","t":"FLANGED CD WELD STUD","p":0,"ss":null,"st":null,"f":"Studs & Threaded Rod"},{"c":"WSN","t":"NON-FLANGED CD WELD STUD","p":0,"ss":null,"st":null,"f":"Studs & Threaded Rod"},{"c":"WSS","t":"WOOD SCREW LEAD SHIELD","p":0,"ss":null,"st":null,"f":"Screws"},{"c":"ZIJ","t":"ZIP-IT JR. HOLLOW WALL ANCHOR","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"ZIW","t":"\"ZIP\"  WASHER","p":0,"ss":null,"st":null,"f":"Washers"},{"c":"ZSA","t":"\"ZIP-IT\" HOLLOW WALL ANCHOR","p":0,"ss":null,"st":null,"f":"Anchors & Inserts"},{"c":"ZWS","t":"WING SCREW T/WS","p":0,"ss":null,"st":null,"f":"Screws"}];
+const SUPPLIERS = [{"code":"MCMAS","name":"McMaster-Carr","specialty":"General industrial"},{"code":"SHERE","name":"Sherex Fastening Solutions","specialty":"Rivet nuts & inserts"},{"code":"PANDU","name":"Panduit Corporation","specialty":"Cable management"},{"code":"SMALL","name":"Smalley Steel Ring","specialty":"Retaining rings"},{"code":"ROTOR","name":"Rotor Clip Company","specialty":"Retaining rings & clips"},{"code":"ASSOC","name":"Associated Spring Raymond","specialty":"Springs"},{"code":"OETIK","name":"Oetiker, Inc.","specialty":"Clamps & rings"},{"code":"NORMA","name":"Norma Michigan / Breeze","specialty":"Hose clamps"},{"code":"CAPLU","name":"Caplugs","specialty":"Caps & plugs"},{"code":"HELLE","name":"HellermannTyton","specialty":"Cable ties & management"},{"code":"MISUM","name":"MISUMI USA Inc.","specialty":"Precision components"},{"code":"AVDEL","name":"Avdel (Stanley Engineered)","specialty":"Blind rivets & fasteners"},{"code":"METEX","name":"Metal Textiles Corporation","specialty":"Mesh & knitted wire"},{"code":"SWAGE","name":"Swagelok Connecticut","specialty":"Tube fittings"},{"code":"STAFA","name":"Stafast Products, Inc.","specialty":"Specialty fasteners"},{"code":"SEAST","name":"Seastrom Mfg. Co., Inc.","specialty":"Washers & stampings"},{"code":"UCCOM","name":"U-C Components, Inc.","specialty":"Precision components"},{"code":"TRIDO","name":"Ideal Clamp Products","specialty":"Hose clamps"},{"code":"MICRO","name":"Essentra Plastics LLC","specialty":"Plastic fasteners & caps"},{"code":"HEYCO","name":"Heyco / D.B. Roberts","specialty":"Electrical fittings"},{"code":"POPAD","name":"POP / Avery Dennison","specialty":"Pop rivets"},{"code":"SOUTH","name":"Southco","specialty":"Access hardware"},{"code":"PARKE","name":"Parker / Connecticut Components","specialty":"Seals & fittings"},{"code":"RAF45","name":"Fascomp Electronic Hardware","specialty":"Standoffs & spacers"},{"code":"RAF11","name":"RAF Electronic Hardware","specialty":"Standoffs & spacers"},{"code":"WSHD1","name":"Superior Washer & Gasket Co.","specialty":"Washers & gaskets"},{"code":"ULINE","name":"Uline","specialty":"Packaging & industrial"},{"code":"FAIRV","name":"Fairview Microwave","specialty":"RF/microwave hardware"},{"code":"DAPCO","name":"Dapco Industries","specialty":"Aerospace fasteners"},{"code":"HUCKM","name":"Huck / Arconic Fastening","specialty":"Structural blind fasteners"},{"code":"POWER","name":"Stanley Black & Decker","specialty":"Tools & fasteners"},{"code":"KATO2","name":"Kato / JEVEKA","specialty":"Helical thread inserts"},{"code":"BREEZ","name":"Breeze Industrial Products","specialty":"Hose clamps"},{"code":"STM21","name":"Fascomp (STM series)","specialty":"Metric standoffs"},{"code":"MS157","name":"Star Stainless Screw Co.","specialty":"Stainless fasteners"},{"code":"MURRA","name":"Murray Corporation","specialty":"Seals & clamps"},{"code":"TINNE","name":"Advance Components, Inc.","specialty":"Specialty fasteners"},{"code":"ORNIT","name":"Ornit / Anshida","specialty":"Hose clamps & fittings"},{"code":"BERGP","name":"Bergan / Alpha Fasteners","specialty":"Structural fasteners"},{"code":"ACCUR","name":"Alpha Fasteners","specialty":"Aerospace fasteners"}];
+
+const FAMILIES = ["Bolts","Screws","Nuts","Washers","Pins","Rivets","Anchors & Inserts","Standoffs & Spacers","Studs & Threaded Rod"];
+const FAM_ICON = {"Bolts":"⬡","Screws":"⛭","Nuts":"⬢","Washers":"◎","Pins":"⌇","Rivets":"◈","Anchors & Inserts":"⚓","Standoffs & Spacers":"⊡","Studs & Threaded Rod":"⌇"};
+
+const INCH_SIZES = ["#0","#2","#4","#6","#8","#10","#12","1/4","5/16","3/8","7/16","1/2","9/16","5/8","3/4","7/8","1","1-1/4","1-1/2","1-3/4","2","2-1/2","3","3-1/2","4"];
+const INCH_COARSE = {"#0":"80","#2":"56","#4":"40","#6":"32","#8":"32","#10":"24","#12":"24","1/4":"20","5/16":"18","3/8":"16","7/16":"14","1/2":"13","9/16":"12","5/8":"11","3/4":"10","7/8":"9","1":"8","1-1/4":"7","1-1/2":"6","1-3/4":"5","2":"4.5","2-1/2":"4","3":"4","3-1/2":"4","4":"4"};
+const INCH_FINE =   {"#0":"","#2":"64","#4":"48","#6":"40","#8":"36","#10":"32","#12":"28","1/4":"28","5/16":"24","3/8":"24","7/16":"20","1/2":"20","9/16":"18","5/8":"18","3/4":"16","7/8":"14","1":"12","1-1/4":"12","1-1/2":"12","1-3/4":"12","2":"","2-1/2":"","3":"","3-1/2":"","4":""};
+const METRIC_SIZES = ["M1.6","M2","M2.5","M3","M4","M5","M6","M8","M10","M12","M14","M16","M18","M20","M22","M24","M27","M30","M36","M42","M48"];
+const METRIC_COARSE = {"M1.6":"0.35","M2":"0.4","M2.5":"0.45","M3":"0.5","M4":"0.7","M5":"0.8","M6":"1.0","M8":"1.25","M10":"1.5","M12":"1.75","M14":"2.0","M16":"2.0","M18":"2.5","M20":"2.5","M22":"2.5","M24":"3.0","M27":"3.0","M30":"3.5","M36":"4.0","M42":"4.5","M48":"5.0"};
+const METRIC_FINE   = {"M8":"1.0","M10":"1.25","M12":"1.5","M14":"1.5","M16":"1.5","M18":"1.5","M20":"1.5","M22":"1.5","M24":"2.0","M27":"2.0","M30":"2.0","M36":"3.0","M42":"3.0","M48":"3.0"};
+
+// SBS inch diameter codes: fraction -> decimal code used in part numbers
+const INCH_DIA_CODE = {
+  "#0":"00","#2":"09","#4":"11","#6":"13","#8":"16","#10":"19","#12":"21",
+  "1/4":"25","5/16":"31","3/8":"37","7/16":"43","1/2":"50",
+  "9/16":"56","5/8":"62","3/4":"75","7/8":"87",
+  "1":"100","1-1/4":"125","1-1/2":"150","1-3/4":"175",
+  "2":"200","2-1/2":"250","3":"300","3-1/2":"350","4":"400"
+};
+
+// SBS inch length codes (same fractional encoding as diameter)
+const INCH_LEN_OPTIONS = [
+  {v:"",l:"-- no length (nuts, washers)"},
+  {v:"25",l:'1/4"'},{v:"37",l:'3/8"'},{v:"50",l:'1/2"'},{v:"62",l:'5/8"'},
+  {v:"75",l:'3/4"'},{v:"87",l:'7/8"'},{v:"100",l:'1"'},{v:"112",l:'1-1/8"'},
+  {v:"125",l:'1-1/4"'},{v:"137",l:'1-3/8"'},{v:"150",l:'1-1/2"'},
+  {v:"162",l:'1-5/8"'},{v:"175",l:'1-3/4"'},{v:"187",l:'1-7/8"'},
+  {v:"200",l:'2"'},{v:"212",l:'2-1/8"'},{v:"225",l:'2-1/4"'},
+  {v:"250",l:'2-1/2"'},{v:"275",l:'2-3/4"'},{v:"300",l:'3"'},
+  {v:"325",l:'3-1/4"'},{v:"350",l:'3-1/2"'},{v:"375",l:'3-3/4"'},
+  {v:"400",l:'4"'},{v:"425",l:'4-1/4"'},{v:"450",l:'4-1/2"'},
+  {v:"500",l:'5"'},{v:"550",l:'5-1/2"'},{v:"600",l:'6"'},
+  {v:"700",l:'7"'},{v:"800",l:'8"'},{v:"900",l:'9"'},
+  {v:"1000",l:'10"'},{v:"1100",l:'11"'},{v:"1200",l:'12"'},
+  {v:"1400",l:'14"'},{v:"1600",l:'16"'},{v:"1800",l:'18"'},{v:"2400",l:'24"'},
+];
+
+// Metric length: just mm value as string
+const METRIC_LEN_OPTIONS = [
+  {v:"",l:"-- no length (nuts, washers)"},
+  {v:"5",l:"5mm"},{v:"6",l:"6mm"},{v:"8",l:"8mm"},{v:"10",l:"10mm"},
+  {v:"12",l:"12mm"},{v:"14",l:"14mm"},{v:"16",l:"16mm"},{v:"18",l:"18mm"},
+  {v:"20",l:"20mm"},{v:"22",l:"22mm"},{v:"25",l:"25mm"},{v:"28",l:"28mm"},
+  {v:"30",l:"30mm"},{v:"35",l:"35mm"},{v:"40",l:"40mm"},{v:"45",l:"45mm"},
+  {v:"50",l:"50mm"},{v:"55",l:"55mm"},{v:"60",l:"60mm"},{v:"65",l:"65mm"},
+  {v:"70",l:"70mm"},{v:"75",l:"75mm"},{v:"80",l:"80mm"},{v:"90",l:"90mm"},
+  {v:"100",l:"100mm"},{v:"110",l:"110mm"},{v:"120",l:"120mm"},{v:"130",l:"130mm"},
+  {v:"140",l:"140mm"},{v:"150",l:"150mm"},{v:"160",l:"160mm"},{v:"180",l:"180mm"},
+  {v:"200",l:"200mm"},{v:"220",l:"220mm"},{v:"240",l:"240mm"},{v:"260",l:"260mm"},
+  {v:"280",l:"280mm"},{v:"300",l:"300mm"},
+];
+
+// Part families that require a length field
+const NEEDS_LENGTH = ["Bolts","Screws","Studs & Threaded Rod"];
+
+const MATERIALS = [
+  {code:"S", label:"Stainless A2 (304)",    note:"General corrosion resistance"},
+  {code:"3", label:"Stainless A4 (316)",    note:"Marine / chemical"},
+  {code:"8", label:"Grade 8 / Class 8.8",  note:"High-strength"},
+  {code:"1", label:"Class 10.9",            note:"Metric high-strength"},
+  {code:"2", label:"Class 12.9",            note:"Metric ultra-high-strength"},
+  {code:"5", label:"Grade 5",               note:"Inch medium-strength"},
+  {code:"",  label:"Steel (no code)",       note:"Default — assumed when no code"},
+];
+
+const FINISHES = [
+  {code:"-Z",label:'Clear zinc (-Z or Z)'},{code:"-Y",label:'Yellow zinc (-Y or Y)'},{code:"P",label:"Plain"},
+  {code:"Q",label:"Black zinc"},{code:"B",label:"Black oxide"},{code:"TZ",label:"Trivalent zinc"},{code:"G",label:"Hot-dip galv"},
+];
+
+const SUFFIXES = [
+  {code:"/N",label:"Nylon patch",group:"Locking"},{code:"/SB",label:"Blue Scotchgrip",group:"Locking"},
+  {code:"/SY",label:"Yellow Scotchgrip",group:"Locking"},{code:"/NP",label:"Nylon pellet",group:"Locking"},
+  {code:"/SL",label:"Shou Long equiv. (manufacturer)",group:"Admin"},
+  {code:"/EL",label:"Electropolished",group:"Surface"},{code:"/CL",label:"Cleaned (SBS)",group:"Surface"},{code:"/KO",label:"Kolsterized",group:"Surface"},
+  {code:"/FT",label:"Full thread",group:"Feature"},{code:"/LH",label:"Left-hand thread",group:"Feature"},
+  {code:"/DR",label:"Drilled",group:"Feature"},{code:"/UC",label:"Thread undercut",group:"Feature"},{code:"/KN",label:"Knurled head",group:"Feature"},
+  {code:"/H6",label:"Pin tol H6",group:"Tolerance"},{code:"/M6",label:"Pin tol m6",group:"Tolerance"},
+  {code:"/SP",label:"Special variation",group:"Admin"},{code:"/PR",label:"Per-print",group:"Admin"},
+];
+
+// ── State ─────────────────────────────────────────────────────────────────
+const F = {type:"",family:"",supplier:null,measure:"",material:"",thread:{size:"",pitch:"",type:""},length:"",code:null,step:1};
+const B = {type:"",measure:"",supplier:null,oemCatNum:"",family:"",code:null,material:"",thread:{size:"",pitch:"",type:""},length:"",finish:"",suffixes:[],step:1};
+
+// ── Utilities ─────────────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+const show = id => $(id) && $(id).classList.remove("hidden");
+const hide = id => $(id) && $(id).classList.add("hidden");
+function titleCase(s){return s.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase())}
+function copyText(id){
+  const v=$(id).textContent;
+  navigator.clipboard.writeText(v).then(()=>{
+    document.querySelectorAll(".btn-ghost").forEach(b=>{
+      if(b.textContent.includes("Copy")){const o=b.innerHTML;b.innerHTML="&#10003; Copied";setTimeout(()=>b.innerHTML=o,1600)}
+    });
+  });
+}
+function ecatUrl(pn){
+  return pn.startsWith("/")
+    ?"https://shop.specialtybolt.com/itemdetail/?itemCode="+encodeURIComponent(pn)
+    :"https://shop.specialtybolt.com/itemdetail/"+encodeURIComponent(pn);
+}
+
+// ── Mode ──────────────────────────────────────────────────────────────────
+function setMode(m){
+  ["find","build","decode","ref"].forEach(id=>{
+    $("panel-"+id).classList.toggle("hidden",id!==m);
+    $("tab-"+id).classList.toggle("active",id===m);
+  });
+}
+
+// ── Chip helpers ──────────────────────────────────────────────────────────
+function deactivateChips(parentId){document.querySelectorAll("#"+parentId+" .chip").forEach(c=>c.classList.remove("on"))}
+function makeChips(containerId,opts,fn){
+  const el=$(containerId); el.innerHTML="";
+  opts.forEach(o=>{
+    const c=document.createElement("div"); c.className="chip"; c.setAttribute("data-val",o);
+    c.innerHTML="<span class=\'chip-dot\'></span>"+(FAM_ICON[o]||"")+" "+o;
+    c.onclick=()=>fn(c,o); el.appendChild(c);
+  });
+}
+
+// ── Thread grid builder ───────────────────────────────────────────────────
+function buildThreadGrid(containerId, measure, stateObj){
+  var el=document.getElementById(containerId); el.innerHTML="";
+  if(measure==="inch"){
+    var inchOpts=INCH_SIZES.map(function(s){return '<option value="'+s+'">'+s+'</option>';}).join('');
+    el.innerHTML='<div><div class="field-label">Diameter</div><select id="'+containerId+'-sz" class="no-icon" onchange="threadOnChange(\''+containerId+'\',\'inch\')"><option value="">Select size...</option>'+inchOpts+'</select></div>'
+      +'<div><div class="field-label">Thread type</div><div class="chips" id="'+containerId+'-ttype">'
+      +'<div class="chip on" data-tt="C" onclick="threadPickType(\''+containerId+'\',\'C\',this)"><span class="chip-dot"></span>UNC &mdash; Coarse</div>'
+      +'<div class="chip" data-tt="F" onclick="threadPickType(\''+containerId+'\',\'F\',this)"><span class="chip-dot"></span>UNF &mdash; Fine</div>'
+      +'</div><div style="font-size:11px;color:var(--ink3);margin-top:6px" id="'+containerId+'-tpi"></div></div>';
+    stateObj.thread={size:"",pitch:"",type:"C"};
+  } else {
+    var metOpts=METRIC_SIZES.map(function(s){return '<option value="'+s+'">'+s+'</option>';}).join('');
+    el.innerHTML='<div><div class="field-label">Diameter</div><select id="'+containerId+'-sz" class="no-icon" onchange="threadOnChange(\''+containerId+'\',\'metric\')"><option value="">Select size...</option>'+metOpts+'</select></div>'
+      +'<div><div class="field-label">Pitch (mm)</div><div class="chips" id="'+containerId+'-ttype">'
+      +'<div class="chip on" data-tt="coarse" onclick="threadPickType(\''+containerId+'\',\'coarse\',this)"><span class="chip-dot"></span>Coarse (std)</div>'
+      +'<div class="chip" data-tt="fine" onclick="threadPickType(\''+containerId+'\',\'fine\',this)"><span class="chip-dot"></span>Fine</div>'
+      +'</div><div style="font-size:11px;color:var(--ink3);margin-top:6px" id="'+containerId+'-tpi"></div></div>';
+    stateObj.thread={size:"",pitch:"",type:"coarse"};
+  }
+  var needsLen = NEEDS_LENGTH.indexOf(stateObj.family||"") >= 0;
+  var lenWrapId = (stateObj===F) ? "f-length-wrap" : "b-length-wrap";
+  var lenSelId  = (stateObj===F) ? "f-length-sel"  : "b-length-sel";
+  var lenWrap = document.getElementById(lenWrapId);
+  var lenSel  = document.getElementById(lenSelId);
+  if(lenWrap && lenSel){
+    var opts = (measure==="inch") ? INCH_LEN_OPTIONS : METRIC_LEN_OPTIONS;
+    lenSel.innerHTML = opts.map(function(o){return "<option value=\""+o.v+"\">"+o.l+"</option>";}).join("");
+    lenSel.value = stateObj.length || "";
+    lenSel.onchange = function(){ stateObj.length = lenSel.value; if(stateObj===B) bUpdate(); };
+    lenWrap.classList.toggle("hidden", !needsLen);
+  }
+}
+
+function threadPickType(gid, tt, el){
+  document.querySelectorAll("#"+gid+"-ttype .chip").forEach(c=>c.classList.remove("on"));
+  el.classList.add("on");
+  const sz=$(gid+"-sz").value;
+  if(gid.startsWith("f-")) F.thread.type=tt;
+  else B.thread.type=tt;
+  threadOnChange(gid, gid.startsWith("f-") ? F.measure : B.measure);
+}
+
+function threadOnChange(gid, measure){
+  const sz=$(gid+"-sz").value;
+  const stateThread = gid.startsWith("f-") ? F.thread : B.thread;
+  const tt = stateThread.type || (measure==="inch"?"C":"coarse");
+  let pitch="", display="";
+  if(measure==="inch"){
+    pitch = tt==="C" ? (INCH_COARSE[sz]||"") : (INCH_FINE[sz]||"");
+    if(sz && pitch) display = sz+"-"+pitch+" "+( tt==="C"?"UNC":"UNF");
+    else if(sz && !pitch && tt==="F") display="No UNF for "+sz+", use UNC";
+  } else {
+    pitch = tt==="coarse" ? (METRIC_COARSE[sz]||"") : (METRIC_FINE[sz]||"");
+    if(sz && pitch) display = sz+" &times; "+pitch+"mm pitch";
+    else if(sz && !pitch && tt==="fine") display="No fine pitch for "+sz;
+  }
+  const tpiEl=$(gid+"-tpi");
+  if(tpiEl) tpiEl.innerHTML=display ? "<strong>"+display+"</strong>" : "";
+  stateThread.size=sz;
+  stateThread.pitch=pitch;
+  if(gid.startsWith("b-")) bUpdate();
+}
+
+// ════════════════════════════════════════════════════════════
+// FIND mode
+// ════════════════════════════════════════════════════════════
+function fPickType(el, type){
+  deactivateChips("fs1"); el.classList.add("on");
+  F.type=type; F.step=2;
+  if(type==="std"){
+    show("fs2-std"); hide("fs2-oem");
+  } else {
+    hide("fs2-std"); show("fs2-oem");
+    fRenderSuppliers($("f-sup-search").value||"");
+  }
+  fUpdateProg();
+}
+
+function fRenderSuppliers(q){
+  const el=$("f-sup-list"); el.innerHTML="";
+  const list=q ? SUPPLIERS.filter(s=>s.name.toUpperCase().includes(q.toUpperCase())||s.code.toUpperCase().includes(q.toUpperCase())) : SUPPLIERS;
+  $("f-sup-count").textContent=list.length+" suppliers";
+  list.forEach(s=>{
+    const row=document.createElement("div"); row.className="sup-item"+(F.supplier&&F.supplier.code===s.code?" on":"");
+    row.innerHTML='<span class="sup-code">/'+s.code+'</span><span class="sup-name">'+s.name+'</span><span class="sup-spec">'+s.specialty+'</span>';
+    row.onclick=()=>fPickSupplier(s);
+    el.appendChild(row);
+  });
+}
+function fFilterSuppliers(){fRenderSuppliers($("f-sup-search").value||"")}
+
+function fPickSupplier(s){
+  F.supplier=s; F.step=3;
+  document.querySelectorAll("#f-sup-list .sup-item").forEach(el=>{
+    el.classList.toggle("on",el.querySelector(".sup-code").textContent.slice(1)===s.code);
+  });
+  // For OEM: skip material/code steps, go straight to result
+  fShowOemResult();
+}
+
+function fPickFamily(el, fam){
+  deactivateChips("f-family-chips"); el.classList.add("on");
+  F.family=fam; F.step=3;
+  show("fs3"); fUpdateProg();
+}
+
+function fPickMeasure(el, val){
+  deactivateChips("fs3"); el.classList.add("on");
+  F.measure=val; F.step=4;
+  buildThreadGrid("f-thread-grid", val||"inch", F);
+  show("fs4"); fUpdateProg();
+}
+
+function fSkipThread(){ F.step=5; show("fs5"); fUpdateProg(); }
+function fApplyThread(){ F.thread.size=$("f-thread-grid-sz")?$("f-thread-grid-sz").value:""; var ls=$("f-length-sel"); F.length=ls?ls.value:""; F.step=5; show("fs5"); fUpdateProg(); }
+
+function fPickMat(el, val){
+  deactivateChips("fs5"); el.classList.add("on");
+  F.material=val; F.step=6;
+  fBuildCodeList(); show("fs6"); fUpdateProg();
+}
+
+function fBuildCodeList(){
+  var list=CODES.filter(function(c){return c.f===F.family;});
+  // ss/st: 1=confirmed yes, null=unknown (show), 0=confirmed no (hide)
+  if(F.material==="ss"||F.material==="ss316") list=list.filter(function(c){return c.ss!==0;});
+  if(F.material==="alloy"||F.material==="steel") list=list.filter(function(c){return c.st!==0;});
+  list.sort(function(a,b){return b.p-a.p||a.t.localeCompare(b.t);});
+  F._list=list; fRenderCodes(list);
+}
+function fFilterCodes(){ const q=($("f-code-search").value||"").toUpperCase(); fRenderCodes(q?F._list.filter(c=>c.t.includes(q)||c.c.includes(q)):F._list); }
+function fRenderCodes(list){
+  const el=$("f-code-list"); el.innerHTML="";
+  $("f-code-count").textContent=list.length+" codes";
+  if(!list.length){el.innerHTML="<div style=\'padding:10px;color:var(--ink3);font-size:13px\'>No matches. Try \'Any\' for material.</div>";return}
+  list.forEach(c=>{
+    const row=document.createElement("div"); row.className="citem"+(F.code&&F.code.c===c.c?" on":"");
+    row.onclick=()=>fPickCode(c);
+    const tags=(c.ss?"<span class=\'ctag ctag-ss\'>SS</span>":"")+(c.st?"<span class=\'ctag ctag-st\'>ST</span>":"")+(c.p?"<span class=\'ctag ctag-p\'>&#9733;</span>":"");
+    row.innerHTML='<span class="cbadge">'+c.c+'</span><span class="cname">'+titleCase(c.t)+'</span><span class="ctags">'+tags+'</span>';
+    el.appendChild(row);
+  });
+}
+function fPickCode(c){
+  F.code=c; F.step=7;
+  document.querySelectorAll("#f-code-list .citem").forEach(el=>el.classList.toggle("on",el.querySelector(".cbadge").textContent===c.c));
+  fShowStdResult(); show("fs7"); show("f-reset"); fUpdateProg();
+}
+
+function fShowStdResult(){
+  const matCode={ss:"S",ss316:"3",alloy:"8",steel:""}[F.material]||"";
+  const prefix=F.measure==="metric"?".":"";
+  const threadStr = F.thread.size ? buildThreadStr(F.measure, F.thread, F.length) : "···";
+  // Both inch and metric: [prefix] + SIZE_THREAD + CODE + MATERIAL
+  // Inch:   25C + HEN + S = 25CHENS
+  // Metric: . + 8C + MHN + S = .8CMHNS
+  var pn=prefix+threadStr+F.code.c+matCode;
+  $("f-pn-raw").textContent=pn;
+  // Unified display: [metric prefix] + size/thread + code + material
+  var pnHtml=
+    (prefix?'<span class="seg seg-on">'+prefix+'</span>':"")+
+    '<span class="seg '+(threadStr==="···"?"seg-dim":"seg-on")+'">'+threadStr+'</span>'+
+    '<span class="seg seg-on">'+F.code.c+'</span>'+
+    (matCode?'<span class="seg seg-on">'+matCode+'</span>':'');
+  $("f-pn-val").innerHTML=pnHtml;
+  const url=ecatUrl(pn.replace("···",""));
+  $("f-ecat-link").href=url;
+  $("f-info-std").style.display="";
+  $("f-info-oem").style.display="none";
+  const tInfo=F.thread.size?(F.measure==="inch"?" &bull; Thread: "+F.thread.size+"-"+F.thread.pitch+" "+(F.thread.type==="C"?"UNC":"UNF"):" &bull; Thread: "+F.thread.size+"&times;"+F.thread.pitch+"mm"):"";
+  $("f-info-text").innerHTML='Code <strong>'+F.code.c+'</strong> &mdash; '+titleCase(F.code.t)+''+tInfo+'. Material code <strong>'+(matCode||"(none = steel)")+'</strong>. Search on <a href="'+url+'" target="_blank">SBS E-Catalog &rarr;</a>';
+}
+
+function fShowOemResult(){
+  const s=F.supplier;
+  const pn="/"+s.code+"···";
+  $("f-pn-raw").textContent="/"+s.code;
+  $("f-pn-val").innerHTML='<span class="seg seg-on">/</span><span class="seg seg-on">'+s.code+'</span><span class="seg seg-dim">···</span>';
+  $("f-ecat-link").href="https://shop.specialtybolt.com/itemdetail/?itemCode=%2F"+s.code;
+  $("f-info-std").style.display="none";
+  $("f-info-oem").style.display="";
+  $("f-oem-text").innerHTML='Supplier: <strong>'+s.name+'</strong> (/'+s.code+'). Specialty: '+s.specialty+'. Part number format: <span style="font-family:var(--mono);font-size:12px">/'+s.code+'[CATALOG#]</span>. Search the E-Catalog with the supplier catalog # to find the specific part.';
+  show("fs7"); show("f-reset"); F.step=7; fUpdateProg();
+}
+
+function fUpdateProg(){var t=7;var dots="";for(var i=0;i<t;i++){dots+='<div class="prog-dot'+(i<F.step?" on":"")+'"></div>';}$("find-prog").innerHTML=dots;}
+
+// ════════════════════════════════════════════════════════════
+// BUILD mode
+// ════════════════════════════════════════════════════════════
+function bPickType(el, type){
+  deactivateChips("bs1"); el.classList.add("on");
+  B.type=type; B.step=2;
+  if(type==="std"){ show("bs2"); hide("bs2-oem"); }
+  else { hide("bs2"); show("bs2-oem"); bRenderSuppliers(""); }
+  bUpdateProg();
+}
+
+function bRenderSuppliers(q){
+  const el=$("b-sup-list"); el.innerHTML="";
+  const list=q?SUPPLIERS.filter(s=>s.name.toUpperCase().includes(q.toUpperCase())||s.code.toUpperCase().includes(q.toUpperCase())):SUPPLIERS;
+  list.forEach(s=>{
+    const row=document.createElement("div"); row.className="sup-item"+(B.supplier&&B.supplier.code===s.code?" on":"");
+    row.innerHTML='<span class="sup-code">/'+s.code+'</span><span class="sup-name">'+s.name+'</span><span class="sup-spec">'+s.specialty+'</span>';
+    row.onclick=()=>{
+      document.querySelectorAll("#b-sup-list .sup-item").forEach(r=>r.classList.remove("on")); row.classList.add("on");
+      B.supplier=s; $("b-oem-manual").value=s.code;
+    };
+    el.appendChild(row);
+  });
+}
+function bFilterSuppliers(){bRenderSuppliers($("b-sup-search").value||"")}
+function bOemManualUpdate(){const v=$("b-oem-manual").value; if(v.length===5){const s=SUPPLIERS.find(x=>x.code===v); if(s){B.supplier=s;} else B.supplier={code:v,name:"Custom: /"+v,specialty:""}}}
+function bApplyOem(){
+  const code=$("b-oem-manual").value.trim().toUpperCase().slice(0,5);
+  const catnum=$("b-oem-catnum").value.trim();
+  if(!code) return;
+  if(!B.supplier) B.supplier={code,name:"Supplier /"+code,specialty:""};
+  B.oemCatNum=catnum; B.step=9;
+  bShowOemResult(); bUpdateProg();
+}
+function bShowOemResult(){
+  const s=B.supplier; const catnum=B.oemCatNum;
+  const pn="/"+s.code+(catnum||"···");
+  $("b-pn-raw").textContent=pn;
+  $("b-pn-val").innerHTML='<span class="seg seg-on">/</span><span class="seg seg-on">'+s.code+'</span><span class="seg '+(catnum?"seg-on":"seg-dim")+'">'+( catnum||"···")+'</span>';
+  $("b-ecat-link").href=ecatUrl(pn.replace("···",""));
+  $("b-breakdown").innerHTML=[
+    '<div class="d-seg ds-prefix"><div class="d-seg-top">/</div><div class="d-seg-lbl">OEM prefix</div></div>',
+    '<div class="d-seg ds-supplier"><div class="d-seg-top">'+s.code+'</div><div class="d-seg-lbl">'+s.name+'</div></div>',
+    catnum?'<div class="d-seg ds-catnum"><div class="d-seg-top">'+catnum+'</div><div class="d-seg-lbl">Catalog #</div></div>':"",
+  ].join("");
+  show("bs9"); bUpdateProg();
+}
+
+function bPickMeasure(el, val){
+  deactivateChips("bs2"); el.classList.add("on");
+  B.measure=val; B.step=3; show("bs3"); bUpdateProg();
+}
+
+function bPickFamily(el, fam){
+  deactivateChips("b-family-chips"); el.classList.add("on");
+  B.family=fam; B.code=null; B.step=4;
+  ["bs5","bs6","bs7","bs8","bs9"].forEach(hide);
+  bBuildCodeList(); show("bs4"); bUpdate(); bUpdateProg();
+}
+
+function bBuildCodeList(){
+  var list=CODES.filter(function(c){return c.f===B.family;}).sort(function(a,b){return b.p-a.p||a.t.localeCompare(b.t);});
+  B._list=list; bRenderCodes(list);
+}
+function bFilterCodes(){const q=($("b-code-search").value||"").toUpperCase(); bRenderCodes(q?B._list.filter(c=>c.t.includes(q)||c.c.includes(q)):B._list);}
+function bRenderCodes(list){
+  const el=$("b-code-list"); el.innerHTML="";
+  $("b-code-count").textContent=list.length+" codes";
+  list.forEach(c=>{
+    const row=document.createElement("div"); row.className="citem"+(B.code&&B.code.c===c.c?" on":"");
+    row.onclick=()=>bPickCode(c);
+    const tags=(c.ss?"<span class=\'ctag ctag-ss\'>SS</span>":"")+(c.st?"<span class=\'ctag ctag-st\'>ST</span>":"")+(c.p?"<span class=\'ctag ctag-p\'>&#9733;</span>":"");
+    row.innerHTML='<span class="cbadge">'+c.c+'</span><span class="cname">'+titleCase(c.t)+'</span><span class="ctags">'+tags+'</span>';
+    el.appendChild(row);
+  });
+}
+
+function bPickCode(c){
+  B.code=c; B.step=5;
+  document.querySelectorAll("#b-code-list .citem").forEach(el=>el.classList.toggle("on",el.querySelector(".cbadge").textContent===c.c));
+  // Material list
+  const el=$("b-mat-list"); el.innerHTML="";
+  MATERIALS.forEach(m=>{
+    const row=document.createElement("div"); row.className="mat-row"+(B.material===m.code?" on":"");
+    row.onclick=()=>bPickMat(row, m.code);
+    row.innerHTML='<span class="cbadge" style="min-width:30px">'+m.code||"—"+'</span><span style="font-size:13px;flex:1">'+m.label+'</span><span style="font-size:11px;color:var(--ink3)">'+m.note+'</span>';
+    el.appendChild(row);
+  });
+  buildThreadGrid("b-thread-grid", B.measure, B);
+  bRenderFinishChips(); bRenderSuffixes();
+  show("bs5"); show("bs6"); show("bs7"); show("bs8"); show("bs9");
+  bUpdate(); bUpdateProg();
+}
+
+function bPickMat(el, code){
+  document.querySelectorAll("#b-mat-list .mat-row").forEach(r=>r.classList.remove("on")); el.classList.add("on");
+  B.material=code; bUpdate();
+}
+
+function bRenderFinishChips(){
+  const el=$("b-finish-chips"); el.innerHTML="";
+  FINISHES.forEach(f=>{
+    const c=document.createElement("div"); c.className="chip"+(B.finish===f.code?" on":"");
+    c.innerHTML='<span style="font-family:var(--mono);font-size:11px;font-weight:500">'+f.code+'</span>&nbsp;'+f.label+'';
+    c.onclick=()=>{document.querySelectorAll("#b-finish-chips .chip").forEach(x=>x.classList.remove("on")); c.classList.add("on"); B.finish=f.code; bUpdate();};
+    el.appendChild(c);
+  });
+}
+
+function bRenderSuffixes(){
+  const wrap=$("b-sfx-wrap"); wrap.innerHTML="";
+  const groups=[...new Set(SUFFIXES.map(s=>s.group))];
+  groups.forEach(g=>{
+    const gEl=document.createElement("div"); gEl.className="sfx-grp";
+    gEl.innerHTML='<div class="sfx-grp-lbl">'+g+'</div>';
+    SUFFIXES.filter(s=>s.group===g).forEach(s=>{
+      const c=document.createElement("div"); c.className="sfx-chip"+(B.suffixes.includes(s.code)?" on":"");
+      c.innerHTML='<span class="sfx-code">'+s.code+'</span> '+s.label+'';
+      c.onclick=()=>{const i=B.suffixes.indexOf(s.code); i>=0?B.suffixes.splice(i,1):B.suffixes.push(s.code); c.classList.toggle("on"); bUpdate();};
+      gEl.appendChild(c);
+    });
+    wrap.appendChild(gEl);
+  });
+}
+
+function buildThreadStr(measure, thread, length){
+  if(!thread.size) return "";
+  if(measure==="inch"){
+    // Inch: size code (e.g. 25 for 1/4") + thread type (C=UNC, F=UNF)
+    var diaCode = INCH_DIA_CODE[thread.size] || thread.size.replace(/[^0-9]/g,"").padStart(2,"0");
+    return diaCode + (thread.type||"C") + (length||"");
+  } else {
+    // Metric: strip "M" from size (M8->8, M10->10) + C (coarse) or F (fine)
+    // Pattern confirmed from catalog: .8CMHN, .10C35MHC-Z, .6CMHNS etc.
+    var diaNum = thread.size.replace("M","");
+    var threadChar = (thread.type==="coarse") ? "C" : "F";
+    return diaNum + threadChar + (length||"");
+  }
+}
+
+function bUpdate(){
+  if(!B.code) return;
+  var prefix=B.measure==="metric"?".":"";
+  var threadStr=buildThreadStr(B.measure, B.thread, B.length);
+  var inch=(B.measure==="inch");
+  // Inch:   SIZETHREAD + CODE + MATERIAL + FINISH  e.g. 25C + HEN + S = 25CHENS
+  // Metric: . + CODE + MATERIAL + SIZETHREAD + FINISH  e.g. .HNN1M610P
+  var pn;
+  // Both inch and metric: SIZE_THREAD + CODE + MATERIAL + FINISH
+  // Inch:   25C + HEN + S        = 25CHENS
+  // Metric: . + 8C + MHN         = .8CMHN
+  // Metric: . + 8C + MHN + S     = .8CMHNS
+  pn=prefix+(threadStr||"···")+B.code.c+(B.material||"")+(B.finish||"")+B.suffixes.join("");
+  $("b-pn-raw").textContent=pn;
+  // Unified segment order: [metric prefix] + size/thread + code + material + finish
+  var segs=[];
+  if(prefix) segs.push({v:prefix,cls:"seg-on",lbl:"Metric prefix"});
+  segs.push(threadStr?{v:threadStr,cls:"seg-on",lbl:inch?"Size + thread (e.g. 25C = 1/4 UNC)":"Size + thread (e.g. 8C = M8 coarse)"}:{v:"···",cls:"seg-dim",lbl:"Size (select above)"});
+  segs.push({v:B.code.c,cls:"seg-on",lbl:"Part type"});
+  if(B.material) segs.push({v:B.material,cls:"seg-on",lbl:"Material"});
+  if(B.finish) segs.push({v:B.finish,cls:"seg-on",lbl:"Finish"});
+  B.suffixes.forEach(sf=>segs.push({v:sf,cls:"seg-on",lbl:SUFFIXES.find(x=>x.code===sf)?.label||sf}));
+  $("b-pn-val").innerHTML=segs.map(s=>'<span class="seg '+s.cls+'">'+s.v+'</span>').join("");
+  $("b-ecat-link").href=ecatUrl(pn.replace("···",""));
+  $("b-breakdown").innerHTML=segs.filter(s=>s.cls!=="seg-dim").map(s=>'<div class="d-seg ds-code"><div class="d-seg-top">'+s.v+'</div><div class="d-seg-lbl">'+s.lbl+'</div></div>').join("");
+}
+
+function bUpdateProg(){var t=9;var dots="";for(var i=0;i<t;i++){dots+='<div class="prog-dot'+(i<B.step?" on":"")+'"></div>';}$("build-prog").innerHTML=dots;}
+
+// ════════════════════════════════════════════════════════════
+// DECODE
+// ════════════════════════════════════════════════════════════
+function setEx(v){$("dec-input").value=v; doDecode();}
+
+function doDecode(){
+  var raw=(document.getElementById("dec-input").value||"").trim();
+  if(!raw){document.getElementById("dec-result").classList.add("hidden");return;}
+  var pn=raw.toUpperCase();
+  var segs=[]; var details=[];
+  var rem=pn;
+  var isMetric=false;
+
+  // 1. Prefix
+  if(rem.startsWith("/KIT")){
+    segs.push({v:"/KIT",lbl:"Kit prefix",cls:"ds-prefix"});
+    details.push("Kit of parts (bagged / packaged together).");
+    renderDecode(pn,segs,details); return;
+  } else if(rem.startsWith("/")){
+    var supCode=rem.slice(1,6);
+    var catNum=rem.slice(6);
+    var knownSup=SUPPLIERS.find(function(s){return s.code===supCode;});
+    segs.push({v:"/",lbl:"OEM / catalog prefix",cls:"ds-prefix"});
+    segs.push({v:supCode,lbl:knownSup?"Supplier: "+knownSup.name:"Supplier code",cls:"ds-supplier"});
+    if(catNum) segs.push({v:catNum,lbl:"Supplier catalog #",cls:"ds-catnum"});
+    details.push("OEM/catalog part. Supplier: <strong>"+supCode+"</strong>"+(knownSup?" — "+knownSup.name+" ("+knownSup.specialty+")":"")+".");
+    if(catNum) details.push("Supplier catalog #: <strong>"+catNum+"</strong>.");
+    renderDecode(pn,segs,details); return;
+  } else if(rem.startsWith(".")){
+    isMetric=true;
+    segs.push({v:".",lbl:"Metric prefix",cls:"ds-prefix"});
+    details.push("Metric part.");
+    rem=rem.slice(1);
+  }
+
+  // 2. Strip known suffixes from end (longest first)
+  var foundSfx=[];
+  var looping=true;
+  while(looping){
+    looping=false;
+    var sfxSorted=SUFFIXES.slice().sort(function(a,b){return b.code.length-a.code.length;});
+    for(var si=0;si<sfxSorted.length;si++){
+      var sf=sfxSorted[si];
+      if(rem.endsWith(sf.code)){foundSfx.unshift(sf); rem=rem.slice(0,-sf.code.length); looping=true; break;}
+    }
+  }
+
+  // 3. Strip known finish codes from end (longest first)
+  var FIN_MAP={"TZ":"Trivalent clear zinc","-Z":"Clear zinc electroplate","Z":"Clear zinc electroplate","-Y":"Yellow zinc electroplate","Y":"Yellow zinc electroplate","P":"Plain (no finish)","Q":"Black zinc","B":"Black oxide","G":"Hot-dip galvanized"};
+  var foundFin=null;
+  var finKeys=Object.keys(FIN_MAP).sort(function(a,b){return b.length-a.length;});
+  for(var fi=0;fi<finKeys.length;fi++){
+    var fc=finKeys[fi];
+    if(rem.endsWith(fc)){foundFin={code:fc,label:FIN_MAP[fc]}; rem=rem.slice(0,-fc.length); break;}
+  }
+
+  // 4. Parse: DIGITS(dia) + C/F/E(thread) + DIGITS(length, optional) + 3ALPHA(code) + CHAR(material, optional)
+  var diaCode="", threadChar="", lengthCode="", codeStr="", matChar="";
+  var diaLabel="", threadLabel="", lengthLabel="";
+  var MAT_MAP={S:"Stainless A2 (304)","3":"Stainless A4 (316)","8":"Grade 8 / Class 8.8","1":"Class 10.9","2":"Class 12.9","5":"Grade 5"};
+
+  // Diameter: leading digits
+  var mDia=rem.match(/^(\d+)/);
+  if(mDia){
+    diaCode=mDia[1]; rem=rem.slice(diaCode.length);
+    if(isMetric){
+      diaLabel="M"+diaCode;
+    } else {
+      var diaFrac="";
+      var diaKeys=Object.keys(INCH_DIA_CODE);
+      for(var di=0;di<diaKeys.length;di++){
+        if(INCH_DIA_CODE[diaKeys[di]]===diaCode){diaFrac=diaKeys[di];break;}
+      }
+      diaLabel=diaFrac?(diaFrac+'" dia'):(diaCode+' dia');
+    }
+  }
+
+  // Thread type: C, F, or E
+  if(rem.length>0 && /^[CFE]/.test(rem)){
+    threadChar=rem[0]; rem=rem.slice(1);
+    threadLabel=threadChar==="C"?(isMetric?"Coarse pitch (std)":"UNC — Coarse"):
+                threadChar==="F"?(isMetric?"Fine pitch":"UNF — Fine"):"Extra fine";
+  }
+
+  // Length: digits after thread (bolts/screws only)
+  var mLen=rem.match(/^(\d+)/);
+  if(mLen){
+    lengthCode=mLen[1]; rem=rem.slice(lengthCode.length);
+    if(isMetric){
+      lengthLabel=lengthCode+"mm";
+    } else {
+      var lenLabel="";
+      for(var li=0;li<INCH_LEN_OPTIONS.length;li++){
+        if(INCH_LEN_OPTIONS[li].v===lengthCode){lenLabel=INCH_LEN_OPTIONS[li].l;break;}
+      }
+      lengthLabel=lenLabel||lengthCode;
+    }
+  }
+
+  // 3-letter code
+  var mCode=rem.match(/^([A-Z]{3})/);
+  if(mCode){codeStr=mCode[1]; rem=rem.slice(3);}
+
+  // Material char
+  if(rem.length>0 && MAT_MAP[rem[0]]){matChar=rem[0]; rem=rem.slice(1);}
+
+  // 5. Build segments in order
+  if(diaCode){
+    segs.push({v:diaCode,lbl:"Diameter: "+diaLabel,cls:"ds-size"});
+    details.push("Diameter: <strong>"+diaLabel+"</strong>.");
+  }
+  if(threadChar){
+    segs.push({v:threadChar,lbl:"Thread: "+threadLabel,cls:"ds-thread"});
+    details.push("Thread: <strong>"+threadLabel+"</strong>.");
+  }
+  if(lengthCode){
+    segs.push({v:lengthCode,lbl:"Length: "+lengthLabel,cls:"ds-length"});
+    details.push("Length: <strong>"+lengthLabel+"</strong>.");
+  }
+  if(codeStr){
+    var codeMatch=CODES.find(function(c){return c.c===codeStr;});
+    if(codeMatch){
+      segs.push({v:codeStr,lbl:"Part type: "+titleCase(codeMatch.t),cls:"ds-code"});
+      details.push("Part type: <strong>"+titleCase(codeMatch.t)+"</strong> ("+codeMatch.f+").");
+    } else {
+      segs.push({v:codeStr,lbl:"Part type (not in standard list)",cls:"ds-code"});
+      details.push("Code <strong>"+codeStr+"</strong>: not in standard list — may be specialty or older.");
+    }
+  }
+  if(matChar){
+    segs.push({v:matChar,lbl:"Material: "+MAT_MAP[matChar],cls:"ds-mat"});
+    details.push("Material: <strong>"+MAT_MAP[matChar]+"</strong>.");
+  } else if(codeStr || diaCode){
+    details.push("No material code — <strong>plain steel assumed</strong> by SBS convention.");
+  }
+  if(rem.length>0){
+    segs.push({v:rem,lbl:"Unrecognised segment",cls:"ds-size"});
+    details.push("Unrecognised: <strong>"+rem+"</strong>.");
+  }
+  if(foundFin){
+    segs.push({v:foundFin.code,lbl:"Finish: "+foundFin.label,cls:"ds-finish"});
+    details.push("Finish: <strong>"+foundFin.label+"</strong>.");
+  }
+  foundSfx.forEach(function(sf){
+    segs.push({v:sf.code,lbl:sf.label,cls:"ds-suffix"});
+    details.push("Suffix <strong>"+sf.code+"</strong>: "+sf.label+".");
+  });
+
+  renderDecode(pn,segs,details);
+}
+function renderDecode(pn,segs,details){
+  $("dec-title").textContent=pn;
+  $("dec-segs").innerHTML=segs.map(s=>'<div class="d-seg '+s.cls+'"><div class="d-seg-top">'+s.v+'</div><div class="d-seg-lbl">'+s.lbl+'</div></div>').join("");
+  $("dec-detail").innerHTML=details.map(d=>'<div style="margin-bottom:4px">&#9656; '+d+'</div>').join("");
+  show("dec-result");
+}
+
+// ════════════════════════════════════════════════════════════
+// RESET
+// ════════════════════════════════════════════════════════════
+function resetMode(m){
+  if(m==="find"){
+    Object.assign(F,{type:"",family:"",supplier:null,measure:"",material:"",thread:{size:"",pitch:"",type:""},length:"",code:null,step:1});
+    ["fs2-std","fs2-oem","fs3","fs4","fs5","fs6","fs7","f-reset"].forEach(hide);
+    document.querySelectorAll("#fs1 .chip, #fs3 .chip, #fs5 .chip").forEach(c=>c.classList.remove("on"));
+    fUpdateProg();
+  } else {
+    Object.assign(B,{type:"",measure:"",supplier:null,oemCatNum:"",family:"",code:null,material:"",thread:{size:"",pitch:"",type:""},length:"",finish:"",suffixes:[],step:1});
+    ["bs2","bs2-oem","bs3","bs4","bs5","bs6","bs7","bs8","bs9"].forEach(hide);
+    document.querySelectorAll("#bs1 .chip, #bs2 .chip").forEach(c=>c.classList.remove("on"));
+    bUpdateProg();
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════════════
+(function init(){
+  makeChips("f-family-chips", FAMILIES, fPickFamily);
+  makeChips("b-family-chips", FAMILIES, bPickFamily);
+  fUpdateProg(); bUpdateProg();
+  // Reference supplier table
+  const tbody=$("ref-sup-table");
+  SUPPLIERS.forEach(s=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML='<td class="mc">/'+s.code+'</td><td>'+s.name+'</td><td style="color:var(--ink3);font-size:11px">'+s.specialty+'</td>';
+    tbody.appendChild(tr);
+  });
+})();
+
+// ── Beta modal ────────────────────────────────────────────────────
+var FEEDBACK_URL = ""; // TODO: replace with form URL when available
+
+function closeBetaModal(){
+  var el = document.getElementById("betaOverlay");
+  if(el){ el.style.opacity="0"; el.style.transition="opacity .2s"; setTimeout(function(){el.remove();},200); }
+}
+
+function openFeedback(){
+  var subject = encodeURIComponent("SBS Part Number Tool \u2014 Beta Feedback");
+  var body = encodeURIComponent(
+    "Hi James,\n\n" +
+    "I found an issue / have a suggestion for the SBS Part Number Creator & Decoder tool:\n\n" +
+    "---\n" +
+    "Type: [ ] Error  [ ] Missing code  [ ] Suggestion  [ ] Other\n\n" +
+    "Part number (if relevant):\n\n" +
+    "Description:\n\n" +
+    "---\n" +
+    "Submitted from: " + window.location.href
+  );
+  window.location.href = "mailto:jchivers@specialtybolt.com?subject=" + subject + "&body=" + body;
+}
+
+// Close modal on overlay click
+document.addEventListener("DOMContentLoaded", function(){
+  var overlay = document.getElementById("betaOverlay");
+  if(overlay){
+    overlay.addEventListener("click", function(e){
+      if(e.target === overlay) closeBetaModal();
+    });
+  }
+});
+</script>
+</body>
+</html>
