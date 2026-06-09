@@ -1,0 +1,2741 @@
+<!DOCTYPE html>
+<!-- SBS TDS Generator — Google Sheet Live Version 1.0 | Specialty Bolt & Screw, Inc. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SBS Fastener TDS Generator — Live Data v1.0</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{
+  --navy:#1D3557;--navy-dark:#12243a;--orange:#E87722;--orange-light:#F0913A;
+  --orange-pale:#FDF0E5;--white:#ffffff;--gray-50:#F8F9FA;--gray-100:#F0F2F5;
+  --gray-200:#E2E6EA;--gray-300:#CED4DA;--gray-400:#ADB5BD;--gray-500:#6C757D;
+  --gray-600:#495057;--gray-700:#343A40;--green:#1A8A4A;--green-bg:#E8F5EE;
+  --red:#C0392B;--red-bg:#FDECEA;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-700);min-height:100vh;}
+
+/* ── BETA MODAL ──────────────────────────────────────────────── */
+#betaOverlay{
+  position:fixed;inset:0;
+  background:rgba(18,36,58,0.88);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  z-index:10000;
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;}
+#betaModal{
+  background:#fff;
+  border-radius:12px;
+  max-width:540px;width:100%;
+  box-shadow:0 32px 80px rgba(0,0,0,0.55);
+  overflow:hidden;
+  animation:betaSlideIn 0.35s cubic-bezier(0.34,1.56,0.64,1) both;}
+@keyframes betaSlideIn{
+  from{opacity:0;transform:translateY(28px) scale(0.96);}
+  to{opacity:1;transform:translateY(0) scale(1);}}
+.beta-modal-header{
+  background:var(--navy);
+  border-bottom:3px solid var(--orange);
+  padding:22px 24px 18px;
+  display:flex;flex-direction:column;gap:10px;}
+.beta-modal-header-row{
+  display:flex;align-items:center;gap:12px;}
+.beta-modal-icon{
+  width:40px;height:40px;border-radius:50%;
+  background:var(--orange);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;}
+.beta-modal-title{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:22px;font-weight:800;
+  color:#fff;letter-spacing:0.3px;line-height:1.1;}
+.beta-modal-sub{
+  font-family:'Inter',sans-serif;
+  font-size:12px;color:rgba(255,255,255,0.6);
+  margin-top:1px;}
+.beta-pill{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--orange);color:#fff;
+  font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;
+  letter-spacing:1.4px;text-transform:uppercase;
+  padding:4px 12px;border-radius:20px;width:fit-content;}
+.beta-modal-body{padding:24px 28px 20px;}
+.beta-modal-body p{
+  font-family:'Inter',sans-serif;font-size:13.5px;
+  color:var(--gray-700);line-height:1.7;margin-bottom:14px;}
+.beta-modal-body p:last-of-type{margin-bottom:0;}
+.beta-modal-body strong{color:var(--navy);}
+.beta-modal-warning{
+  background:#fff8e6;border-left:4px solid var(--orange);
+  border-radius:0 6px 6px 0;padding:12px 16px;margin:18px 0 0;
+  font-family:'Inter',sans-serif;font-size:12.5px;
+  color:var(--gray-700);line-height:1.6;}
+.beta-modal-warning strong{color:#b35a00;}
+.beta-modal-footer{
+  padding:16px 28px 24px;display:flex;justify-content:center;}
+.beta-accept-btn{
+  background:var(--orange);color:#fff;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:18px;font-weight:700;letter-spacing:0.5px;
+  padding:14px 36px;border:none;border-radius:8px;cursor:pointer;
+  transition:background 0.15s;width:100%;
+  display:flex;align-items:center;justify-content:center;gap:10px;}
+.beta-accept-btn:hover{background:#d4681a;}
+.beta-accept-btn svg{flex-shrink:0;}
+
+/* ── LOADER OVERLAY ─────────────────────────────────────────── */
+#appLoader{position:fixed;inset:0;background:var(--navy);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;z-index:9999;transition:opacity 0.4s;}
+#appLoader.hidden{opacity:0;pointer-events:none;}
+.app-loader-logo{height:56px;margin-bottom:28px;filter:brightness(0) invert(1);}
+.app-loader-msg{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;
+  color:rgba(255,255,255,0.85);letter-spacing:1px;text-transform:uppercase;margin-bottom:18px;}
+.app-loader-bar{width:280px;height:4px;background:rgba(255,255,255,0.15);border-radius:4px;overflow:hidden;}
+.app-loader-fill{height:100%;background:var(--orange);border-radius:4px;width:0%;transition:width 0.3s ease;}
+.app-loader-step{font-size:12px;color:rgba(255,255,255,0.45);margin-top:10px;font-family:'Inter',sans-serif;
+  letter-spacing:0.5px;min-height:18px;}
+.app-loader-error{color:#ff6b6b;font-size:13px;text-align:center;max-width:400px;margin-top:16px;
+  background:rgba(255,255,255,0.08);padding:12px 16px;border-radius:8px;display:none;}
+
+/* ── HEADER ─────────────────────────────────────────────────── */
+.sbs-header{position:sticky;top:0;z-index:100;background:var(--white);
+  border-bottom:3px solid var(--orange);box-shadow:0 2px 8px rgba(0,0,0,0.10);
+  padding:0.65rem 1.5rem;display:flex;align-items:center;gap:1rem;}
+.sbs-header a{display:flex;align-items:center;flex-shrink:0;}
+.sbs-header img.logo{height:48px;display:block;}
+.header-divider{width:1px;height:36px;background:var(--gray-200);flex-shrink:0;}
+.header-title{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;
+  color:var(--navy);line-height:1.1;letter-spacing:0.3px;}
+.header-badge{background:var(--green);color:#fff;font-family:'Barlow',sans-serif;
+  font-size:10px;font-weight:700;letter-spacing:1.2px;padding:3px 8px;border-radius:20px;
+  text-transform:uppercase;margin-left:10px;vertical-align:middle;}
+.header-actions{display:flex;gap:8px;margin-left:auto;align-items:center;}
+.data-freshness{font-size:11px;color:var(--gray-400);font-family:'Inter',sans-serif;}
+.data-freshness span{color:var(--green);font-weight:600;}
+
+/* ── TABS ────────────────────────────────────────────────────── */
+.tab-bar{background:var(--navy);display:flex;padding:0 24px;gap:2px;overflow-x:auto;}
+.tab-btn{font-family:'Barlow',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.3px;
+  padding:14px 22px;border:none;background:transparent;color:rgba(255,255,255,0.55);
+  cursor:pointer;border-bottom:3px solid transparent;transition:all 0.18s;white-space:nowrap;}
+.tab-btn:hover{color:rgba(255,255,255,0.9);}
+.tab-btn.active{color:var(--white);border-bottom-color:var(--orange);}
+.tab-panel{display:none;}.tab-panel.active{display:block;}
+
+/* ── PAGE BODY ──────────────────────────────────────────────── */
+.page-body{padding:28px 28px 40px;max-width:1140px;margin:0 auto;}
+
+/* ── SECTION CARDS ──────────────────────────────────────────── */
+.section-card{background:var(--white);border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,0.07);
+  margin-bottom:20px;overflow:hidden;}
+.section-header{background:var(--navy);padding:14px 20px;display:flex;align-items:center;gap:12px;}
+.section-num{width:28px;height:28px;border-radius:50%;background:var(--orange);
+  color:#fff;font-family:'Barlow',sans-serif;font-weight:800;font-size:15px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.section-label{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;
+  color:#fff;letter-spacing:0.5px;text-transform:uppercase;}
+.section-body{padding:22px 22px 18px;}
+
+/* ── SEARCH & FILTER ROW ─────────────────────────────────────── */
+.search-wrap{position:relative;margin-bottom:18px;}
+.search-wrap input{width:100%;padding:10px 44px 10px 42px;border:2px solid var(--navy);
+  border-radius:6px;font-size:14px;font-family:'Inter',sans-serif;background-image:none;
+  transition:border-color 0.15s;}
+.search-wrap input:focus{outline:none;border-color:var(--orange);}
+.search-wrap input::placeholder{font-style:italic;color:var(--gray-400);}
+.search-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);
+  color:var(--gray-500);pointer-events:none;}
+.search-clear{position:absolute;right:13px;top:50%;transform:translateY(-50%);
+  color:var(--gray-400);cursor:pointer;display:none;background:none;border:none;padding:2px;}
+.search-clear.visible{display:flex;}
+.filter-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px;}
+.filter-group{display:flex;flex-direction:column;gap:5px;flex:1;min-width:180px;}
+.filter-group label{font-size:11px;font-weight:600;text-transform:uppercase;
+  letter-spacing:0.7px;color:var(--gray-500);font-family:'Inter',sans-serif;display:flex;align-items:center;gap:4px;}
+.filter-group select{border:1.5px solid var(--gray-200);border-radius:6px;
+  padding:9px 32px 9px 11px;font-size:13.5px;font-family:'Inter',sans-serif;
+  color:var(--gray-700);background:var(--white);transition:border-color 0.15s;
+  appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236C757D' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 11px center;}
+.filter-group select:focus{outline:none;border-color:var(--orange);}
+
+/* ── ACTION BUTTONS ROW ─────────────────────────────────────── */
+.sec1-actions{display:flex;gap:10px;flex-wrap:wrap;padding:14px 22px;
+  border-top:1px solid var(--gray-100);display:none;}
+.sec1-actions.visible{display:flex;}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 18px;
+  border-radius:6px;font-family:'Barlow',sans-serif;font-size:13px;font-weight:700;
+  letter-spacing:0.3px;cursor:pointer;border:none;text-decoration:none;transition:all 0.15s;}
+.btn-orange{background:var(--orange);color:#fff;}
+.btn-orange:hover{background:#d4681a;}
+.btn-navy{background:var(--navy);color:#fff;}
+.btn-navy:hover{background:var(--navy-dark);}
+.btn-outline{background:transparent;color:var(--navy);border:1.5px solid var(--navy);}
+.btn-outline:hover{background:var(--navy);color:#fff;}
+
+/* ── FIELD GRID ─────────────────────────────────────────────── */
+.field-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-bottom:18px;}
+.field-group{display:flex;flex-direction:column;gap:5px;}
+.field-group label{font-size:11px;font-weight:600;text-transform:uppercase;
+  letter-spacing:0.7px;color:var(--gray-500);font-family:'Inter',sans-serif;display:flex;align-items:center;gap:4px;}
+.field-group select,.field-group input[type=text]{border:1.5px solid var(--gray-200);border-radius:6px;
+  padding:9px 32px 9px 11px;font-size:13.5px;font-family:'Inter',sans-serif;
+  color:var(--gray-700);background:var(--white);transition:border-color 0.15s;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236C757D' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 11px center;}
+.field-group input[type=text]{background-image:none;padding-right:11px;}
+.field-group select:focus,.field-group input[type=text]:focus{outline:none;border-color:var(--orange);}
+.field-group select:disabled{background-color:var(--gray-50);color:var(--gray-400);cursor:not-allowed;}
+/* "Other - User Specified" inline text box */
+.other-input-wrap{display:none;margin-top:6px;position:relative;}
+.other-input-wrap.visible{display:block;}
+.other-input-wrap input{width:100%;padding:8px 11px;border:1.5px solid var(--orange);
+  border-radius:6px;font-size:13px;font-family:'Inter',sans-serif;color:var(--gray-700);
+  background:var(--orange-pale);transition:border-color 0.15s;}
+.other-input-wrap input:focus{outline:none;border-color:#c4591a;}
+.other-input-wrap input::placeholder{color:var(--orange-light);font-style:italic;}
+.other-input-label{font-size:10px;color:var(--orange);font-weight:600;
+  letter-spacing:0.5px;margin-bottom:3px;text-transform:uppercase;}
+.btn-row{display:flex;justify-content:flex-start;padding-top:4px;}
+.not-built{background:var(--gray-50);border-radius:8px;padding:20px;font-size:13px;
+  color:var(--gray-500);text-align:center;line-height:1.7;margin:4px 0;}
+.not-built strong{display:block;color:var(--navy);margin-bottom:6px;font-size:14px;}
+.not-built a{color:var(--orange);font-weight:600;}
+
+/* ── TOOLTIP ─────────────────────────────────────────────────── */
+.tip-btn{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;
+  border-radius:50%;background:var(--gray-300);color:var(--white);font-size:9px;font-weight:700;
+  font-family:'Barlow',sans-serif;cursor:help;border:none;position:relative;flex-shrink:0;}
+.tip-btn .tip{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);
+  background:#1a2535;color:#fff;font-size:11.5px;padding:8px 12px;border-radius:6px;
+  white-space:normal;width:260px;line-height:1.5;font-family:'Inter',sans-serif;font-weight:400;
+  text-transform:none;letter-spacing:0;pointer-events:none;opacity:0;transition:opacity 0.15s;z-index:50;}
+.tip-btn:hover .tip,.tip-btn:focus .tip{opacity:1;}
+
+/* ── TDS OUTPUT ──────────────────────────────────────────────── */
+#sec3{display:none;}
+.tds-print-bar{display:flex;gap:10px;align-items:center;padding:14px 22px;
+  border-bottom:1px solid var(--gray-100);background:var(--gray-50);}
+.tds-sheet{font-family:'Inter',sans-serif;padding:24px 24px 20px;}
+.tds-top{display:flex;justify-content:space-between;align-items:flex-start;
+  margin-bottom:18px;gap:16px;}
+.tds-top h2{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;
+  color:var(--navy);line-height:1.2;}
+.tds-subtitle{font-size:13px;color:var(--gray-500);margin-top:4px;line-height:1.5;}
+.tds-logo-bar{display:flex;flex-direction:column;align-items:flex-end;gap:3px;}
+.tds-logo-bar img{height:40px;}
+.tds-logo-bar p{font-size:10px;color:var(--gray-400);text-align:right;}
+.optional-strip{display:flex;gap:14px;flex-wrap:wrap;padding:12px 14px;
+  background:var(--gray-50);border-radius:8px;margin-bottom:18px;}
+.optional-strip .field-group{flex:1;min-width:200px;}
+.optional-strip .field-group label{font-size:10px;}
+.optional-strip .field-group input{font-size:13px;padding:7px 10px;background-image:none;padding-right:10px;}
+.tds-image-panel{display:flex;justify-content:center;margin-bottom:18px;}
+.tds-img-wrap{display:flex;justify-content:center;margin-bottom:18px;}
+.tds-img-wrap.sec2-wrap{margin-bottom:0;margin-top:16px;}
+.tds-part-img{max-width:340px;max-height:220px;object-fit:contain;border:1px solid var(--gray-200);
+  border-radius:8px;cursor:zoom-in;transition:all 0.25s ease;display:block;}
+/* Zoomed state: image fills the full-width modal box */
+.tds-part-img.zoomed{
+  position:fixed;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:92vw;
+  height:86vh;
+  max-width:none;
+  max-height:none;
+  object-fit:contain;
+  background:#fff;
+  border-radius:10px;
+  box-shadow:0 24px 80px rgba(0,0,0,0.7);
+  z-index:1000;
+  cursor:zoom-out;
+  border:4px solid var(--white);}
+/* Dim backdrop when zoomed */
+.img-backdrop{display:none;position:fixed;inset:0;background:rgba(18,36,58,0.75);
+  backdrop-filter:blur(3px);z-index:999;cursor:zoom-out;}
+.img-backdrop.active{display:block;}
+.tds-img-placeholder-single{display:flex;flex-direction:column;align-items:center;gap:8px;
+  padding:24px 40px;background:var(--gray-50);border-radius:8px;border:1px dashed var(--gray-300);}
+.tds-img-label{font-size:12px;font-weight:600;color:var(--gray-400);}
+.tds-img-sub{font-size:11px;color:var(--gray-300);text-align:center;}
+.tds-section-bar{display:flex;align-items:center;gap:8px;padding:9px 14px;
+  background:var(--navy);border-radius:6px 6px 0 0;margin-top:14px;}
+.tds-sec-title-wrap{display:flex;align-items:center;gap:8px;flex:1;}
+.tds-sec-title{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;
+  color:#fff;text-transform:uppercase;letter-spacing:0.5px;}
+.tds-sec-std{font-size:11px;background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.85);
+  padding:2px 8px;border-radius:10px;}
+.tds-sec-std-link{text-decoration:none;cursor:pointer;}
+.tds-sec-std-link:hover{background:rgba(255,255,255,0.25);}
+.tds-sec-collapse{background:none;border:none;color:rgba(255,255,255,0.7);cursor:pointer;
+  padding:2px;display:flex;margin-left:auto;}
+.tds-sec-body{border:1px solid var(--gray-200);border-top:none;border-radius:0 0 6px 6px;
+  overflow:hidden;margin-bottom:4px;}
+/* tds-eav-table replaced by tds-3col grid */
+.tds-valid-banner{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-radius:5px;margin-bottom:8px;font-size:12.5px;line-height:1.5;}
+.tds-valid-warning{background:#fff8e1;border-left:4px solid #f59e0b;color:#92400e;}
+.tds-valid-error{background:#fef2f2;border-left:4px solid #ef4444;color:#991b1b;}
+.tds-valid-info{background:#eff6ff;border-left:4px solid #3b82f6;color:#1e40af;}
+.tds-valid-icon{font-size:15px;flex-shrink:0;margin-top:1px;}
+.tds-valid-block{margin-bottom:4px;}
+.tds-dim-divider{border:none;border-top:2px solid #c0392b;margin:0;}
+.tds-3col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;}
+.tds-3col-inputs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;}
+.tds-dim-cell{padding:10px 14px;font-size:12.5px;border-bottom:1px solid var(--gray-100);display:flex;flex-direction:column;gap:3px;min-width:0;overflow:hidden;}
+.tds-3col .tds-dim-cell:nth-child(6n+1),.tds-3col .tds-dim-cell:nth-child(6n+2),.tds-3col .tds-dim-cell:nth-child(6n+3){background:var(--gray-50);}
+.tds-3col-inputs .tds-dim-cell{background:#fff;}
+.tds-dim-cell-label{font-weight:600;color:var(--gray-600);font-size:11.5px;}
+.tds-dim-cell-value{color:var(--gray-800);font-size:12.5px;}
+.tds-quote-section{margin-top:16px;border:2px solid var(--orange);border-radius:8px;overflow:hidden;}
+.tds-quote-section-head{background:var(--orange);color:#fff;padding:12px 18px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;}
+.tds-quote-section-head h2{margin:0;font-size:15px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;text-transform:uppercase;}
+.tds-quote-section-body{display:none;padding:18px;background:#fafafa;}
+.tds-quote-section-body.open{display:block;}
+.tds-quote-summary{background:#fff;border:1px solid var(--gray-200);border-radius:5px;padding:12px 14px;font-size:12.5px;color:var(--gray-700);margin-bottom:16px;line-height:1.7;}
+.tds-quote-summary strong{color:var(--navy);}
+.tds-quote-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.tds-quote-field{margin-bottom:0;}
+.tds-quote-field label{display:block;font-size:11px;font-weight:600;color:var(--gray-600);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.4px;}
+.tds-quote-field input,.tds-quote-field textarea{width:100%;padding:7px 10px;border:1px solid var(--gray-200);border-radius:4px;font-size:13px;font-family:inherit;box-sizing:border-box;}
+.tds-quote-field textarea{resize:vertical;min-height:80px;}
+.tds-quote-foot{display:flex;gap:10px;justify-content:flex-end;margin-top:14px;}
+.tds-footer{display:flex;justify-content:space-between;align-items:flex-end;
+  margin-top:20px;padding-top:14px;border-top:1px solid var(--gray-200);}
+.tds-foot-note{font-size:10px;color:var(--gray-400);max-width:72%;line-height:1.5;}
+.tds-qr{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.tds-qr-lbl{font-size:10px;color:var(--gray-400);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;}
+
+/* ── STANDARD DATA SHEET TAB ────────────────────────────────── */
+.sds-img-panel{display:flex;justify-content:center;padding:20px;
+  background:var(--gray-50);border-bottom:1px solid var(--gray-200);margin-bottom:0;}
+.sds-table-wrap{overflow-x:auto;}
+.sds-table{width:100%;border-collapse:collapse;min-width:600px;font-size:12.5px;}
+.sds-table thead th{background:var(--navy);color:#fff;font-family:'Barlow Condensed',sans-serif;
+  font-size:11px;letter-spacing:1px;text-transform:uppercase;padding:9px 13px;
+  white-space:nowrap;position:sticky;top:0;z-index:2;}
+.sds-table thead th:first-child{position:sticky;left:0;z-index:3;min-width:120px;}
+.sds-table tbody tr:nth-child(even) td{background:var(--gray-50);}
+.sds-table tbody tr:hover td{background:#e8f0fe;}
+.sds-table tbody td{padding:8px 13px;border:1px solid var(--gray-100);
+  white-space:nowrap;font-family:'Inter',sans-serif;color:var(--gray-700);}
+.sds-table tbody td:first-child{font-family:'Barlow Condensed',sans-serif;font-size:13px;
+  font-weight:700;color:var(--navy);position:sticky;left:0;background:inherit;z-index:1;}
+.sds-footer{padding:12px 16px;font-size:11px;color:var(--gray-400);
+  background:var(--gray-50);border-top:1px solid var(--gray-100);}
+/* Print — SDS tab */
+@media print {
+  #tab-sds .section-card:first-child { display:none !important; }
+  #sdsOutput { display:block !important; }
+  .sds-table-wrap { overflow-x:visible; }
+  .sds-table thead th:first-child,
+  .sds-table tbody td:first-child { position:static; }
+}
+
+/* ── COMPARE TAB ─────────────────────────────────────────────── */
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+@media(max-width:700px){.compare-grid{grid-template-columns:1fr;}}
+.compare-panel{background:var(--white);border-radius:10px;
+  box-shadow:0 1px 4px rgba(0,0,0,0.07);overflow:hidden;}
+.compare-panel-hdr{padding:12px 18px;background:var(--navy-dark);
+  font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;
+  color:#fff;letter-spacing:0.5px;text-transform:uppercase;}
+.compare-panel-body{padding:18px;}
+.compare-result{background:var(--white);border-radius:10px;
+  box-shadow:0 1px 4px rgba(0,0,0,0.07);overflow:hidden;margin-top:20px;}
+.compare-diff-table{width:100%;border-collapse:collapse;}
+.compare-diff-table th{background:var(--navy);color:#fff;padding:9px 14px;
+  font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;
+  text-transform:uppercase;letter-spacing:0.4px;text-align:left;}
+.compare-diff-table td{padding:7px 14px;font-size:12.5px;
+  border-bottom:1px solid var(--gray-100);vertical-align:top;}
+.compare-diff-table tr:nth-child(even) td{background:var(--gray-50);}
+.diff-highlight td{background:#fff8e6 !important;font-weight:600;}
+
+/* ── BEST PRACTICES ──────────────────────────────────────────── */
+.bp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;}
+.bp-card{background:var(--white);border-radius:10px;padding:22px;
+  box-shadow:0 1px 4px rgba(0,0,0,0.07);border-left:4px solid var(--orange);}
+.bp-card h3{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;
+  color:var(--navy);margin-bottom:10px;}
+.bp-card p{font-size:13px;color:var(--gray-600);line-height:1.65;}
+.bp-card ul{padding-left:18px;margin-top:8px;}
+.bp-card ul li{font-size:13px;color:var(--gray-600);line-height:1.65;margin-bottom:4px;}
+
+/* ── LOADING OVERLAY (TDS generate) ─────────────────────────── */
+#loadingOverlay{display:none;position:fixed;inset:0;background:rgba(29,53,87,0.7);
+  backdrop-filter:blur(3px);z-index:500;align-items:center;justify-content:center;flex-direction:column;gap:14px;}
+#loadingOverlay.active{display:flex;}
+.spinner{width:44px;height:44px;border:4px solid rgba(255,255,255,0.2);
+  border-top-color:var(--orange);border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-text{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;
+  color:#fff;letter-spacing:1px;text-transform:uppercase;}
+
+/* ── PRINT ─────────────────────────────────────────────────── */
+@media print{
+  /* Hide all navigation and UI chrome */
+  .sbs-header,.tab-bar,.sec1-actions,.app-loader-error,
+  #loadingOverlay,.img-backdrop,.tds-print-bar,
+  .btn-row,.not-built { display:none !important; }
+  /* Show all tab panels so the active one prints */
+  .tab-panel { display:block !important; }
+  /* Hide non-active tabs content */
+  #tab-tds #sec1, #tab-tds #sec2 { display:none !important; }
+  #tab-tds #sec3 { display:block !important; }
+  #tab-sds .section-card:first-child { display:none !important; }
+  #sdsOutput { display:block !important; }
+  /* Hide other tabs entirely when printing */
+  #tab-compare, #tab-bp { display:none !important; }
+  body { background:#fff; }
+  .tds-sheet { padding:0; }
+  .page-body { padding:0; max-width:100%; }
+  .sds-table-wrap { overflow-x:visible; }
+  .sds-table thead th:first-child,
+  .sds-table tbody td:first-child { position:static; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ BETA WARNING MODAL ══════════════════════════════════ -->
+<div id="betaOverlay">
+  <div id="betaModal">
+
+    <div class="beta-modal-header">
+      <div class="beta-modal-header-row">
+        <div class="beta-modal-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+            stroke="#fff" stroke-width="2.5" stroke-linecap="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+        </div>
+        <div>
+          <div class="beta-modal-title">Specialty Bolt &amp; Screw, Inc.</div>
+          <div class="beta-modal-sub">Fastener Technical Data Sheet Generator</div>
+        </div>
+      </div>
+      <div class="beta-pill">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+          <circle cx="12" cy="12" r="10"/>
+        </svg>
+        Beta Version — Under Construction
+      </div>
+    </div>
+
+    <div class="beta-modal-body">
+      <p>This tool is currently <strong>under active development</strong> and has not
+        been validated for production use. Features, data, and outputs may be incomplete,
+        inaccurate, or subject to change without notice.</p>
+
+      <p>Data presented by this tool — including dimensional, mechanical, chemical,
+        and finish properties — <strong>has not been fully verified</strong> and
+        may not reflect the current published standard. Always consult the original
+        consensus standard document for binding specifications.</p>
+
+      <p>This tool is expected to reach <strong>Beta release on January 1, 2027</strong>.
+        Until that time it is made available for evaluation and feedback purposes only.</p>
+
+      <div class="beta-modal-warning">
+        <strong>⚠ This tool must not be used for:</strong><br>
+        Design specification &nbsp;·&nbsp; Engineering review &nbsp;·&nbsp;
+        Sourcing decisions &nbsp;·&nbsp; Application approval &nbsp;·&nbsp;
+        Procurement or purchasing of any kind.
+      </div>
+    </div>
+
+    <div class="beta-modal-footer">
+      <button class="beta-accept-btn" onclick="dismissBeta()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        I Understand — Continue to Tool
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- App startup loader -->
+<div id="appLoader">
+  <img class="app-loader-logo" src="data:image/png;base64,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" alt="SBS">
+  <div class="app-loader-msg">Loading Live Data</div>
+  <div class="app-loader-bar"><div class="app-loader-fill" id="loaderFill"></div></div>
+  <div class="app-loader-step" id="loaderStep">Connecting to Google Sheets…</div>
+  <div class="app-loader-error" id="loaderError"></div>
+</div>
+
+<div class="img-backdrop" id="imgBackdrop" onclick="closeImgZoom()"></div>
+<div id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text">Generating Technical Data Sheet…</div>
+</div>
+
+<header class="sbs-header">
+  <a href="https://shop.specialtybolt.com/" target="_blank">
+    <img class="logo" src="data:image/png;base64,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" alt="SBS Specialty Bolt and Screw">
+  </a>
+  <div class="header-divider"></div>
+  <div style="flex:1;">
+    <div class="header-title">
+      Fastener Technical Data Sheet Generator
+      <span class="header-badge">Live Data v1.0</span>
+    </div>
+  </div>
+  <div class="header-actions">
+    <div class="data-freshness" id="dataFreshness"></div>
+    <button class="btn btn-outline" id="btnRefresh" onclick="reloadData()" title="Reload data from Google Sheets" style="padding:7px 13px;font-size:12px;">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.33"/></svg>
+      Refresh Data
+    </button>
+    <button class="btn btn-navy" onclick="window.print()" style="padding:8px 14px;font-size:12px;">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Print TDS
+    </button>
+  </div>
+</header>
+
+<nav class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('tds')">TDS Generator</button>
+  <button class="tab-btn" onclick="switchTab('sds')">Standard Data Sheet</button>
+  <button class="tab-btn" onclick="switchTab('compare')">Compare Parts</button>
+  <button class="tab-btn" onclick="switchTab('bp')">Best Practices</button>
+</nav>
+
+<!-- ══ TAB 1: TDS GENERATOR ══════════════════════════════════ -->
+<div id="tab-tds" class="tab-panel active">
+<div class="page-body">
+
+  <!-- Section 1 -->
+  <div class="section-card" id="sec1">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <div class="section-label">Define Type of Part and Controlling Standard</div>
+    </div>
+    <div class="section-body">
+      <div class="search-wrap">
+        <span class="search-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </span>
+        <input type="text" id="searchBar" placeholder="Search part type, standard name, or keyword (e.g. hex flange, ISO 7089, blind rivet, DIN 933)…">
+        <button class="search-clear" id="searchClearBtn" onclick="clearSearch()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="filter-row">
+        <div class="filter-group">
+          <label>Type of Part <button class="tip-btn" tabindex="0">i<span class="tip">Select the fastener category to filter the available standards.</span></button></label>
+          <select id="typeOfPart" onchange="onTypeChange()">
+            <option value="">-- Select Part Type --</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Unit of Measure <button class="tip-btn" tabindex="0">i<span class="tip">Filter standards by measurement system. Select Metric or Inch to narrow the Standard dropdown.</span></button></label>
+          <select id="uomFilter" onchange="onUomChange()">
+            <option value="">-- All --</option>
+            <option value="Inch">Inch</option>
+            <option value="Metric">Metric</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Standard <button class="tip-btn" tabindex="0">i<span class="tip">Select the governing consensus standard for this part type. The standard controls all dimensional, mechanical, and finish requirements.</span></button></label>
+          <select id="standard" onchange="onStandardChange()">
+            <option value="">-- Select Standard --</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="sec1-actions" id="sec1Actions">
+      <a class="btn btn-orange" id="btnCategoryPage" href="#" target="_blank" style="display:none;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        <span id="lblCategoryPage">Category Page</span>
+      </a>
+      <a class="btn btn-navy" id="btnStandardPDF" href="#" target="_blank" style="display:none;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <span id="lblStandardPDF">Standard PDF</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Section 2 -->
+  <div class="section-card" id="sec2" style="display:none;">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <div class="section-label">Define Key Attributes</div>
+    </div>
+    <div class="section-body" id="sec2Body">
+      <p style="font-size:13px;color:var(--gray-500);">Select a Standard above to define part attributes.</p>
+    </div>
+  </div>
+
+  <!-- Section 3 -->
+  <div class="section-card" id="sec3">
+    <div class="tds-print-bar">
+      <button class="btn btn-orange" onclick="window.print()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        Print / Save PDF
+      </button>
+      <button class="btn btn-outline" onclick="document.getElementById('sec3').style.display='none';">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        Close
+      </button>
+      <button class="btn btn-orange" onclick="openQuoteSection()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
+        Quote This Part
+      </button>
+      <a id="btnSearchEcat" href="#" target="_blank" class="btn btn-orange" style="text-decoration:none;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Search E-Catalog
+      </a>
+    </div>
+    <div id="tdsContent"></div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══ TAB: STANDARD DATA SHEET ════════════════════════════ -->
+<div id="tab-sds" class="tab-panel">
+<div class="page-body">
+
+  <div style="border-left:4px solid var(--orange);background:var(--orange-pale);
+    padding:12px 18px;border-radius:0 6px 6px 0;margin-bottom:20px;font-size:13px;
+    color:var(--gray-700);line-height:1.6;">
+    <strong style="color:var(--navy);">Standard Data Sheet</strong> — Select a standard
+    to view a complete summary table of all values across every size in that standard.
+    Ideal for quick reference and engineering selection.
+  </div>
+
+  <div class="section-card">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <div class="section-label">Select Standard</div>
+    </div>
+    <div class="section-body">
+      <div class="field-grid" style="grid-template-columns:repeat(auto-fill,minmax(260px,1fr));margin-bottom:16px;">
+        <div class="field-group">
+          <label>Standard <button class="tip-btn" tabindex="0">i<span class="tip">Select the standard to generate a complete data table for all sizes.</span></button></label>
+          <select id="sdsStandard" onchange="onSdsStandardChange()">
+            <option value="">-- Select Standard --</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label>Data Section to Display</label>
+          <select id="sdsSection">
+            <option value="DIM">Dimensional Data</option>
+            <option value="MECH">Mechanical Properties</option>
+            <option value="THREAD">Thread Data</option>
+            <option value="FINISH">Finish Data</option>
+            <option value="CHEM">Chemical Properties</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn btn-orange" onclick="generateSDS()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+          Generate Standard Data Sheet
+        </button>
+        <button class="btn btn-navy" onclick="printSDS()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Print / Save PDF
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-card" id="sdsOutput" style="display:none;">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <div class="section-label" id="sdsOutputLabel">Standard Data Sheet</div>
+      <button class="btn btn-navy" onclick="printSDS()"
+        style="margin-left:auto;padding:7px 16px;font-size:12px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        Print
+      </button>
+    </div>
+    <div style="padding:0;" id="sdsTableWrap"></div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══ TAB 2: COMPARE ════════════════════════════════════════ -->
+<div id="tab-compare" class="tab-panel">
+<div class="page-body">
+  <div class="compare-grid">
+    <div class="compare-panel">
+      <div class="compare-panel-hdr">Part A</div>
+      <div class="compare-panel-body">
+        <div class="filter-group" style="margin-bottom:12px;">
+          <label>Type of Part</label>
+          <select id="cmpTypeA" onchange="syncCmpStandards('A')">
+            <option value="">-- Select --</option>
+          </select>
+        </div>
+        <div class="filter-group" style="margin-bottom:12px;">
+          <label>Standard</label>
+          <select id="cmpStdA" onchange="syncCmpFields('A')">
+            <option value="">-- Select Standard --</option>
+          </select>
+        </div>
+        <div id="cmpFieldsA"></div>
+      </div>
+    </div>
+    <div class="compare-panel">
+      <div class="compare-panel-hdr">Part B</div>
+      <div class="compare-panel-body">
+        <div class="filter-group" style="margin-bottom:12px;">
+          <label>Type of Part</label>
+          <select id="cmpTypeB" onchange="syncCmpStandards('B')">
+            <option value="">-- Select --</option>
+          </select>
+        </div>
+        <div class="filter-group" style="margin-bottom:12px;">
+          <label>Standard</label>
+          <select id="cmpStdB" onchange="syncCmpFields('B')">
+            <option value="">-- Select Standard --</option>
+          </select>
+        </div>
+        <div id="cmpFieldsB"></div>
+      </div>
+    </div>
+  </div>
+  <div style="text-align:center;margin:20px 0;">
+    <button class="btn btn-orange" onclick="runCompare()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+      Compare Parts
+    </button>
+  </div>
+  <div class="compare-result" id="compareResult" style="display:none;">
+    <div class="section-header">
+      <div class="section-num"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></div>
+      <div class="section-label">Comparison Results</div>
+    </div>
+    <div style="padding:18px;" id="compareResultBody"></div>
+  </div>
+</div>
+</div>
+
+<!-- ══ TAB 3: BEST PRACTICES ════════════════════════════════ -->
+<div id="tab-bp" class="tab-panel">
+<div class="page-body">
+  <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;color:var(--navy);margin-bottom:6px;">Why Consensus Standard Parts?</h2>
+  <p style="font-size:14px;color:var(--gray-500);margin-bottom:22px;line-height:1.6;">Using consensus standard fasteners over custom "manufactured to print" parts offers significant advantages across cost, quality, and supply chain flexibility.</p>
+  <div class="bp-grid">
+    <div class="bp-card">
+      <h3>💰 Cost Advantage</h3>
+      <p>Standard parts are manufactured in high volumes by multiple suppliers worldwide, driving down unit cost through competition and economies of scale. Custom print parts carry tooling, setup, and minimum order premiums.</p>
+    </div>
+    <div class="bp-card">
+      <h3>⏱ Lead Time</h3>
+      <p>Standard fasteners are stocked globally. When you need 500 pieces of an M10 hex bolt, they ship today. A custom fastener may require 8–16 weeks for tooling, first article inspection, and production.</p>
+    </div>
+    <div class="bp-card">
+      <h3>✅ Quality Assurance</h3>
+      <p>Consensus standards (IFI, ISO, ASME, DIN, SAE) define dimensional tolerances, mechanical properties, and test methods. Independent certification and traceability are built in. No need to specify — the standard does it for you.</p>
+    </div>
+    <div class="bp-card">
+      <h3>🔗 Supply Chain Flexibility</h3>
+      <p>Standard parts can be sourced from dozens of manufacturers worldwide. If one supplier has a shortage or quality issue, you can qualify an alternate in days, not months.</p>
+    </div>
+    <div class="bp-card">
+      <h3>📐 Engineering Confidence</h3>
+      <p>Published standards provide documented design data: proof loads, tensile strength, torque values, and dimensional drawings. Your engineering team can rely on published data rather than generating it themselves.</p>
+    </div>
+    <div class="bp-card">
+      <h3>♻️ Sustainability</h3>
+      <p>Standardized designs reduce engineering waste and the need for custom tooling. Globally stocked parts reduce transportation distances when sourced regionally. Traceability requirements in many standards support responsible sourcing.</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<div id="tipFloater"></div>
+
+<script>
+'use strict';
+
+// ════════════════════════════════════════════════════════════════
+//  CONFIGURATION — Google Sheets CSV URLs
+// ════════════════════════════════════════════════════════════════
+const SHEET_URLS = {
+  standards:   'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_0ZF64G4vXygPK0rfjwhVCwWf8pMDK7Wi4pW0bwWUfV-xIHJPhdOm23TKNVx67ADfWWhLxh-a3oGN/pub?gid=1859895872&single=true&output=csv',
+  partInputs:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_0ZF64G4vXygPK0rfjwhVCwWf8pMDK7Wi4pW0bwWUfV-xIHJPhdOm23TKNVx67ADfWWhLxh-a3oGN/pub?gid=107019329&single=true&output=csv',
+  thread:      'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_0ZF64G4vXygPK0rfjwhVCwWf8pMDK7Wi4pW0bwWUfV-xIHJPhdOm23TKNVx67ADfWWhLxh-a3oGN/pub?gid=813242915&single=true&output=csv',
+  dimensional: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_0ZF64G4vXygPK0rfjwhVCwWf8pMDK7Wi4pW0bwWUfV-xIHJPhdOm23TKNVx67ADfWWhLxh-a3oGN/pub?gid=1072264072&single=true&output=csv',
+  mechanical:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_0ZF64G4vXygPK0rfjwhVCwWf8pMDK7Wi4pW0bwWUfV-xIHJPhdOm23TKNVx67ADfWWhLxh-a3oGN/pub?gid=86934510&single=true&output=csv',
+  finish:      'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_0ZF64G4vXygPK0rfjwhVCwWf8pMDK7Wi4pW0bwWUfV-xIHJPhdOm23TKNVx67ADfWWhLxh-a3oGN/pub?gid=241102801&single=true&output=csv',
+  finishCodes: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_0ZF64G4vXygPK0rfjwhVCwWf8pMDK7Wi4pW0bwWUfV-xIHJPhdOm23TKNVx67ADfWWhLxh-a3oGN/pub?gid=301134754&single=true&output=csv',
+  chemical:       'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_0ZF64G4vXygPK0rfjwhVCwWf8pMDK7Wi4pW0bwWUfV-xIHJPhdOm23TKNVx67ADfWWhLxh-a3oGN/pub?gid=468507148&single=true&output=csv',
+  validation:     'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_0ZF64G4vXygPK0rfjwhVCwWf8pMDK7Wi4pW0bwWUfV-xIHJPhdOm23TKNVx67ADfWWhLxh-a3oGN/pub?gid=1609865007&single=true&output=csv',
+  threadTooltips: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_0ZF64G4vXygPK0rfjwhVCwWf8pMDK7Wi4pW0bwWUfV-xIHJPhdOm23TKNVx67ADfWWhLxh-a3oGN/pub?gid=1327470550&single=true&output=csv',
+};
+
+// ════════════════════════════════════════════════════════════════
+//  LIVE DATA STORE  (populated from Google Sheets on load)
+// ════════════════════════════════════════════════════════════════
+let DB = {
+  standards:   [],   // rows from 1_STANDARDS_CATEGORIES
+  partInputs:  [],   // rows from 3_PART_INPUTS
+  thread:      [],   // rows from 4_THREAD_DATA
+  dimensional: [],   // rows from 5_DIMENSIONAL_DATA
+  mechanical:  [],   // rows from 6_MECHANICAL_PROPS
+  finish:      [],   // rows from 7_FINISH_DATA
+  finishCodes: [],   // rows from 7b_FINISH_CODES
+  chemical:       [],   // rows from 8_CHEMICAL_DATA
+  validation:     [],   // rows from 11_VALIDATION_RULES
+  threadTooltips: [],   // rows from 4b_THREAD_TOOLTIPS
+};
+
+// Derived lookup maps (built after load)
+let STANDARD_MAP  = {};   // standardID → row object
+let FIELDS_MAP    = {};   // standardID → [field rows]
+let THREAD_MAP    = {};   // threadKey  → row object
+let DIM_MAP       = {};   // configKey  → {dimName: value}
+let MECH_MAP      = {};   // configKey  → {propName: value}
+let FINISH_MAP    = {};   // finishCode → row object
+let CHEM_MAP      = {};   // materialCode → {element: value}
+let VALID_MAP           = {};   // standardID → [rule objects]
+let THREAD_TOOLTIP_MAP  = {};   // propertyName → tooltip string
+
+let dataLoadedAt  = null;
+
+// ════════════════════════════════════════════════════════════════
+//  CSV PARSER  (RFC-4180 compliant, handles quoted fields)
+// ════════════════════════════════════════════════════════════════
+function parseCSV(text) {
+  // RFC-4180 compliant: parse character by character so quoted fields
+  // containing real newlines (e.g. Google Sheets multi-line cells) are handled correctly.
+  const rows = [];
+  const n = text.length;
+  let i = 0;
+  while (i < n) {
+    const cells = [];
+    // Parse one row — loop over fields
+    while (i <= n) {
+      let cur = '';
+      if (i < n && text[i] === '"') {
+        // Quoted field
+        i++; // skip opening quote
+        while (i < n) {
+          if (text[i] === '"') {
+            if (i + 1 < n && text[i+1] === '"') { cur += '"'; i += 2; } // escaped quote
+            else { i++; break; } // closing quote
+          } else {
+            cur += text[i++];
+          }
+        }
+      } else {
+        // Unquoted field — read until comma or newline or end
+        while (i < n && text[i] !== ',' && text[i] !== '\n' && text[i] !== '\r') {
+          cur += text[i++];
+        }
+      }
+      cells.push(cur);
+      // Comma → next field; anything else → end of row
+      if (i < n && text[i] === ',') { i++; continue; }
+      break;
+    }
+    // Skip row terminator (CRLF or LF)
+    if (i < n && text[i] === '\r') i++;
+    if (i < n && text[i] === '\n') i++;
+    if (cells.some(c => c.trim())) rows.push(cells);
+  }
+  return rows;
+}
+
+function csvToObjects(text) {
+  const rows = parseCSV(text);
+  if (rows.length < 2) return [];
+  // Skip instruction rows (rows where first cell is a long description paragraph)
+  let headerIdx = 0;
+  for (let i = 0; i < Math.min(rows.length, 3); i++) {
+    if (rows[i].length > 3 && rows[i][0].length < 50 && rows[i][1] && rows[i][1].length < 50) {
+      headerIdx = i; break;
+    }
+  }
+  const headers = rows[headerIdx].map(h => h.trim());
+  const objs = [];
+  for (let i = headerIdx + 1; i < rows.length; i++) {
+    const row = rows[i];
+    if (row.every(c => !c.trim())) continue; // skip blank rows
+    const obj = {};
+    headers.forEach((h, j) => { if (h) obj[h] = (row[j] || '').trim(); });
+    if (row.some(c => c.trim())) objs.push(obj); // skip fully blank rows
+  }
+  return objs;
+}
+
+// ════════════════════════════════════════════════════════════════
+//  FETCH WITH RETRY + CORS PROXY FALLBACK
+// ════════════════════════════════════════════════════════════════
+async function fetchCSV(url, label) {
+  setLoaderStep(`Loading ${label}…`);
+  try {
+    const res = await fetch(url, { cache: 'no-cache' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.text();
+  } catch (e) {
+    // Try corsproxy.io as fallback
+    try {
+      const proxy = 'https://corsproxy.io/?' + encodeURIComponent(url);
+      const res2  = await fetch(proxy, { cache: 'no-cache' });
+      if (!res2.ok) throw new Error(`Proxy HTTP ${res2.status}`);
+      return await res2.text();
+    } catch (e2) {
+      throw new Error(`Failed to load ${label}: ${e2.message}`);
+    }
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+//  DATA LOAD & INDEX BUILD
+// ════════════════════════════════════════════════════════════════
+async function loadAllData() {
+  const steps = [
+    ['standards',   SHEET_URLS.standards,   '1 — Standards & Categories',  10],
+    ['partInputs',  SHEET_URLS.partInputs,  '3 — Part Input Fields',        25],
+    ['thread',      SHEET_URLS.thread,      '4 — Thread Data',              40],
+    ['dimensional', SHEET_URLS.dimensional, '5 — Dimensional Data',         55],
+    ['mechanical',  SHEET_URLS.mechanical,  '6 — Mechanical Properties',    65],
+    ['finish',      SHEET_URLS.finish,      '7 — Finish Data',              78],
+    ['finishCodes', SHEET_URLS.finishCodes, '7b — Finish Codes',            86],
+    ['chemical',    SHEET_URLS.chemical,    '8 — Chemical Data',            93],
+    ['validation',  SHEET_URLS.validation,  '11 — Validation Rules',        98],
+    ...(SHEET_URLS.threadTooltips ? [['threadTooltips', SHEET_URLS.threadTooltips, '4b — Thread Tooltips', 99]] : []),
+  ];
+
+  for (const [key, url, label, pct] of steps) {
+    try {
+      const csv  = await fetchCSV(url, label);
+      DB[key]    = csvToObjects(csv);
+      setLoaderProgress(pct);
+    } catch (e) {
+      console.warn(`Sheet ${label} failed:`, e.message);
+      DB[key] = [];
+    }
+  }
+
+  buildIndexes();
+  setLoaderProgress(100);
+  setLoaderStep('Ready!');
+  dataLoadedAt = new Date();
+}
+
+function buildIndexes() {
+  // ── STANDARD_MAP ─────────────────────────────────────────────
+  STANDARD_MAP = {};
+  for (const row of DB.standards) {
+    const id = row['StandardID'] || row['standardID'];
+    if (!id) continue;
+    STANDARD_MAP[id] = {
+      id,
+      name:         row['StandardName']     || row['standardName'] || id,
+      threadKey:    row['ThreadDataKey']    || '',
+      uom:          row['MeasurementSystem']|| row['uom'] || '',
+      standardUrl:  row['StandardURL']      || row['standardUrl'] || '',
+      keywords:     row['Search Keywords']  || row['keywords'] || '',
+      catId:        row['CategoryID']       || '',
+      catName:      row['CatName']          || '',
+      shopUrl:      row['SBSShopURL / QR Code'] || row['shopUrl'] || '',
+      partImg:      row['PartImg']          || row['partImg'] || '',
+      raw: row
+    };
+  }
+
+  // ── FIELDS_MAP ────────────────────────────────────────────────
+  FIELDS_MAP = {};
+  for (const row of DB.partInputs) {
+    const sid = row['StandardID'];
+    if (!sid) continue;
+    if (!FIELDS_MAP[sid]) FIELDS_MAP[sid] = [];
+    FIELDS_MAP[sid].push({
+      fieldOrder:  parseInt(row['FieldOrder']  || '0'),
+      displayRow:  parseInt(row['DisplayRow']  || '0') || null,
+      fieldKey:    row['FieldKey'],
+      label:      row['FieldLabel'] || row['FieldKey'],
+      type:       row['FieldType'] || 'dropdown',
+      opts:       row['Options']   || '',
+      tooltip:    row['FieldTooltip'] || '',
+      tooltipOv:  row['FieldTooltipOverride'] || '',
+      depOn:      row['DependsOnField'] || '',
+      depVal:     row['DependsOnValue'] || '',
+    });
+  }
+  // Sort by fieldOrder
+  for (const sid in FIELDS_MAP) {
+    FIELDS_MAP[sid].sort((a,b) => a.fieldOrder - b.fieldOrder);
+  }
+
+  // ── THREAD_MAP ─────────────────────────────────────────────────
+  // Key: threadStdID|size|tpi  → row (EAV rows grouped)
+  THREAD_MAP = {};
+  const threadGroups = {};
+  for (const row of DB.thread) {
+    const std  = row['ThreadStandardID'];
+    const size = row['Size'] || '';
+    const tpi  = row['TPI']  || '';
+    if (!std || !tpi) continue;
+    const key = `${std}|${size}|${tpi}`;
+    if (!threadGroups[key]) threadGroups[key] = {};
+    // Flat row — each column is a property
+    Object.assign(threadGroups[key], {
+      size, tpi,
+      seriesDesig:    row['SeriesDesignation'] || '',
+      threadClass:    row['ThreadClass']       || '',
+      majorDiaMax:    row['MajorDiaMax']       || '',
+      majorDiaMin:    row['MajorDiaMin']       || '',
+      pitchDiaMax:    row['PitchDiaMax']       || '',
+      pitchDiaMin:    row['PitchDiaMin']       || '',
+      minorDia:       row['MinorDia']          || '',
+      tensileArea:    row['TensileStressArea'] || '',
+      threadStandard:    row['ThreadStandard']       || '',
+      threadStandardUrl: row['StandardURL']           || '',
+      notes:             row['Notes']               || '',
+    });
+  }
+  THREAD_MAP = threadGroups;
+
+  // ── DIM_MAP ──────────────────────────────────────────────────
+  // Key: configKey  → [{dimName, value}, ...] order-preserving array + fast lookup
+  // ConfigKey is only in col A on the first row of each block; carry it forward.
+  DIM_MAP = {};
+  let lastDimKey = '';
+  for (const row of DB.dimensional) {
+    const ck = (row['ConfigKey'] || '').trim();
+    if (ck) lastDimKey = ck;
+    if (!lastDimKey) continue;
+    if (!DIM_MAP[lastDimKey]) DIM_MAP[lastDimKey] = { _standard: row['StdRef'] || row['StandardID'] || '', _rows: [] };
+    const name    = (row['Dim_Name']            || '').trim();
+    const val     = (row['Dim_Value']           || '').trim();
+    const group   = (row['Row_Group']           || '').trim();
+    const tipGlob = (row['AttributeTooltip']    || '').trim();
+    const tipOver = (row['DimTooltipOverride']  || '').trim();
+    const tip     = tipOver || tipGlob;
+    if (name && val) {
+      DIM_MAP[lastDimKey][name] = val;                              // fast lookup by name
+      DIM_MAP[lastDimKey]._rows.push({ name, val, group, tip });    // ordered list for rendering
+    }
+  }
+
+  // ── MECH_MAP ─────────────────────────────────────────────────
+  // Key: configKey → {PropName: value, ...}
+  MECH_MAP = {};
+  for (const row of DB.mechanical) {
+    const ck = row['ConfigKey'];
+    if (!ck) continue;
+    if (!MECH_MAP[ck]) MECH_MAP[ck] = { _standardUrl: row['StandardURL'] || '' };
+    const name = row['Prop_Name'];
+    const val  = row['Prop_Value'];
+    const unit = row['Unit'] || '';
+    if (name && val !== undefined) MECH_MAP[ck][name] = val + (unit ? ' ' + unit : '');
+  }
+
+  // ── FINISH_MAP ───────────────────────────────────────────────
+  FINISH_MAP = {};
+  for (const row of DB.finish) {
+    const code = row['FinishCode'];
+    if (!code || code.length > 60) continue; // skip instruction rows
+    FINISH_MAP[code] = {
+      code,
+      name:        row['FinishName']        || '',
+      subtitle:    row['FinishSubtitle']    || '',
+      standard:    row['FinishStandard']    || '',
+      standardUrl: row['StandardURL']          || '',
+      kFactor:     row['KFactor']           || '',
+      thickMin:    row['ThicknessMin_um']   || '',
+      thickMax:    row['ThicknessMax_um']   || '',
+      rohs:        row['RoHSCompliant']     || '',
+      heRisk:      row['HE_Risk']           || '',
+      materials:   row['CompatibleMaterials'] || '',
+      saltWhite:   row['SaltSpray_White_hr'] || '',
+      saltRed:     row['SaltSpray_Red_hr']  || '',
+      bestCode:    row['BestCode']          || '',
+      notes:       row['ApplicationNotes'] || '',
+    };
+  }
+
+  // ── CHEM_MAP ─────────────────────────────────────────────────
+  // Chemical sheet uses EAV with the ConfigKey only on the first row of each material block.
+  // Carry the last seen ConfigKey forward for subsequent property rows.
+  CHEM_MAP = {};
+  let lastChemKey = '';
+  for (const row of DB.chemical) {
+    const ck = (row['ConfigKey'] || '').trim();
+    if (ck) lastChemKey = ck;
+    if (!lastChemKey) continue;
+    if (!CHEM_MAP[lastChemKey]) CHEM_MAP[lastChemKey] = { _standardUrl: (row['StandardURL'] || '') };
+    const name = (row['Element_Name'] || '').trim();
+    const val  = (row['Element_Value'] || '').trim();
+    if (name && val) CHEM_MAP[lastChemKey][name] = val;
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+//  LOADER UI HELPERS
+// ════════════════════════════════════════════════════════════════
+function setLoaderProgress(pct) {
+  document.getElementById('loaderFill').style.width = pct + '%';
+}
+function setLoaderStep(msg) {
+  document.getElementById('loaderStep').textContent = msg;
+}
+function showLoaderError(msg) {
+  const el = document.getElementById('loaderError');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+function hideAppLoader() {
+  document.getElementById('appLoader').classList.add('hidden');
+  setTimeout(() => {
+    const el = document.getElementById('appLoader');
+    if (el) el.remove();
+  }, 500);
+}
+async function reloadData() {
+  document.getElementById('btnRefresh').disabled = true;
+  document.getElementById('dataFreshness').textContent = 'Reloading…';
+  try {
+    await loadAllData();
+    rebuildUI();
+    const t = dataLoadedAt.toLocaleTimeString();
+    document.getElementById('dataFreshness').innerHTML = 'Data loaded: <span>' + t + '</span>';
+  } catch(e) {
+    document.getElementById('dataFreshness').textContent = 'Reload failed';
+  }
+  document.getElementById('btnRefresh').disabled = false;
+}
+
+// ════════════════════════════════════════════════════════════════
+//  UI BUILD HELPERS
+// ════════════════════════════════════════════════════════════════
+function getAllCatNames() {
+  const cats = new Set();
+  for (const sid in STANDARD_MAP) cats.add(STANDARD_MAP[sid].catName);
+  return [...cats].filter(Boolean).sort();
+}
+
+function getStandardsForCat(catName, uom) {
+  return Object.values(STANDARD_MAP).filter(sm => {
+    if (catName && sm.catName !== catName) return false;
+    if (uom && sm.uom !== uom && sm.uom !== 'Both') return false;
+    return true;
+  });
+}
+
+function getStdById(name) {
+  // Match by name
+  for (const sid in STANDARD_MAP) {
+    if (STANDARD_MAP[sid].name === name) return STANDARD_MAP[sid];
+  }
+  // Partial
+  for (const sid in STANDARD_MAP) {
+    if (STANDARD_MAP[sid].name.includes(name) || name.includes(STANDARD_MAP[sid].name))
+      return STANDARD_MAP[sid];
+  }
+  return null;
+}
+
+function rebuildUI() {
+  populateTypeDropdowns();
+  onTypeChange();
+  populateSdsStandards();
+  syncCmpStandards('A');
+  syncCmpStandards('B');
+}
+
+function populateTypeDropdowns() {
+  const cats = getAllCatNames();
+  ['typeOfPart','cmpTypeA','cmpTypeB'].forEach(id => {
+    const sel = document.getElementById(id);
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">-- Select Part Type --</option>';
+    cats.forEach(c => {
+      const o = document.createElement('option');
+      o.value = o.textContent = c;
+      sel.appendChild(o);
+    });
+    if (cur && cats.includes(cur)) sel.value = cur;
+  });
+}
+
+function populateStandardDropdown(selId, stds, currentVal) {
+  const sel = document.getElementById(selId);
+  sel.innerHTML = '<option value="">-- Select Standard --</option>';
+  stds.forEach(sm => {
+    const o = document.createElement('option');
+    o.value = o.textContent = sm.name;
+    sel.appendChild(o);
+  });
+  if (currentVal && stds.some(s => s.name === currentVal)) sel.value = currentVal;
+}
+
+// ── Returns first real (non-separator) option from an optsStr ──
+// ── Convert fraction string e.g. "3/8" to decimal 0.375 ──
+function fracToDecimal(str) {
+  if (!str) return NaN;
+  const s = String(str).trim();
+  const parts = s.split('/');
+  if (parts.length === 2) return parseFloat(parts[0]) / parseFloat(parts[1]);
+  return parseFloat(s);
+}
+
+// ── Evaluate Sheet 11 validation rules for a given standard + vals + dimKey ──
+function evaluateValidationRules(stdId, vals, dimKey) {
+  const rules = VALID_MAP[stdId] || [];
+  if (!rules.length) return '';
+  const d = DIM_MAP[dimKey] || {};
+  let html = '';
+  for (const rule of rules) {
+    const { condition, threshold, severity, message } = rule;
+    let triggered = false;
+    try {
+      // Parse condition: "length > threadSize" or "length < thread_length"
+      const match = condition.match(/^(\S+)\s*([><=!]+)\s*(\S+)$/);
+      if (!match) { console.warn('VALID: no match for condition', JSON.stringify(condition)); continue; }
+      const [, lhsKey, op, rhsKey] = match;
+
+      // Resolve LHS — always a user input field
+      const lhsVal = fracToDecimal(vals[lhsKey] || '0');
+
+      // Resolve RHS — user input field, DIM_MAP lookup, or numeric literal
+      let rhsVal;
+      if (!isNaN(parseFloat(rhsKey)) && isFinite(rhsKey)) {
+        rhsVal = parseFloat(rhsKey);             // numeric literal in condition
+      } else if (vals[rhsKey] !== undefined) {
+        rhsVal = fracToDecimal(vals[rhsKey]);    // another user input field
+      } else {
+        // DIM_MAP lookup — find matching Dim_Name key (e.g. thread_length → "Thread Length, Lₜ")
+        const dimMatch = Object.keys(d).find(k =>
+          k !== '_standard' && k !== '_rows' && k !== '_standardUrl' &&
+          k.toLowerCase().replace(/[^a-z0-9]/g,'_').includes(rhsKey.replace(/[^a-z0-9]/g,'_'))
+        );
+        rhsVal = dimMatch ? parseFloat(d[dimMatch]) : NaN;
+      }
+
+      // Apply threshold multiplier if present
+      const mult = threshold && threshold !== '—' && threshold !== '-' ? parseFloat(threshold) : 1;
+      const rhsFinal = rhsVal * mult;
+
+      console.log('VALID rule:', rule.ruleId, '| lhsKey:', lhsKey, '→', lhsVal,
+        '| op:', op, '| rhsKey:', rhsKey, '→', rhsVal, '| mult:', mult,
+        '| rhsFinal:', rhsFinal, '| triggered:', lhsVal > rhsFinal);
+
+      if (isNaN(lhsVal) || isNaN(rhsFinal)) { console.warn('VALID: NaN skip', rule.ruleId, lhsVal, rhsFinal); continue; }
+
+      // Evaluate operator
+      if      (op === '>')  triggered = lhsVal >  rhsFinal;
+      else if (op === '<')  triggered = lhsVal <  rhsFinal;
+      else if (op === '>=') triggered = lhsVal >= rhsFinal;
+      else if (op === '<=') triggered = lhsVal <= rhsFinal;
+      else if (op === '==' || op === '=') triggered = lhsVal === rhsFinal;
+      else if (op === '!=' || op === '<>') triggered = lhsVal !== rhsFinal;
+    } catch(e) { console.error('VALID rule error:', e); continue; }
+
+    if (triggered) {
+      const cls = severity === 'error' ? 'tds-valid-error'
+                : severity === 'info'  ? 'tds-valid-info'
+                : 'tds-valid-warning';
+      const icon = severity === 'error' ? '✖' : severity === 'info' ? 'ℹ' : '⚠';
+      html += `<div class="tds-valid-banner ${cls}"><span class="tds-valid-icon">${icon}</span><span>${message}</span></div>`;
+    }
+  }
+  return html;
+}
+
+function getFirstRealOption(optsStr) {
+  if (!optsStr) return '';
+  const items = optsStr.includes('||')
+    ? optsStr.split(',').map(s => s.trim())
+    : optsStr.split('|').map(s => s.trim());
+  return items.find(s => s && !s.match(/^\|\|.+\|\|$/)) || '';
+}
+
+// ── Option builder: handles ||LABEL|| group markers ───────────
+function buildOptionsHtml(optsStr) {
+  if (!optsStr) return '';
+  // ||LABEL|| marker format
+  if (optsStr.includes('||')) {
+    let out = '', inGroup = false;
+    optsStr.split(',').forEach(item => {
+      item = item.trim();
+      if (!item) return;
+      const gm = item.match(/^\|\|(.+)\|\|$/);
+      if (gm) {
+        if (inGroup) out += '</optgroup>';
+        out += `<optgroup label="── ${gm[1]} ──────────────────">`;
+        inGroup = true;
+      } else {
+        out += `<option value="${item}">${item}</option>`;
+      }
+    });
+    if (inGroup) out += '</optgroup>';
+    return out;
+  }
+  // Pipe-separated flat list
+  return optsStr.split('|').map(o => o.trim())
+    .filter(Boolean)
+    .map(o => `<option value="${o}">${o}</option>`)
+    .join('');
+}
+
+function parseCascadeDepVal(depVal) {
+  // depVal: "ParentA:||COMMON||,opt1,opt2|ParentB:opt3"
+  // ||LABEL|| contains |, so we protect them first
+  const safe = depVal.replace(/\|\|([^|]+)\|\|/g, (_, lbl) => `\x00${lbl}\x00`);
+  const map = {};
+  safe.split('|').forEach(seg => {
+    const idx = seg.indexOf(':');
+    if (idx < 0) return;
+    const k    = seg.substring(0, idx).replace(/^[\s\n\r]+/, '').trim();
+    const vStr = seg.substring(idx+1).replace(/\x00([^\x00]+)\x00/g, '||$1||');
+    const vals = vStr.split(',').map(s => s.trim()).filter(Boolean);
+    map[k] = vals;
+  });
+  return map;
+}
+
+function buildCascadeOptionsHtml(items) {
+  let out = '', inGroup = false;
+  items.forEach(item => {
+    if (!item) return;
+    const gm = item.match(/^\|\|(.+)\|\|$/);
+    if (gm) {
+      if (inGroup) out += '</optgroup>';
+      out += `<optgroup label="── ${gm[1]} ──────────────────">`;
+      inGroup = true;
+    } else {
+      out += `<option value="${item}">${item}</option>`;
+    }
+  });
+  if (inGroup) out += '</optgroup>';
+  return out;
+}
+
+function tipBtn(tooltip) {
+  if (!tooltip) return '';
+  const safe = tooltip.replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/'/g, '&#39;');
+  return `<button class="tip-btn" tabindex="0"
+    onmouseenter="showTip(this,'${safe}')"
+    onmouseleave="hideTip()"
+    onfocus="showTip(this,'${safe}')"
+    onblur="hideTip()">i</button>`;
+}
+
+function showTip(el, text) {
+  const f = document.getElementById('tipFloater');
+  if (!f) return;
+  f.textContent = text.replace(/&quot;/g,'"').replace(/&lt;/g,'<').replace(/&#39;/g,"'");
+  f.style.opacity = '0';
+  f.style.display = 'block';
+  const r = el.getBoundingClientRect();
+  const fw = f.offsetWidth, fh = f.offsetHeight;
+  let top  = r.top - fh - 8;
+  let left = r.left + r.width / 2 - fw / 2;
+  if (top < 8) top = r.bottom + 8;
+  if (left < 8) left = 8;
+  if (left + fw > window.innerWidth - 8) left = window.innerWidth - fw - 8;
+  f.style.top  = top  + 'px';
+  f.style.left = left + 'px';
+  f.style.opacity = '1';
+}
+
+function hideTip() {
+  const f = document.getElementById('tipFloater');
+  if (f) { f.style.opacity = '0'; f.style.display = 'none'; }
+}
+
+// ════════════════════════════════════════════════════════════════
+//  SECTION 1 — TYPE / UOM / STANDARD SELECTORS
+// ════════════════════════════════════════════════════════════════
+function onTypeChange() {
+  const cat = document.getElementById('typeOfPart').value;
+  const uom = document.getElementById('uomFilter').value;
+  const stds = getStandardsForCat(cat, uom);
+  populateStandardDropdown('standard', stds, '');
+  onStandardChange();
+
+  // ── THREAD_TOOLTIP_MAP ──────────────────────────────────────────
+  // Key: PropertyName → tooltip string (from 4b_THREAD_TOOLTIPS)
+  THREAD_TOOLTIP_MAP = {};
+  for (const row of (DB.threadTooltips || [])) {
+    const prop = (row['PropertyName'] || '').trim();
+    const tip  = (row['Tooltip']      || '').trim();
+    if (prop && tip) THREAD_TOOLTIP_MAP[prop] = tip;
+  }
+
+  // ── VALID_MAP ─────────────────────────────────────────────────
+  // Key: standardID → [{ ruleId, field, condition, threshold, severity, message }]
+  VALID_MAP = {};
+  for (const row of (DB.validation || [])) {
+    const sid = (row['StandardID'] || '').trim();
+    if (!sid) continue;
+    if (!VALID_MAP[sid]) VALID_MAP[sid] = [];
+    VALID_MAP[sid].push({
+      ruleId:    (row['RuleID']        || '').trim(),
+      field:     (row['Field']         || '').trim(),
+      condition: (row['Condition']     || '').trim(),
+      threshold: (row['Threshold']     || '').trim(),
+      severity:  (row['SeverityLevel'] || 'warning').trim().toLowerCase(),
+      message:   (row['Message']       || '').trim(),
+    });
+  }
+}
+
+function onUomChange() {
+  onTypeChange();
+}
+
+function onStandardChange() {
+  const stdName = document.getElementById('standard').value;
+  const sm      = stdName ? getStdById(stdName) : null;
+  updateActionButtons(sm);
+  buildSection2(sm);
+  document.getElementById('sec2').style.display = sm ? 'block' : 'none';
+  document.getElementById('sec3').style.display = 'none';
+}
+
+function updateActionButtons(sm) {
+  const row     = document.getElementById('sec1Actions');
+  const btnCat  = document.getElementById('btnCategoryPage');
+  const lblCat  = document.getElementById('lblCategoryPage');
+  const btnStd  = document.getElementById('btnStandardPDF');
+  const lblStd  = document.getElementById('lblStandardPDF');
+  let show = false;
+  if (sm && sm.shopUrl) {
+    btnCat.href = sm.shopUrl;
+    lblCat.textContent = 'Category Page : ' + (sm.catName || sm.name);
+    btnCat.style.display = 'inline-flex';
+    show = true;
+  } else {
+    btnCat.style.display = 'none';
+  }
+  if (sm && sm.standardUrl) {
+    btnStd.href = sm.standardUrl;
+    lblStd.textContent = 'Standard (PDF) : ' + sm.name.split(' — ')[0].split(' - ')[0].trim();
+    btnStd.style.display = 'inline-flex';
+    show = true;
+  } else {
+    btnStd.style.display = 'none';
+  }
+  row.classList.toggle('visible', show);
+}
+
+// ════════════════════════════════════════════════════════════════
+//  SECTION 2 — DYNAMIC FIELD BUILDER
+// ════════════════════════════════════════════════════════════════
+function buildSection2(sm) {
+  const body = document.getElementById('sec2Body');
+  if (!sm) {
+    body.innerHTML = '<p style="font-size:13px;color:var(--gray-500);">Select a Standard above to define part attributes.</p>';
+    return;
+  }
+  const fields = FIELDS_MAP[sm.id] || [];
+  if (!fields.length) {
+    body.innerHTML = `<div class="not-built"><strong>This standard has not yet been built in the database</strong>
+      Feel free to submit a request and we will prioritize adding it.<br><br>
+      <a href="https://shop.specialtybolt.com/technical/technical-data-sheets" target="_blank">Submit a TDS Request</a></div>`;
+    return;
+  }
+  // ── Part image in Section 2 ─────────────────────────────────
+  let html = '';
+  if (sm.partImg) {
+    const imgSrc = resolveImgUrl(sm.partImg);
+    html += `<div class="tds-img-wrap sec2-wrap">
+      <img class="tds-part-img" src="${imgSrc}" alt="Part Drawing"
+        title="Click to zoom"
+        onclick="toggleImgZoom(this)"
+        onerror="this.parentElement.innerHTML=driveImgFallback('${imgSrc}')">
+    </div>`;
+  }
+  // Group fields by DisplayRow (if set), otherwise treat each as its own group
+  // Fields without DisplayRow get a synthetic row number based on FieldOrder
+  const rowGroups = new Map();
+  fields.forEach((f, idx) => {
+    const rk = f.displayRow || (1000 + idx); // ungrouped fields get unique high keys
+    if (!rowGroups.has(rk)) rowGroups.set(rk, []);
+    rowGroups.get(rk).push(f);
+  });
+  // Sort groups by their row key
+  const sortedGroups = [...rowGroups.entries()].sort((a, b) => a[0] - b[0]);
+
+  function fieldHtml(f) {
+    const tip = f.tooltipOv || f.tooltip || '';
+    let h = `<div class="field-group">
+      <label>${f.label} ${tipBtn(tip)}</label>`;
+    if (f.type === 'text') {
+      h += `<input type="text" id="f_${f.fieldKey}" placeholder="Enter ${f.label}…">`;
+    } else {
+      h += `<select id="f_${f.fieldKey}" ${f.depOn ? 'disabled' : ''}
+        onchange="handleOtherSelect(this, 'fother_${f.fieldKey}')">
+        <option value="">-- Select ${f.label} --</option>`;
+      if (!f.depOn && f.opts) h += buildOptionsHtml(f.opts);
+      h += `<option value="__OTHER__">Other — User Specified</option></select>`;
+      h += `<div class="other-input-wrap" id="fother_${f.fieldKey}">
+        <div class="other-input-label">Specify value</div>
+        <input type="text" id="fotherval_${f.fieldKey}"
+          placeholder="Enter custom ${f.label}…"
+          oninput="syncOtherValue(this, 'f_${f.fieldKey}')">
+      </div>`;
+    }
+    h += `</div>`;
+    return h;
+  }
+
+  html += '<div id="fieldGrid">';
+  sortedGroups.forEach(([rk, grpFields]) => {
+    html += `<div class="field-grid">`;
+    grpFields.forEach(f => { html += fieldHtml(f); });
+    html += `</div>`;
+  });
+  html += `</div>
+    <div class="btn-row">
+      <button class="btn btn-orange" onclick="generateTDS('${sm.id}')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Generate Technical Data Sheet
+      </button>
+    </div>`;
+  body.innerHTML = html;
+
+  // Auto-select first real option for independent (non-dependent) dropdowns
+  fields.forEach(f => {
+    if (f.depOn || f.type === 'text' || !f.opts) return;
+    const el = document.getElementById('f_' + f.fieldKey);
+    if (!el || el.value) return;
+    const first = getFirstRealOption(f.opts);
+    if (first) el.value = first;
+  });
+
+  // Wire cascade dependencies
+  fields.forEach(f => {
+    if (!f.depOn) return;
+    const parentId  = 'f_' + f.depOn.replace(/ /g,'_');
+    const childId   = 'f_' + f.fieldKey;
+    const childWrap = 'fother_' + f.fieldKey;
+    const parentEl  = document.getElementById(parentId);
+    const childEl   = document.getElementById(childId);
+    if (!parentEl || !childEl) return;
+    const depMap = parseCascadeDepVal(f.depVal);
+    parentEl.addEventListener('change', function() {
+      const pv        = this.value;
+      const childWrapEl = document.getElementById(childWrap);
+
+      // Reset child first
+      childEl.innerHTML = `<option value="">-- Select ${f.label} --</option>`;
+      childEl.innerHTML += `<option value="__OTHER__">Other — User Specified</option>`;
+      if (childWrapEl) childWrapEl.classList.remove('visible');
+
+      if (!pv) {
+        childEl.disabled = true;
+        return;
+      }
+
+      // Parent is "Other — User Specified": bypass dropdown, go straight to text input
+      if (pv === '__OTHER__') {
+        childEl.disabled = true;
+        childEl.value = '__OTHER__';
+        if (childWrapEl) {
+          childWrapEl.classList.add('visible');
+          const inp = childWrapEl.querySelector('input');
+          if (inp) { inp.value = ''; inp.focus(); }
+        }
+        return;
+      }
+
+      // Normal cascade: populate child dropdown options
+      const opts = depMap[pv] || [];
+      if (opts.length) {
+        // Insert options before the "Other" option (last)
+        const otherOpt = childEl.querySelector('option[value="__OTHER__"]');
+        const frag = document.createDocumentFragment();
+        const tmp  = document.createElement('select');
+        tmp.innerHTML = buildCascadeOptionsHtml(opts);
+        while (tmp.firstChild) frag.appendChild(tmp.firstChild);
+        childEl.insertBefore(frag, otherOpt);
+        childEl.disabled = false;
+        // Auto-select first real option
+        const real = opts.filter(o => !o.match(/^\|\|.+\|\|$/));
+        if (real.length >= 1) childEl.value = real[0];
+      } else {
+        childEl.disabled = true;
+      }
+    });
+  });
+
+  // Fire change on each parent (in field order) so dependent dropdowns auto-populate
+  // from the parent's already-selected default value
+  const firedParents = new Set();
+  fields.filter(f => f.depOn).forEach(f => {
+    const parentId = 'f_' + f.depOn.replace(/ /g,'_');
+    if (firedParents.has(parentId)) return;
+    firedParents.add(parentId);
+    const parentEl = document.getElementById(parentId);
+    if (parentEl && parentEl.value) parentEl.dispatchEvent(new Event('change'));
+  });
+}
+
+function getFieldValues(stdId) {
+  const vals = {};
+  (FIELDS_MAP[stdId] || []).forEach(f => {
+    const el = document.getElementById('f_' + f.fieldKey);
+    if (!el) return;
+    // "Other" selected OR select is disabled but text box is visible (parent was Other)
+    const wrapEl   = document.getElementById('fother_' + f.fieldKey);
+    const isOther  = el.value === '__OTHER__' ||
+                     (wrapEl && wrapEl.classList.contains('visible'));
+    if (isOther) {
+      const customEl = document.getElementById('fotherval_' + f.fieldKey);
+      const raw = customEl ? customEl.value.trim() : '';
+      vals[f.fieldKey] = raw ? raw + ' - user specified' : '';
+    } else {
+      vals[f.fieldKey] = el.value;
+    }
+  });
+  return vals;
+}
+
+// ════════════════════════════════════════════════════════════════
+//  TDS GENERATOR
+// ════════════════════════════════════════════════════════════════
+let _lastQuoteSm = null;
+let _lastQuoteVals = null;
+
+function generateTDS(stdId) {
+  const sm   = STANDARD_MAP[stdId];
+  if (!sm) return;
+  const vals = getFieldValues(stdId);
+  _lastQuoteSm = sm; _lastQuoteVals = vals;
+
+  document.getElementById('loadingOverlay').classList.add('active');
+  setTimeout(() => {
+    try {
+      const html = buildTDSHtml(stdId, sm, vals);
+      document.getElementById('tdsContent').innerHTML = html;
+      document.getElementById('sec3').style.display = 'block';
+
+      // QR code — Shop This Category
+      const qrDiv = document.getElementById('qrcode');
+      if (qrDiv && sm.shopUrl) {
+        qrDiv.innerHTML = '';
+        new QRCode(qrDiv, { text: sm.shopUrl, width: 66, height: 66,
+          colorDark: '#FFFFFF', colorLight: '#1D3557' });
+      }
+      // QR code — Get Quote (subject-only mailto keeps URL short enough for QR)
+      const qrQuoteDiv = document.getElementById('qrcode-quote');
+      if (qrQuoteDiv) {
+        const sz  = vals.threadSize || '';
+        const tpi = (vals.tpi || '').replace(/\s*\(.*\)/, '').trim().split(' ')[0];
+        const subj = encodeURIComponent('RFQ - ' + sm.name + ' ' + sz + '-' + tpi + ' x ' + (vals.length||'') + '" - ' + (vals.grade||'') + ' - ' + (vals.finish||''));
+        const mailtoUrl = 'mailto:jchivers@specialtybolt.com?subject=' + subj;
+        qrQuoteDiv.innerHTML = '';
+        new QRCode(qrQuoteDiv, { text: mailtoUrl, width: 66, height: 66,
+          colorDark: '#1D3557', colorLight: '#FFFFFF' });
+      }
+      document.getElementById('sec3').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Update Search E-Catalog button href
+      const btnEcat = document.getElementById('btnSearchEcat');
+      if (btnEcat) btnEcat.href = buildSearchUrl(sm, vals);
+    } catch(e) {
+      console.error('TDS build error:', e);
+      document.getElementById('tdsContent').innerHTML =
+        `<div style="padding:16px;color:#c0392b;font-family:monospace;font-size:13px;">
+          <strong>TDS Build Error:</strong><br>${e.message}<br><pre>${e.stack}</pre>
+        </div>`;
+      document.getElementById('sec3').style.display = 'block';
+    }
+    document.getElementById('loadingOverlay').classList.remove('active');
+  }, 400);
+}
+
+function buildTDSHtml(stdId, sm, vals) {
+  const isRivet  = stdId.includes('IFI') || stdId.includes('RIVET');
+  const isWasher = stdId.includes('WASHER') || stdId.includes('7089');
+  const isBolt   = !isRivet && !isWasher;
+
+  // ── Header subtitle ───────────────────────────────────────────
+  let subtitle = '';
+  if (isBolt) {
+    const sz    = vals.threadSize || '';
+    const tpi   = (vals.tpi || '').split(' ')[0];
+    const len   = vals.length ? ' × ' + vals.length + '"' : '';
+    const grade = vals.grade ? ' — ' + vals.grade : '';
+    const fin   = vals.finish ? ' — ' + vals.finish : '';
+    subtitle = [sz + (tpi ? '-' + tpi : '') + len, grade.replace(' — ',''), fin.replace(' — ','')]
+      .filter(Boolean).join(' — ');
+  } else if (isWasher) {
+    subtitle = (vals.size||'') + ' ' + (vals.material||'');
+  } else {
+    subtitle = (vals.size||'') + '" ' + (vals.headType||'') + (vals.bodyMaterial ? ' | ' + vals.bodyMaterial : '');
+  }
+
+  // ── Logo & header ─────────────────────────────────────────────
+  const LOGO_B64 = document.querySelector('.logo').src;
+  let tds = `<div class="tds-sheet">
+    <div class="tds-top">
+      <div class="tds-top-left">
+        <h2>${sm.standardUrl ? `<a href="${sm.standardUrl}" target="_blank" style="color:var(--orange);text-decoration:none;">${sm.name}</a>` : sm.name}</h2>
+        <p class="tds-subtitle">${subtitle}</p>
+      </div>
+      <div class="tds-logo-bar">
+        <a href="https://shop.specialtybolt.com/" target="_blank">
+          <img src="${LOGO_B64}" alt="SBS" style="height:40px;">
+        </a>
+        <p>www.specialtybolt.com | 1-800-322-7878</p>
+      </div>
+    </div>
+    <div class="optional-strip">
+      <div class="field-group"><label>SBS Part No.</label><input type="text" placeholder="Enter SBS part number…"></div>
+      <div class="field-group"><label>Customer Part No.</label><input type="text" placeholder="Enter customer part no…"></div>
+    </div>`;
+
+  // ── Image panel ───────────────────────────────────────────────
+  if (sm.partImg) {
+    const imgSrc = resolveImgUrl(sm.partImg);
+    tds += `<div class="tds-img-wrap">
+      <img class="tds-part-img" src="${imgSrc}" alt="Part Drawing"
+        title="Click to zoom"
+        onclick="toggleImgZoom(this)"
+        onerror="this.parentElement.innerHTML=driveImgFallback('${imgSrc}')">
+    </div>`;
+  } else {
+    tds += `<div class="tds-img-wrap"><div class="tds-img-placeholder-single">
+      <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="var(--gray-300)" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      <div class="tds-img-label">Part Drawing / 3D Model</div>
+      <div class="tds-img-sub">Add PartImg URL to Sheet 1 to display here.</div>
+    </div></div>`;
+  }
+
+  // ── Data sections ─────────────────────────────────────────────
+  if (isBolt) {
+    tds += buildBoltSections(stdId, sm, vals);
+  } else if (isWasher) {
+    tds += buildWasherSections(stdId, sm, vals);
+  } else {
+    tds += buildRivetSections(stdId, sm, vals);
+  }
+
+  // ── Footer ────────────────────────────────────────────────────
+  const noteText = isBolt
+    ? 'Torque values based on K factors per DIN 946, tightening tension 75% yield strength, formula T=KDP. Advisory only.'
+    : isWasher ? 'Dimensional data per applicable ISO standard. All dimensions in millimetres.'
+    : 'Dimensional and mechanical data per IFI-116-2013. All dimensions in inches.';
+  tds += `<div class="tds-quote-section" id="tdsQuoteSection">
+    <div class="tds-quote-section-head" onclick="toggleQuoteSection()">
+      <h2>Quote This Part</h2>
+      <svg id="tdsQuoteChevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="tds-quote-section-body" id="tdsQuoteBody">
+      <div class="tds-quote-summary" id="tdsQuoteSummary"></div>
+      <div class="tds-quote-grid">
+        <div class="tds-quote-field"><label>Your Name</label><input type="text" id="qName" placeholder="Full name"></div>
+        <div class="tds-quote-field"><label>Company</label><input type="text" id="qCompany" placeholder="Company name"></div>
+        <div class="tds-quote-field"><label>Quantity Required</label><input type="number" id="qQty" placeholder="e.g. 500"></div>
+        <div class="tds-quote-field"><label>Estimated Annual Usage (EAU)</label><input type="number" id="qEau" placeholder="e.g. 5000"></div>
+      </div>
+      <div class="tds-quote-field" style="margin-bottom:12px;"><label>When Are Parts Needed?</label><input type="text" id="qWhen" placeholder="e.g. ASAP, within 4 weeks, specific date"></div>
+      <div class="tds-quote-field"><label>Additional Notes (optional)</label><textarea id="qNotes" placeholder="Special requirements, certifications needed, etc."></textarea></div>
+      <div class="tds-quote-foot">
+        <button class="btn btn-outline" onclick="toggleQuoteSection()">Cancel</button>
+        <button class="btn btn-orange" onclick="sendQuoteEmail()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
+          Open in Email Client
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="tds-footer">
+    <div class="tds-qr">
+      <div class="tds-qr-lbl">Get Quote</div>
+      <div id="qrcode-quote"></div>
+    </div>
+    <div class="tds-foot-note">${noteText}</div>
+    <div class="tds-qr">
+      <div class="tds-qr-lbl">Shop This Category</div>
+      ${sm.shopUrl ? '<a href="' + sm.shopUrl + '" target="_blank" id="qrcode" title="Shop This Category"></a>' : '<div id="qrcode"></div>'}
+    </div>
+  </div></div>`;
+  return tds;
+}
+
+// ── Image URL resolver — converts any Google Drive share/view URL to embeddable thumbnail ──
+function resolveImgUrl(url) {
+  if (!url) return '';
+  // Already a thumbnail URL — leave as-is
+  if (url.includes('drive.google.com/thumbnail')) return url;
+  // Extract file ID from any Drive URL format:
+  //   /file/d/FILE_ID/view
+  //   /open?id=FILE_ID
+  //   /uc?id=FILE_ID or /uc?export=view&id=FILE_ID
+  let id = null;
+  const patterns = [
+    /\/file\/d\/([a-zA-Z0-9_-]+)/,
+    /[?&]id=([a-zA-Z0-9_-]+)/,
+  ];
+  for (const re of patterns) {
+    const m = url.match(re);
+    if (m) { id = m[1]; break; }
+  }
+  if (id) return `https://drive.google.com/thumbnail?id=${id}&sz=w2000`;
+  // Not a Drive URL — return as-is (CDN, direct, etc.)
+  return url;
+}
+
+function driveImgFallback(src) {
+  // Extract file ID to offer a direct Drive link
+  const m = src.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  const link = m ? `https://drive.google.com/file/d/${m[1]}/view` : src;
+  return `<div class="tds-img-placeholder-single">
+    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--gray-300)" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+    <div class="tds-img-label">Image could not load</div>
+    <a href="${link}" target="_blank" style="font-size:11px;color:var(--orange);">Open in Google Drive ↗</a>
+  </div>`;
+}
+
+// ── EAV table helpers ─────────────────────────────────────────
+function eavInputRow(label, value) {
+  if (value === undefined || value === null || value === '') return '<div class="tds-dim-cell"></div>';
+  return `<div class="tds-dim-cell"><span class="tds-dim-cell-label">${label}</span><span class="tds-dim-cell-value">${value}</span></div>`;
+}
+function eavSectionRaw(title, bodyHtml, stdRef, stdUrl) {
+  if (!bodyHtml) return '';
+  const uid   = 'sec-' + title.replace(/[^a-zA-Z0-9]/g,'-').toLowerCase();
+  const badge = stdRef
+    ? stdUrl
+      ? `<a href="${stdUrl}" target="_blank" class="tds-sec-std tds-sec-std-link">${stdRef} ↗</a>`
+      : `<span class="tds-sec-std">${stdRef}</span>`
+    : '';
+  return `
+    <div class="tds-section-bar">
+      <div class="tds-sec-title-wrap">
+        <span class="tds-sec-title">${title}</span>${badge}
+      </div>
+      <button class="tds-sec-collapse" onclick="toggleSection('${uid}')" title="Collapse">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" id="${uid}-icon">
+          <polyline points="18 15 12 9 6 15"/>
+        </svg>
+      </button>
+    </div>
+    <div class="tds-sec-body" id="${uid}-body">${bodyHtml}</div>`;
+}
+function eavRow(label, value) {
+  if (value === undefined || value === null || value === '') return '';
+  return `<div class="tds-dim-cell"><span class="tds-dim-cell-label">${label}</span><span class="tds-dim-cell-value">${value}</span></div>`;
+}
+function eavSection(title, rows, stdRef, stdUrl) {
+  if (!rows) return '';
+  const uid    = 'sec-' + title.replace(/[^a-zA-Z0-9]/g,'-').toLowerCase();
+  const badge  = stdRef
+    ? stdUrl
+      ? `<a href="${stdUrl}" target="_blank" class="tds-sec-std tds-sec-std-link">${stdRef} ↗</a>`
+      : `<span class="tds-sec-std">${stdRef}</span>`
+    : '';
+  return `
+    <div class="tds-section-bar">
+      <div class="tds-sec-title-wrap">
+        <span class="tds-sec-title">${title}</span>${badge}
+      </div>
+      <button class="tds-sec-collapse" onclick="toggleSection('${uid}')" title="Collapse">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" id="${uid}-icon">
+          <polyline points="18 15 12 9 6 15"/>
+        </svg>
+      </button>
+    </div>
+    <div class="tds-sec-body" id="${uid}-body">
+      <div class="tds-3col">${rows}</div>
+    </div>`;
+}
+
+function buildSearchUrl(sm, vals) {
+  if (!sm || !sm.shopUrl) return '';
+  const parts = [
+    sm.name,
+    vals.material    || '',
+    vals.grade       || '',
+    vals.threadSize  || '',
+    (vals.tpi || '').replace(/\s*\(.*\)/, '').trim().split(' ')[0],
+    vals.threadClass || '',
+    vals.length      || '',
+    vals.finish_type || '',
+    vals.finish      || '',
+  ].filter(Boolean);
+  const query = parts.join(' ').replace(/ /g, '%20');
+  return sm.shopUrl.replace(/\/$/, '') + '/?searchInCat=' + query + '%20';
+}
+
+function buildQuoteSummaryHtml() {
+  if (!_lastQuoteSm || !_lastQuoteVals) return '';
+  const sm = _lastQuoteSm, vals = _lastQuoteVals;
+  const sz = vals.threadSize || '';
+  const tpi = (vals.tpi || '').replace(/\s*\(.*\)/, '').trim().split(' ')[0];
+  return [
+    'Standard: ' + sm.name,
+    'Thread Size / TPI: ' + sz + (vals.pitch_mm ? '×' + vals.pitch_mm : '-' + tpi),
+    'Length: ' + (vals.length || '') + '"',
+    'Thread Class: ' + (vals.threadClass || ''),
+    'Material: ' + (vals.material || ''),
+    'Grade / Class: ' + (vals.grade || ''),
+    'Finish Type: ' + (vals.finish_type || ''),
+    'Finish: ' + (vals.finish || ''),
+    'Finish Thickness / Sealer: ' + (vals.finish_thickness_sealer || vals.finishThickness || ''),
+    vals.patch && vals.patch !== 'None' ? 'Pre-Applied Patch: ' + vals.patch : null,
+  ].filter(Boolean).join('<br>');
+}
+
+function openQuoteSection() {
+  const tdsContent = document.getElementById('tdsContent');
+  if (!tdsContent || !_lastQuoteSm) return;
+  // Collapse all TDS data sections
+  tdsContent.querySelectorAll('.tds-sec-body').forEach(b => b.style.display = 'none');
+  // Populate summary
+  const summary = document.getElementById('tdsQuoteSummary');
+  if (summary) summary.innerHTML = '<strong>Part Summary</strong><br>' + buildQuoteSummaryHtml();
+  // Expand quote section
+  const body = document.getElementById('tdsQuoteBody');
+  if (body) body.classList.add('open');
+  const chevron = document.getElementById('tdsQuoteChevron');
+  if (chevron) chevron.setAttribute('points', '18 15 12 9 6 15');
+  // Scroll
+  const qs = document.getElementById('tdsQuoteSection');
+  if (qs) qs.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function toggleQuoteSection() {
+  const body = document.getElementById('tdsQuoteBody');
+  const chevron = document.getElementById('tdsQuoteChevron');
+  if (!body) return;
+  const isOpen = body.classList.toggle('open');
+  if (chevron) chevron.setAttribute('points', isOpen ? '18 15 12 9 6 15' : '6 9 12 15 18 9');
+  if (isOpen) {
+    const summary = document.getElementById('tdsQuoteSummary');
+    if (summary && !summary.innerHTML.trim()) {
+      summary.innerHTML = '<strong>Part Summary</strong><br>' + buildQuoteSummaryHtml();
+    }
+  }
+}
+
+function openQuoteModal() { openQuoteSection(); } // legacy alias
+
+function sendQuoteEmail() {
+  if (!_lastQuoteSm || !_lastQuoteVals) return;
+  const sm = _lastQuoteSm, vals = _lastQuoteVals;
+  const sz = vals.threadSize || '';
+  const tpi = (vals.tpi || '').replace(/\s*\(.*\)/, '').trim().split(' ')[0];
+  const name    = document.getElementById('qName').value;
+  const company = document.getElementById('qCompany').value;
+  const qty     = document.getElementById('qQty').value;
+  const eau     = document.getElementById('qEau').value;
+  const when    = document.getElementById('qWhen').value;
+  const notes   = document.getElementById('qNotes').value;
+  const subj = 'RFQ - ' + sm.name + ' ' + sz + '-' + tpi + ' x ' + (vals.length||'') + '" - ' + (vals.grade||'') + ' - ' + (vals.finish||'');
+  const bodyLines = [
+    'Hello,', '',
+    'Please provide a quote for the following part:', '',
+    '--- PART DETAILS ---',
+    'Standard:               ' + sm.name,
+    'Thread Size / TPI:      ' + sz + (vals.pitch_mm ? '×' + vals.pitch_mm : '-' + tpi),
+    'Length:                 ' + (vals.length||'') + '"',
+    'Thread Class:           ' + (vals.threadClass||''),
+    'Material:               ' + (vals.material||''),
+    'Grade / Class:          ' + (vals.grade||''),
+    'Finish Type:            ' + (vals.finish_type||''),
+    'Finish:                 ' + (vals.finish||''),
+    'Finish Thickness:       ' + (vals.finish_thickness_sealer || vals.finishThickness||''),
+    vals.patch && vals.patch !== 'None' ? 'Pre-Applied Patch:      ' + vals.patch : null,
+    '', '--- CONTACT & QUANTITY ---',
+    'Name:                   ' + name,
+    'Company:                ' + company,
+    'Quantity Required:      ' + qty,
+    'Estimated Annual Usage: ' + eau,
+    'When Needed:            ' + when,
+    notes ? '\nAdditional Notes:\n' + notes : null,
+    '', 'Thank you,', name,
+  ].filter(l => l !== null).join('\n');
+  window.location.href = 'mailto:jchivers@specialtybolt.com?subject=' + encodeURIComponent(subj) + '&body=' + encodeURIComponent(bodyLines);
+}
+
+function toggleSection(uid) {
+  const body = document.getElementById(uid+'-body');
+  const icon = document.getElementById(uid+'-icon');
+  if (!body) return;
+  const col = body.style.display === 'none';
+  body.style.display = col ? '' : 'none';
+  if (icon) icon.setAttribute('points', col ? '18 15 12 9 6 15' : '6 9 12 15 18 9');
+}
+
+// ── BOLT TDS sections ─────────────────────────────────────────
+function buildBoltSections(stdId, sm, vals) {
+  let out = '';
+  const sz      = vals.threadSize || '';
+  const tpiRaw  = vals.tpi || '';
+  const tpi     = tpiRaw.replace(/\s*\(.*\)/, '').trim().split(' ')[0];
+  const grade   = vals.grade   || '';
+  const material= vals.material|| '';
+  const finish  = vals.finish  || '';
+  const finThick= vals.finish_thickness_sealer || vals.finishThickness || '';
+  const patch   = vals.patch   || '';
+
+  // 1. THREAD DATA
+  const threadKey = `${sm.threadKey}|${sz}|${tpi}`;
+  const t = THREAD_MAP[threadKey] || {};
+  if (Object.keys(t).length) {
+    const sizeDesig = t.pitchMm ? sz + '×' + t.pitchMm : sz + '-' + tpi;
+    const tt = THREAD_TOOLTIP_MAP;
+    function ttr(label, value, propKey) {
+      if (value === undefined || value === null || value === '') return '';
+      const tip = tt[propKey] ? tipBtn(tt[propKey]) : '';
+      return `<div class="tds-dim-cell"><span class="tds-dim-cell-label">${label}${tip}</span><span class="tds-dim-cell-value">${value}</span></div>`;
+    }
+    let rows = ttr('Size / TPI',                sizeDesig,                                                               'Size_TPI');
+    rows    += ttr('Series Designation',         t.seriesDesig,                                                           'SeriesDesignation');
+    rows    += ttr('Thread Class',               t.threadClass || vals.threadClass,                                       'ThreadClass');
+    rows    += ttr('Major Diameter (Min / Max)', t.majorDiaMin && t.majorDiaMax ? t.majorDiaMin + ' / ' + t.majorDiaMax : '', 'MajorDia');
+    rows    += ttr('Pitch Diameter (Min / Max)', t.pitchDiaMin && t.pitchDiaMax ? t.pitchDiaMin + ' / ' + t.pitchDiaMax : '', 'PitchDia');
+    rows    += ttr('Minor Diameter',             t.minorDia    || '',                                                     'MinorDia');
+    rows    += ttr('Tensile Stress Area',        t.tensileArea ? t.tensileArea + ' in²' : '',                        'TensileStressArea');
+    const tsVal = t.threadStandardUrl
+      ? `<a href="${t.threadStandardUrl}" target="_blank" style="color:var(--orange)">${t.threadStandard} ↗</a>`
+      : t.threadStandard;
+    rows    += ttr('Thread Standard', tsVal, 'ThreadStandard');
+    out += eavSection('Thread Data', rows, t.threadStandard || 'ASME B1.1-2019', t.threadStandardUrl || '');
+  }
+
+  // 2. DIMENSIONAL DATA
+  const dimKey = `${stdId}|threadSize:${sz}`;
+  const d = DIM_MAP[dimKey] || {};
+  const dimRows = d._rows || [];
+  // Validation banners — evaluated against user inputs + DIM_MAP
+  const validationHtml = evaluateValidationRules(stdId, vals, dimKey);
+
+  if (dimRows.length) {
+    // ── inputs block (full-width rows above red line) ──
+    let inputHtml = '';
+    inputHtml += eavInputRow('Standard',       sm.name);
+    inputHtml += eavInputRow('Nominal Diameter', sz);
+    inputHtml += eavInputRow('L - Length',     vals.length ? vals.length + '"' : '');
+
+    // ── data cells (two-column grid below red line) ──
+    const seen = new Set();
+    const cells = [];
+    for (let i = 0; i < dimRows.length; i++) {
+      const { name, val, group, tip } = dimRows[i];
+      if (group) {
+        if (seen.has(group)) continue;
+        seen.add(group);
+        const partner = dimRows.slice(i + 1).find(r => r.group === group);
+        if (partner) {
+          const baseLabel = name.replace(/,\s*[^\s,]+$/, '');
+          cells.push({ label: baseLabel + ' (min / max)', val: val + ' / ' + partner.val, tip });
+        } else {
+          cells.push({ label: name, val, tip });
+        }
+      } else {
+        cells.push({ label: name, val, tip });
+      }
+    }
+
+    let gridHtml = '';
+    for (const cell of cells) {
+      const cellTip = cell.tip ? tipBtn(cell.tip) : '';
+      gridHtml += `<div class="tds-dim-cell"><span class="tds-dim-cell-label">${cell.label}${cellTip}</span><span class="tds-dim-cell-value">${cell.val}</span></div>`;
+    }
+    // Pad to multiple of 3 so grid stays balanced
+    const rem = cells.length % 3;
+    if (rem !== 0) gridHtml += '<div class="tds-dim-cell"></div>'.repeat(3 - rem);
+
+    const dimBody = `<div class="tds-3col-inputs">${inputHtml}</div><hr class="tds-dim-divider"><div class="tds-3col">${gridHtml}</div>`;
+    out += (validationHtml ? `<div class="tds-valid-block">${validationHtml}</div>` : '');
+    out += eavSectionRaw('Dimensional Data', dimBody, sm.name, sm.standardUrl);
+  }
+
+  // 3. MECHANICAL PROPERTIES — always show material/grade; enrich with lookup data if available
+  const gradeNorm = normalizeGradeKey(grade);
+  const mechStdId = deriveMechStd(gradeNorm, material);
+  const mechKey   = mechStdId ? `${mechStdId}|grade:${gradeNorm}|size:${sz}` : '';
+  const m = mechKey ? (MECH_MAP[mechKey] || {}) : {};
+  {
+    // Always render material + grade — lookup data added when available
+    let rows = eavRow('Material', material);
+    rows    += eavRow('Grade / Class', grade);
+    rows    += eavRow('Typical Materials',    m.TypicalMaterials    || '');
+    rows    += eavRow('Hardness',             m.Hardness            || '');
+    rows    += eavRow('Proof Load',           m.ProofLoad           || '');
+    rows    += eavRow('Tensile Load Min',     m.TensileLoad_Min     || '');
+    rows    += eavRow('Tensile Strength Min', m.TensileStrength_Min || '');
+    rows    += eavRow('Yield Strength Min',   m.YieldStrength_Min   || '');
+    rows    += eavRow('Tightening Torque',    m.TighteningTorque    || '');
+    rows    += eavRow('Calculated Pretension',m.CalculatedPretension|| '');
+    const mechStdUrl = m._standardUrl || '';
+    out += eavSection('Physical Requirements', rows, mechStdId || '', mechStdUrl);
+  }
+
+  // 4. FINISH DATA — always show finish type + finish; enrich with lookup data if available
+  const finishType = vals.finish_type || '';
+  if (finishType || finish || finThick) {
+    const fc = Object.keys(FINISH_MAP).find(k =>
+      FINISH_MAP[k].name === finish ||
+      FINISH_MAP[k].name.startsWith(finish) ||
+      finish.startsWith(FINISH_MAP[k].name.split(' (')[0]) ||
+      k === finish ||
+      (finThick && finThick.startsWith(k)));
+    const fm = fc ? FINISH_MAP[fc] : null;
+    let rows = eavRow('Finish Type', finishType);
+    rows    += eavRow('Finish',      finish || (fm ? fm.name : ''));
+    if (fm) {
+      rows += eavRow('Specification',  fm.standard);
+      rows += eavRow('K Factor',       fm.kFactor);
+      rows += eavRow('Thickness',      fm.thickMin && fm.thickMax
+                       ? fm.thickMin + '–' + fm.thickMax + ' µm' : (finThick || ''));
+      rows += eavRow('RoHS Compliant', fm.rohs);
+      rows += eavRow('HE Risk',        fm.heRisk);
+      rows += eavRow('Salt Spray (White / Red)', fm.saltWhite && fm.saltRed
+                       ? fm.saltWhite + ' / ' + fm.saltRed + ' hr' : '');
+      rows += eavRow('Best Code',      fm.bestCode);
+      out += eavSection('Finish Data', rows, fm.standard, fm.standardUrl || '');
+    } else {
+      rows += eavRow('Finish Thickness / Sealer', finThick);
+      out += eavSection('Finish Data', rows, '', '');
+    }
+  }
+
+  // 5. CHEMICAL PROPERTIES — always show material name; enrich with lookup data if available
+  const chemCode = deriveChemCode(material, gradeNorm);
+  const chemKey  = chemCode ? `CHEM|material:${chemCode}` : '';
+  const ch       = chemKey ? (CHEM_MAP[chemKey] || {}) : {};
+  if (material) {  // always render if material is specified
+    const matName = ch['MaterialName'] || material.replace(' - user specified', '') || '';
+    const std     = ch['Standard']    || '';
+    let rows = eavRow('Material Name', matName);
+    rows    += eavRow('Governing Standard', std);
+    // Element ranges — pair min/max into single rows
+    const elements = {};
+    for (const [k, v] of Object.entries(ch)) {
+      if (k === 'MaterialName' || k === 'Standard' || k === 'ApplicationNote' ||
+          k === 'AlloyNote') continue;
+      const base = k.replace(/_min$|_max$/, '');
+      if (!elements[base]) elements[base] = {};
+      if (k.endsWith('_min')) elements[base].min = v;
+      else if (k.endsWith('_max')) elements[base].max = v;
+      else elements[base].val = v;
+    }
+    for (const [el, vals2] of Object.entries(elements)) {
+      const label = el + ' (% wt)';
+      if (vals2.min !== undefined && vals2.max !== undefined)
+        rows += eavRow(label, vals2.min + ' – ' + vals2.max);
+      else if (vals2.max !== undefined)
+        rows += eavRow(label + ' max', vals2.max);
+      else if (vals2.val !== undefined)
+        rows += eavRow(el, vals2.val);
+    }
+    if (ch['ApplicationNote'])
+      rows += eavRow('Application Note', ch['ApplicationNote']);
+    if (ch['AlloyNote'])
+      rows += eavRow('Typical Alloy Designations', ch['AlloyNote']);
+    out += eavSection('Chemical Properties', rows, std, ch._standardUrl || '');
+  }
+
+  // 6. PATCH
+  if (patch && patch !== 'None') {
+    let rows = eavRow('Pre-Applied Thread Retention', patch);
+    out += eavSection('Thread Retention', rows, '', '');
+  }
+
+  return out;
+}
+
+// ── Grade key normalizer ─────────────────────────────────────────────────────
+function normalizeGradeKey(grade) {
+  if (!grade) return '';
+  return grade
+    .replace(/^SAE J429:\s*/i,    '')
+    .replace(/^ASTM F593:\s*/i,   '')
+    .replace(/^ASTM A307:\s*/i,   '')
+    .replace(/^ASTM A354:\s*/i,   '')
+    .replace(/^ASTM A449:\s*/i,   '')
+    .replace(/^ISO 898-?1?:\s*/i, '')
+    .replace(/^ISO 898:\s*/i,     '')
+    .replace(/^ISO 3506-?1?:\s*/i,'')
+    .replace(/^DIN 267:\s*/i,     '')
+    .trim();
+}
+
+// ── Material → chemical code mapper ──────────────────────────────────────────
+function deriveChemCode(material, gradeNorm) {
+  const m = (material || '').toLowerCase();
+  const g = (gradeNorm || '').toUpperCase();
+  if (m.includes('stainless')) {
+    if (g.includes('316') || g.includes('A4')) return '316SS';
+    if (g.includes('302'))                     return '302SS';
+    return '304SS';
+  }
+  if (m === 'alloy steel' || g.includes('GRADE 8')) return 'ALLOY_STEEL_G8';
+  if (m === 'carbon steel' || g.includes('GRADE 2') || g.includes('GRADE 5')) return 'CARBON_STEEL';
+  if (m.includes('brass') || m.includes('aluminum')) return null;
+  return 'CARBON_STEEL';
+}
+
+function deriveMechStd(gradeNorm, material) {
+  // gradeNorm has already had the standards prefix stripped by normalizeGradeKey()
+  const g  = gradeNorm.toUpperCase();
+  const ml = (material || '').toLowerCase();
+  // Stainless — check material first so A2/A4 grade labels still route correctly
+  if (ml.includes('stainless') || g.includes('A2') || g.includes('A4') ||
+      g.includes('F593') || g.includes('ISO 3506') || g.includes('GROUP'))
+    return 'ASTM_F593';
+  // SAE J429 grade tokens after stripping
+  if (g.includes('GRADE 2') || g.includes('GRADE 5') || g.includes('GRADE 8') ||
+      g.includes('A307') || g.includes('A354') || g.includes('A449'))
+    return 'SAE_J429';
+  // Metric
+  if (g.includes('8.8') || g.includes('10.9') || g.includes('12.9') ||
+      g.includes('ISO 898') || g === '4.6' || g === '4.8' || g === '5.8')
+    return 'ISO_898_1';
+  if (g.includes('ISO 3506') || g.includes('A4-80') || g.includes('A2-70'))
+    return 'ISO_3506_1';
+  if (ml === 'brass' || ml === 'aluminum') return null;
+  return 'SAE_J429';  // default for carbon/alloy steel
+}
+
+function buildWasherSections(stdId, sm, vals) {
+  let out = '';
+  const sz  = vals.size || '';
+  const mat = vals.material || '';
+  const fin = vals.finish   || '';
+  const dimKey = `${stdId}|size:${sz}`;
+  const d = DIM_MAP[dimKey] || {};
+  if (Object.keys(d).filter(k=>k!=='_standard').length) {
+    let rows = eavRow('Type', sm.name);
+    rows    += eavRow('Standard', sm.name);
+    rows    += eavRow('Size', sz);
+    rows    += eavRow('Nominal', d.Nominal);
+    rows    += eavRow('ID (Max / Min)', (d.ID_Max||'') + (d.ID_Min ? ' / ' + d.ID_Min : ''));
+    rows    += eavRow('OD (Max / Min)', (d.OD_Max||'') + (d.OD_Min ? ' / ' + d.OD_Min : ''));
+    rows    += eavRow('Thickness (Max / Min)', (d.Thickness_Max||'') + (d.Thickness_Min ? ' / ' + d.Thickness_Min : ''));
+    out += eavSection('Dimensional Data', rows, sm.name, sm.standardUrl);
+  }
+  if (mat) {
+    let rows = eavRow('Typical Material', mat);
+    rows    += eavRow('Hardness', vals.grade || '');
+    out += eavSection('Material Data', rows, '', '');
+  }
+  if (fin) {
+    out += eavSection('Finish Data', eavRow('Finish Type', fin), '', '');
+  }
+  return out;
+}
+
+function buildRivetSections(stdId, sm, vals) {
+  let out = '';
+  const sz  = vals.size || '';
+  const ht  = vals.headType || '';
+  const bm  = vals.bodyMaterial || '';
+  const mm  = vals.mandrelMaterial || '';
+  const dimKey = `${stdId}|size:${sz}`;
+  const d   = DIM_MAP[dimKey] || {};
+  if (Object.keys(d).filter(k=>k!=='_standard').length) {
+    let rows = eavRow('Blind Rivet Style', d.BlindRivetStyle || sm.name);
+    rows    += eavRow('Head Style', ht);
+    rows    += eavRow('Size', sz);
+    rows    += eavRow('Standard', sm.name);
+    rows    += eavRow('D - Body Dia. Ref', d.BodyDia_Ref);
+    rows    += eavRow('H - Head Dia.',     d.HeadDia_Ref);
+    rows    += eavRow('E - Head Height',   d.HeadHeight_Ref);
+    rows    += eavRow('Grip Range', d.GripRange_Min && d.GripRange_Max ? d.GripRange_Min + ' – ' + d.GripRange_Max : '');
+    out += eavSection('Dimensional Data', rows, sm.name, sm.standardUrl);
+  }
+  const mechKey = `${stdId}|size:${sz}|head:${ht}`;
+  const m = MECH_MAP[mechKey] || {};
+  if (Object.keys(m).length) {
+    let rows = eavRow('Body Material',  bm);
+    rows    += eavRow('Mandrel Material', mm);
+    rows    += eavRow('Shear Strength Min',  m.ShearStrength_Min);
+    rows    += eavRow('Tensile Strength Min', m.TensileStrength_Min);
+    rows    += eavRow('Mandrel Break Load',   m.MandrelBreakLoad);
+    out += eavSection('Mechanical Data', rows, sm.name, sm.standardUrl);
+  }
+  return out;
+}
+
+// ════════════════════════════════════════════════════════════════
+//  SEARCH
+// ════════════════════════════════════════════════════════════════
+function doSearch(q) {
+  const typeSel = document.getElementById('typeOfPart');
+  const stdSel  = document.getElementById('standard');
+  const uom     = document.getElementById('uomFilter').value;
+  if (!q) {
+    populateTypeDropdowns();
+    const stds = getStandardsForCat(typeSel.value, uom);
+    populateStandardDropdown('standard', stds, '');
+    onStandardChange(); return;
+  }
+  const tokens = q.toLowerCase().replace(/[^a-z0-9 /]/g,' ').split(/\s+/).filter(Boolean);
+  const matchedStds = Object.values(STANDARD_MAP).filter(sm => {
+    const s = (sm.name + ' ' + sm.keywords + ' ' + sm.catName).toLowerCase();
+    return tokens.every(t => s.includes(t));
+  });
+  const matchedCats = [...new Set(matchedStds.map(s => s.catName))].filter(Boolean).sort();
+
+  // Rebuild type dropdown with matching cats
+  typeSel.innerHTML = '<option value="">-- Select Part Type --</option>';
+  matchedCats.forEach(c => {
+    const o = document.createElement('option');
+    o.value = o.textContent = c;
+    typeSel.appendChild(o);
+  });
+
+  // Populate standards
+  const filtered = uom ? matchedStds.filter(s => s.uom === uom || s.uom === 'Both') : matchedStds;
+  populateStandardDropdown('standard', filtered, '');
+  if (filtered.length === 1) {
+    stdSel.value = filtered[0].name;
+    if (matchedCats.length) typeSel.value = filtered[0].catName;
+  }
+  onStandardChange();
+}
+
+function clearSearch() {
+  document.getElementById('searchBar').value = '';
+  document.getElementById('searchClearBtn').classList.remove('visible');
+  doSearch('');
+}
+
+// ════════════════════════════════════════════════════════════════
+//  COMPARE TAB
+// ════════════════════════════════════════════════════════════════
+function syncCmpStandards(side) {
+  const cat = document.getElementById('cmpType' + side).value;
+  const stds = getStandardsForCat(cat, '');
+  populateStandardDropdown('cmpStd' + side, stds, '');
+  syncCmpFields(side);
+}
+
+function syncCmpFields(side) {
+  const stdName = document.getElementById('cmpStd' + side).value;
+  const sm      = stdName ? getStdById(stdName) : null;
+  const cont    = document.getElementById('cmpFields' + side);
+  if (!sm) { cont.innerHTML = ''; return; }
+  const fields  = FIELDS_MAP[sm.id] || [];
+  if (!fields.length) { cont.innerHTML = '<p style="font-size:13px;color:var(--gray-400);">No fields configured.</p>'; return; }
+  let html = '<div style="display:flex;flex-direction:column;gap:10px;">';
+  fields.forEach(f => {
+    html += `<div class="field-group" style="min-width:0;">
+      <label style="font-size:10px;">${f.label}</label>
+      <select id="cmp${side}_f_${f.fieldKey}" ${f.depOn?'disabled':''} style="font-size:12px;">
+        <option value="">-- Select --</option>`;
+    if (!f.depOn && f.opts) html += buildOptionsHtml(f.opts);
+    html += '</select></div>';
+  });
+  html += '</div>';
+  cont.innerHTML = html;
+
+  // Wire cascades for compare side
+  fields.forEach(f => {
+    if (!f.depOn) return;
+    const parentEl = document.getElementById(`cmp${side}_f_${f.depOn}`);
+    const childEl  = document.getElementById(`cmp${side}_f_${f.fieldKey}`);
+    if (!parentEl || !childEl) return;
+    const depMap = parseCascadeDepVal(f.depVal);
+    parentEl.addEventListener('change', function() {
+      const opts = depMap[this.value] || [];
+      childEl.innerHTML = `<option value="">-- Select ${f.label} --</option>` + buildCascadeOptionsHtml(opts);
+      childEl.disabled = !opts.length;
+    });
+  });
+}
+
+function runCompare() {
+  const smA = getStdById(document.getElementById('cmpStdA').value);
+  const smB = getStdById(document.getElementById('cmpStdB').value);
+  if (!smA || !smB) { alert('Please select standards for both Part A and Part B.'); return; }
+  const vA = {}, vB = {};
+  (FIELDS_MAP[smA.id]||[]).forEach(f => {
+    const el = document.getElementById('cmpA_f_' + f.fieldKey);
+    if (el) vA[f.fieldKey] = el.value;
+  });
+  (FIELDS_MAP[smB.id]||[]).forEach(f => {
+    const el = document.getElementById('cmpB_f_' + f.fieldKey);
+    if (el) vB[f.fieldKey] = el.value;
+  });
+  const allKeys = [...new Set([...Object.keys(vA), ...Object.keys(vB)])];
+  let rows = `<tr>
+    <th>Attribute</th>
+    <th>Part A — ${smA.name}</th>
+    <th>Part B — ${smB.name}</th>
+  </tr>`;
+  allKeys.forEach(k => {
+    const a   = vA[k] || '—', b = vB[k] || '—';
+    const dif = a !== b;
+    rows += `<tr class="${dif ? 'diff-highlight' : ''}">
+      <td style="font-weight:600;color:var(--gray-600);">${k}</td>
+      <td>${a}</td>
+      <td>${b}</td>
+    </tr>`;
+  });
+  document.getElementById('compareResultBody').innerHTML =
+    `<table class="compare-diff-table">${rows}</table>
+     <p style="font-size:11px;color:var(--gray-400);margin-top:12px;">Highlighted rows differ between the two selections.</p>`;
+  document.getElementById('compareResult').style.display = 'block';
+  document.getElementById('compareResult').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+// ════════════════════════════════════════════════════════════════
+//  STANDARD DATA SHEET (SDS) TAB
+// ════════════════════════════════════════════════════════════════
+
+function populateSdsStandards() {
+  const sel = document.getElementById('sdsStandard');
+  if (!sel) return;
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">-- Select Standard --</option>';
+  // All standards alphabetically
+  Object.values(STANDARD_MAP)
+    .sort((a,b) => a.name.localeCompare(b.name))
+    .forEach(sm => {
+      const o = document.createElement('option');
+      o.value = sm.id;
+      o.textContent = sm.name;
+      sel.appendChild(o);
+    });
+  if (cur) sel.value = cur;
+}
+
+function onSdsStandardChange() {
+  // Reset output when standard changes
+  document.getElementById('sdsOutput').style.display = 'none';
+}
+
+function generateSDS() {
+  const stdId   = document.getElementById('sdsStandard').value;
+  const section = document.getElementById('sdsSection').value;
+  if (!stdId) { alert('Please select a Standard.'); return; }
+
+  const sm = STANDARD_MAP[stdId] || {};
+
+  // ── Section label map ─────────────────────────────────────────
+  const sectionLabels = {
+    DIM:'Dimensional Data', MECH:'Mechanical Properties',
+    THREAD:'Thread Data', FINISH:'Finish Data', CHEM:'Chemical Properties'
+  };
+
+  // ── Get relevant keys from the right map ─────────────────────
+  let keys = [], MAP = {};
+  if (section === 'DIM') {
+    MAP  = DIM_MAP;
+    keys = Object.keys(DIM_MAP).filter(k => k.startsWith(stdId + '|'));
+  } else if (section === 'THREAD') {
+    MAP  = THREAD_MAP;
+    // Thread keys: threadStdKey|size|tpi — match by threadKey prefix
+    const tk = sm.threadKey || '';
+    keys = tk ? Object.keys(THREAD_MAP).filter(k => k.startsWith(tk + '|')) : [];
+  } else if (section === 'MECH') {
+    MAP  = MECH_MAP;
+    // Determine mech std prefix for this standard
+    const mechPfx = stdId.includes('ISO_7089') ? 'ISO_898_1'
+                  : stdId.includes('IFI')       ? ''
+                  : 'SAE_J429';
+    keys = mechPfx ? Object.keys(MECH_MAP).filter(k => k.startsWith(mechPfx + '|')) : [];
+  } else if (section === 'FINISH') {
+    MAP  = FINISH_MAP;
+    keys = Object.keys(FINISH_MAP);
+  } else if (section === 'CHEM') {
+    MAP  = CHEM_MAP;
+    keys = Object.keys(CHEM_MAP).filter(k => k.startsWith('CHEM|'));
+  }
+
+  const wrap = document.getElementById('sdsTableWrap');
+
+  if (!keys.length) {
+    wrap.innerHTML = `<div style="padding:24px;text-align:center;color:var(--gray-400);font-size:13px;">
+      <strong style="display:block;color:var(--navy);margin-bottom:8px;">No data available for this section</strong>
+      Add data to the Google Sheet or select a different section.
+    </div>`;
+    document.getElementById('sdsOutput').style.display = 'block';
+    document.getElementById('sdsOutputLabel').textContent =
+      sm.name + ' — ' + (sectionLabels[section] || section);
+    return;
+  }
+
+  // ── Collect all attribute names across all keys ───────────────
+  const allAttrs = [];
+  keys.forEach(k => {
+    const rec = MAP[k];
+    if (!rec) return;
+    Object.keys(rec).forEach(a => {
+      if (a !== '_standard' && !allAttrs.includes(a)) allAttrs.push(a);
+    });
+  });
+
+  // ── Build header row ─────────────────────────────────────────
+  let thead = '<tr><th>Size / Config</th>';
+  allAttrs.forEach(a => { thead += `<th>${a}</th>`; });
+  thead += '</tr>';
+
+  // ── Build data rows ──────────────────────────────────────────
+  let tbody = '';
+  keys.forEach(k => {
+    const rec = MAP[k];
+    if (!rec) return;
+    // Clean up config key label — strip standard prefix
+    let lbl = k
+      .replace(stdId + '|', '')
+      .replace('CHEM|material:', '')
+      .replace('FINISH|finish:', '')
+      .replace(/^SAE_J429\|/, '')
+      .replace(/^ISO_898_1\|/, '')
+      .replace(/^THREAD_[A-Z0-9_]+\|/, '');
+    let cells = `<td>${lbl}</td>`;
+    allAttrs.forEach(a => {
+      cells += `<td>${rec[a] !== undefined && rec[a] !== '' ? rec[a] : '—'}</td>`;
+    });
+    tbody += `<tr>${cells}</tr>`;
+  });
+
+  // ── Part image — always from sm.partImg ──────────────────────
+  let imgHtml = '';
+  if (sm.partImg) {
+    const src = resolveImgUrl(sm.partImg);
+    imgHtml = `<div class="sds-img-panel">
+      <img class="tds-part-img" src="${src}" alt="${sm.name}"
+        title="Click to zoom" onclick="toggleImgZoom(this)"
+        onerror="this.parentElement.innerHTML=driveImgFallback('${src}')">
+    </div>`;
+  } else {
+    imgHtml = `<div class="sds-img-panel">
+      <div class="tds-img-placeholder-single">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="var(--gray-300)" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <div class="tds-img-label">Part Drawing / 3D Model</div>
+        <div class="tds-img-sub">${sm.name} — Add image URL to the IMAGE row in Sheet 1 to display here.</div>
+      </div>
+    </div>`;
+  }
+
+  // ── Dimensions note ──────────────────────────────────────────
+  const dimNote = sm.uom === 'Metric' ? 'All dimensions in millimetres.'
+                : sm.uom === 'Inch'   ? 'All dimensions in inches.'
+                : '';
+
+  wrap.innerHTML = imgHtml + `
+    <div class="sds-table-wrap">
+      <table class="sds-table">
+        <thead>${thead}</thead>
+        <tbody>${tbody}</tbody>
+      </table>
+    </div>
+    <div class="sds-footer">
+      ${keys.length} entries. All values sourced from the Google Sheet.
+      ${dimNote ? ' ' + dimNote : ''}
+      ${sm.standardUrl ? ` <a href="${sm.standardUrl}" target="_blank" style="color:var(--orange);font-weight:600;">View Standard PDF ↗</a>` : ''}
+    </div>`;
+
+  document.getElementById('sdsOutput').style.display = 'block';
+  document.getElementById('sdsOutputLabel').textContent =
+    sm.name + ' — ' + (sectionLabels[section] || section) +
+    (dimNote ? ' (All Dimensions in ' + (sm.uom === 'Metric' ? 'Millimetres' : 'Inches') + ')' : '');
+  document.getElementById('sdsOutput').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+function printSDS() {
+  // Make only the SDS output visible for printing
+  window.print();
+}
+
+// ════════════════════════════════════════════════════════════════
+//  TAB SWITCHER
+// ════════════════════════════════════════════════════════════════
+function switchTab(id) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  const btns = document.querySelectorAll('.tab-btn');
+  const map  = { tds:0, sds:1, compare:2, bp:3 };
+  if (map[id] !== undefined) btns[map[id]].classList.add('active');
+}
+
+// ════════════════════════════════════════════════════════════════
+//  BOOT
+// ════════════════════════════════════════════════════════════════
+// ── Beta modal ───────────────────────────────────────────────────────────────
+function dismissBeta() {
+  const overlay = document.getElementById('betaOverlay');
+  if (!overlay) return;
+  overlay.style.transition = 'opacity 0.3s ease';
+  overlay.style.opacity = '0';
+  setTimeout(() => { overlay.remove(); }, 320);
+}
+
+// ── "Other — User Specified" field helpers ───────────────────────────────────
+function handleOtherSelect(sel, wrapperId) {
+  const wrap = document.getElementById(wrapperId);
+  if (!wrap) return;
+  if (sel.value === '__OTHER__') {
+    wrap.classList.add('visible');
+    const input = wrap.querySelector('input');
+    if (input) { input.value = ''; input.focus(); }
+  } else {
+    wrap.classList.remove('visible');
+    // Clear the text box value when switching away
+    const input = wrap.querySelector('input');
+    if (input) input.value = '';
+  }
+}
+function syncOtherValue(input, selectId) {
+  // Keep the select visually showing "Other — User Specified"
+  const sel = document.getElementById(selectId);
+  if (sel && sel.value !== '__OTHER__') sel.value = '__OTHER__';
+}
+
+// ── Image zoom ───────────────────────────────────────────────────────────────
+function toggleImgZoom(img) {
+  const backdrop = document.getElementById('imgBackdrop');
+  if (img.classList.contains('zoomed')) {
+    img.classList.remove('zoomed');
+    backdrop.classList.remove('active');
+    document.body.style.overflow = '';
+  } else {
+    // Close any other zoomed images first
+    document.querySelectorAll('.tds-part-img.zoomed').forEach(i => i.classList.remove('zoomed'));
+    img.classList.add('zoomed');
+    backdrop.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+}
+function closeImgZoom() {
+  document.querySelectorAll('.tds-part-img.zoomed').forEach(i => i.classList.remove('zoomed'));
+  const backdrop = document.getElementById('imgBackdrop');
+  backdrop.classList.remove('active');
+  document.body.style.overflow = '';
+}
+// Close zoom on Escape key
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeImgZoom(); });
+
+// ── URL Parameter Pre-population ─────────────────────────────────────────────
+// Supports the following query params (all optional, can combine):
+//   ?standard=ASME_B182_FLBOLT          — select by StandardID
+//   ?standard=ASME+B18.2.1+Hex+Flange   — select by partial standard name
+//   ?type=Flange+Bolts                   — pre-select Type of Part
+//   ?uom=Inch                            — pre-select Unit of Measure
+//   ?material=Carbon+Steel               — pre-select Material field
+//   ?grade=SAE+J429%3A+Grade+5           — pre-select Material Grade
+//   ?size=1%2F4                          — pre-select Thread Size / Size
+//   ?tab=compare                         — open Compare tab instead of TDS
+//
+// iframe embed example:
+//   <iframe src="tool.html?standard=ASME_B182_FLBOLT&material=Carbon+Steel&grade=SAE+J429%3A+Grade+5&size=1%2F4">
+function applyURLParams() {
+  const p = new URLSearchParams(window.location.search);
+  if (!p.toString()) return;
+
+  // Tab
+  const tab = p.get('tab');
+  if (tab && ['tds','compare','bp'].includes(tab)) switchTab(tab);
+
+  // UOM
+  const uom = p.get('uom');
+  if (uom) {
+    const uomSel = document.getElementById('uomFilter');
+    if (uomSel) { uomSel.value = uom; onUomChange(); }
+  }
+
+  // Type of Part
+  const type = p.get('type');
+  if (type) {
+    const typeSel = document.getElementById('typeOfPart');
+    // Try exact match first, then case-insensitive
+    const opt = [...typeSel.options].find(o =>
+      o.value === type || o.value.toLowerCase() === type.toLowerCase());
+    if (opt) { typeSel.value = opt.value; onTypeChange(); }
+  }
+
+  // Standard — match by StandardID or partial name
+  const stdParam = p.get('standard');
+  if (stdParam) {
+    const stdSel = document.getElementById('standard');
+    // Try StandardID lookup first
+    const smById = STANDARD_MAP[stdParam];
+    if (smById) {
+      // Make sure the standard is visible in the dropdown
+      populateStandardDropdown('standard',
+        getStandardsForCat(document.getElementById('typeOfPart').value,
+                           document.getElementById('uomFilter').value), smById.name);
+      stdSel.value = smById.name;
+    } else {
+      // Try matching by name (partial, case-insensitive)
+      const match = Object.values(STANDARD_MAP).find(sm =>
+        sm.name.toLowerCase().includes(stdParam.toLowerCase()) ||
+        stdParam.toLowerCase().includes(sm.id.toLowerCase()));
+      if (match) {
+        populateStandardDropdown('standard',
+          getStandardsForCat(document.getElementById('typeOfPart').value,
+                             document.getElementById('uomFilter').value), match.name);
+        stdSel.value = match.name;
+      }
+    }
+    onStandardChange();
+  }
+
+  // Field-level params — set after section 2 is built
+  // Use a small delay to ensure the field grid has rendered
+  if (p.get('material') || p.get('grade') || p.get('size') ||
+      p.get('threadSize') || p.get('tpi')) {
+    setTimeout(() => {
+      const fieldMap = {
+        material:   'f_material',
+        grade:      'f_grade',
+        size:       'f_size',
+        threadSize: 'f_threadSize',
+        tpi:        'f_tpi',
+        length:     'f_length',
+        finish:     'f_finish',
+        finish_type:'f_finish_type',
+      };
+      for (const [param, elId] of Object.entries(fieldMap)) {
+        const val = p.get(param);
+        if (!val) continue;
+        const el = document.getElementById(elId);
+        if (!el) continue;
+        // Find matching option (exact or case-insensitive)
+        const opt = [...(el.options || [])].find(o =>
+          o.value === val || o.value.toLowerCase() === val.toLowerCase());
+        if (opt) {
+          el.value = opt.value;
+          el.dispatchEvent(new Event('change')); // trigger cascades
+        }
+      }
+    }, 150);
+  }
+}
+
+(async function boot() {
+  setLoaderProgress(5);
+  try {
+    await loadAllData();
+    rebuildUI();
+    const t = dataLoadedAt.toLocaleTimeString();
+    document.getElementById('dataFreshness').innerHTML = 'Data loaded: <span>' + t + '</span>';
+    applyURLParams();
+    hideAppLoader();
+  } catch(e) {
+    setLoaderProgress(0);
+    showLoaderError('Failed to load data: ' + e.message +
+      '\n\nCheck that the Google Sheet is published. You can still try the Refresh button after fixing permissions.');
+    console.error('Boot error:', e);
+  }
+})();
+
+// Search input listener
+document.getElementById('searchBar').addEventListener('input', function() {
+  const v = this.value;
+  document.getElementById('searchClearBtn').classList.toggle('visible', !!v);
+  doSearch(v);
+});
+
+</script>
+</body>
+</html>
