@@ -594,7 +594,7 @@ async function loadData() {
     showErrorState('No Google Sheet URL configured. Set SHEET_CSV_URL in the script.');
     return;
   }
-  showLoadingState('Loading standards from Google Sheets…');
+  showLoadingState('Loading Standards from SBS Standards Library Database...');
   console.log('[SBS] Starting data load from:', SHEET_CSV_URL);
 
   async function tryFetch(label, url) {
