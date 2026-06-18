@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frequently Asked Questions | Specialty Bolt &amp; Screw Inc.</title>
+<style>
+
+  /* ── Base ─────────────────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    color: #222222;
+    background: #ffffff;
+    line-height: 1.65;
+  }
+
+  .faq-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 32px 24px 48px;
+  }
+
+
+
+  /* ── Section headings ─────────────────────────────────────────── */
+  .faq-section {
+    margin-top: 36px;
+  }
+
+  .faq-section-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #f4a14a;           /* light orange */
+    color: #ffffff;
+    font-size: 13.5px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 10px 16px;
+    border-radius: 4px;
+    margin-bottom: 4px;
+    border-left: 5px solid #d4751a;
+  }
+
+  /* ── Individual Q&A items ─────────────────────────────────────── */
+  .faq-item {
+    border-bottom: 1px solid #e5e5e5;
+  }
+
+  .faq-item:last-child {
+    border-bottom: none;
+  }
+
+  /* Question button */
+  .faq-question {
+    width: 100%;
+    background: #fff8f2;           /* very light orange tint */
+    border: none;
+    border-left: 4px solid #f4a14a;
+    text-align: left;
+    cursor: pointer;
+    padding: 14px 44px 14px 16px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14.5px;
+    font-weight: 700;
+    color: #1b3a6b;
+    line-height: 1.45;
+    position: relative;
+    transition: background 0.15s ease;
+    margin-top: 6px;
+    border-radius: 3px;
+  }
+
+  .faq-question:hover {
+    background: #fdeedd;
+  }
+
+  .faq-question.active {
+    background: #fdeedd;
+    border-left-color: #d4751a;
+  }
+
+  /* Toggle indicator */
+  .faq-question::after {
+    content: "+";
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    font-weight: 400;
+    color: #f4a14a;
+    line-height: 1;
+  }
+
+  .faq-question.active::after {
+    content: "\2212";
+    color: #d4751a;
+  }
+
+  /* Answer panel */
+  .faq-answer {
+    display: none;
+    padding: 14px 20px 18px 22px;
+    background: #ffffff;
+    border-left: 4px solid #f4e0c8;
+    font-size: 14.5px;
+    color: #333333;
+    line-height: 1.7;
+    margin-bottom: 4px;
+    border-radius: 0 0 3px 3px;
+  }
+
+  .faq-answer.open {
+    display: block;
+  }
+
+  .faq-answer p {
+    margin-bottom: 10px;
+  }
+  .faq-answer p:last-child {
+    margin-bottom: 0;
+  }
+
+  .faq-answer ul, .faq-answer ol {
+    margin: 8px 0 12px 24px;
+  }
+
+  .faq-answer li {
+    margin-bottom: 5px;
+  }
+
+  .faq-answer a {
+    color: #1155cc;
+    text-decoration: underline;
+  }
+
+  .faq-answer a:hover {
+    color: #d4751a;
+  }
+
+  .faq-answer strong {
+    color: #1b3a6b;
+  }
+
+  /* ── Utility ──────────────────────────────────────────────────── */
+  .note {
+    background: #fff3e0;
+    border-left: 4px solid #f4a14a;
+    padding: 10px 14px;
+    border-radius: 3px;
+    font-size: 13.5px;
+    color: #555;
+    margin-top: 10px;
+  }
+
+  /* ── Banner & Language Selector ───────────────────────────────── */
+  .faq-banner {
+    background: #1d3557;
+    color: #ffffff;
+    padding: 28px 24px;
+    margin: 0 -24px 32px -24px;
+    border-bottom: 4px solid #f4a14a;
+  }
+
+  .faq-banner-content {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .faq-banner h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .language-selector {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .language-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #f4a14a;
+    white-space: nowrap;
+  }
+
+  .lang-button {
+    background: transparent;
+    border: 2px solid #f4a14a;
+    border-radius: 4px;
+    padding: 0;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: #ffffff;
+    transition: all 0.15s ease;
+    width: 48px;
+    height: 36px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+
+  .lang-button:hover {
+    background: #f4a14a;
+    color: #1d3557;
+  }
+
+  .lang-button.active {
+    background: #f4a14a;
+    color: #1d3557;
+  }
+
+  @media (max-width: 768px) {
+    .faq-banner-content {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .faq-banner h1 {
+      font-size: 22px;
+    }
+
+    .language-selector {
+      width: 100%;
+    }
+  }
+
+</style>
+</head>
+<body>
+
+<!-- Banner with Language Selector -->
+<div class="faq-banner">
+  <div class="faq-banner-content">
+    <h1>FAQs — Frequently Asked Questions</h1>
+    <div class="language-selector">
+      <span class="language-label">Language:</span>
+      <button class="lang-button active" data-lang="en" onclick="setLanguage('en')">EN</button>
+      <button class="lang-button" data-lang="es" onclick="setLanguage('es')">ES</button>
+      <button class="lang-button" data-lang="fr" onclick="setLanguage('fr')">FR</button>
+      <button class="lang-button" data-lang="vi" onclick="setLanguage('vi')">VI</button>
+      <button class="lang-button" data-lang="zh-s" onclick="setLanguage('zh-s')">ZH-S</button>
+      <button class="lang-button" data-lang="zh-t" onclick="setLanguage('zh-t')">ZH-T</button>
+    </div>
+  </div>
+</div>
+
+<div class="faq-wrapper">
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SECTION 1 — VMI SERVICES
+  ═══════════════════════════════════════════════════════════════ -->
+  <div class="faq-section">
+    <div class="faq-section-heading">
+      1. &nbsp;VMI Services
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">What is VMI and why choose Specialty Bolt & Screw?</button>
+      <div class="faq-answer">
+        <p>VMI (Vendor-Managed Inventory) is a supply chain program in which Specialty Bolt & Screw manages your fastener and hardware inventory on-site at your facility. We monitor stock levels, replenish automatically on a defined schedule, and ensure you never run out of critical parts — reducing your purchasing workload, eliminating emergency buys, and lowering carrying costs.</p>
+        <p>SBS is a recognized expert in VMI solutions for OEM manufacturers across diverse industries and global locations. Whether you're in aerospace, automotive, medical, industrial manufacturing, or any other sector, we can design a customized VMI program for your operation. Learn more at <a href="https://www.specialtybolt.com/">specialtybolt.com</a>.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">Who is VMI best suited for?</button>
+      <div class="faq-answer">
+        <p>VMI is ideal for OEM manufacturers, assemblers, and maintenance operations that use a consistent set of fasteners and hardware at predictable rates and want to eliminate the administrative burden of managing those items internally. It is particularly valuable for facilities with high part-number counts, lean/JIT production environments, or operations seeking to reduce inventory-related downtime.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">How do I get started with a VMI program?</button>
+      <div class="faq-answer">
+        <p>Contact our team through the <a href="https://www.specialtybolt.com/contact-us">Contact Us</a> page or call <a href="tel:800-322-7878">800-322-7878</a> to schedule a consultation. We will assess your current inventory, usage patterns, and facility layout, and design a program that fits. Setup typically involves an on-site bin or Kanban replenishment system and an agreed restocking schedule.</p>
+      </div>
+    </div>
+  </div><!-- /section 1 -->
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SECTION 2 — FINDING THE RIGHT PART
+  ═══════════════════════════════════════════════════════════════ -->
+  <div class="faq-section">
+    <div class="faq-section-heading">
+      2. &nbsp;Finding the Right Part
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">I cannot find the part I need. Can you quote a non-stock or custom item?</button>
+      <div class="faq-answer">
+        <p>Yes — if you can't find exactly what you need (wrong size, coating, material, etc.), you have several options:</p>
+        <ol>
+          <li>Submit an RFQ directly at <a href="https://shop.specialtybolt.com/sourcing/rfq">shop.specialtybolt.com/sourcing/rfq</a></li>
+          <li>Use the Quote Request page, click "Add an Item," check "Non-Stock Item," and describe the part — including a McMaster-Carr or other supplier part number if you have one.</li>
+          <li>Find the closest matching part in our catalog, click "Add to Quote," and use the Item Note field to describe what you need differently (e.g., "This part but in stainless steel, 100mm long").</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">How do I identify a part if I don't know the part number or standard?</button>
+      <div class="faq-answer">
+        <p>Use the <a href="https://shop.specialtybolt.com/technical/request-technical-assistance">Request Technical Support</a> form and describe the part as best you can — include dimensions, head style, drive type, material, finish, and application. Photos are very helpful and can be attached to your request. Our engineering team will identify the part and point you to the right specification.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">Can you cross-reference a part number from another supplier?</button>
+      <div class="faq-answer">
+        <p>Yes. Use our <a href="https://shop.specialtybolt.com/technical/part_cross_reference">Part Cross Reference</a> tool to find equivalent parts in our catalog. We cross-reference to McMaster-Carr, MSC, Grainger, and many other distributors. If the tool doesn't return a match, submit an RFQ or contact our technical team with the part number, supplier name, and any dimensional or spec information you have.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">Do you have 3D models or prints available for parts?</button>
+      <div class="faq-answer">
+        <p>Yes. 3D models and drawings are available for many standard parts through our <a href="https://shop.specialtybolt.com/technical/3d_models">3D Model / Print</a> resource under the Technical menu. If a model is not available for the part you need, contact us and we will assist.</p>
+      </div>
+    </div>
+  </div><!-- /section 1 -->
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SECTION 3 — MATERIALS, GRADES & COATINGS
+  ═══════════════════════════════════════════════════════════════ -->
+  <div class="faq-section">
+    <div class="faq-section-heading">
+      3. &nbsp;Materials, Grades &amp; Coatings
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">Where can I find information about fastener materials and grades?</button>
+      <div class="faq-answer">
+        <p>Our <a href="https://shop.specialtybolt.com/technical/material-and-grade">Materials &amp; Grades</a> resource (Technical menu) provides a comprehensive reference covering common materials (alloy steel, stainless steel, aluminum, titanium, brass, etc.) and their associated strength grades and standards. Our <a href="https://shop.specialtybolt.com/technical/technical_dictionary">Tech Dictionary</a> is also a useful starting point for terminology.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">What is the difference between material grade and material type?</button>
+      <div class="faq-answer">
+        <p>Material <strong>type</strong> refers to the base alloy (e.g., 18-8 stainless steel, alloy steel, titanium Grade 5). <strong>Grade</strong> refers to the mechanical property classification within that material — for example, SAE Grade 5 vs. Grade 8 for carbon steel bolts, or A2-70 vs. A4-80 for stainless. Selecting the right combination depends on your strength, corrosion, and temperature requirements. Contact our <a href="https://shop.specialtybolt.com/technical/request-technical-assistance">Technical Support team</a> if you need guidance.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">What plating and coating options are available?</button>
+      <div class="faq-answer">
+        <p>We stock and source parts with a wide range of finishes including zinc, hot-dip galvanized, black oxide, passivated, nickel, chrome, Dacromet, and others. See our <a href="https://shop.specialtybolt.com/technical/plating-and-coating">Plating &amp; Coatings</a> reference page for details. We can also apply alternative coatings to in-stock items as a secondary process — include your requirement in your RFQ or order notes.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">Can you modify a standard part with a different coating, plating, or secondary operation?</button>
+      <div class="faq-answer">
+        <p>Yes. SBS specializes in modifying in-stock items with: (i) alternative coatings and plating, (ii) pre-applied adhesive or non-metallic locking patches, and (iii) machining operations such as drilling, slotting, or custom lengths. Describe your requirements in your RFQ or order and we will confirm feasibility and pricing.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">What are pre-applied patches and adhesives, and when would I use them?</button>
+      <div class="faq-answer">
+        <p>Pre-applied patches are locking or sealing elements applied to the thread of a fastener before installation — they function as a controlled alternative to liquid threadlocking compounds. Common types include nylon pellets, full-thread nylon patches, and micro-encapsulated adhesive coatings. See our <a href="https://shop.specialtybolt.com/technical/pre-applied-patches-and-adhesives">Pre-Applied Patches</a> reference for details and options.</p>
+      </div>
+    </div>
+  </div><!-- /section 2 -->
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SECTION 4 — TECHNICAL DATA SHEETS & CERTIFICATIONS
+  ═══════════════════════════════════════════════════════════════ -->
+  <div class="faq-section">
+    <div class="faq-section-heading">
+      4. &nbsp;Technical Data Sheets &amp; Certifications
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">How do I request a Technical Data Sheet (TDS) for a product?</button>
+      <div class="faq-answer">
+        <p>Technical Data Sheets are available for many products through the <a href="https://shop.specialtybolt.com/technical/technical-data-sheets">Datasheet</a> section under the Technical menu. If the document you need isn't listed there, submit a <a href="https://shop.specialtybolt.com/technical/request-technical-assistance">Technical Support request</a> with the part number and we will locate or provide the appropriate documentation.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">What is a Material Test Report (MTR) and how do I request one?</button>
+      <div class="faq-answer">
+        <p>An MTR (also called a Mill Certificate or Mill Test Report) is a quality assurance document that certifies a material's chemical composition and mechanical properties, traceable to the specific heat or lot it was produced from. MTRs are available upon request — please indicate this requirement when placing your order or submitting an RFQ, or contact us after ordering with your order number.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">What is a Certificate of Conformance (C of C) and can I get one?</button>
+      <div class="faq-answer">
+        <p>A Certificate of Conformance is a signed document affirming that a product meets specified requirements (dimensional, material, performance, etc.). We provide C of C documentation upon request. Please specify this requirement when submitting your order or RFQ so it can be included with your shipment.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">Can I receive both an MTR and a C of C for the same order?</button>
+      <div class="faq-answer">
+        <p>Yes. Both documents can be provided together on request. Specify all documentation requirements upfront — in your RFQ or order notes — to ensure nothing is missed.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">Do you provide RoHS or REACH compliance documentation?</button>
+      <div class="faq-answer">
+        <p>Compliance documentation for RoHS, REACH, and similar regulatory frameworks is available for many products. Contact us with the specific part number and the compliance standard required, and our team will provide the appropriate documentation.</p>
+      </div>
+    </div>
+  </div><!-- /section 3 -->
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SECTION 5 — STANDARDS & CROSS-REFERENCING
+  ═══════════════════════════════════════════════════════════════ -->
+  <div class="faq-section">
+    <div class="faq-section-heading">
+      5. &nbsp;Standards &amp; Cross-Referencing
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">What technical standards do you support?</button>
+      <div class="faq-answer">
+        <p>We stock and source parts conforming to a wide range of domestic and international standards including ASME/ANSI, ISO, DIN, JIS, SAE, IFI, MS (Military Standard), and NAS (National Aerospace Standard), among others. Our <a href="https://shop.specialtybolt.com/technical/consensusstandardslibrary">Standards Library</a> provides access to consensus standards documentation to help you identify the correct specification for your application.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">How do I find the right technical standard for a part?</button>
+      <div class="faq-answer">
+        <p>Use the <a href="https://shop.specialtybolt.com/technical/consensusstandardslibrary">Standards Library</a> to browse and search available standards. If you know the part type but not the governing standard, our <a href="https://shop.specialtybolt.com/technical/request-technical-assistance">Request Technical Support</a> form connects you with our engineering team, who can identify the applicable ASME, ISO, DIN, or other standard for your application.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">What is the difference between ASME, ISO, DIN, and JIS standards?</button>
+      <div class="faq-answer">
+        <p>These are different standards bodies that define specifications for fastener dimensions, tolerances, materials, and performance:</p>
+        <ul>
+          <li><strong>ASME/ANSI</strong> — American Society of Mechanical Engineers / American National Standards Institute (United States)</li>
+          <li><strong>ISO</strong> — International Organization for Standardization (global, primarily metric)</li>
+          <li><strong>DIN</strong> — Deutsches Institut für Normung (German origin, widely used in Europe)</li>
+          <li><strong>JIS</strong> — Japanese Industrial Standards</li>
+        </ul>
+        <p>Parts from different standards are often similar but may not be interchangeable due to subtle dimensional or thread differences. See also our <a href="https://shop.specialtybolt.com/technical/threads-and-thread-forms">Threads</a> and <a href="https://shop.specialtybolt.com/technical/technical_dictionary">Tech Dictionary</a> references, or contact our technical team to confirm compatibility.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">What thread forms do you carry, and how do I know which one I need?</button>
+      <div class="faq-answer">
+        <p>We carry parts in UNC, UNF, UNEF (unified inch series), metric coarse (M), metric fine (MF), and specialty thread forms. Our <a href="https://shop.specialtybolt.com/technical/threads-and-thread-forms">Threads &amp; Thread Forms</a> reference explains the differences and includes pitch charts and tolerance information. Our engineering team can also help confirm the correct thread form for your application.</p>
+      </div>
+    </div>
+  </div><!-- /section 4 -->
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SECTION 6 — CUSTOM & SPECIAL PARTS / RFQ PROCESS
+  ═══════════════════════════════════════════════════════════════ -->
+  <div class="faq-section">
+    <div class="faq-section-heading">
+      6. &nbsp;Custom &amp; Special Parts / RFQ Process
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">When should I submit an RFQ instead of ordering directly?</button>
+      <div class="faq-answer">
+        <p>Submit an RFQ when you need: a part not found in our online catalog; a standard part in a special material, finish, or dimension; a per-print custom part; large quantities that warrant a formal quote; or any item requiring specific documentation (MTR, C of C). Use our <a href="https://shop.specialtybolt.com/sourcing/rfq">Request for Quote</a> page to get started.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">What information should I include in an RFQ for a custom part?</button>
+      <div class="faq-answer">
+        <p>The more detail you provide, the faster and more accurately we can respond. Ideally include:</p>
+        <ul>
+          <li>Part description or name</li>
+          <li>Governing standard (if known), e.g., ASME B18.3 or DIN 912</li>
+          <li>Material and grade (e.g., 316 SS, Grade 8, A286, Ti-6Al-4V)</li>
+          <li>Finish or plating (e.g., zinc yellow, passivated, black oxide)</li>
+          <li>Dimensions: thread size, length, head style, drive type, tolerances</li>
+          <li>Quantity required and whether blanket/scheduled releases are needed</li>
+          <li>Required documentation: MTR, C of C, RoHS, etc.</li>
+          <li>Required delivery date or lead time constraint</li>
+        </ul>
+        <p>A print or drawing (PDF) can be attached and is especially helpful for per-print or screw machine parts.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">What types of custom or special parts can you source or manufacture?</button>
+      <div class="faq-answer">
+        <p>SBS specializes in a broad range of custom and engineered fasteners and components, including:</p>
+        <ul>
+          <li>Custom fasteners and per-print specials</li>
+          <li>CNC turned and screw machine parts</li>
+          <li>Stampings (progressive, deep-drawn, fine-blanking)</li>
+          <li>Brass inserts (pressed-in or molded-in)</li>
+          <li>Bushings, spacers, and plain bearings</li>
+          <li>Electrical standoffs and PCB hardware</li>
+          <li>Vacuum hardware (vented components for in-vacuum environments)</li>
+          <li>Titanium fasteners and components</li>
+          <li>Rivets, SEMS screws, cable ties, and clamps</li>
+        </ul>
+        <p>See the <a href="https://shop.specialtybolt.com/sourcing/rfq">RFQs and Sourcing</a> menu for the full list of specialty categories.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">How long does it take to receive a quote?</button>
+      <div class="faq-answer">
+        <p>For standard catalog items, pricing is typically available within one business day. For custom, special, or sourced parts, quote turnaround is generally 1–3 business days depending on complexity. If you need an expedited response, call us directly at <a href="tel:800-322-7878">800-322-7878</a>.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">Can you support low-volume prototype orders as well as high-volume production?</button>
+      <div class="faq-answer">
+        <p>Yes. We offer <a href="https://shop.specialtybolt.com/sourcing/rapid_prototyping">Rapid Prototyping</a> services for low-volume or one-off needs, as well as full production sourcing and <a href="https://shop.specialtybolt.com/sourcing/strategicsourcing">Strategic Sourcing</a> programs for high-volume and long-term supply requirements.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">What is VA/VE and how can it benefit my project?</button>
+      <div class="faq-answer">
+        <p>Value Analysis / Value Engineering (VA/VE) is a process of reviewing your parts and assemblies to identify opportunities to reduce cost without compromising function or quality. SBS offers VA/VE services to help engineers and procurement teams standardize parts, reduce part-number count, and optimize material selection. Learn more on our <a href="https://shop.specialtybolt.com/vave/vave">VA/VE page</a>.</p>
+      </div>
+    </div>
+  </div><!-- /section 5 -->
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SECTION 7 — ACCOUNT & ORDERING
+  ═══════════════════════════════════════════════════════════════ -->
+  <div class="faq-section">
+    <div class="faq-section-heading">
+      8. &nbsp;Account &amp; Ordering
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">Who is this website intended for?</button>
+      <div class="faq-answer">
+        <p>The SBS website is primarily designed to support OEM (Original Equipment Manufacturer) customers operating under a Long-Term Arrangement (LTA) or VMI (Vendor-Managed Inventory) program with Specialty Bolt &amp; Screw. While anyone can browse the catalog and technical resources freely, full website functionality — including pricing, ordering, RFQ submission, and the customer portal — is available to approved account holders. Access is reviewed and approved on a per-account basis.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">I requested website access but it was not approved. What should I do?</button>
+      <div class="faq-answer">
+        <p>Because SBS primarily serves OEM customers under LTA and VMI programs, website account credentials are not automatically granted to all requestors. If your access request was not approved or you are unsure of your status, please contact your assigned SBS Account Manager directly. They can clarify your account standing, initiate the approval process if appropriate, or assist you through alternative channels (phone, email, or direct RFQ).</p>
+        <div class="note">If you do not know who your Account Manager is, call us at <a href="tel:800-322-7878"><strong>800-322-7878</strong></a> and we will connect you with the right person.</div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">Do I need an account to browse the catalog and technical resources?</button>
+      <div class="faq-answer">
+        <p>No — the product catalog, technical library, standards resources, datasheets, engineering tools, and reference guides are all publicly accessible without logging in. A registered and approved account is required only to access pricing, real-time availability, the customer portal, and online ordering or RFQ submission.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">What can I do in the customer portal once I have an approved account?</button>
+      <div class="faq-answer">
+        <p>Approved customers with access to the customer portal can use a range of self-service tools depending on their account configuration, including:</p>
+        <ul>
+          <li>Viewing contract pricing on parts covered under your LTA</li>
+          <li>Submitting and managing RFQs (Requests for Quote) online</li>
+          <li>Placing orders directly for parts with established pricing</li>
+          <li>Tracking open and historical orders</li>
+          <li>Reviewing purchase history and invoices</li>
+          <li>Managing saved parts lists and wish lists for repeat ordering</li>
+          <li>Accessing VMI-related reporting and replenishment details</li>
+        </ul>
+        <p>The specific features available to your account depend on your arrangement with SBS. Speak with your Account Manager if you need access to a feature not currently enabled.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">Can I order directly online, or do I always need to request a quote first?</button>
+      <div class="faq-answer">
+        <p>This depends on your account type. Customers with an active LTA and contract pricing can order directly online through the customer portal. Customers without an LTA will work through the RFQ process to receive a quote before an order can be placed. Contact your SBS Account Manager or call <a href="tel:800-322-7878">800-322-7878</a> to discuss the right account setup for your organization.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">How do I find out who my assigned SBS Account Manager is?</button>
+      <div class="faq-answer">
+        <p>If you are an existing SBS customer and are unsure who your Account Manager is, call us at <a href="tel:800-322-7878">800-322-7878</a> or reach out via the <a href="https://www.specialtybolt.com/contact-us">Contact Us</a> page. Provide your company name and we will connect you with your dedicated contact.</p>
+        <p>Your Account Manager is your primary point of contact for pricing, access approvals, VMI program management, and any escalated support needs.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">How do I track an existing order?</button>
+      <div class="faq-answer">
+        <p>Approved account holders can log in and visit the <a href="https://shop.specialtybolt.com/myaccount/myaccount">Track an Order</a> page to view current order status and shipment information. For urgent inquiries, or if you do not have portal access, contact your SBS Account Manager or call <a href="tel:800-322-7878">800-322-7878</a>.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">I found an error or outdated information on a product page. How do I report it?</button>
+      <div class="faq-answer">
+        <p>We appreciate the feedback. Use the <a href="https://specialtybolt.jotform.com/243516313307045">Report Error / Update</a> link in the Technical menu to submit a correction. Our team reviews all submissions and updates the catalog accordingly.</p>
+      </div>
+    </div>
+  </div><!-- /section 8 -->
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SECTION 8 — MANUFACTURERS AND SUPPLIERS
+  ═══════════════════════════════════════════════════════════════ -->
+  <div class="faq-section">
+    <div class="faq-section-heading">
+      8. &nbsp;Manufacturers and Suppliers
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">How can a manufacturer or trading company become a supplier to SBS?</button>
+      <div class="faq-answer">
+        <p>If you are a manufacturer or trading company interested in becoming a supplier to Specialty Bolt and Screw, please visit our <a href="https://shop.specialtybolt.com/supplierinfo/supplier">Supplier Information</a> page to review required documents and submit the appropriate forms.</p>
+        <p>The supplier onboarding process typically includes:</p>
+        <ul>
+          <li>NDA Supplier Agreement</li>
+          <li>Supplier Code of Conduct</li>
+          <li>Self Assessment Survey</li>
+          <li>New Supplier Setup Form</li>
+          <li>US Routing Guide for Suppliers</li>
+          <li>Overseas Supplier Manual (available in multiple languages)</li>
+        </ul>
+        <p>Submit completed surveys and acknowledgements to <a href="mailto:new_supplier_request@specialtybolt.com">new_supplier_request@specialtybolt.com</a></p>
+        <p>You may also send sales literature or digital catalogs to the same email address.</p>
+      </div>
+    </div>
+  </div><!-- /section 8 -->
+
+</div><!-- /faq-wrapper -->
+
+<script>
+  // Language switching functionality
+  let currentLanguage = localStorage.getItem('faqLanguage') || 'en';
+
+  // Set language and reload with translation
+  function setLanguage(lang) {
+    currentLanguage = lang;
+    localStorage.setItem('faqLanguage', lang);
+
+    // Update active button
+    document.querySelectorAll('.lang-button').forEach(btn => {
+      btn.classList.remove('active');
+      if (btn.dataset.lang === lang) {
+        btn.classList.add('active');
+      }
+    });
+
+    // Translate page using Google Translate parameter
+    if (lang === 'en') {
+      // Reload page without translation
+      location.reload();
+    } else {
+      // Language to Google Translate code mapping
+      const langMap = {
+        'es': 'es',
+        'fr': 'fr',
+        'vi': 'vi',
+        'zh-s': 'zh-CN',
+        'zh-t': 'zh-TW'
+      };
+      
+      const gTranslateCode = langMap[lang];
+      
+      // Use Google Translate redirect method
+      const currentUrl = window.location.href;
+      const separator = currentUrl.includes('?') ? '&' : '?';
+      const translationUrl = `https://translate.google.com/translate?hl=${gTranslateCode}&sl=en&tl=${gTranslateCode}&u=${encodeURIComponent(currentUrl.split('?')[0])}`;
+      
+      // Alternative: Use Google Translate on current domain if possible
+      // This method works better with iframes
+      window.location.href = translationUrl;
+    }
+  }
+
+  // Load saved language on page load
+  window.addEventListener('load', function() {
+    if (currentLanguage !== 'en') {
+      // Restore button state
+      document.querySelectorAll('.lang-button').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.lang === currentLanguage) {
+          btn.classList.add('active');
+        }
+      });
+    }
+  });
+
+  // Accordion toggle — click question to open/close answer
+  document.querySelectorAll('.faq-question').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var answer = this.nextElementSibling;
+      var isOpen = answer.classList.contains('open');
+
+      // Close all open answers
+      document.querySelectorAll('.faq-answer.open').forEach(function(a) {
+        a.classList.remove('open');
+      });
+      document.querySelectorAll('.faq-question.active').forEach(function(b) {
+        b.classList.remove('active');
+      });
+
+      // If it wasn't already open, open it
+      if (!isOpen) {
+        answer.classList.add('open');
+        this.classList.add('active');
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
