@@ -1212,8 +1212,8 @@ async function buildIndexes() {
   // Maps display name (from 7b_FINISH_CODES) to FinishCode for resolveFinish()
   // Uses cleaner FinishCode + FinishName from 7b_FINISH_CODES sheet
   FINISH_NAME_TO_CODE = {};
-  if (DB.finish_codes && DB.finish_codes.length) {
-    for (const row of DB.finish_codes) {
+  if (DB.finishCodes && DB.finishCodes.length) {
+    for (const row of DB.finishCodes) {
       const code = (row['FinishCode'] || '').trim();
       const name = (row['FinishName'] || '').trim();
       // Map display name to code (first occurrence per name)
