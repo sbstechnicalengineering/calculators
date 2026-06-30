@@ -818,6 +818,8 @@ let DIM_MAP       = {};   // configKey  → {dimName: value}
 let MECH_MAP      = {};   // configKey  → {propName: value}
 let FINISH_MAP    = {};   // finishCode → row object
 let FINISH_NAME_TO_CODE = {}; // display name → FinishCode (data-driven lookup)
+let FINISH_NAME_NORM = {};    // normalized display name → FinishCode (fallback index)
+window.__FINISH_DEBUG = true; // TEMP: logs finish resolution to console (remove once confirmed)
 let CHEM_MAP      = {};   // materialCode → {element: value}
 let VALID_MAP           = {};   // standardID → [rule objects]
 let THREAD_TOOLTIP_MAP  = {};   // propertyName → tooltip string
@@ -1136,20 +1138,33 @@ async function buildIndexes() {
   FINISH_MAP = {};
   const finishIsEav = DB.finish.some(r => r['Prop_Name'] !== undefined && r['ConfigKey'] !== undefined);
   if (finishIsEav) {
-    let lastKey = '';
     for (const row of DB.finish) {
       const ck = (row['ConfigKey'] || '').trim();
-      if (ck) lastKey = ck;
-      if (!lastKey) continue;
-      // Bucket key = everything after "FINISH|finish:" — preserves any
-      // |finish_specification:... segment so variants are distinct buckets.
-      const bucketKey = lastKey.replace(/^FINISH\|finish:/, '').trim();
-      if (!bucketKey || bucketKey.length > 200) continue;
-      // FinishCode is the part before the first "|" (the base code)
-      const finishCode = (row['FinishCode'] || bucketKey.split('|')[0]).trim();
-      // finish_specification override (if present in ConfigKey)
-      const specMatch = lastKey.match(/\|finish_specification:(.*)$/);
+      if (!ck) continue;
+
+      // ── Robust ConfigKey parsing — tolerant of inconsistent prefixes ──
+      // Valid forms we must accept (the sheet contains all of these):
+      //   FINISH|finish:{CODE}
+      //   FINISH|finish:{CODE}|finish_specification:{SPEC}
+      //   {CODE}|finish:{x}|finish_specification:{SPEC}        (malformed prefix)
+      //   {x}|finish:{CODE}|finish_specification:{SPEC}        (malformed prefix)
+      // Strategy: derive CODE from the FinishCode column (authoritative),
+      // and derive SPEC by extracting the finish_specification segment
+      // wherever it appears. Never depend on the leading token.
+      const finishCode = (row['FinishCode'] || '').trim();
+      if (!finishCode) continue;
+
+      const specMatch = ck.match(/\|finish_specification:(.*)$/);
       const specVal = specMatch ? specMatch[1].trim() : '';
+
+      // Canonical bucket key — always built from authoritative parts,
+      // never from the raw (possibly malformed) ConfigKey:
+      //   spec present → {CODE}|finish_specification:{SPEC}
+      //   spec absent  → {CODE}
+      const bucketKey = specVal
+        ? `${finishCode}|finish_specification:${specVal}`
+        : finishCode;
+
       if (!FINISH_MAP[bucketKey]) FINISH_MAP[bucketKey] = {
         code: finishCode,
         spec: specVal,
@@ -1157,13 +1172,19 @@ async function buildIndexes() {
         standardUrl:  row['StandardURL'] || '',
         _standardName: row['StandardURL_Name'] || '',
       };
+      // Carry standard URL/name forward if a later row in the bucket has it
+      if (row['StandardURL'] && !FINISH_MAP[bucketKey].standardUrl)
+        FINISH_MAP[bucketKey].standardUrl = row['StandardURL'];
+      if (row['StandardURL_Name'] && !FINISH_MAP[bucketKey]._standardName)
+        FINISH_MAP[bucketKey]._standardName = row['StandardURL_Name'];
+
       const name   = (row['Prop_Name']  || '').trim();
-      const val    = (row['Prop_Value'] || '').trim();
+      const val    = (row['Prop_Value'] || '').toString().trim();
       const unit   = (row['Unit']       || '').trim();
       const tipG   = (row['AttributeTooltip']     || '').trim();
       const tipO   = (row['FinishTooltipOverride']|| '').trim();
       const tip    = tipO || tipG;
-      const layout = (row['Layout'] || '').trim();
+      const layout = (row['Layout'] || '').toString().trim();
       if (name && val) {
         FINISH_MAP[bucketKey]._rows.push({ name, val, tip, unit, layout });
       }
@@ -1208,18 +1229,40 @@ async function buildIndexes() {
     }
   }
 
-  // ── Build FINISH_NAME_TO_CODE lookup (data-driven, no hardcoding) ──
-  // Maps display name (from 7b_FINISH_CODES) to FinishCode for resolveFinish()
-  // Uses cleaner FinishCode + FinishName from 7b_FINISH_CODES sheet
+  // ── Build FINISH_NAME_TO_CODE lookup (data-driven, multi-source) ──
+  // Maps a finish display name (as it appears in the dropdown) to its FinishCode.
+  // Sources, in priority order:
+  //   1. 7b_FINISH_CODES   (FinishName → FinishCode)   — authoritative reference
+  //   2. 7_FINISH_DATA     (first Prop_Value per code) — covers names only in the data sheet
+  // A normalized index (lowercased, punctuation-stripped) is also kept so dropdown
+  // labels that differ only cosmetically still resolve.
   FINISH_NAME_TO_CODE = {};
+  FINISH_NAME_NORM = {};                  // normalized name → code
+  const _norm = s => (s || '').toString().toLowerCase().replace(/[^a-z0-9]/g, '');
+
+  const _addFinishName = (name, code) => {
+    name = (name || '').trim();
+    code = (code || '').trim();
+    if (!name || !code) return;
+    if (!FINISH_NAME_TO_CODE[name]) FINISH_NAME_TO_CODE[name] = code;
+    const nk = _norm(name);
+    if (nk && !FINISH_NAME_NORM[nk]) FINISH_NAME_NORM[nk] = code;
+  };
+
+  // Source 1: 7b_FINISH_CODES
   if (DB.finishCodes && DB.finishCodes.length) {
     for (const row of DB.finishCodes) {
-      const code = (row['FinishCode'] || '').trim();
-      const name = (row['FinishName'] || '').trim();
-      // Map display name to code (first occurrence per name)
-      if (code && name && !FINISH_NAME_TO_CODE[name]) {
-        FINISH_NAME_TO_CODE[name] = code;
-      }
+      _addFinishName(row['FinishName'], row['FinishCode']);
+    }
+  }
+  // Source 2: 7_FINISH_DATA — first Prop_Value seen for each FinishCode
+  const _seenCode = {};
+  for (const row of DB.finish) {
+    const code = (row['FinishCode'] || '').trim();
+    const pv   = (row['Prop_Value'] || '').toString().trim();
+    if (code && pv && !_seenCode[code]) {
+      _seenCode[code] = true;
+      _addFinishName(pv, code);
     }
   }
 
@@ -2132,29 +2175,44 @@ function eavVal(mapObj, propName) {
 //   3. Name/code fuzzy match against the user's finish selection
 // Returns the FINISH_MAP entry (with _rows) or null.
 function resolveFinish(finishName, finishSpec, finishThick) {
-  // Step 1: Map display name to FinishCode using data-driven lookup
-  // (e.g., "Zinc Clear" → "ZINC_CLEAR")
+  const norm = s => (s || '').toString().toLowerCase().replace(/[^a-z0-9]/g, '');
+
+  // Step 1: Resolve finish display name → FinishCode (exact, then normalized)
   let baseCode = FINISH_NAME_TO_CODE[finishName];
-  
+  if (!baseCode) {
+    const nk = norm(finishName);
+    baseCode = FINISH_NAME_NORM[nk];
+  }
+  // Last-resort: thickness prefix (legacy)
   if (!baseCode && finishThick) {
-    // Fallback: try thickness prefix match against known codes
-    for (const [displayName, code] of Object.entries(FINISH_NAME_TO_CODE)) {
-      if (finishThick.startsWith(code)) {
-        baseCode = code;
-        break;
-      }
+    for (const [nm, code] of Object.entries(FINISH_NAME_TO_CODE)) {
+      if (finishThick.startsWith(code)) { baseCode = code; break; }
     }
   }
+
+  if (window.__FINISH_DEBUG) {
+    console.log('[resolveFinish] inputs:', { finishName, finishSpec, finishThick });
+    console.log('[resolveFinish] baseCode:', baseCode);
+  }
   if (!baseCode) return null;
-  
-  // Step 2: Build spec-specific bucketKey using finish_specification
-  // (e.g., "ZINC_CLEAR|finish_specification:ASTM F1941 Fe/Zn 3A Hex Clear")
+
+  // Step 2: Spec-specific bucket — key built from authoritative code + spec
   if (finishSpec) {
     const specKey = `${baseCode}|finish_specification:${finishSpec}`;
+    if (window.__FINISH_DEBUG) {
+      console.log('[resolveFinish] specKey:', specKey,
+                  '| exists:', !!FINISH_MAP[specKey],
+                  '| rows:', FINISH_MAP[specKey]?._rows?.length || 0);
+    }
     if (FINISH_MAP[specKey]?._rows?.length) return FINISH_MAP[specKey];
   }
-  
-  // Step 3: Fallback to plain FinishCode bucket (no spec override)
+
+  // Step 3: Plain FinishCode bucket
+  if (window.__FINISH_DEBUG) {
+    console.log('[resolveFinish] baseKey:', baseCode,
+                '| exists:', !!FINISH_MAP[baseCode],
+                '| rows:', FINISH_MAP[baseCode]?._rows?.length || 0);
+  }
   if (FINISH_MAP[baseCode]?._rows?.length) return FINISH_MAP[baseCode];
   return null;
 }
