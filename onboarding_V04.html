@@ -1,0 +1,2270 @@
+<!DOCTYPE html>
+<!--
+SBS Technical Onboarding and Cost Reduction Process | Copyright (c) 2024 Specialty Bolt & Screw, Inc.
+Fingerprint: SBS-ONBOARDING-COST-REDUCTION-v2 | https://shop.specialtybolt.com/
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SBS Technical Onboarding and Cost Reduction Process</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #1D3557;
+      --navy-dark: #12243a;
+      --orange: #E87722;
+      --orange-light: #F0913A;
+      --orange-pale: #FDF0E5;
+      --white: #ffffff;
+      --gray-50: #F8F9FA;
+      --gray-100: #F0F2F5;
+      --gray-200: #E2E6EA;
+      --gray-300: #CED4DA;
+      --gray-400: #ADB5BD;
+      --gray-500: #6C757D;
+      --gray-600: #495057;
+      --gray-700: #343A40;
+      --active-green: #1A8A4A;
+      --active-bg: #E8F5EE;
+      --obsolete-red: #C0392B;
+      --obsolete-bg: #FDECEA;
+      --withdrawn-amber: #B7610A;
+      --withdrawn-bg: #FEF3E2;
+      --shadow: 0 12px 30px rgba(18, 36, 58, 0.12);
+      --radius: 18px;
+      --pastel-1: #FDF0E5;
+      --pastel-2: #F8F9FA;
+      --pastel-3: #FEF3E2;
+      --pastel-4: #E8F5EE;
+      --pastel-5: #F0F2F5;
+      --pastel-6: #FDECEA;
+      --pastel-7: #FDF0E5;
+      --pastel-8: #F8F9FA;
+      --header-h: 76px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', Arial, Helvetica, sans-serif;
+      color: var(--gray-700);
+      background: var(--gray-100);
+      line-height: 1.55;
+    }
+
+    a { color: var(--orange); font-weight: 700; }
+
+    h1, h2, h3, .brand-heading { font-family: 'Barlow Condensed', Arial, sans-serif; }
+
+    /* ---------- Sticky brand header ---------- */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--white);
+      border-bottom: 3px solid var(--orange);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+      padding: 0.65rem 1.5rem;
+    }
+
+    .header-inner {
+      width: min(1180px, calc(100% - 36px));
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .header-logo-link { display: block; line-height: 0; }
+    .header-logo { height: 48px; display: block; }
+
+    .header-divider {
+      width: 1px;
+      height: 36px;
+      background: var(--gray-200);
+      flex: 0 0 auto;
+    }
+
+    .header-title-block { min-width: 0; }
+
+    .header-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: clamp(18px, 2.4vw, 26px);
+      color: var(--navy);
+      line-height: 1.1;
+    }
+
+    .header-subtitle {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      color: var(--gray-500);
+      margin-top: 2px;
+    }
+
+    /* ---------- Hero intro ---------- */
+    .hero {
+      background:
+        radial-gradient(circle at 18% 20%, rgba(232,119,34,0.22), transparent 28%),
+        linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
+      color: white;
+      padding: 40px 24px 34px;
+    }
+
+    .container {
+      width: min(1180px, calc(100% - 36px));
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Barlow', sans-serif;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      font-size: 12px;
+      color: #ffcda0;
+      margin-bottom: 12px;
+    }
+
+    .hero h1 {
+      font-size: clamp(28px, 4vw, 46px);
+      line-height: 1.08;
+      margin: 0 0 14px;
+      max-width: 940px;
+      font-weight: 800;
+    }
+
+    .hero p {
+      font-size: clamp(15px, 1.6vw, 18px);
+      max-width: 980px;
+      color: rgba(255,255,255,.88);
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .button {
+      display: inline-block;
+      text-decoration: none;
+      border-radius: 6px;
+      padding: 12px 18px;
+      font-family: 'Barlow', sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      color: white;
+      background: var(--orange);
+      border: none;
+      font-size: 13px;
+      box-shadow: 0 2px 6px rgba(232,119,34,0.3);
+      transition: background .15s ease, transform .15s ease;
+    }
+
+    .button:hover { background: var(--orange-light); transform: translateY(-1px); }
+
+    section { padding: 30px 0; }
+
+    .section-title {
+      margin: 0 0 10px;
+      font-size: clamp(22px, 2.6vw, 32px);
+      color: var(--navy);
+      font-weight: 800;
+    }
+
+    .section-lead {
+      max-width: 960px;
+      margin: 0 0 22px;
+      color: var(--gray-500);
+      font-size: 16px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .takeaways {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: -22px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .takeaway-card {
+      background: white;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 10px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+      min-height: 130px;
+    }
+
+    .takeaway-number {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 36px;
+      line-height: 1;
+      color: var(--orange);
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .takeaway-card h3 {
+      margin: 0 0 7px;
+      font-size: 16px;
+      color: var(--navy);
+      font-weight: 700;
+    }
+
+    .takeaway-card p {
+      margin: 0;
+      color: var(--gray-500);
+      font-size: 13.5px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .executive-box {
+      background: white;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 10px;
+      padding: 18px;
+      box-shadow: 0 10px 28px rgba(18, 36, 58, 0.08);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .executive-box h3 {
+      color: var(--navy);
+      margin: 0 0 8px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .executive-box p {
+      margin: 0;
+      color: var(--gray-500);
+      font-size: 13.5px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .summary-details {
+      margin-top: 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    details.executive-detail,
+    details.compact-detail {
+      background: white;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 7px 18px rgba(18, 36, 58, 0.06);
+    }
+
+    details.executive-detail summary,
+    details.compact-detail summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 11px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      font-family: 'Barlow', sans-serif;
+      font-weight: 700;
+      color: var(--navy);
+      font-size: 14px;
+    }
+
+    details.executive-detail summary::-webkit-details-marker,
+    details.compact-detail summary::-webkit-details-marker { display: none; }
+
+    details.executive-detail summary::after,
+    details.compact-detail summary::after {
+      content: "+";
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--orange-pale);
+      color: var(--orange);
+      flex: 0 0 24px;
+      font-size: 16px;
+    }
+
+    details.executive-detail[open] summary::after,
+    details.compact-detail[open] summary::after {
+      content: "-";
+    }
+
+    .detail-body {
+      padding: 0 14px 14px;
+      color: var(--gray-600);
+      font-size: 13.5px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .detail-body ul {
+      margin: 9px 0 0;
+      padding-left: 18px;
+    }
+
+    /* ---------- Tabs ---------- */
+    .tabs-bar {
+      position: sticky;
+      top: var(--header-h);
+      z-index: 90;
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-200);
+      padding: 0;
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .tab-link {
+      display: inline-block;
+      text-decoration: none;
+      color: var(--gray-500);
+      background: transparent;
+      border: none;
+      border-bottom: 3px solid transparent;
+      border-radius: 0;
+      padding: 16px 20px 13px;
+      font-family: 'Barlow', sans-serif;
+      font-weight: 700;
+      font-size: 13.5px;
+      letter-spacing: 0.2px;
+      cursor: pointer;
+      transition: all .15s ease;
+      margin-bottom: -1px;
+    }
+
+    .tab-link:hover { color: var(--orange); }
+
+    .tab-link.active {
+      background: transparent;
+      color: var(--navy);
+      border-bottom-color: var(--orange);
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .subsection { margin-top: 30px; }
+    .subsection:first-child { margin-top: 0; }
+
+    .flow-wrap {
+      background: white;
+      border: 1.5px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: 0 10px 28px rgba(18, 36, 58, 0.09);
+      overflow: visible;
+    }
+
+    .flow-note {
+      color: var(--gray-500);
+      margin: 0 0 18px;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 44px 44px;
+      position: relative;
+    }
+
+    .flow-node {
+      position: relative;
+      min-height: 118px;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 12px;
+      padding: 18px 16px;
+      box-shadow: 0 8px 18px rgba(18,36,58,0.08);
+      cursor: default;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      z-index: 1;
+    }
+
+    .flow-node:nth-child(1) { background: linear-gradient(180deg, #ffffff 0%, var(--pastel-1) 100%); }
+    .flow-node:nth-child(2) { background: linear-gradient(180deg, #ffffff 0%, var(--pastel-2) 100%); }
+    .flow-node:nth-child(3) { background: linear-gradient(180deg, #ffffff 0%, var(--pastel-3) 100%); }
+    .flow-node:nth-child(4) { background: linear-gradient(180deg, #ffffff 0%, var(--pastel-4) 100%); }
+    .flow-node:nth-child(5) { background: linear-gradient(180deg, #ffffff 0%, var(--pastel-5) 100%); }
+    .flow-node:nth-child(6) { background: linear-gradient(180deg, #ffffff 0%, var(--pastel-6) 100%); }
+    .flow-node:nth-child(7) { background: linear-gradient(180deg, #ffffff 0%, var(--pastel-7) 100%); }
+    .flow-node:nth-child(8) { background: linear-gradient(180deg, #ffffff 0%, var(--pastel-8) 100%); }
+
+    .flow-node:hover,
+    .flow-node:focus-within {
+      transform: translateY(-4px);
+      border-color: var(--orange);
+      box-shadow: 0 16px 28px rgba(18,36,58,0.16);
+      z-index: 20;
+    }
+
+    .node-number {
+      position: absolute;
+      top: -16px;
+      left: 16px;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--navy);
+      color: white;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      border: 3px solid white;
+      box-shadow: 0 4px 12px rgba(18,36,58,0.25);
+    }
+
+    .flow-node h3 {
+      margin: 8px 0 8px;
+      color: var(--navy);
+      font-size: 17px;
+      line-height: 1.2;
+      font-weight: 700;
+    }
+
+    .flow-node p {
+      margin: 0;
+      color: var(--gray-500);
+      font-size: 13.5px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .connector {
+      position: absolute;
+      top: 50%;
+      right: -34px;
+      width: 28px;
+      height: 2px;
+      background: var(--orange);
+    }
+
+    .connector::after {
+      content: "";
+      position: absolute;
+      right: -2px;
+      top: -4px;
+      border-left: 8px solid var(--orange);
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+    }
+
+    .node-tooltip {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      top: calc(100% + 10px);
+      background: var(--navy-dark);
+      color: white;
+      border-radius: 10px;
+      padding: 14px;
+      box-shadow: 0 18px 28px rgba(0,0,0,0.22);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-4px);
+      transition: all .18s ease;
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      z-index: 40;
+    }
+
+    .node-tooltip::before {
+      content: "";
+      position: absolute;
+      top: -7px;
+      left: 24px;
+      border-bottom: 8px solid var(--navy-dark);
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+    }
+
+    .flow-node:hover .node-tooltip,
+    .flow-node:focus-within .node-tooltip {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .node-tooltip strong { color: #ffcda0; font-family: 'Barlow', sans-serif; }
+    .node-tooltip ul { margin: 8px 0 0; padding-left: 18px; }
+    .node-tooltip li { margin: 3px 0; }
+
+    .drill-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      overflow: hidden;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(18, 36, 58, 0.08);
+      border: 1px solid var(--gray-200);
+    }
+
+    th, td {
+      padding: 12px 13px;
+      border-bottom: 1px solid var(--gray-100);
+      text-align: left;
+      vertical-align: top;
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      color: var(--gray-700);
+    }
+
+    th {
+      background: var(--gray-50);
+      color: var(--gray-500);
+      font-family: 'Barlow', sans-serif;
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      font-weight: 700;
+    }
+
+    tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: var(--gray-50); }
+
+    .status-chip, .tag {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 4px 9px;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: 'Barlow', sans-serif;
+      background: var(--gray-100);
+      color: var(--navy);
+      white-space: nowrap;
+    }
+
+    .tag.gold { background: var(--withdrawn-bg); color: var(--withdrawn-amber); }
+    .tag.green { background: var(--active-bg); color: var(--active-green); }
+
+    .link-card {
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: 10px;
+      padding: 14px;
+      margin-top: 10px;
+    }
+
+    .link-card strong {
+      display: block;
+      color: var(--navy);
+      margin-bottom: 4px;
+      font-family: 'Barlow', sans-serif;
+    }
+
+    .cta {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
+      color: white;
+      border-radius: var(--radius);
+      padding: 30px;
+      box-shadow: var(--shadow);
+    }
+
+    .cta h2 { margin: 0 0 8px; font-size: 26px; font-weight: 800; }
+    .cta p { margin: 0; color: rgba(255,255,255,.88); font-family: 'Inter', sans-serif; }
+
+    .disclaimer-bar {
+      background: var(--gray-50);
+      border-top: 1px solid var(--gray-200);
+      padding: 16px 0;
+    }
+
+    .disclaimer-bar p {
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+      font-size: 11.5px;
+      color: var(--gray-500);
+      font-family: 'Inter', sans-serif;
+    }
+
+    .disclaimer-bar strong { color: var(--navy); }
+
+    footer {
+      padding: 20px 0 36px;
+      color: var(--gray-500);
+      font-size: 12px;
+      text-align: center;
+      font-family: 'Inter', sans-serif;
+    }
+
+    @media (max-width: 1050px) {
+      .flow { grid-template-columns: repeat(2, 1fr); }
+      .connector { display: none; }
+    }
+
+    @media (max-width: 950px) {
+      .takeaways { grid-template-columns: repeat(2, 1fr); }
+      .executive-box { grid-template-columns: 1fr; }
+      .business-case-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 700px) {
+      .takeaways, .flow, .drill-grid { grid-template-columns: 1fr; }
+      .node-tooltip {
+        position: static;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        margin-top: 12px;
+        background: var(--gray-50);
+        color: var(--gray-700);
+        box-shadow: none;
+      }
+      .node-tooltip::before { display: none; }
+      .node-tooltip strong { color: var(--navy); }
+      .hero { padding-top: 32px; }
+      .header-inner { flex-wrap: wrap; }
+      .header-divider { display: none; }
+    }
+
+    .summary-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .effort-bubble {
+      margin-left: auto;
+      display: inline-block;
+      border-radius: 999px;
+      padding: 4px 9px;
+      font-size: 11.5px;
+      font-weight: 700;
+      font-family: 'Barlow', sans-serif;
+      background: var(--gray-100);
+      color: var(--navy);
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
+
+    .effort-bubble.green { background: var(--active-bg); color: var(--active-green); }
+    .effort-bubble.gold { background: var(--withdrawn-bg); color: var(--withdrawn-amber); }
+    .effort-bubble.red { background: var(--obsolete-bg); color: var(--obsolete-red); }
+
+    .business-case-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .business-card {
+      background: white;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 10px;
+      padding: 16px;
+      box-shadow: 0 7px 18px rgba(18,36,58,0.06);
+    }
+
+    .business-card h3 {
+      margin: 0 0 8px;
+      color: var(--navy);
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .business-card p,
+    .business-card li {
+      color: var(--gray-600);
+      font-size: 13.5px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .business-card ul {
+      margin: 8px 0 0;
+      padding-left: 18px;
+    }
+
+    .final-list {
+      margin: 14px 0 0;
+      padding-left: 20px;
+      color: rgba(255,255,255,.9);
+      font-family: 'Inter', sans-serif;
+    }
+
+    .final-list li { margin: 8px 0; }
+
+    /* ---------- Beta modal ---------- */
+    .beta-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(18, 36, 58, 0.75);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2147483647;
+      padding: 20px;
+    }
+
+    .beta-overlay.hidden { display: none; }
+
+    .beta-modal {
+      background: white;
+      border-radius: 14px;
+      max-width: 460px;
+      width: 100%;
+      max-height: 88vh;
+      overflow-y: auto;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+    }
+
+    .beta-modal-header {
+      background: var(--navy);
+      border-bottom: 4px solid var(--orange);
+      border-radius: 14px 14px 0 0;
+      padding: 18px 22px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .beta-modal-header svg { color: var(--orange); flex: 0 0 auto; }
+
+    .beta-modal-header h2 {
+      color: white;
+      font-size: 20px;
+      margin: 0;
+      flex: 1;
+      font-weight: 800;
+    }
+
+    .beta-pill {
+      display: inline-block;
+      background: var(--orange);
+      color: white;
+      font-family: 'Barlow', sans-serif;
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-radius: 999px;
+      padding: 4px 10px;
+      flex: 0 0 auto;
+    }
+
+    .beta-modal-body {
+      padding: 22px;
+      font-family: 'Inter', sans-serif;
+      color: var(--gray-700);
+      font-size: 14px;
+    }
+
+    .beta-modal-body p { margin: 0 0 12px; }
+    .beta-modal-body p:last-child { margin-bottom: 0; }
+
+    .beta-modal-footer {
+      padding: 0 22px 22px;
+      display: flex;
+      justify-content: flex-end;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Beta modal -->
+  <div class="beta-overlay" id="betaOverlay">
+    <div class="beta-modal">
+      <div class="beta-modal-header">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        <h2>Specialty Bolt and Screw</h2>
+        <span class="beta-pill">Beta</span>
+      </div>
+      <div class="beta-modal-body">
+        <p>This tool is currently in beta. Some content, calculations, or formatting may change as SBS continues to refine it.</p>
+        <p>We invite you to explore the tool and use it as part of your process. If you notice anything unclear or run into an issue, please share your feedback with your SBS contact.</p>
+        <p>Thank you for helping us improve this tool for the entire SBS community.</p>
+      </div>
+      <div class="beta-modal-footer">
+        <button class="button" type="button" data-sbs-action="dismiss-beta">I Understand - Continue to Tool</button>
+      </div>
+    </div>
+  </div>
+
+  <img id="sbsLogoPrint" src="data:image/png;base64,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" style="display:none;">
+
+  <header class="site-header" id="siteHeader">
+    <div class="header-inner">
+      <a class="header-logo-link" href="https://shop.specialtybolt.com/" target="_blank" rel="noopener">
+        <img class="header-logo" src="data:image/png;base64,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" alt="Specialty Bolt and Screw">
+      </a>
+      <div class="header-divider"></div>
+      <div class="header-title-block">
+        <div class="header-title">Technical Onboarding and Cost Reduction Process</div>
+        <div class="header-subtitle">Implementation, risk management, and strategic cost reduction guide for OEM partners</div>
+      </div>
+    </div>
+  </header>
+
+  <section class="tabs-bar" id="process-tabs">
+    <div class="container">
+      <div class="tabs" role="tablist" aria-label="Process tabs">
+        <button type="button" class="tab-link active" data-tab="implementation-process" role="tab">Implementation Process</button>
+        <button type="button" class="tab-link" data-tab="risks-mitigation" role="tab">Risks and Mitigation Strategies</button>
+        <button type="button" class="tab-link" data-tab="cost-reduction" role="tab">Strategic Cost Reduction Process</button>
+        <button type="button" class="tab-link" data-tab="part-standardization" role="tab">Part Standardization</button>
+      </div>
+    </div>
+  </section>
+
+  <header class="hero">
+    <div class="container">
+      <div class="eyebrow" id="heroEyebrow">Specialty Bolt and Screw</div>
+      <h1 id="heroTitle">SBS Technical Onboarding Process</h1>
+      <p id="heroDesc">
+        An executive overview of how SBS identifies parts, documents conformance, manages risk, and reduces approval
+        effort and cost so OEMs avoid production turbulence during supplier implementation.
+      </p>
+      <div class="hero-actions">
+        <a class="button" id="heroBtn" href="#implementation-process">View Implementation Process</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="container">
+
+      <!-- ============ TAB 1: IMPLEMENTATION PROCESS ============ -->
+      <div id="implementation-process" class="tab-panel active">
+
+        <div class="subsection" aria-label="Key takeaways">
+          <div class="takeaways">
+            <article class="takeaway-card">
+              <div class="takeaway-number">80%</div>
+              <h3>High BOM Count</h3>
+              <p>Fasteners and hardware can represent a large percentage of BOM line items.</p>
+            </article>
+            <article class="takeaway-card">
+              <div class="takeaway-number">3 to 5%</div>
+              <h3>Low Spend Share</h3>
+              <p>These parts often represent only a small percentage of total product spend.</p>
+            </article>
+            <article class="takeaway-card">
+              <div class="takeaway-number">Smart</div>
+              <h3>Risk Management Approval</h3>
+              <p>Approval effort should be based on smart, risk-based decisions that match part risk, complexity, value, and documentation quality.</p>
+            </article>
+            <article class="takeaway-card">
+              <div class="takeaway-number">Core Business</div>
+              <h3>OEM Technical Focus</h3>
+              <p>OEM engineering and quality teams need to focus on core products and not low-value hardware implementation administration.</p>
+            </article>
+          </div>
+        </div>
+
+        <div class="subsection">
+          <h2 class="section-title">Executive Summary</h2>
+          <p class="section-lead">
+            The OEM (Original Equipment Manufacturer) remains responsible for final part approval because the OEM owns the application,
+            assembly conditions, compliance, safety requirements, and shipped product. SBS supports that decision by doing the technical
+            heavy lifting required to identify, document, inspect, test, and categorize parts before approval decisions are made.
+            The goal is to shift as much of the approval burden as practical from the OEM to SBS, while keeping the OEM fully informed
+            of assumptions, conflicts, gaps, risks, and recommended approval paths.
+          </p>
+
+          <div class="executive-box">
+            <div>
+              <h3>What SBS solves</h3>
+              <p>
+                Many OEMs have thousands of fastener and hardware part numbers with incomplete ERP descriptions,
+                limited drawings, inconsistent samples, multiple stock locations, and mixed approval requirements.
+                SBS creates technical structure from that messy data through a 3-Way Part Verification process that compares
+                collected samples, OEM part descriptions, and the print, technical data sheet, or catalog page used to define the part.
+              </p>
+            </div>
+            <div>
+              <h3>What the process prevents</h3>
+              <p>
+                The process helps OEM engineering and quality teams avoid time-consuming approval work on low-value fasteners and hardware,
+                while preventing avoidable disruption caused by part mismatches, undocumented assumptions, compliance issues,
+                unclear approval responsibility, or rushed supplier transitions. Every step is visible to the OEM, so questions,
+                ambiguities, test results, and recommendations are documented before implementation decisions are made.
+              </p>
+            </div>
+          </div>
+
+          <div class="summary-details">
+            <details class="executive-detail">
+              <summary>Why fasteners need a different approval approach</summary>
+              <div class="detail-body">
+                Fasteners and hardware can represent up to 80% of BOM line items but only 3 to 5% of total spend.
+                A one-size-fits-all approval process can overload engineering and quality teams with excessive review
+                of low-value standard parts. SBS helps apply the right level of review where it matters most.
+              </div>
+            </details>
+
+            <details class="executive-detail">
+              <summary>OEM vs. SBS responsibility</summary>
+              <div class="detail-body">
+                SBS defines part conformance and supports the OEM agreed approval process with samples, part categorization,
+                attributes, documents, assumptions, deviations, test data, and recommendations. The OEM makes the final approval
+                decision because only the OEM fully understands the end application, end customer expectations, and product-level risk.
+              </div>
+            </details>
+
+            <details class="executive-detail">
+              <summary>3-Way Part Verification</summary>
+              <div class="detail-body">
+                SBS verifies the technical basis of each part by comparing three sources: the collected current-use sample,
+                the OEM part description, and the print, technical data sheet, catalog page, or other document used to define the part.
+                When the three sources do not agree, SBS documents the ambiguity in the shared Discrepancy Sheet and links to supporting
+                information such as annotated prints, corrected descriptions, or photos of golden samples.
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <div class="subsection">
+          <h2 class="section-title">Why Partner with SBS</h2>
+          <p class="section-lead">
+            The OEM is the expert in manufacturing its own product. SBS is the expert in fastener and hardware implementation,
+            part configuration, sourcing, procurement, quality, and logistics. With 50 years of experience implementing VMI
+            programs across many OEM environments, SBS helps customers avoid having to reinvent a supplier-change process
+            from scratch.
+          </p>
+
+          <div class="executive-box">
+            <div>
+              <h3>OEM Expertise</h3>
+              <p>
+                OEMs know their product, application, and end customer better than anyone. That expertise belongs on the
+                product, not on low-value fastener administration.
+              </p>
+            </div>
+            <div>
+              <h3>SBS Expertise</h3>
+              <p>
+                SBS has implemented hundreds of VMI programs with OEMs across many industries and regions over the past 50 years.
+                That experience includes technically demanding automotive environments with strict testing, validation,
+                compliance, and AIAG PPAP requirements, as well as semiconductor environments where cleanliness, packaging,
+                precision parts, and proprietary designs are critical. SBS brings that implementation discipline to OEMs
+                who may not have recently changed suppliers at scale, helping them avoid excess effort, frustration, and production turbulence.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="subsection">
+          <h2 class="section-title">8-Step Process Flow</h2>
+          <p class="section-lead">
+            Hover over each node to see additional detail.
+          </p>
+
+          <div class="flow-wrap">
+            <p class="flow-note">
+              The process starts with OEM-provided part scope and ends with OEM approval and SBS production release.
+              PIM means Part Information Management. COTS means Commercial Off-the-Shelf parts, typically standard parts or catalog parts.
+            </p>
+
+            <div class="flow">
+              <article class="flow-node" tabindex="0">
+                <span class="node-number">1</span><span class="connector"></span>
+                <h3>Define Scope</h3><p>OEM provides part list, known requirements, and available documentation.</p>
+                <div class="node-tooltip"><strong>Typical inputs</strong><ul><li>ERP, BOM, supplier list, or usage extract</li><li>OEM part number, description, EAU, location</li><li>Available prints and data sheet collection</li><li>Known quality, compliance, or criticality information</li><li>SBS may identify additional parts during site discovery</li></ul></div>
+              </article>
+
+              <article class="flow-node" tabindex="0">
+                <span class="node-number">2</span><span class="connector"></span>
+                <h3>Collect Samples</h3><p>SBS or OEM collects Current-Use Golden Samples.</p>
+                <div class="node-tooltip"><strong>Sample control</strong><ul><li>Ideally five new, unused pieces per part number</li><li>Collected from inventory, work cells, or stock rooms</li><li>Bagged by OEM part number and location</li><li>Retained by SBS and photographed under controlled conditions</li></ul></div>
+              </article>
+
+              <article class="flow-node" tabindex="0">
+                <span class="node-number">3</span><span class="connector"></span>
+                <h3>3-Way Part Verification</h3><p>SBS compares samples, OEM descriptions, and defining technical data.</p>
+                <div class="node-tooltip"><strong>Verification points</strong><ul><li>Collected samples, including samples from multiple stock locations or work cells</li><li>OEM part description, including engineering description, ERP description, or SAP description</li><li>Print, technical data sheet, catalog page, or other document showing how the OEM defines the part</li><li>SBS confirms whether all three sources agree before sourcing and approval work proceeds</li></ul></div>
+              </article>
+
+              <article class="flow-node" tabindex="0">
+                <span class="node-number">4</span>
+                <h3>Review Assumptions &amp; Discrepancies</h3><p>Ambiguities are documented in the shared Discrepancy Sheet.</p>
+                <div class="node-tooltip"><strong>Discrepancy review</strong><ul><li>Sample does not match OEM description, SAP description, print, TDS, or catalog definition</li><li>Multiple samples from different stock locations or work cells do not match each other</li><li>Print, description, or technical data is incomplete, outdated, or ambiguous</li><li>SBS communicates the issue through the Discrepancy Sheet with links to annotated prints, corrected descriptions, or golden sample photos</li></ul></div>
+              </article>
+
+              <article class="flow-node" tabindex="0">
+                <span class="node-number">5</span><span class="connector"></span>
+                <h3>Source and Quote</h3><p>SBS identifies standard, COTS, custom, or alternate paths.</p>
+                <div class="node-tooltip"><strong>Sourcing paths</strong><ul><li>Consensus-standard part</li><li>COTS catalog part</li><li>SBS-controlled standard part</li><li>Reverse-engineered special part</li><li>Alternate CoO or compliance-driven substitute</li></ul></div>
+              </article>
+
+              <article class="flow-node" tabindex="0">
+                <span class="node-number">6</span><span class="connector"></span>
+                <h3>Submit Samples</h3><p>SBS provides proposed sample and documentation.</p>
+                <div class="node-tooltip"><strong>Submission contents</strong><ul><li>SBS proposed sample</li><li>Comparison to Current-Use Golden Sample</li><li>Assumptions and deviations</li><li>Compliance documents, when required</li><li>Recommended approval path</li></ul></div>
+              </article>
+
+              <article class="flow-node" tabindex="0">
+                <span class="node-number">7</span><span class="connector"></span>
+                <h3>Select Approval Path</h3><p>SBS and OEM choose the right-sized method.</p>
+                <div class="node-tooltip"><strong>Approval options</strong><ul><li>Website Part Page</li><li>TDS or SBS Technical Print</li><li>FAI</li><li>PPAP Level 3 or Level 4</li><li>CPAL for high-value or critical parts</li></ul></div>
+              </article>
+
+              <article class="flow-node" tabindex="0">
+                <span class="node-number">8</span>
+                <h3>Approval Sheet Review</h3><p>OEM reviews SBS proposal, sample status, and shared technical information.</p>
+                <div class="node-tooltip"><strong>Approval Sheet control</strong><ul><li>SBS identifies the proposed part and documents sample status</li><li>Links are provided to the website part page, TDS, PPAP, CPAL, or other supporting documents</li><li>OEM reviews the sample and technical information for each part</li><li>OEM approves the SBS proposal or rejects it with notes</li><li>Approved parts are released by SBS for production supply</li></ul></div>
+              </article>
+            </div>
+          </div>
+        </div>
+
+        <div class="subsection">
+          <h2 class="section-title">Approval Methods</h2>
+          <p class="section-lead">
+            These sections are collapsed by default so the page works as an executive summary. Users can drill into the method
+            that best fits the part's risk, value, and documentation requirements.
+          </p>
+
+          <div class="drill-grid">
+            <details class="compact-detail approval-card" data-row="1">
+              <summary><span class="summary-title">Website Part Page</span><span class="effort-bubble green">Lowest effort</span></summary>
+              <div class="detail-body">
+                Best for low-risk, low-value standard parts. The page acts as an information portal with OEM part number
+                cross-reference, SBS part number, categorized attributes, and a photo of the SBS proposed sample.
+                <div class="link-card"><strong>Example</strong><a href="https://shop.specialtybolt.com/itemdetail/25CHENS" target="_blank" rel="noopener">Example Website Part Page</a></div>
+              </div>
+            </details>
+
+            <details class="compact-detail approval-card" data-row="1">
+              <summary><span class="summary-title">TDS: Technical Data Sheet</span><span class="effort-bubble">Low / Medium effort</span></summary>
+              <div class="detail-body">
+                Best for standard parts requiring a controlled technical summary. A TDS may include dimensions, tolerances,
+                material, mechanical properties, finish, coating, standards, supplier data, and revision control.
+                <div class="link-card"><strong>Example</strong><a href="https://s3.amazonaws.com/sbs.pod/CONTROLLED+TDS/25CHENS-TDS.pdf" target="_blank" rel="noopener">Example Technical Data Sheet</a></div>
+              </div>
+            </details>
+
+            <details class="compact-detail approval-card" data-row="2">
+              <summary><span class="summary-title">SBS Technical Print</span><span class="effort-bubble">Medium effort</span></summary>
+              <div class="detail-body">
+                Best for special or controlled parts. The print may be an SBS-controlled reference document or a reverse-engineered
+                print based on sample inspection, standards, and test data. Reverse-engineered prints require OEM approval.
+                <div class="link-card"><strong>Example</strong><a href="https://drive.google.com/file/d/1Z_9GhuM3DKAdRs5e0hAvAa7jv0SwvbcZ/view?usp=drive_link" target="_blank" rel="noopener">Example SBS Technical Print</a></div>
+              </div>
+            </details>
+
+            <details class="compact-detail approval-card" data-row="2">
+              <summary><span class="summary-title">FAI: First Article Inspection</span><span class="effort-bubble">Medium effort</span></summary>
+              <div class="detail-body">
+                Best when dimensional confirmation is needed. SBS typically inspects six pieces dimensionally and for head marking
+                against an OEM print, SBS print, applicable standard, or approved inspection basis.
+                <div class="link-card"><strong>Example</strong><a href="https://drive.google.com/file/d/1qQyanH52fhWFIsBbJ0cspkozpwAncRVz/view?usp=drive_link" target="_blank" rel="noopener">Example First Article Inspection</a></div>
+              </div>
+            </details>
+
+            <details class="compact-detail approval-card" data-row="3">
+              <summary><span class="summary-title">PPAP Level 4</span><span class="effort-bubble gold">Medium effort plus cost</span></summary>
+              <div class="detail-body">
+                Best for standard, consensus-standard, or COTS catalog parts requiring formal documentation. SBS submits supplier
+                documentation plus SBS inspection and supporting documents. <strong>Typical SBS charge: $150.</strong>
+              </div>
+            </details>
+
+            <details class="compact-detail approval-card" data-row="3">
+              <summary><span class="summary-title">PPAP Level 3</span><span class="effort-bubble red">High effort plus cost</span></summary>
+              <div class="detail-body">
+                Best for OEM-print or higher-control parts. The OEM should approve the PSW before SBS begins mass production.
+                SBS performs more than 400 PPAP submissions per year and can use SBS templates or OEM formats.
+                <strong>Typical SBS charge: $350.</strong>
+              </div>
+            </details>
+
+            <details class="compact-detail approval-card" data-row="4">
+              <summary><span class="summary-title">CPAL: ComParative AnaLysis</span><span class="effort-bubble red">High effort</span></summary>
+              <div class="detail-body">
+                Best for high-value, critical, complex, or disputed parts. CPAL compares the SBS proposed sample to the Current-Use
+                Golden Sample using photos, dimensional data, material review, mechanical properties, finish, compliance, and engineering judgment.
+                <div class="link-card"><strong>Example</strong><a href="https://drive.google.com/file/d/1T_BlEc3-cQS6M-5wmuCGJdZaRSnkYqg1/view?usp=drive_link" target="_blank" rel="noopener">Example CPAL Report</a></div>
+              </div>
+            </details>
+
+            <details class="compact-detail approval-card" data-row="4">
+              <summary><span class="summary-title">Hybrid Approval Path</span><span class="effort-bubble green">Bespoke</span></summary>
+              <div class="detail-body">
+                SBS and the OEM may combine methods when one standard path does not fit the part. For example, an OEM may use
+                the website page for low-risk parts, TDS for standard documented parts, PPAP for print-controlled parts, and CPAL for
+                critical items.
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <div class="subsection">
+          <h2 class="section-title">Shared Master File</h2>
+          <p class="section-lead">
+            SBS maintains cloud-based shared working files so progress, assumptions, discrepancies, proposed parts, supporting documentation,
+            and approval status are visible to SBS and the OEM in real time.
+          </p>
+
+          <div class="executive-box">
+            <div>
+              <h3>Example: SBS&ndash;OEM Discrepancy Sheet</h3>
+              <p>
+                A shared working file used by SBS and the OEM to document mismatches, questions, and gaps between samples,
+                descriptions, prints, and other technical data during implementation. SBS may link to annotated prints,
+                corrected descriptions, or golden sample photos so issues are visible and resolved before sourcing or approval proceeds.
+              </p>
+              <div class="link-card">
+                <strong>Screenshot Example</strong>
+                <a href="https://drive.google.com/file/d/1fGF1OT8ZckNNgr54PROpAUdNdYYow3wU/view?usp=drive_link" target="_blank" rel="noopener noreferrer">View example discrepancy sheet</a>
+              </div>
+            </div>
+            <div>
+              <h3>Example: SBS&ndash;OEM Approval Sheet</h3>
+              <p>
+                A shared working file used by SBS and the OEM to review each proposed part, sample status, supporting technical information,
+                and final OEM approval decision. SBS uses the sheet to link the proposed part to the website part page, TDS, PPAP,
+                CPAL, or other applicable documentation. The OEM approves the SBS proposal or rejects it with notes.
+              </p>
+              <div class="link-card">
+                <strong>Screenshot Example</strong>
+                <a href="https://drive.google.com/file/d/10e_C-pf3oDF7Tq3dAGe5KCvavwHE45Yr/view?usp=sharing" target="_blank" rel="noopener noreferrer">View example approval sheet</a>
+              </div>
+            </div>
+          </div>
+
+          <details class="executive-detail">
+            <summary>Open status list</summary>
+            <div class="detail-body">
+              <table>
+                <thead><tr><th>Status</th><th>Meaning</th></tr></thead>
+                <tbody>
+                  <tr><td><span class="status-chip">Scoped</span></td><td>Part identified for review.</td></tr>
+                  <tr><td><span class="status-chip">Sample Collected</span></td><td>Current-Use Golden Sample available.</td></tr>
+                  <tr><td><span class="status-chip">Identification in Progress</span></td><td>SBS reviewing category, standard, and attributes.</td></tr>
+                  <tr><td><span class="status-chip">Assumption Open</span></td><td>OEM input may be required before sourcing.</td></tr>
+                  <tr><td><span class="status-chip">Conflict Open</span></td><td>Description, sample, print, standard, or multiple samples do not align; issue is documented in the Discrepancy Sheet.</td></tr>
+                  <tr><td><span class="status-chip">Ready to Source</span></td><td>Technical basis is sufficient to begin sourcing.</td></tr>
+                  <tr><td><span class="status-chip">Quoted</span></td><td>Commercial proposal issued.</td></tr>
+                  <tr><td><span class="status-chip">SBS Sample Submitted</span></td><td>Proposed sample sent to OEM.</td></tr>
+                  <tr><td><span class="status-chip">Approval Path Defined</span></td><td>Website, TDS, print, FAI, PPAP, CPAL, or hybrid path selected.</td></tr>
+                  <tr><td><span class="status-chip">OEM Approved</span></td><td>OEM has approved the SBS proposal for use in the Approval Sheet.</td></tr>
+                  <tr><td><span class="status-chip">Production Released</span></td><td>SBS may supply production quantities.</td></tr>
+                  <tr><td><span class="status-chip">On Hold</span></td><td>Waiting on OEM, supplier, testing, or internal action.</td></tr>
+                  <tr><td><span class="status-chip">Rejected / Not Recommended</span></td><td>Part is not approved or not viable.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </details>
+        </div>
+
+      </div>
+
+      <!-- ============ TAB 2: RISKS AND MITIGATION STRATEGIES ============ -->
+      <div id="risks-mitigation" class="tab-panel">
+
+        <div class="subsection" aria-label="Key takeaways">
+          <div class="takeaways">
+            <article class="takeaway-card">
+              <div class="takeaway-number">8</div>
+              <h3>Risk Touchpoints</h3>
+              <p>Every step of the implementation process carries a distinct risk that SBS actively manages.</p>
+            </article>
+            <article class="takeaway-card">
+              <div class="takeaway-number">4</div>
+              <h3>Decision Gates</h3>
+              <p>Proceed, proceed with limits, hold, or stop keep risk decisions structured and visible.</p>
+            </article>
+            <article class="takeaway-card">
+              <div class="takeaway-number">Transparent</div>
+              <h3>Flagging</h3>
+              <p>Assumptions, deviations and conflicts are logged in the shared master file as soon as identified.</p>
+            </article>
+            <article class="takeaway-card">
+              <div class="takeaway-number">Approval</div>
+              <h3>OEM Final Say</h3>
+              <p>The OEM retains final approval authority on any part with unresolved risk.</p>
+            </article>
+          </div>
+        </div>
+
+        <div class="subsection">
+          <h2 class="section-title">Executive Summary</h2>
+          <p class="section-lead">
+            Risk in the onboarding and cost reduction process typically comes from incomplete information, mismatched samples,
+            unclear compliance requirements, or approval effort that does not match part value. SBS identifies these risks
+            early and recommends mitigation paths so the OEM can make the best informed decision.
+          </p>
+
+          <div class="executive-box">
+            <div>
+              <h3>What creates risk</h3>
+              <p>
+                Mismatched samples, undocumented assumptions, unclear compliance requirements, and approval effort that does
+                not match part value are the most common sources of risk as parts move from the OEM to SBS.
+              </p>
+            </div>
+            <div>
+              <h3>How SBS manages it</h3>
+              <p>
+                SBS documents assumptions, flags conflicts in a shared master file, applies decision gates before formal
+                validation work, and keeps the OEM as final decision-maker on anything with unresolved application or
+                compliance risk.
+              </p>
+            </div>
+          </div>
+
+          <div class="summary-details">
+            <details class="executive-detail">
+              <summary>Common conflict and risk triggers</summary>
+              <div class="detail-body">
+                <ul>
+                  <li>Sample does not match OEM description or print</li>
+                  <li>Multiple samples exist under the same part number</li>
+                  <li>Current-use part does not meet the stated standard</li>
+                  <li>Compliance or application criticality is unclear</li>
+                </ul>
+              </div>
+            </details>
+
+            <details class="executive-detail">
+              <summary>How SBS handles missing or conflicting information</summary>
+              <div class="detail-body">
+                Missing information does not stop the project. SBS documents assumptions, identifies whether they are
+                simple or sourcing-critical, and flags conflicts in a shared master file. Examples include samples that
+                do not match prints, multiple samples under one part number, unclear compliance requirements, or current-use
+                parts that do not meet the stated standard.
+              </div>
+            </details>
+
+            <details class="executive-detail">
+              <summary>OEM vs. SBS responsibility for risk decisions</summary>
+              <div class="detail-body">
+                SBS defines part conformance and supports the OEM agreed approval process with samples, part categorization,
+                attributes, documents, assumptions, deviations, test data, and recommendations. The OEM makes the final approval
+                decision because only the OEM fully understands the end application, end customer expectations, and product-level risk.
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <div class="subsection">
+          <h2 class="section-title">Potential Risks: OEM Moving Parts to SBS</h2>
+          <p class="section-lead">
+            The table below is a first draft mapping of risk to the 8-Step Implementation Process. It identifies where risk
+            can enter as an OEM transitions parts to SBS, the consequence if left unmanaged, and how SBS mitigates it.
+          </p>
+          <table>
+            <thead>
+              <tr><th>Implementation Step</th><th>Potential Risk</th><th>Consequence If Unmanaged</th><th>How SBS Mitigates</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="status-chip">1. Define Scope</span></td>
+                <td>Part scope is based on incomplete or outdated ERP data, drawings, or usage history</td>
+                <td>Wrong parts are sourced, validation effort is wasted, and the project timeline slips</td>
+                <td>SBS runs a structured scope intake against ERP, BOM, and supplier data, and flags gaps immediately</td>
+              </tr>
+              <tr>
+                <td><span class="status-chip">2. Collect Samples</span></td>
+                <td>Current-Use Golden Sample does not match the OEM print, description, or varies by location</td>
+                <td>An approved replacement may not perform identically in the application, risking a field failure</td>
+                <td>SBS collects and photographs Current-Use Golden Samples under controlled conditions and documents any mismatch before sourcing</td>
+              </tr>
+              <tr>
+                <td><span class="status-chip">3. Identify and Categorize</span></td>
+                <td>Part is misclassified on standard, material, grade, finish, or compliance attributes</td>
+                <td>An incorrect or non-conforming part is sourced, creating a performance or compliance issue</td>
+                <td>SBS applies PIM-based attribute logic and clearly labels confirmed versus inferred attributes for OEM review</td>
+              </tr>
+              <tr>
+                <td><span class="status-chip">4. Review Assumptions</span></td>
+                <td>Open assumptions or conflicts are carried forward instead of being resolved</td>
+                <td>Rework, late-stage disputes, added cost, and schedule delays surface after sourcing has started</td>
+                <td>SBS logs every assumption in the shared master file and holds sourcing-critical items until the OEM resolves them</td>
+              </tr>
+              <tr>
+                <td><span class="status-chip">5. Source and Quote</span></td>
+                <td>Compliance requirements such as RoHS, DFARS, CoO, or REACH are not identified before sourcing</td>
+                <td>Regulatory non-conformance, customer rejection, or a shipment hold at the OEM or end customer</td>
+                <td>SBS confirms compliance flags during categorization and validates them before a sourcing path is finalized</td>
+              </tr>
+              <tr>
+                <td><span class="status-chip">6. Submit Samples</span></td>
+                <td>Comparison data against the Current-Use Golden Sample is incomplete or unclear</td>
+                <td>The OEM cannot make a confident approval decision, causing delay or an uninformed approval</td>
+                <td>SBS submits the proposed sample with a full comparison package, assumptions, deviations, and a recommended approval path</td>
+              </tr>
+              <tr>
+                <td><span class="status-chip">7. Select Approval Path</span></td>
+                <td>Approval effort is mismatched to part risk and value, either over-engineered or under-engineered</td>
+                <td>Engineering resources are wasted on low-value parts, or a critical part receives insufficient control</td>
+                <td>SBS recommends a right-sized approval method, from a Website Part Page up to CPAL or PPAP, based on risk and criticality</td>
+              </tr>
+              <tr>
+                <td><span class="status-chip">8. Approve and Release</span></td>
+                <td>Production quantities move before OEM approval, or supply is disrupted during cutover</td>
+                <td>Production stoppage, expedite cost, or an unapproved part reaching the production line</td>
+                <td>SBS withholds production release until OEM approval and PSW, where required, are complete, and phases the ramp with the OEM</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="subsection">
+          <h2 class="section-title">Risk Review and Decision Gates</h2>
+          <div class="business-case-grid">
+            <article class="business-card">
+              <h3>Risk Review Questions</h3>
+              <ul>
+                <li>Could a conforming alternate behave differently than the current-use part?</li>
+                <li>Are CoO, DFARS, RoHS, REACH, or end customer restrictions confirmed?</li>
+                <li>Does the part have known quality history or application criticality?</li>
+                <li>Will the approval path create more cost than the savings opportunity?</li>
+              </ul>
+            </article>
+            <article class="business-card">
+              <h3>Decision Gates</h3>
+              <ul>
+                <li><strong>Proceed:</strong> savings and risk profile justify implementation</li>
+                <li><strong>Proceed with limits:</strong> use lower-effort approval path or phased rollout</li>
+                <li><strong>Hold:</strong> missing application, compliance, or quality information</li>
+                <li><strong>Stop:</strong> validation cost or risk exceeds savings value</li>
+              </ul>
+            </article>
+            <article class="business-card">
+              <h3>Mitigation Strategies</h3>
+              <ul>
+                <li>Right-size the approval method to the part's actual risk and value</li>
+                <li>Log assumptions and conflicts in the shared master file as soon as they appear</li>
+                <li>Keep OEM sign-off on any part with unclear application, safety, or compliance impact</li>
+                <li>Apply decision gates before starting formal testing or validation work</li>
+                <li>Confirm CoO, DFARS, RoHS, and REACH status before sourcing compliance-sensitive parts</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ============ TAB 3: STRATEGIC COST REDUCTION PROCESS ============ -->
+      <div id="cost-reduction" class="tab-panel">
+
+        <div class="subsection" aria-label="Key takeaways">
+          <div class="takeaways">
+            <article class="takeaway-card">
+              <div class="takeaway-number">80:20</div>
+              <h3>Focus Rule</h3>
+              <p>Prioritize the vital few parts and suppliers that drive most of the savings.</p>
+            </article>
+            <article class="takeaway-card">
+              <div class="takeaway-number">Delayed Savings</div>
+              <h3>1yr +</h3>
+              <p>Without discipline, savings realization is commonly delayed a year or more.</p>
+            </article>
+            <article class="takeaway-card">
+              <div class="takeaway-number">ROI</div>
+              <h3>Minimum Saving</h3>
+              <p>Minimum savings required to justify the resource commitment.</p>
+            </article>
+            <article class="takeaway-card">
+              <div class="takeaway-number">Ongoing</div>
+              <h3>Not a One-off Event</h3>
+              <p>Cost saving is a process, not a one-off event, run on a governed cadence.</p>
+            </article>
+          </div>
+        </div>
+
+        <div class="subsection">
+          <h2 class="section-title">Executive Summary</h2>
+          <p class="section-lead">
+            Cost saving is a process, not a one-off event. SBS Advantage delivers sustainable cost savings through technical
+            expertise and global sourcing, keeping OEM engineering engaged early and building a repeatable, disciplined
+            cadence instead of a single piece-price exercise.
+          </p>
+
+          <div class="executive-box">
+            <div>
+              <h3>What undermines savings</h3>
+              <p>
+                Poorly defined objectives, a lack of focus beyond piece price, underfunded validation and testing, and lost
+                momentum are the most common reasons cost saving initiatives fail to deliver.
+              </p>
+            </div>
+            <div>
+              <h3>The SBS approach</h3>
+              <p>
+                Maximize savings using the 80:20 rule, take a deep dive on the BOM to review and categorize every part,
+                streamline the approval process, and hold regular engagement and governance meetings.
+              </p>
+            </div>
+          </div>
+
+          <div class="summary-details">
+            <details class="executive-detail">
+              <summary>Why cost saving initiatives fail</summary>
+              <div class="detail-body">
+                <ul>
+                  <li>Hard versus soft cost dollar savings are not distinguished, and supplier consolidation or part standardization goals are unclear</li>
+                  <li>Every commodity or supplier is tackled at once instead of applying the 80:20 rule, and focus stays on piece price instead of total cost</li>
+                  <li>Engineering is engaged late and treated only as a supply chain initiative</li>
+                  <li>Tooling and engineering validation, including testing and PPAP, is not budgeted, and the engineering effort to validate is underestimated</li>
+                  <li>Enthusiasm and engagement fade before savings are realized, delaying results by a year or more</li>
+                </ul>
+              </div>
+            </details>
+
+            <details class="executive-detail">
+              <summary>Discipline over time</summary>
+              <div class="detail-body">
+                Maintain engagement, accelerate validation, and realize savings. Cost saving is a process, not a one-off event,
+                and SBS structures it as an ongoing, governed cadence rather than a single initiative. A senior champion
+                should be identified on the OEM side to secure resource commitment and keep governance transparent and regular.
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <div class="subsection">
+          <h2 class="section-title">8-Step Cost Reduction Flow</h2>
+          <p class="section-lead">
+            Hover over each node to see additional detail.
+          </p>
+
+          <div class="flow-wrap">
+            <p class="flow-note">
+              The process starts with an OEM strategy review and ends with an updated BOM and tracked savings.
+              EAU means Estimated Annual Usage. CPAL means Comparative Analysis Report.
+            </p>
+
+            <div class="flow">
+              <article class="flow-node" tabindex="0">
+                <span class="node-number">1</span><span class="connector"></span>
+                <h3>Review</h3><p>OEM strategy review sets savings goals and constraints.</p>
+                <div class="node-tooltip"><strong>Strategy inputs</strong><ul><li>Maximize savings and set minimum savings targets</li><li>Engineering resources, typically $5,000 minimum</li><li>Supplier consolidation and localization</li><li>Geographic realignment</li><li>End-customer approval and compliance restrictions</li></ul></div>
+              </article>
+
+              <article class="flow-node" tabindex="0">
+                <span class="node-number">2</span><span class="connector"></span>
+                <h3>Spend</h3><p>Analyze spend to build the cost baseline.</p>
+                <div class="node-tooltip"><strong>Spend inputs</strong><ul><li>Deep dive on the BOM (Bill of Material)</li><li>EAU</li><li>Last paid price</li><li>Should-cost</li><li>Target price</li></ul></div>
+              </article>
+
+              <article class="flow-node" tabindex="0">
+                <span class="node-number">3</span><span class="connector"></span>
+                <h3>Identify</h3><p>Group parts and locate the best-fit sourcing path.</p>
+                <div class="node-tooltip"><strong>Identification approach</strong><ul><li>Group by commodity, material, sub-system, or supplier</li><li>Identify best fit with the SBS supply base</li><li>Collect samples and prints</li><li>Low cost country sourcing</li></ul></div>
+              </article>
+
+              <article class="flow-node" tabindex="0">
+                <span class="node-number">4</span>
+                <h3>Business Case</h3><p>Prepare the business case and validation timeline.</p>
+                <div class="node-tooltip"><strong>Business case inputs</strong><ul><li>Estimate cost saving by part, commodity, or sub-system</li><li>Set a timeline for validation and start of production</li><li>Prioritize based on 80:20</li></ul></div>
+              </article>
+
+              <article class="flow-node" tabindex="0">
+                <span class="node-number">5</span><span class="connector"></span>
+                <h3>Business Case</h3><p>Prioritize initiatives and confirm the validation plan.</p>
+                <div class="node-tooltip"><strong>Prioritization</strong><ul><li>Share business cases and emphasize 80:20</li><li>Make a Go / No-Go decision</li><li>Develop a robust validation and approval process</li><li>Assign criticality and note special testing needs</li><li>Share quality history</li></ul></div>
+              </article>
+
+              <article class="flow-node" tabindex="0">
+                <span class="node-number">6</span><span class="connector"></span>
+                <h3>Sample</h3><p>Develop technical documentation and order samples.</p>
+                <div class="node-tooltip"><strong>Sample development</strong><ul><li>Develop print or TDS</li><li>Order samples</li><li>Run CPAL, a comparative analysis report, where justified</li></ul></div>
+              </article>
+
+              <article class="flow-node" tabindex="0">
+                <span class="node-number">7</span><span class="connector"></span>
+                <h3>Approval</h3><p>Validate and approve before production use.</p>
+                <div class="node-tooltip"><strong>Approval steps</strong><ul><li>Testing</li><li>Validation</li><li>Approval</li></ul></div>
+              </article>
+
+              <article class="flow-node" tabindex="0">
+                <span class="node-number">8</span>
+                <h3>Update BOM</h3><p>Release SBS as the supplier of record and track savings.</p>
+                <div class="node-tooltip"><strong>Update actions</strong><ul><li>Set SBS as primary supplier</li><li>Add to SBS VMI</li><li>Track savings</li></ul></div>
+              </article>
+            </div>
+          </div>
+        </div>
+
+        <div class="subsection">
+          <h2 class="section-title">Business Case and Governance</h2>
+          <div class="business-case-grid">
+            <article class="business-card">
+              <h3>Why This Matters</h3>
+              <p>
+                Cost reduction succeeds when it is run as an ongoing governance process rather than a one-off event.
+                Each initiative should maintain engagement, accelerate validation, and realize savings on a defined timeline.
+              </p>
+            </article>
+            <article class="business-card">
+              <h3>Business Case Inputs</h3>
+              <ul>
+                <li>EAU, last paid price, should-cost, and target price</li>
+                <li>Minimum engineering resource commitment, typically $5,000 or more per initiative</li>
+                <li>Timeline for validation and start of production</li>
+              </ul>
+            </article>
+            <article class="business-card">
+              <h3>Types of Cost Saving Initiatives</h3>
+              <ul>
+                <li>Supplier consolidation and localization</li>
+                <li>Geographic realignment</li>
+                <li>Part standardization</li>
+                <li>Low cost country sourcing</li>
+              </ul>
+            </article>
+            <article class="business-card">
+              <h3>Governance and Output</h3>
+              <ul>
+                <li>Assign a senior champion to secure resource commitment and keep governance transparent and regular</li>
+                <li>Prioritize using the 80:20 rule with a clear Go / No-Go gate</li>
+                <li>Hold regular engagement and governance meetings</li>
+                <li>Once approved, set SBS as primary supplier, add to SBS VMI, and track realized savings</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ============ TAB 4: PART STANDARDIZATION ============ -->
+      <div id="part-standardization" class="tab-panel">
+
+        <div class="subsection" aria-label="Key takeaways">
+          <div class="takeaways">
+            <article class="takeaway-card">
+              <div class="takeaway-number">8</div>
+              <h3>Benefit Areas</h3>
+              <p>Standardization delivers cost, supply chain, quality, and scalability benefits across the business.</p>
+            </article>
+            <article class="takeaway-card">
+              <div class="takeaway-number">3</div>
+              <h3>Step Approach</h3>
+              <p>Audit, standardize, and monitor are the three phases SBS uses to drive fastener standardization.</p>
+            </article>
+            <article class="takeaway-card">
+              <div class="takeaway-number">Fewer</div>
+              <h3>Part Numbers</h3>
+              <p>Consolidating fastener types reduces SKUs, tooling, and inventory complexity.</p>
+            </article>
+            <article class="takeaway-card">
+              <div class="takeaway-number">Approval</div>
+              <h3>Gate Required</h3>
+              <p>No new fastener part number is created without Engineering or Purchasing approval.</p>
+            </article>
+          </div>
+        </div>
+
+        <div class="subsection">
+          <h2 class="section-title">Executive Summary</h2>
+          <p class="section-lead">
+            Fasteners and hardware are high in part count but low in value, which makes them one of the best opportunities
+            for standardization. SBS partners with OEM engineering, purchasing, and production teams to consolidate fastener
+            types without compromising performance, and to keep new part creation under control going forward.
+          </p>
+
+          <div class="executive-box">
+            <div>
+              <h3>Why standardize</h3>
+              <p>
+                Standardization reduces procurement and inventory cost, simplifies sourcing, speeds up assembly, improves
+                quality control, and makes maintenance and future design changes easier.
+              </p>
+            </div>
+            <div>
+              <h3>What SBS delivers</h3>
+              <p>
+                SBS runs a structured, three-step methodology, audit, standardize, and monitor, that consolidates fastener
+                types and keeps the resulting catalog under control with full transparency for the OEM.
+              </p>
+            </div>
+          </div>
+
+          <div class="summary-details">
+            <details class="executive-detail">
+              <summary>Why manufacturers should prioritize standardization</summary>
+              <div class="detail-body">
+                <ul>
+                  <li>Cost savings: lower procurement, inventory, and tooling costs</li>
+                  <li>Simplified supply chain: fewer suppliers and improved lead times</li>
+                  <li>Enhanced efficiency: faster assembly and reduced complexity</li>
+                  <li>Improved quality control: consistent, standards-based parts with fewer selection errors</li>
+                  <li>Easier maintenance and repairs: replacement parts are readily available</li>
+                  <li>Increased scalability: production scales without added tooling or inventory complexity</li>
+                  <li>Environmental benefits: less waste from excess materials and packaging</li>
+                  <li>Design flexibility: modular designs support future product adaptations</li>
+                </ul>
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <div class="subsection">
+          <h2 class="section-title">Why Standardize Fasteners</h2>
+          <div class="business-case-grid">
+            <article class="business-card">
+              <h3>Cost and Inventory</h3>
+              <ul>
+                <li>Reduced procurement costs from bulk purchasing of standardized fasteners</li>
+                <li>Lower inventory, storage, handling, and administrative costs</li>
+                <li>Minimized tooling, tapping, drilling, and punching costs</li>
+              </ul>
+            </article>
+            <article class="business-card">
+              <h3>Supply Chain and Efficiency</h3>
+              <ul>
+                <li>Streamlined sourcing with fewer suppliers and stronger relationships</li>
+                <li>Improved lead times versus custom or rare parts</li>
+                <li>Faster assembly and fewer errors with fewer fastener types to handle</li>
+              </ul>
+            </article>
+            <article class="business-card">
+              <h3>Quality and Maintenance</h3>
+              <ul>
+                <li>Consistent quality and reliability against ANSI or ISO standards</li>
+                <li>Fewer errors selecting or installing the wrong part</li>
+                <li>Easier repairs since correct replacement parts are readily available</li>
+              </ul>
+            </article>
+            <article class="business-card">
+              <h3>Scalability and Sustainability</h3>
+              <ul>
+                <li>Production scales without added tooling or inventory adjustments</li>
+                <li>Less waste from excess materials and packaging</li>
+                <li>Modular, interchangeable designs support future product updates</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+
+        <div class="subsection">
+          <h2 class="section-title">3-Step Standardization Approach</h2>
+          <p class="section-lead">
+            SBS supports the OEM through all three steps, from cataloging existing fasteners to enforcing approval controls
+            once standards are in place.
+          </p>
+          <div class="business-case-grid">
+            <article class="business-card">
+              <h3>Step 1: Audit and Analyze</h3>
+              <ul>
+                <li>Catalog existing fasteners by type, specification, material, and application</li>
+                <li>Identify redundancies and consolidate overlapping fastener types</li>
+                <li>Assess whether custom or specialized fasteners can be replaced with standard parts</li>
+                <li>Involve design, engineering, production, and procurement teams</li>
+              </ul>
+            </article>
+            <article class="business-card">
+              <h3>Step 2: Develop and Implement</h3>
+              <ul>
+                <li>Set design standards aligned to ANSI or ISO for common use cases</li>
+                <li>Eliminate non-standard or rarely used fasteners</li>
+                <li>Require Engineering Manager or Purchasing approval before any new fastener part number is created</li>
+                <li>Update CAD libraries and blueprints with standardized options</li>
+                <li>Leverage supplier relationships for bulk sourcing</li>
+              </ul>
+            </article>
+            <article class="business-card">
+              <h3>Step 3: Monitor and Enforce</h3>
+              <ul>
+                <li>Track fastener usage across the organization</li>
+                <li>Regularly evaluate whether standardized parts still meet requirements</li>
+                <li>Train design, production, and procurement staff</li>
+                <li>Continuously improve the program as materials and standards evolve</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <section class="container">
+      <div class="cta">
+        <h2>Final Key Takeaways</h2>
+        <p>
+          SBS performs the technical heavy lifting so OEM engineering and quality teams can focus approval effort where it matters most:
+          high-risk, high-value, complex, or compliance-sensitive parts.
+        </p>
+        <ul class="final-list">
+          <li>A robust, collaborative, and transparent implementation plan mitigates the risk of production turbulence.</li>
+          <li>Strategic cost reduction delivers sustainable savings only when it is run as an ongoing, disciplined process, not a one-time event.</li>
+          <li>Part standardization and consolidation reduce cost, complexity, and risk while improving quality and scalability.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <div class="disclaimer-bar">
+    <p><strong>Disclaimer:</strong> This tool provides a general overview of the SBS technical onboarding, risk management, and strategic
+    cost reduction process. It is intended for planning and educational purposes and does not replace engineering judgment, quality
+    approval, or compliance verification specific to any application. Final part approval remains the responsibility of the OEM.</p>
+  </div>
+
+  <footer>
+    SBS Technical Onboarding Process, executive summary concept with drill-down details.
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+      function setHeaderHeightVar() {
+        var header = document.getElementById("siteHeader");
+        if (header) {
+          document.documentElement.style.setProperty("--header-h", header.offsetHeight + "px");
+        }
+      }
+      setHeaderHeightVar();
+      window.addEventListener("resize", setHeaderHeightVar);
+
+      var approvalCards = document.querySelectorAll(".approval-card");
+      approvalCards.forEach(function (card) {
+        card.addEventListener("toggle", function () {
+          var row = card.getAttribute("data-row");
+          var rowCards = document.querySelectorAll('.approval-card[data-row="' + row + '"]');
+          rowCards.forEach(function (peer) {
+            if (peer !== card) {
+              peer.open = card.open;
+            }
+          });
+        });
+      });
+
+      var heroContent = {
+        "implementation-process": {
+          eyebrow: "Specialty Bolt and Screw",
+          title: "SBS Technical Onboarding Process",
+          desc: "An executive overview of how SBS identifies parts, documents conformance, manages risk, and reduces approval effort and cost so OEMs avoid production turbulence during supplier implementation.",
+          btn: "View Implementation Process"
+        },
+        "risks-mitigation": {
+          eyebrow: "Specialty Bolt and Screw",
+          title: "Risks and Mitigation Strategies",
+          desc: "A structured view of where risk enters the process as parts move from the OEM to SBS, the consequence if left unmanaged, and how SBS mitigates it at every step.",
+          btn: "View Risk Review and Decision Gates"
+        },
+        "cost-reduction": {
+          eyebrow: "Specialty Bolt and Screw",
+          title: "Strategic Cost Reduction Process",
+          desc: "SBS Advantage: sustainable cost savings through technical expertise and global sourcing, treating cost reduction as an ongoing, disciplined process rather than a one-off event.",
+          btn: "View Cost Reduction Flow"
+        },
+        "part-standardization": {
+          eyebrow: "Specialty Bolt and Screw",
+          title: "Part Standardization",
+          desc: "A practical three-step approach to consolidating fastener types, reducing part count, and keeping new part creation under control.",
+          btn: "View Standardization Approach"
+        }
+      };
+
+      function updateHero(tabId) {
+        var content = heroContent[tabId];
+        if (!content) return;
+        var eyebrowEl = document.getElementById("heroEyebrow");
+        var titleEl = document.getElementById("heroTitle");
+        var descEl = document.getElementById("heroDesc");
+        var btnEl = document.getElementById("heroBtn");
+        if (eyebrowEl) eyebrowEl.textContent = content.eyebrow;
+        if (titleEl) titleEl.textContent = content.title;
+        if (descEl) descEl.textContent = content.desc;
+        if (btnEl) {
+          btnEl.textContent = content.btn;
+          btnEl.setAttribute("href", "#" + tabId);
+        }
+      }
+
+      document.addEventListener("click", function (e) {
+        var el = e.target;
+        var action = null;
+        var tab = null;
+        for (var i = 0; i < 6; i++) {
+          if (!el || el === document.body) break;
+          if (el.getAttribute && el.getAttribute("data-sbs-action")) {
+            action = el.getAttribute("data-sbs-action");
+            break;
+          }
+          if (el.getAttribute && el.getAttribute("data-tab")) {
+            tab = el.getAttribute("data-tab");
+            break;
+          }
+          el = el.parentNode;
+        }
+
+        if (action === "dismiss-beta") {
+          var overlay = document.getElementById("betaOverlay");
+          if (overlay) overlay.classList.add("hidden");
+        }
+
+        if (tab) {
+          var tabLinks = document.querySelectorAll(".tab-link[data-tab]");
+          var tabPanels = document.querySelectorAll(".tab-panel");
+          tabLinks.forEach(function (item) { item.classList.remove("active"); });
+          tabPanels.forEach(function (panel) { panel.classList.remove("active"); });
+          el.classList.add("active");
+          var target = document.getElementById(tab);
+          if (target) target.classList.add("active");
+          updateHero(tab);
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
