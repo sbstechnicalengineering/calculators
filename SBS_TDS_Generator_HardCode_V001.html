@@ -1410,6 +1410,7 @@ const EMBEDDED_DB = {"standards":[{"StandardID":"ASME_B182_FLBOLT","StandardName
 
 async function loadAllData() {
   // HARDCODE V001: no Google Sheets round-trips — data is embedded below.
+  const _tFetch0 = performance.now();
   setLoaderStep('Loading embedded data…');
   Object.assign(DB, EMBEDDED_DB);
   setLoaderProgress(90);
