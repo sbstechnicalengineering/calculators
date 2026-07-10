@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socket Head Cap Screws Design Guide - SBS</title>
+    <style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+header {
+    background: white;
+    color: #1D3557;
+    padding: 40px 30px;
+    text-align: center;
+}
+header h1 { font-size: 2.2em; margin-bottom: 10px; font-weight: 700; }
+header p { font-size: 1.1em; color: #666; }
+
+.toc {
+    background: #f8f9fa;
+    padding: 30px;
+    border-bottom: 2px solid #E87722;
+}
+.toc h2 { color: #1D3557; font-size: 1.3em; margin-bottom: 15px; }
+.toc ul { list-style: none; columns: 2; gap: 20px; }
+.toc li { margin-bottom: 8px; }
+.toc a { color: #1D3557; text-decoration: none; font-weight: 500; transition: color 0.3s; }
+.toc a:hover { color: #E87722; }
+
+.content { padding: 40px 30px; }
+.content p { text-align: justify; }
+section { margin-bottom: 40px; }
+
+h2 {
+    color: #1D3557;
+    font-size: 1.8em;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 3px solid #E87722;
+}
+h3 { color: #E87722; font-size: 1.3em; margin-top: 20px; margin-bottom: 15px; }
+
+.expandable {
+    background: #f8f9fa;
+    border-left: 4px solid #E87722;
+    margin-bottom: 15px;
+    border-radius: 4px;
+}
+.expandable-header {
+    padding: 15px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    font-weight: 600;
+    color: #1D3557;
+    transition: background 0.3s;
+}
+.expandable-header:hover { background: #f8f9fa; }
+
+.toggle-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #E87722;
+    color: white;
+    border-radius: 50%;
+    font-size: 0.9em;
+    transition: transform 0.3s;
+}
+.expandable-header.active .toggle-icon { transform: rotate(180deg); }
+
+.expandable-content {
+    padding: 0 15px;
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+.expandable-content.active { padding: 15px; max-height: 5000px; }
+.expandable-content p { margin-bottom: 12px; line-height: 1.7; }
+.expandable-content ul, .expandable-content ol { margin: 15px 0 15px 20px; }
+.expandable-content li { margin-bottom: 8px; line-height: 1.6; }
+
+.table-scroll {
+    overflow-x: auto;
+    margin: 15px 0;
+    -webkit-overflow-scrolling: touch;
+}
+.table-scroll table { margin: 0; min-width: 480px; }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95em;
+    border: 1px solid #e0e0e0;
+}
+table th {
+    background: #1D3557;
+    color: white;
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    border: 1px solid #1D3557;
+    word-break: normal; overflow-wrap: break-word; word-wrap: break-word; white-space: normal; hyphens: auto;
+}
+table td {
+    padding: 12px;
+    border-bottom: 1px solid #e0e0e0;
+    border-right: 1px solid #e0e0e0;
+    vertical-align: top;
+    word-break: normal; overflow-wrap: break-word; word-wrap: break-word; white-space: normal; hyphens: auto;
+}
+table td:last-child { border-right: none; }
+table tr:nth-child(even) { background: #f9f9f9; }
+table tr:hover { background: #f0f0f0; }
+
+.code-block {
+    background: white;
+    color: #1D3557;
+    padding: 15px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+    margin: 15px 0;
+    overflow-x: auto;
+    line-height: 1.5;
+    border: 2px solid #E87722;
+}
+.highlight { background: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; border-radius: 4px; margin: 15px 0; }
+.advantage { background: #d4edda; border-left: 4px solid #28a745; padding: 15px; margin: 10px 0; border-radius: 4px; }
+.limitation { background: #f8d7da; border-left: 4px solid #dc3545; padding: 15px; margin: 10px 0; border-radius: 4px; }
+
+.reference-link {
+    display: inline-block;
+    margin: 5px;
+    padding: 5px 10px;
+    background: #E87722;
+    color: white;
+    text-decoration: none;
+    border-radius: 3px;
+    font-size: 0.9em;
+    transition: background 0.3s;
+}
+.reference-link:hover { background: #1D3557; }
+
+.standard-badge {
+    display: inline-block;
+    background: #E87722;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.9em;
+    text-align: center;
+    line-height: 1.3;
+    text-decoration: none;
+    transition: background 0.3s;
+}
+.standard-badge:hover { background: #1D3557; }
+.datasheet-link {
+    display: inline-block;
+    color: #E87722;
+    font-weight: 700;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+.datasheet-link:hover { color: #1D3557; text-decoration: underline; }
+.datasheet-pending {
+    display: inline-block;
+    color: #999;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 0.9em;
+}
+
+.sku-stat {
+    display: inline-block;
+    background: #E87722;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 3px;
+    font-weight: 600;
+    margin: 5px 5px 5px 0;
+    font-size: 0.9em;
+}
+.decision-tree {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 4px;
+    font-family: monospace;
+    margin: 15px 0;
+    white-space: pre-wrap; word-wrap: break-word;
+    font-size: 0.9em;
+    line-height: 1.6;
+}
+
+.footer { background: #1D3557; color: white; padding: 30px; text-align: center; border-top: 3px solid #E87722; }
+.footer p { margin-bottom: 10px; }
+
+@media (max-width: 768px) {
+    header h1 { font-size: 1.5em; }
+    .toc ul { columns: 1; }
+    h2 { font-size: 1.4em; }
+    .content { padding: 20px; }
+    table { font-size: 0.85em; }
+    table td, table th { padding: 8px; }
+}
+
+@media print {
+    .expandable-content { max-height: none !important; padding: 15px !important; }
+    .expandable-header { background: #f8f9fa !important; }
+}
+
+/* Master guide toggle (collapse/expand the ENTIRE guide) */
+.dg-toggle-wrap {
+    max-width: 1000px;
+    margin: 0 auto 20px;
+    text-align: center;
+    padding: 0 30px;
+}
+
+.dg-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: linear-gradient(to right, #f5a962, #E87722);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 14px 32px;
+    font-size: 1.05em;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+    max-width: 520px;
+    width: 100%;
+}
+.dg-btn:hover { background: linear-gradient(to right, #f09a4a, #c9651a); }
+
+.dg-icon {
+    width: 26px;
+    height: 26px;
+    min-width: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.28);
+    border-radius: 50%;
+    font-size: 1em;
+    line-height: 1;
+    transition: transform 0.25s;
+}
+
+.dg-panel { display: none; }
+.dg-panel.open { display: block; }
+
+/* "Generate Technical Data Sheet" button, shown above the Table of Contents */
+.dg-tds-wrap {
+    text-align: center;
+    padding: 0 30px 25px;
+}
+
+.orng-btn {
+    display: inline-block;
+    background: #E87722;
+    color: #fff;
+    border-radius: 6px;
+    padding: 14px 28px;
+    font-size: 0.95em;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+.orng-btn:hover { background: #1D3557; }
+
+/* Floating "Close Design Guide" pill */
+.dg-float-close {
+    display: none;
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    z-index: 9999;
+    background: #E87722;
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    padding: 12px 22px;
+    font-size: 0.9em;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+    transition: background 0.18s, opacity 0.25s;
+    align-items: center;
+    gap: 8px;
+}
+.dg-float-close:hover { background: #c9651a; }
+.dg-float-close.visible { display: inline-flex; }
+
+@media print {
+    .dg-btn, .dg-float-close { display: none !important; }
+    .dg-panel { display: block !important; }
+}
+    </style>
+</head>
+<body>
+    <div class="dg-toggle-wrap">
+        <button class="dg-btn" id="dg-toggle" onclick="toggleGuide()">
+            <span class="dg-icon" id="dg-icon">+</span>
+            Socket Head Cap Screws Design Guide
+        </button>
+    </div>
+    <div class="container">
+        <div class="dg-panel" id="dg-panel">
+        <header>
+            <h1>Socket Head Cap Screws Design Guide</h1>
+            <p>Comprehensive technical reference for engineers and procurement professionals</p>
+        </header>
+
+        <div class="dg-tds-wrap">
+            <a class="orng-btn" href="https://shop.specialtybolt.com/technical/master-tds-insp-generator?cat=Socket+Head+Cap+Screws" target="_blank" rel="noopener noreferrer">
+                Generate Technical Data Sheet (TDS) (pdf) and / or Inspection Report Template (xlsx)
+            </a>
+        </div>
+
+        <div class="toc">
+            <h2>Table of Contents</h2>
+            <ul>
+                <li><a href="#overview">What Is a Socket Head Cap Screw?</a></li>
+                <li><a href="#advantages-limitations">Advantages &amp; Limitations</a></li>
+                <li><a href="#design-considerations">Design Considerations</a></li>
+                <li><a href="#thread-types">Coarse vs. Fine vs. Extra-Fine Threads</a></li>
+                <li><a href="#drive-styles">Drive Styles</a></li>
+                <li><a href="#materials-grades">Materials &amp; Grades</a></li>
+                <li><a href="#finishes-coatings">Finishes &amp; Coatings</a></li>
+                <li><a href="#nomenclature">Nomenclature &amp; Part Number Logic</a></li>
+            </ul>
+        </div>
+
+        <div class="content">
+
+            <section id="overview">
+                <h2>What Is a Socket Head Cap Screw?</h2>
+                <div class="expandable">
+                    <div class="expandable-header" onclick="toggleExpand(this)">
+                        <span>Overview</span>
+                        <span class="toggle-icon">&#9660;</span>
+                    </div>
+                    <div class="expandable-content">
+                        <p>A socket head cap screw is a precision machine-threaded fastener with a cylindrical head and an internal drive, most commonly a hex socket. It is tightened with an Allen wrench, hex key, or socket bit rather than an external wrench.</p>
+                        <p>Socket head cap screws are designed for use in tapped holes or with mating nuts. They are commonly selected when the assembly requires high clamp load, compact head geometry, strong tool engagement, or a clean recessed appearance.</p>
+                        <p>The cylindrical head allows the screw to be installed in a counterbore, keeping the fastener flush or protected within the assembly surface &mdash; a key differentiator from external hex head fasteners.</p>
+                    </div>
+                </div>
+                <div class="expandable">
+                    <div class="expandable-header" onclick="toggleExpand(this)">
+                        <span>Industry Standards</span>
+                        <span class="toggle-icon">&#9660;</span>
+                    </div>
+                    <div class="expandable-content">
+                        <h3>Inch-Based Standards</h3>
+                        <div class="table-scroll"><table>
+                            <tr><th>Standard</th><th>Description</th><th>Data Sheet</th></tr>
+                            <tr>
+                                <td><a href="https://drive.google.com/file/d/1HZ1piXs-4ddcNfnhfOEM2AI4avecnXQ_/view?usp=drivesdk" class="standard-badge" target="_blank" rel="noopener noreferrer">ASME B18.3</a></td>
+                                <td>Inch hex socket head cap screws / bolts, including standard, hex socket head cap screw, and bolt-length variant designations</td>
+                                <td><span class="datasheet-pending">Coming Soon</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="standard-badge">NAS1351 / NAS1352</span></td>
+                                <td>Aerospace-grade inch socket head cap screw specifications</td>
+                                <td><span class="datasheet-pending">Coming Soon</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="standard-badge">MS16995 / MS16996 / MS16997 / MS16998</span></td>
+                                <td>Military standard socket head cap screw specifications</td>
+                                <td><span class="datasheet-pending">Coming Soon</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="standard-badge">MIL-C-26074</span></td>
+                                <td>Military specification referenced for coating/plating requirements on aerospace-grade parts</td>
+                                <td><span class="datasheet-pending">Coming Soon</span></td>
+                            </tr>
+                        </table></div>
+                        <h3>Metric-Based Standards</h3>
+                        <div class="table-scroll"><table>
+                            <tr><th>Standard</th><th>Description</th><th>Data Sheet</th></tr>
+                            <tr>
+                                <td><a href="https://drive.google.com/file/d/19IaEMpsJzIGu9xPEif-fxqtYd2s7B9iL/view?usp=drivesdk" class="standard-badge" target="_blank" rel="noopener noreferrer">DIN 912</a></td>
+                                <td>Metric hex socket head cap screws</td>
+                                <td><span class="datasheet-pending">Coming Soon</span></td>
+                            </tr>
+                            <tr>
+                                <td><a href="https://drive.google.com/file/d/183kQ3kZVSIr-OXT2-6vbUGK4qaS9fECX/view?usp=drivesdk" class="standard-badge" target="_blank" rel="noopener noreferrer">ISO 4762</a></td>
+                                <td>Hexagon socket head cap screw &mdash; metric equivalent/successor to DIN 912</td>
+                                <td><span class="datasheet-pending">Coming Soon</span></td>
+                            </tr>
+                            <tr>
+                                <td><a href="https://drive.google.com/file/d/1-Auo-r5VsheOg0gYmgAAhZUH6nUm8Aj3/view?usp=drivesdk" class="standard-badge" target="_blank" rel="noopener noreferrer">ISO 14579</a></td>
+                                <td>Hexalobular socket head cap screws</td>
+                                <td><span class="datasheet-pending">Coming Soon</span></td>
+                            </tr>
+                        </table></div>
+                        <p><strong>Other:</strong> Customer Print and Catalog Part designations are used for non-standard or supplier/customer-defined parts that do not map to a published standard.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="advantages-limitations">
+                <h2>Advantages &amp; Limitations</h2>
+                <div class="expandable">
+                    <div class="expandable-header" onclick="toggleExpand(this)">
+                        <span>Comparison</span>
+                        <span class="toggle-icon">&#9660;</span>
+                    </div>
+                    <div class="expandable-content">
+                        <div class="table-scroll"><table>
+                            <tr><th>Advantages</th><th>Limitations</th></tr>
+                            <tr>
+                                <td>
+                                    <ul>
+                                        <li>High clamp load capability</li>
+                                        <li>Compact cylindrical head</li>
+                                        <li>Good wrench access in confined areas</li>
+                                        <li>Clean appearance when counterbored</li>
+                                        <li>Wide availability in inch and metric sizes</li>
+                                        <li>Available in many materials, grades, finishes, and thread styles</li>
+                                        <li>Suitable for machinery, fixtures, tooling, equipment, and precision assemblies</li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <ul>
+                                        <li>Socket drive can strip if misused</li>
+                                        <li>Requires correct hex key, Allen wrench, or bit</li>
+                                        <li>Plain steel versions may corrode</li>
+                                        <li>Not always the lowest-cost fastener option</li>
+                                        <li>Head height may interfere with low-clearance designs</li>
+                                        <li>Stainless versions may gall if installed without proper care</li>
+                                        <li>Counterbore design must allow proper head and tool clearance</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </table></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="design-considerations">
+                <h2>Design Considerations</h2>
+                <div class="expandable">
+                    <div class="expandable-header" onclick="toggleExpand(this)">
+                        <span>Design Factor Reference</span>
+                        <span class="toggle-icon">&#9660;</span>
+                    </div>
+                    <div class="expandable-content">
+                        <div class="table-scroll"><table>
+                            <tr><th>Factor</th><th>Key Considerations</th></tr>
+                            <tr>
+                                <td><strong>Thread Size &amp; Measurement System</strong></td>
+                                <td>The thread determines whether the part is inch or metric (e.g. 1/4-20 is inch/UNC, M6-1.0 is metric). Do not mix inch and metric threads, even when sizes appear close.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Thread Engagement</strong></td>
+                                <td>Must be long enough to support the required load; softer materials (aluminum, brass, plastic, castings) may need more engagement than steel. Confirm:
+                                    <ul>
+                                        <li>Internal thread depth</li>
+                                        <li>Minimum full thread engagement</li>
+                                        <li>Blind-hole depth</li>
+                                        <li>Screw length</li>
+                                        <li>Thread runout</li>
+                                        <li>Bottoming risk</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Head Clearance</strong></td>
+                                <td>The cylindrical head is often installed in a counterbore. Confirm:
+                                    <ul>
+                                        <li>Head diameter clearance</li>
+                                        <li>Head height clearance</li>
+                                        <li>Counterbore diameter and depth</li>
+                                        <li>Tool access above the screw</li>
+                                        <li>Clearance for washer use, if applicable</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Strength &amp; Grade</strong></td>
+                                <td>Material and grade determine strength, hardness, ductility, corrosion resistance, and temperature performance. High-strength alloy steel suits demanding mechanical joints; stainless steel suits applications where corrosion resistance matters more than maximum strength.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Vibration &amp; Loosening</strong></td>
+                                <td>For vibration, shock, or repeated cycling, consider a locking method:
+                                    <ul>
+                                        <li>Nylon patch or nylon pellet</li>
+                                        <li>Threadlocker patch or liquid threadlocker (e.g. Scotchgrip)</li>
+                                        <li>Strip-lok, plastisol patch, or epoxy lock</li>
+                                        <li>Locking washer, where appropriate</li>
+                                        <li>Prevailing torque feature</li>
+                                        <li>Proper joint preload, or joint redesign if loosening persists</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Environment</strong></td>
+                                <td>Material and finish selection should account for:
+                                    <ul>
+                                        <li>Indoor vs. outdoor use</li>
+                                        <li>Moisture or washdown exposure</li>
+                                        <li>Chemicals and salt spray</li>
+                                        <li>Temperature and cleanliness requirements</li>
+                                        <li>Vacuum or venting requirements</li>
+                                        <li>Galvanic corrosion between dissimilar metals</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </table></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="thread-types">
+                <h2>Coarse vs. Fine vs. Extra-Fine Threads</h2>
+                <div class="expandable">
+                    <div class="expandable-header" onclick="toggleExpand(this)">
+                        <span>Thread Type Comparison</span>
+                        <span class="toggle-icon">&#9660;</span>
+                    </div>
+                    <div class="expandable-content">
+                        <div class="table-scroll"><table>
+                            <tr><th>Thread Type</th><th>Description</th><th>Advantages</th><th>Limitations</th></tr>
+                            <tr>
+                                <td><strong>Coarse</strong></td>
+                                <td>Fewer threads per inch or a larger metric pitch. Examples: 1/4-20, 3/8-16, 1/2-13, M6-1.0, M8-1.25, M10-1.5. The most common thread type in this category.</td>
+                                <td>
+                                    <ul>
+                                        <li>Faster assembly</li>
+                                        <li>Less likely to cross-thread</li>
+                                        <li>Better for softer materials</li>
+                                        <li>More tolerant of plating buildup and debris</li>
+                                        <li>Common and widely available</li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <ul>
+                                        <li>Less fine adjustment</li>
+                                        <li>Lower minor diameter vs. fine thread of the same nominal size</li>
+                                        <li>May be less preferred for vibration-sensitive designs unless properly locked</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Fine</strong></td>
+                                <td>More threads per inch or a smaller metric pitch. Examples: 1/4-28, 3/8-24, 1/2-20, M10-1.25, M12-1.5. The second most common thread type.</td>
+                                <td>
+                                    <ul>
+                                        <li>Better adjustment control</li>
+                                        <li>Higher tensile stress area</li>
+                                        <li>Good for thin sections</li>
+                                        <li>Improved resistance to vibration loosening when properly preloaded</li>
+                                        <li>Useful where thread engagement length is limited</li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <ul>
+                                        <li>Easier to cross-thread</li>
+                                        <li>More sensitive to dirt, damage, and plating buildup</li>
+                                        <li>Slower assembly</li>
+                                        <li>Less ideal for soft materials unless engagement is carefully designed</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Extra-Fine</strong></td>
+                                <td>Least common thread type; used for special applications requiring precise adjustment, thin-wall engagement, or print-controlled requirements.</td>
+                                <td>Precise adjustment; useful in thin-wall applications</td>
+                                <td>Limited availability; specialty ordering typically required</td>
+                            </tr>
+                        </table></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="drive-styles">
+                <h2>Drive Styles</h2>
+                <div class="expandable">
+                    <div class="expandable-header" onclick="toggleExpand(this)">
+                        <span>Drive Style Comparison</span>
+                        <span class="toggle-icon">&#9660;</span>
+                    </div>
+                    <div class="expandable-content">
+                        <div class="table-scroll"><table>
+                            <tr><th>Drive</th><th>Description</th><th>Common Uses</th><th>Advantages</th></tr>
+                            <tr>
+                                <td><strong>Hex Socket</strong></td>
+                                <td>The standard internal drive for most socket head cap screws, installed with a hex key, Allen wrench, or hex socket bit. The dominant drive style in this category.</td>
+                                <td>
+                                    <ul>
+                                        <li>Machinery and fixtures</li>
+                                        <li>Equipment frames and tooling</li>
+                                        <li>Counterbored assemblies</li>
+                                        <li>High-strength mechanical joints</li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <ul>
+                                        <li>Strong tool engagement</li>
+                                        <li>Common and easy to source</li>
+                                        <li>Works well in recessed holes</li>
+                                        <li>Good for high clamp load applications</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Hexalobular</strong></td>
+                                <td>Often associated with 6-lobe or Torx-style geometry; found under standards such as ISO 14579.</td>
+                                <td>Production assembly environments requiring consistent, repeatable torque transfer</td>
+                                <td>
+                                    <ul>
+                                        <li>Improved drive engagement</li>
+                                        <li>Reduced risk of cam-out</li>
+                                        <li>Good for production assembly</li>
+                                        <li>Can support more consistent torque transfer</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </table></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="materials-grades">
+                <h2>Materials &amp; Grades</h2>
+                <div class="expandable">
+                    <div class="expandable-header" onclick="toggleExpand(this)">
+                        <span>Material Comparison</span>
+                        <span class="toggle-icon">&#9660;</span>
+                    </div>
+                    <div class="expandable-content">
+                        <div class="table-scroll"><table>
+                            <tr><th>Material</th><th>Common Grades</th><th>Notes</th></tr>
+                            <tr>
+                                <td><strong>Steel</strong></td>
+                                <td>
+                                    <ul>
+                                        <li>PC 12.9 Alloy Steel</li>
+                                        <li>PC 10.9 Alloy Steel</li>
+                                        <li>PC 8.8 Medium Carbon Steel</li>
+                                        <li>B7 Steel</li>
+                                    </ul>
+                                </td>
+                                <td>The most common material group in the category. Selected for strength, cost efficiency, and general mechanical performance. Inch alloy steel parts are commonly associated with ASTM A574. Common in machinery, tooling, equipment, and structural mechanical assemblies.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Stainless Steel</strong></td>
+                                <td>
+                                    <ul>
+                                        <li>18-8 / A2 Stainless Steel</li>
+                                        <li>316 / A4 Stainless Steel</li>
+                                        <li>316L / A4-80 Stainless Steel</li>
+                                        <li>B8M Class 1 Stainless Steel</li>
+                                    </ul>
+                                </td>
+                                <td>Selected for corrosion resistance, cleanliness, and appearance. Common in outdoor, washdown, food equipment, marine, chemical, medical-adjacent, and clean equipment applications. <strong>Design note:</strong> can gall, especially stainless-to-stainless &mdash; lubrication, proper installation speed, and compatible mating materials should be considered.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Titanium</strong></td>
+                                <td>Grade 5 Titanium</td>
+                                <td>Used where weight reduction, corrosion resistance, or nonmagnetic performance is important. Typically more expensive than steel or stainless steel and should be selected for a specific performance reason.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Plastic, Nylon &amp; PEEK</strong></td>
+                                <td>
+                                    <ul>
+                                        <li>Nylon</li>
+                                        <li>PEEK (including Ultem 1000 and Ultem 2300 grades)</li>
+                                        <li>PVDF</li>
+                                        <li>Generic Plastic</li>
+                                    </ul>
+                                </td>
+                                <td>Used where corrosion resistance, electrical insulation, light weight, or chemical compatibility matters more than strength. Not direct substitutes for alloy steel fasteners in high-load joints.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Nickel Alloys &amp; Specialty Materials</strong></td>
+                                <td>
+                                    <ul>
+                                        <li>Monel, Hastelloy, Inconel, 200 Nickel Alloy</li>
+                                        <li>Silicone Bronze, Beryllium Copper</li>
+                                        <li>Ceramic, Tungsten</li>
+                                        <li>Aluminum (6061-T6), G-10 Fiberglass</li>
+                                    </ul>
+                                </td>
+                                <td>Used for specialized corrosion, temperature, electrical, nonmagnetic, or weight-reduction requirements. These typically appear on Customer Print or Catalog Part numbers rather than standard catalog SKUs.</td>
+                            </tr>
+                        </table></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="finishes-coatings">
+                <h2>Finishes &amp; Coatings</h2>
+                <div class="expandable">
+                    <div class="expandable-header" onclick="toggleExpand(this)">
+                        <span>Finish Comparison</span>
+                        <span class="toggle-icon">&#9660;</span>
+                    </div>
+                    <div class="expandable-content">
+                        <div class="table-scroll"><table>
+                            <tr><th>Finish</th><th>Description</th><th>Best For</th></tr>
+                            <tr>
+                                <td><strong>Plain</strong></td>
+                                <td>Common for alloy steel and stainless socket head cap screws; the most common finish in the category. Plain alloy steel may include oil or basic protection but should not be treated as corrosion resistant.</td>
+                                <td>Indoor applications, oiled environments, controlled machinery spaces, applications where coating thickness is undesired</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Zinc &amp; Zinc Yellow</strong></td>
+                                <td>Includes Zinc (Cr3), Zinc and Yellow (Cr3), Black Zinc (Cr3), and Black Zinc Nickel with Sealant. Improves corrosion resistance vs. plain steel. <strong>Design note:</strong> plating changes thread fit and installation friction &mdash; verify coating compatibility with the standard, thread class, and customer requirements.</td>
+                                <td>General industrial use</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Black Oxide</strong></td>
+                                <td>Provides a dark appearance and mild corrosion protection, usually when paired with oil.</td>
+                                <td>Indoor equipment, appearance-sensitive assemblies, tooling and machinery</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Passivated</strong></td>
+                                <td>Common for stainless steel. Improves corrosion resistance by removing free iron and supporting the stainless passive layer.</td>
+                                <td>Stainless steel parts, clean assemblies, corrosion-sensitive applications</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Electropolished</strong></td>
+                                <td>Used on stainless steel to improve surface finish, cleanliness, and corrosion resistance.</td>
+                                <td>Clean equipment, food or medical-adjacent environments, applications needing smoother surfaces</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Kolsterised</strong></td>
+                                <td>A surface hardening treatment often used on stainless steel to improve wear resistance without sacrificing corrosion resistance. Also available combined as Electropolished and Kolsterised.</td>
+                                <td>Stainless applications needing improved surface hardness, wear-prone assemblies, specialty customer requirements</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Phosphate and Oil</strong></td>
+                                <td>Provides lubricity and mild corrosion resistance; commonly associated with alloy steel fasteners.</td>
+                                <td>Indoor mechanical assemblies, applications where controlled friction is useful</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Dacromet, Nicotef &amp; Specialty Coatings</strong></td>
+                                <td>Includes Nicotef, Dacromet, RIE 5230 Black, RIE 4037A Black, Geomet 321/500, and Magni 565, among other customer or application-specific coatings.</td>
+                                <td>Enhanced corrosion resistance, lubricity, chemical resistance, or customer print requirements</td>
+                            </tr>
+                        </table></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="nomenclature">
+                <h2>Nomenclature &amp; Part Number Logic</h2>
+                <p style="margin-bottom: 15px; color: #666;">SBS part numbers for socket head cap screws are built from a compact, position-based code rather than a free-text description. Inch and metric parts follow related but distinct code structures, and Customer Print / Catalog Part numbers follow their own conventions &mdash; all covered below.</p>
+                <div class="expandable">
+                    <div class="expandable-header" onclick="toggleExpand(this)">
+                        <span>Part Number Structure &amp; Codes</span>
+                        <span class="toggle-icon">&#9660;</span>
+                    </div>
+                    <div class="expandable-content">
+                        <h3>Inch Part Numbers</h3>
+                        <p><strong>Format:</strong></p>
+                        <div class="code-block"><strong>[THREAD-SIZE][PITCH][LENGTH][SHORT CODE] [MATERIAL/GRADE] [FINISH] [MODIFIERS]</strong></div>
+                        <div class="table-scroll"><table>
+                            <tr><th>Position</th><th>Code Examples</th><th>Meaning</th></tr>
+                            <tr>
+                                <td><strong>Thread-Size</strong></td>
+                                <td>0, 4, 6, 8, 10, 12, 25, 31, 37, 43, 50, 62, 75, 87, 100, 125, 150, 200</td>
+                                <td>Nominal thread size, #0-80 through 2"-4&frac12; (e.g. 25 = 1/4", 37 = 3/8")</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Pitch</strong></td>
+                                <td>C / F</td>
+                                <td>Coarse / Fine</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Length</strong></td>
+                                <td>150, 87, 37, 225</td>
+                                <td>Length in inches &times; 100 (150 = 1-1/2", 87 = 7/8", 37 = 3/8", 225 = 2-1/4")</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Short Code</strong></td>
+                                <td>SCS, TSC, SCL</td>
+                                <td>SBS internal categorization code &mdash; 3-letter code combining head style and drive type; see Materials, Grades &amp; Finish Codes below</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Material/Grade</strong></td>
+                                <td>(none), S, 3</td>
+                                <td>Steel (plain default), 18-8 Stainless, 316/316L Stainless &mdash; see Materials, Grades &amp; Finish Codes below</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Finish</strong></td>
+                                <td>-Z, -Y, /EP, /KO, /EPKO</td>
+                                <td>Zinc, Zinc and Yellow, Electropolished, Kolsterised, and combinations &mdash; see Materials, Grades &amp; Finish Codes below</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Modifiers</strong></td>
+                                <td>/FT, L</td>
+                                <td>Fully Threaded, Left-Hand thread &mdash; optional; most parts are standard right-hand, partially threaded</td>
+                            </tr>
+                        </table></div>
+                        <div class="table-scroll"><table>
+                            <tr><th>Example Part Number</th><th>Decode</th></tr>
+                            <tr><td><strong>37C150TSC</strong></td><td>3/8" thread-size, Coarse, 1.50" length, Hexalobular Short Code &rarr; 3/8-16 x 1-1/2" Hexalobular Socket Cap Screw, Steel</td></tr>
+                            <tr><td><strong>25C37SCL</strong></td><td>1/4" thread-size, Coarse, 0.375" length, Left-Hand Short Code &rarr; 1/4-20 x 3/8" Socket Cap Screw, Left-Hand Thread, Steel</td></tr>
+                            <tr><td><strong>31F200SCS3/KO</strong></td><td>5/16" thread-size, Fine, 2.00" length, Short Code SCS, Material/Grade 3, Finish /KO &rarr; 5/16-24 x 2" Socket Cap Screw, 316 (A4) Stainless Steel, Kolsterised</td></tr>
+                            <tr><td><strong>50C350SCSS/FT</strong></td><td>1/2" thread-size, Coarse, 3.50" length, Short Code SCS, Material/Grade S, Modifier /FT &rarr; 1/2-13 x 3-1/2" Socket Cap Screw, 18-8 (A2) Stainless Steel, Fully Threaded</td></tr>
+                        </table></div>
+                        <div class="highlight">A meaningful number of legacy inch part numbers carry suffixes such as <code>-CL</code> or <code>-B</code> that do not map cleanly to a single finish or grade. Treat the linked spec attributes, not the part number suffix, as the source of truth, and flag mismatches for cleanup when found.</div>
+                        <h3>Inch Nomenclature Reference</h3>
+                        <div class="table-scroll"><table>
+                            <tr><th>Position</th><th>Example</th><th>Meaning</th><th>Notes</th></tr>
+                            <tr>
+                                <td><strong>Diameter Code</strong></td>
+                                <td>0, 4, 6, 8, 10, 12, 25, 37, 50, 100</td>
+                                <td>#0-80, #4-40, #6-32, #8-32, #10-32, #12-24, 1/4"-20, 3/8"-16, 1/2"-13, 1"-8</td>
+                                <td>Bare number; fractional sizes use decimal-inch shorthand (37 = 3/8")</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Pitch Code</strong></td>
+                                <td>C, F</td>
+                                <td>Coarse, Fine</td>
+                                <td>C is the dominant thread type in this category</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Length</strong></td>
+                                <td>37, 100, 150, 225</td>
+                                <td>3/8", 1", 1-1/2", 2-1/4"</td>
+                                <td>Length in inches &times; 100</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Short Code</strong></td>
+                                <td>SCS, TSC, SCL</td>
+                                <td>SBS internal categorization code</td>
+                                <td>3-letter code combining head style and drive type; not an industry-standard designation. Leading "T" flags Hexalobular drive.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Material/Grade</strong></td>
+                                <td>(none), S, 3</td>
+                                <td>Steel (plain default), 18-8 Stainless, 316/316L Stainless</td>
+                                <td>Appended directly after the short code</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Finish</strong></td>
+                                <td>-Z, -Y, /EP, /KO, /EPKO, NIC, -RIE, -H</td>
+                                <td>Zinc, Zinc and Yellow, Electropolished, Kolsterised, Electropolished and Kolsterised, Nicotef, RIE Black, Phosphate and Oil</td>
+                                <td>Plain (no suffix) is the category default</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Modifiers</strong></td>
+                                <td>L, /FT</td>
+                                <td>Left-Hand thread, Fully Threaded</td>
+                                <td>Optional; most parts are standard right-hand, partially threaded</td>
+                            </tr>
+                        </table></div>
+
+                        <h3>Metric Part Numbers</h3>
+                        <p><strong>Format:</strong></p>
+                        <div class="code-block"><strong>.[THREAD-SIZE][PITCH][LENGTH][SHORT CODE] [MATERIAL/GRADE] [FINISH] [MODIFIERS]</strong></div>
+                        <div class="table-scroll"><table>
+                            <tr><th>Position</th><th>Code Examples</th><th>Meaning</th></tr>
+                            <tr>
+                                <td><strong>Thread-Size</strong></td>
+                                <td>.2, .3, .4, .5, .6, .8, .10, .12, .16, .20, .24, .30, .36, .48</td>
+                                <td>Nominal metric diameter, M2 through M48; leading period marks the metric system</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Pitch</strong></td>
+                                <td>C / F</td>
+                                <td>Coarse / Fine</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Length</strong></td>
+                                <td>16, 30, 60, 170</td>
+                                <td>Length in millimeters, used directly</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Short Code</strong></td>
+                                <td>MSC</td>
+                                <td>SBS internal categorization code &mdash; 3-letter code combining head style and drive type; see Materials, Grades &amp; Finish Codes below</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Material/Grade</strong></td>
+                                <td>(none), S, 3, 1</td>
+                                <td>Steel (PC 8.8 default), 18-8 Stainless, 316/316L Stainless, PC 10.9 Steel &mdash; see Materials, Grades &amp; Finish Codes below</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Finish</strong></td>
+                                <td>-Z, -Y, /EP, /KO, /EPKO</td>
+                                <td>Zinc, Zinc and Yellow, Electropolished, Kolsterised, and combinations &mdash; see Materials, Grades &amp; Finish Codes below</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Modifiers</strong></td>
+                                <td>/FT, /A480</td>
+                                <td>Fully Threaded, A4-80 grade override &mdash; optional; most parts are standard</td>
+                            </tr>
+                        </table></div>
+                        <div class="highlight">Data quality note: the diameter code <strong>"16"</strong> is shared by M1.6 and M16 (e.g. <code>.16C15MSC3</code> = M1.6-0.35 x 15mm, while <code>.16C170MSC</code> = M16-2.0 x 170mm). The two are only distinguishable by the length value and thread pitch, not by the part number alone &mdash; a candidate for a decimal-point convention fix.</div>
+                        <div class="table-scroll"><table>
+                            <tr><th>Example Part Number</th><th>Decode</th></tr>
+                            <tr><td><strong>.10C170MSC</strong></td><td>M10 thread-size, Coarse, 170mm length, Short Code MSC &rarr; M10-1.5 x 170mm Socket Cap Screw, Steel</td></tr>
+                            <tr><td><strong>.6C16MSC-Z</strong></td><td>M6 thread-size, Coarse, 16mm length, Short Code MSC, Finish -Z &rarr; M6-1.0 x 16mm Socket Cap Screw, Zinc (Cr3)</td></tr>
+                            <tr><td><strong>.12C16MSCS</strong></td><td>M12 thread-size, Coarse, 16mm length, Short Code MSC, Material/Grade S &rarr; M12-1.75 x 16mm Socket Cap Screw, 18-8 (A2) Stainless Steel</td></tr>
+                            <tr><td><strong>.6C30MSC3/A480</strong></td><td>M6 thread-size, Coarse, 30mm length, Short Code MSC, Material/Grade 3, Modifier /A480 &rarr; M6-1.0 x 30mm Socket Cap Screw, 316L (A4-80) Stainless Steel</td></tr>
+                        </table></div>
+                        <h3>Metric Nomenclature Reference</h3>
+                        <div class="table-scroll"><table>
+                            <tr><th>Position</th><th>Example</th><th>Meaning</th><th>Notes</th></tr>
+                            <tr>
+                                <td><strong>Diameter Code</strong></td>
+                                <td>.2, .3, .4, .5, .6, .8, .10, .12, .16</td>
+                                <td>M2, M3, M4, M5, M6, M8, M10, M12, M16 (or M1.6)</td>
+                                <td>Leading period; code "16" is shared by M1.6 and M16</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Pitch Code</strong></td>
+                                <td>C, F</td>
+                                <td>Coarse, Fine</td>
+                                <td>C is the dominant thread type in this category</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Length</strong></td>
+                                <td>16, 30, 60, 170</td>
+                                <td>16mm, 30mm, 60mm, 170mm</td>
+                                <td>Length in millimeters, used directly</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Short Code</strong></td>
+                                <td>MSC</td>
+                                <td>SBS internal categorization code</td>
+                                <td>3-letter code combining head style and drive type; not an industry-standard designation. The metric category uses one dominant short code.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Material/Grade</strong></td>
+                                <td>(none), S, 3, 1</td>
+                                <td>Steel (PC 8.8 default), 18-8 Stainless, 316/316L Stainless, PC 10.9 Steel</td>
+                                <td>Appended directly after the short code</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Finish</strong></td>
+                                <td>-Z, -Y, /EP, /KO, /EPKO, NIC, -RIE, -H</td>
+                                <td>Zinc, Zinc and Yellow, Electropolished, Kolsterised, Electropolished and Kolsterised, Nicotef, RIE Black, Phosphate and Oil</td>
+                                <td>Plain (no suffix) is the category default</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Modifiers</strong></td>
+                                <td>/FT, /A480</td>
+                                <td>Fully Threaded, 316L (A4-80) grade override</td>
+                                <td>Optional; most parts are standard</td>
+                            </tr>
+                        </table></div>
+
+                        <h3>Customer Print &amp; Catalog Parts</h3>
+                        <p>Customer Print and Catalog Part numbers follow their own conventions rather than the positional diameter/thread/length logic used for standard catalog parts. Customer Print numbers reference an internal print number; Catalog Part numbers reference the manufacturer's own part number under a shortened manufacturer prefix.</p>
+                        <div class="table-scroll"><table>
+                            <tr><th>Part Type</th><th>Format</th></tr>
+                            <tr><td><strong>Customer Print</strong></td><td><strong>/[PRINT NUMBER]/PR</strong></td></tr>
+                            <tr><td><strong>Catalog Part</strong></td><td><strong>/[MANUFACTURER PREFIX (FIRST 5 LETTERS)][MANUFACTURER PART NUMBER]</strong></td></tr>
+                        </table></div>
+                        <div class="table-scroll"><table>
+                            <tr><th>Example Part Number</th><th>Description</th></tr>
+                            <tr><td><strong>/2134110/PR</strong></td><td>Print No. 2134110 &rarr; 1/4-20 x 1-1/2" Socket Head Cap Screw, Customer Print, Steel, Zinc (Cr3), Nylok Patch</td></tr>
+                            <tr><td><strong>/UCCOMC2016NAU</strong></td><td>UC Components ("UCCOM") part C2016NAU &rarr; 1/4-20 x 1" Socket Head Cap Screw, Catalog Part, 18-8 Stainless Steel, Gold Plated</td></tr>
+                            <tr><td><strong>/UCCOMMC4305EP</strong></td><td>UC Components ("UCCOM") part MC4305EP &rarr; M3-0.5 x 5mm Socket Head Cap Screw, Catalog Part, 316 Stainless Steel, Electropolished</td></tr>
+                        </table></div>
+                    </div>
+                </div>
+                <div class="expandable">
+                    <div class="expandable-header" onclick="toggleExpand(this)">
+                        <span>Materials, Grades &amp; Finish Codes</span>
+                        <span class="toggle-icon">&#9660;</span>
+                    </div>
+                    <div class="expandable-content">
+                        <h3>Material &amp; Grade Codes</h3>
+                        <div class="table-scroll"><table>
+                            <tr><th>Suffix Pattern</th><th>Material / Grade</th><th>Applies To</th></tr>
+                            <tr><td><strong>No suffix</strong> (SCS, MSC)</td><td>Plain Steel (inch default); PC 8.8 Medium Carbon Steel (metric default)</td><td>Inch &amp; Metric</td></tr>
+                            <tr><td><strong>S / SS</strong> (SCSS, MSCS)</td><td>Stainless Steel, 18-8 (A2) grade</td><td>Inch &amp; Metric</td></tr>
+                            <tr><td><strong>3</strong> (SCS3, MSC3)</td><td>Stainless Steel, 316 (A4) or 316L (A4-80) grade</td><td>Inch &amp; Metric</td></tr>
+                            <tr><td><strong>1</strong> (MSC1)</td><td>Steel, PC 10.9 Alloy Steel grade</td><td>Metric only</td></tr>
+                            <tr><td><strong>T</strong> (TSC, TSCS)</td><td>Hexalobular drive &mdash; combines with the same material suffixes above, independent of material</td><td>Inch &amp; Metric</td></tr>
+                            <tr><td><strong>L</strong> (SCL)</td><td>Left-Hand thread &mdash; independent of material</td><td>Inch only</td></tr>
+                        </table></div>
+                        <p>Titanium, Nylon, PEEK, Brass, Monel, Hastelloy, and other specialty materials do not follow a single consistent suffix pattern and are more often carried on Customer Print or Catalog Part numbers rather than the standard catalog code.</p>
+                        <h3>Finish Codes</h3>
+                        <div class="table-scroll"><table>
+                            <tr><th>Suffix Pattern</th><th>Finish</th></tr>
+                            <tr><td><strong>-Z</strong></td><td>Zinc (Cr3)</td></tr>
+                            <tr><td><strong>-Y</strong></td><td>Zinc and Yellow (Cr3)</td></tr>
+                            <tr><td><strong>/EP</strong></td><td>Electropolished</td></tr>
+                            <tr><td><strong>/KO</strong></td><td>Kolsterised</td></tr>
+                            <tr><td><strong>/EPKO</strong></td><td>Electropolished and Kolsterised</td></tr>
+                            <tr><td><strong>NIC</strong></td><td>Nicotef</td></tr>
+                            <tr><td><strong>-RIE</strong></td><td>RIE 5230 Black or RIE 4037A Black (specialty black coating)</td></tr>
+                            <tr><td><strong>-H</strong></td><td>Phosphate and Oil</td></tr>
+                            <tr><td><strong>No suffix</strong></td><td>Plain (the category default &mdash; roughly 60% of all SKUs)</td></tr>
+                        </table></div>
+                        <div class="highlight">These finish and material suffixes are reliable in the vast majority of cases (typically 95%+ match rate against the linked spec attribute), but a meaningful number of legacy part numbers carry suffixes like <code>-CL</code>, <code>/HK</code>, or <code>-B</code> that do not map cleanly to a single attribute. Treat the linked spec attribute, not the part number suffix, as the source of truth, and flag mismatches for cleanup when found.</div>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <div class="highlight" style="background: #e8f4f8; border-left: 4px solid #1D3557; padding: 25px;">
+                    <h3 style="color: #1D3557; margin-top: 0;">Browse Socket Head Cap Screws in the SBS E-Catalog</h3>
+                    <p style="margin: 15px 0; line-height: 1.7;">SBS has added a selection of socket head cap screws to the E-Catalog. Use the attribute filters on the left-hand panel to narrow results by thread size, measurement system, length, material, grade, drive style, and finish.</p>
+                    <p style="margin: 15px 0; line-height: 1.7;"><strong>Can't find what you need?</strong> Parts not shown in the E-Catalog can still be sourced and manufactured. Contact your SBS account manager directly, or <a href="https://shop.specialtybolt.com/sourcing/rfq" style="color: #E87722; font-weight: bold; text-decoration: none;" target="_blank" rel="noopener noreferrer">submit a Request for Quote (RFQ)</a> and the team will follow up.</p>
+                </div>
+            </section>
+
+        </div>
+        </div>
+    </div>
+    <button class="dg-float-close" id="dg-float" onclick="toggleGuide()">
+        <span style="font-size: 1.1em; font-weight: 700; line-height: 1;">&minus;</span>
+        Close Design Guide
+    </button>
+    <script>
+function toggleExpand(header) {
+    const content = header.nextElementSibling;
+    const isActive = header.classList.contains('active');
+
+    // Close all other expandables in the same section
+    const section = header.closest('section');
+    if (section) {
+        section.querySelectorAll('.expandable-header').forEach(h => {
+            if (h !== header && h.classList.contains('active')) {
+                h.classList.remove('active');
+                h.nextElementSibling.classList.remove('active');
+            }
+        });
+    }
+
+    // Toggle current
+    header.classList.toggle('active');
+    content.classList.toggle('active');
+}
+
+// Expand first expandable in each section by default
+document.querySelectorAll('section').forEach(section => {
+    const firstHeader = section.querySelector('.expandable-header');
+    if (firstHeader && section.id !== '') {
+        firstHeader.classList.add('active');
+        firstHeader.nextElementSibling.classList.add('active');
+    }
+});
+
+// Smooth scroll for TOC links
+document.querySelectorAll('.toc a').forEach(link => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.querySelector(link.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    });
+});
+
+// Master guide collapse/expand (whole header + TDS button + TOC + content panel)
+let dgPanelOpen = false;
+
+function toggleGuide() {
+    const panel = document.getElementById('dg-panel');
+    const icon = document.getElementById('dg-icon');
+    const floatBtn = document.getElementById('dg-float');
+
+    dgPanelOpen = panel.classList.toggle('open');
+    icon.textContent = dgPanelOpen ? '\u2212' : '+';
+
+    if (dgPanelOpen) {
+        floatBtn.classList.add('visible');
+    } else {
+        floatBtn.classList.remove('visible');
+        document.getElementById('dg-toggle').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+// Show/hide the floating close pill only while the panel is open AND
+// the main toggle button has scrolled out of view
+function onDgScroll() {
+    if (!dgPanelOpen) return;
+    const toggle = document.getElementById('dg-toggle');
+    const floatBtn = document.getElementById('dg-float');
+    const rect = toggle.getBoundingClientRect();
+
+    if (rect.bottom > 0 && rect.top < window.innerHeight) {
+        floatBtn.style.opacity = '0';
+        floatBtn.style.pointerEvents = 'none';
+    } else {
+        floatBtn.style.opacity = '1';
+        floatBtn.style.pointerEvents = 'auto';
+    }
+}
+
+window.addEventListener('scroll', onDgScroll, { passive: true });
+    </script>
+</body>
+</html>
