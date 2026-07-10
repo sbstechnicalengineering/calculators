@@ -1,5 +1,26 @@
 <!DOCTYPE html>
-<!-- SBS TDS Generator — Google Sheet Live Version 1.5.0 (vB8) | Specialty Bolt & Screw, Inc. -->
+<!-- SBS TDS Generator — Google Sheet Live Version 1.5.1 (vB7) | Specialty Bolt & Screw, Inc. -->
+<!-- vB7 changelog — phantom cascade selection fix:
+       • ROOT CAUSE: cascade options are staged in a temporary <select> and
+         moved into the real dropdown. A select default-selects its first
+         option and RE-defaults as options leave, so every option was stamped
+         "selected" in turn — and the LAST selected-flagged option wins on
+         insertion. Cascades therefore silently landed on their last item
+         (e.g. Finish Type "None") instead of the placeholder, and the v119
+         propagation wrapper then correctly committed that phantom value down
+         the chain (Color=Natural, Chromate/Sealer=Not Applicable).
+       • FIX: childEl.selectedIndex = 0 immediately after insertion, before
+         the deliberate auto-select logic. Manual fields now show their
+         placeholder; single-option cascades still auto-select; optional
+         fields now pick their FIRST option (as designed) rather than
+         accidentally their last. Compare tab unaffected (builds via
+         innerHTML, placeholder-first).
+       • A/B verified headless: previous build reproduces the reported
+         screenshot (finish_type="None", Color="Natural"); this build shows
+         the placeholder with the chain waiting. Full 10-assertion finish-
+         chain regression passes.
+     Carried over: parallel fetch (1.5.0), v121 benchmark, v120 watermark,
+     v119 cascade propagation, v118 THREAD EAV + tooltips, v113–v117. -->
 <!-- vB8 changelog — parallel data fetch (the original priority-#1 fix):
        • loadAllData fetches all ten published CSVs concurrently
          (Promise.all) instead of sequentially. Expected: measured 5.13 s
@@ -2424,6 +2445,14 @@ function buildSection2(sm) {
         tmp.innerHTML = buildCascadeOptionsHtml(opts);
         while (tmp.firstChild) frag.appendChild(tmp.firstChild);
         childEl.insertBefore(frag, otherOpt);
+        // vB7: neutralize phantom selection. Moving options out of the temp
+        // select stamps each one "selected" in turn (a select always default-
+        // selects its first option, re-defaulting as options leave), and the
+        // LAST selected-flagged option wins in the real dropdown — which made
+        // cascades silently land on their last item (e.g. Finish Type "None")
+        // instead of the placeholder. Reset to placeholder BEFORE the
+        // auto-select logic decides deliberately.
+        childEl.selectedIndex = 0;
         childEl.disabled = false;
         const real = opts.filter(o => !o.match(/^\|\|.+\|\|$/));
         // v105: universal single-option auto-select. If a cascade yields exactly
