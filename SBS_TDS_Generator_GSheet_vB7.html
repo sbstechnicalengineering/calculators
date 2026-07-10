@@ -1,5 +1,17 @@
 <!DOCTYPE html>
-<!-- SBS TDS Generator — Google Sheet Live Version 1.4.3 (v121) | Specialty Bolt & Screw, Inc. -->
+<!-- SBS TDS Generator — Google Sheet Live Version 1.5.0 (vB8) | Specialty Bolt & Screw, Inc. -->
+<!-- vB8 changelog — parallel data fetch (the original priority-#1 fix):
+       • loadAllData fetches all ten published CSVs concurrently
+         (Promise.all) instead of sequentially. Expected: measured 5.13 s
+         fetch → roughly the latency of the slowest single sheet (~0.5–1.2 s).
+         Progress bar advances per completed sheet in completion order.
+       • Each sheet still fails independently (empty array + console.warn) —
+         one bad endpoint no longer stalls the sheets behind it, which was
+         the mechanism of the historic "Loading 4 — Thread Data" hang.
+       • ⏱ PERF badge (v121) retained — compare fetch ms against your
+         5.13 s sequential baseline and the 0.00 s hardcoded POC.
+     Carried over: v121 (benchmark), v120 (watermark), v119 (cascades/print),
+     v118 (THREAD EAV, tooltips), v113–v117. -->
 <!-- v121 changelog — load-time benchmark:
        • PERF instrumentation: header badge + console line report ms-to-ready,
          split into data fetch vs parse+index, for measured A/B comparison
@@ -1421,16 +1433,24 @@ async function loadAllData() {
     ...(SHEET_URLS.threadTooltips ? [['threadTooltips', SHEET_URLS.threadTooltips, '4b — Thread Tooltips', 99]] : []),
   ];
 
-  for (const [key, url, label, pct] of steps) {
+  // vB8: PARALLEL fetch — all ten CSVs launch at once instead of one at a
+  // time. Load cost drops from the SUM of ten round-trips to the SLOWEST
+  // single one (measured baseline: 5.13 s sequential fetch). The progress
+  // bar advances as each sheet resolves, in completion order.
+  let done = 0;
+  setLoaderStep('Fetching all sheets in parallel…');
+  await Promise.all(steps.map(async ([key, url, label]) => {
     try {
-      const csv  = await fetchCSV(url, label);
-      DB[key]    = csvToObjects(csv);
-      setLoaderProgress(pct);
+      const csv = await fetchCSV(url, label);
+      DB[key]   = csvToObjects(csv);
     } catch (e) {
       console.warn(`Sheet ${label} failed:`, e.message);
       DB[key] = [];
     }
-  }
+    done++;
+    setLoaderProgress(Math.round((done / steps.length) * 95));
+    setLoaderStep(`Loaded ${done} of ${steps.length} sheets…`);
+  }));
 
   PERF.fetchMs = Math.round(performance.now() - _tFetch0);
   const _tIdx0 = performance.now();
