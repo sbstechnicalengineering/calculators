@@ -1,0 +1,1804 @@
+<!--
+  SBS Bolt Tensile Strength Simulator | Copyright (c) 2026 Specialty Bolt & Screw, Inc.
+  Fingerprint: SBS-BOLT-TENSILE-SIM-v1 | https://shop.specialtybolt.com/
+-->
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600&display=swap');
+:root{
+  --navy:#1D3557;--navy-dark:#12243a;--orange:#E87722;--orange-light:#F0913A;--orange-pale:#FDF0E5;
+  --gray-50:#F8F9FA;--gray-100:#F0F2F5;--gray-200:#E2E6EA;--gray-300:#CED4DA;--gray-400:#ADB5BD;
+  --gray-500:#6C757D;--gray-600:#495057;--gray-700:#343A40;
+  --obsolete-red:#C0392B;--obsolete-bg:#FDECEA;
+  /* Alias the tool's existing semantic tokens to the SBS palette above so the file renders
+     correctly wherever it's hosted (GitHub Pages, iframe embed) and not only inside a host
+     page that happens to already define these custom properties. */
+  --color-background-primary:#ffffff;
+  --color-background-secondary:var(--gray-50);
+  --color-background-danger:var(--obsolete-bg);
+  --color-border-secondary:var(--gray-200);
+  --color-border-tertiary:var(--gray-100);
+  --color-border-danger:var(--obsolete-red);
+  --color-text-primary:var(--gray-700);
+  --color-text-secondary:var(--gray-500);
+  --color-text-danger:var(--obsolete-red);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body,#app{font-family:'Inter',sans-serif;font-size:13px}
+.hdr{background:#ffffff;border-bottom:3px solid #E87722;padding:.65rem 1.5rem;display:flex;align-items:center;gap:14px;flex-wrap:wrap;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.10)}
+.hdr-divider{width:1px;height:36px;background:var(--gray-200,#E2E6EA);flex-shrink:0}
+.hdr-logo-badge{background:#ffffff;border-radius:6px;padding:0;display:flex;align-items:center;flex-shrink:0}
+.hdr-logo-badge a{display:flex;align-items:center;line-height:0;transition:opacity .15s}
+.hdr-logo-badge a:hover{opacity:.8}
+.hdr-logo{height:36px;width:auto;display:block}
+.hdr-t{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:#1D3557}
+.hdr-s{font-family:'Inter',sans-serif;font-size:11px;color:var(--gray-500,#6C757D);margin-top:1px}
+.hdr-actions{display:flex;gap:12px;align-items:center;margin-left:auto;flex-wrap:wrap}
+.tgl-row{display:flex;align-items:center;gap:6px;font-family:'Barlow',sans-serif;font-size:10px;color:rgba(29,53,87,.75);font-weight:600;letter-spacing:.4px;text-transform:uppercase}
+.tgl{position:relative;width:32px;height:17px;flex-shrink:0}
+.tgl input{opacity:0;width:0;height:0;position:absolute}
+.tgl-sl{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#c7cdd4;border-radius:17px;transition:.2s}
+.tgl-sl:before{content:"";position:absolute;height:13px;width:13px;left:2px;bottom:2px;background:#fff;border-radius:50%;transition:.2s}
+.tgl input:checked+.tgl-sl{background:#E87722}
+.tgl input:checked+.tgl-sl:before{transform:translateX(15px)}
+.cfg-tgl-row .tgl-sl{background:#c7cdd4}
+.cfg-tgl-row .tgl input:checked+.tgl-sl{background:#1D3557}
+.cfg{background:var(--color-background-secondary);border-bottom:.5px solid var(--color-border-tertiary);padding:8px 16px;display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.cfg-g{display:flex;flex-direction:column;gap:3px;flex:1;min-width:100px}
+.cfg-g label{font-family:'Barlow',sans-serif;font-size:10px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--color-text-secondary)}
+.cfg-g select,.cfg-g input[type=number]{font-family:'Inter',sans-serif;font-size:12px;padding:5px 7px;border-radius:6px;border:.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary)}
+.stepper{display:flex;align-items:stretch;background:var(--color-background-primary);border:.5px solid var(--color-border-secondary);border-radius:7px;overflow:hidden;height:28px}
+.stepper-btn{background:#1D3557;border:none;color:#fff;font-size:15px;font-weight:700;width:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1}
+.stepper-btn:hover{background:#E87722}
+.stepper-btn:active{background:#c4661c}
+.stepper-val{flex:1;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--color-text-primary);padding:0 4px;min-width:34px;border:none;border-left:1px solid var(--color-border-secondary);border-right:1px solid var(--color-border-secondary);background:transparent;-moz-appearance:textfield}
+.stepper-val:focus{outline:none;background:rgba(29,53,87,.06)}
+.stepper-val::-webkit-outer-spin-button,.stepper-val::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.cfg-info{font-size:11px;color:var(--color-text-secondary);flex:2;min-width:140px;padding-bottom:4px;line-height:1.4}
+.cfg-g select:disabled,.cfg-g input[type=number]:disabled{opacity:.5;cursor:not-allowed}
+.stepper-btn:disabled{opacity:.4;cursor:not-allowed;background:#7c8a99}
+.stepper-btn:disabled:hover{background:#7c8a99}
+.btn-sm:disabled,.btn-sm.ghost:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-sm:disabled:hover,.btn-sm.ghost:disabled:hover{background:#E87722;transform:none;box-shadow:none}
+.btn-sm.ghost:disabled:hover{background:none}
+.mount-notice{display:none;background:var(--orange-pale);color:#8a4a12;border-left:3px solid #E87722;font-size:11.5px;padding:7px 16px;line-height:1.5}
+.mount-notice.on{display:block}
+.mount-notice.mounted{background:#e6f4ea;color:#2e7d32;border-left-color:#2e7d32}
+.stats{background:var(--color-background-secondary);border-radius:8px;border:.5px solid var(--color-border-tertiary);padding:10px 12px;margin-top:10px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.st{display:flex;flex-direction:column;gap:1px;position:relative}
+.st-l{font-family:'Barlow',sans-serif;font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--color-text-secondary);display:flex;align-items:center;gap:3px}
+.st-v{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;color:#1D3557;transition:color .3s}
+.st-v.w{color:#cc7700}.st-v.d{color:#b71c1c}
+.pill{margin-left:auto;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;padding:3px 12px;border-radius:20px;background:#e6f4ea;color:#2e7d32;transition:all .3s;white-space:nowrap}
+.pill.w{background:#fff3e0;color:#e65100}.pill.r{background:#fce8e6;color:#b71c1c}.pill.x{background:#1D3557;color:#fff}
+.tabs{display:flex;border-bottom:.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);flex-wrap:wrap}
+.tab{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.5px;padding:8px 18px;cursor:pointer;color:var(--color-text-secondary);border-bottom:2px solid transparent}
+.tab.on{color:#1D3557;border-bottom-color:#E87722}
+.tc{display:none}.tc.on{display:block}
+.grid2{display:grid;grid-template-columns:1fr 1fr}
+.pan{padding:14px 16px;border-right:.5px solid var(--color-border-tertiary)}
+.pan:last-child{border-right:none}
+.pan-lbl{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:10px}
+.ib-wrap{position:relative;display:inline-flex;align-items:center}
+.btn-sm{font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;letter-spacing:.4px;background:#E87722;color:#fff;border:none;border-radius:6px;padding:7px 13px;cursor:pointer;transition:background .15s,transform .15s,box-shadow .15s}
+.btn-sm:hover{background:var(--orange-light,#F0913A);transform:translateY(-1px);box-shadow:0 2px 6px rgba(232,119,34,.3)}
+.btn-sm.ghost{background:none;border:1px solid var(--color-border-secondary);color:var(--color-text-secondary)}
+.btn-sm.ghost:hover{background:var(--color-background-secondary);color:var(--color-text-primary)}
+.btn-reset{display:inline-flex;align-items:center;gap:6px;font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;letter-spacing:.4px;background:#1D3557;border:1px solid #1D3557;color:#fff;border-radius:6px;padding:7px 13px;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.btn-reset svg{flex-shrink:0;transition:transform .3s}
+.btn-reset:hover{background:var(--navy-dark,#12243a);border-color:var(--navy-dark,#12243a);color:#fff}
+.btn-reset:hover svg{transform:rotate(-70deg)}
+.btn-reset:active svg{transform:rotate(-140deg)}
+.slider-zone{border-top:.5px solid var(--color-border-tertiary);padding:12px 16px 14px}
+.sl-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.sl-lbl{font-family:'Barlow',sans-serif;font-size:14px;font-weight:700;color:var(--color-text-primary)}
+.reads{display:flex;gap:18px}
+.rd{text-align:right}
+.rd-l{font-family:'Barlow',sans-serif;font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--color-text-secondary)}
+.rd-v{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:#1D3557}
+.play-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap;row-gap:8px}
+#main-sl{width:100%;accent-color:#E87722;margin-bottom:2px}
+#ax-bar{position:relative;height:23px}
+.warn{margin-top:7px;padding:6px 10px;border-radius:6px;font-size:11px;background:var(--color-background-danger);color:var(--color-text-danger);border-left:3px solid var(--color-border-danger);display:none}
+.warn.on{display:block}
+.bp-wrap{padding:14px 16px}
+.bp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.bp-card{background:var(--color-background-secondary);border-radius:8px;padding:9px 11px;border-left:3px solid #E87722}
+.bp-speed-rec{margin-top:7px;padding:6px 8px;border-radius:5px;background:rgba(29,53,87,.08);font-size:10.5px;color:#1D3557;line-height:1.5}
+.stage-intro{font-size:11.5px;color:var(--color-text-secondary);line-height:1.55;margin:2px 0 10px}
+.stage-table{width:100%;border-collapse:collapse;background:var(--color-background-secondary);border-radius:10px;overflow:hidden;font-size:11.5px}
+.stage-table th{background:#1D3557;color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.5px;font-size:10.5px;text-transform:uppercase;text-align:left;padding:8px 10px}
+.stage-table td{padding:8px 10px;border-bottom:.5px solid var(--color-border-tertiary);vertical-align:middle}
+.stage-table tr:last-child td{border-bottom:none}
+.stage-icon-cell{width:110px}
+.stage-icon-cell svg{display:block}
+.stage-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;color:#1D3557;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.stage-desc{color:var(--color-text-secondary);line-height:1.5}
+.std-code{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;color:#1D3557;white-space:nowrap}
+.std-link-btn{padding:5px 10px;font-size:10.5px;white-space:nowrap}
+.std-coming-soon{display:inline-block;font-family:'Barlow Condensed',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--color-text-secondary);background:var(--color-background-secondary);border:1px solid var(--color-border-secondary);border-radius:6px;padding:5px 10px;white-space:nowrap}
+.stage-row-warn{background:rgba(230,119,34,.08)}
+.stage-row-warn .stage-name{color:#b25500}
+.stage-warn-badge{display:inline-flex;align-items:center;justify-content:center;background:#E87722;color:#fff;border-radius:4px;font-size:9px;font-weight:700;padding:1px 5px;letter-spacing:.3px;white-space:nowrap}
+.stage-stop-btn{font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;letter-spacing:.3px;background:none;border:1.5px solid #1D3557;color:#1D3557;border-radius:6px;padding:5px 8px;cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:3px;transition:background .15s,color .15s,border-color .15s}
+.stage-stop-btn:hover{background:var(--color-background-primary);border-color:#1D3557}
+.stage-stop-btn.stagewarn{border-color:#E87722}
+.stage-stop-btn.stagewarn:hover{background:var(--color-background-primary);border-color:#E87722}
+.stage-stop-btn.active{box-shadow:inset 0 -3px 0 0 rgba(0,0,0,.18)}
+@media (max-width:700px){
+  .stage-table,.stage-table thead,.stage-table tbody,.stage-table th,.stage-table td,.stage-table tr{display:block}
+  .stage-table thead{display:none}
+  .stage-table tr{border-bottom:1px solid var(--color-border-tertiary);padding:10px 0;display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+  .stage-icon-cell{width:auto}
+}
+.sim-extra{border-top:.5px solid var(--color-border-tertiary);padding:14px 16px 18px}
+.sim-extra--panel{border-top:none;padding:0;margin-top:14px;padding-top:12px;border-top:.5px solid var(--color-border-tertiary)}
+.stage-btn-row{display:flex;flex-wrap:wrap;gap:5px;justify-content:center}
+.sim-extra--panel.locked .stage-btn-row,.sim-extra--panel.locked .detail-row{opacity:.45;pointer-events:none}
+.detail-row{display:grid;grid-template-columns:110px 1fr 110px;gap:12px;align-items:center;margin-top:8px;background:var(--color-background-secondary);border-radius:10px;padding:14px}
+.sim-extra--panel .detail-row{grid-template-columns:58px 1fr 58px;gap:10px;padding:12px}
+.detail-side{display:flex;flex-direction:column;align-items:center;gap:6px;opacity:.65;transition:transform .25s cubic-bezier(.2,.8,.3,1),opacity .25s ease;transform-origin:center;position:relative}
+.sim-extra--panel .detail-side{gap:4.4px}
+.detail-side.clickable{cursor:pointer;opacity:.8}
+.detail-side.clickable:hover,.detail-side.clickable:focus-visible{opacity:1;transform:scale(1.28);z-index:5;outline:none}
+.detail-side.clickable:hover .detail-icon-box,.detail-side.clickable:focus-visible .detail-icon-box{border-color:#E87722;box-shadow:0 8px 20px rgba(20,30,45,.22)}
+.detail-side.clickable:active{transform:scale(1.18)}
+.detail-side-label{font-family:'Barlow',sans-serif;font-size:9.5px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--color-text-secondary)}
+.sim-extra--panel .detail-side-label{font-size:9.7px;letter-spacing:.3px}
+.detail-icon-box{background:var(--color-background-primary);border-radius:8px;padding:8px;border:.5px solid var(--color-border-tertiary);transition:border-color .25s ease,box-shadow .25s ease}
+.sim-extra--panel .detail-icon-box{padding:5px;border-radius:6px;width:100%}
+.detail-side-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11.5px;color:#1D3557;text-align:center}
+.sim-extra--panel .detail-side-name{font-size:11.6px}
+.detail-main-box{display:flex;flex-direction:column;align-items:center;gap:8px;background:var(--color-background-primary);border-radius:10px;padding:16px;border:1.5px solid #E87722}
+.sim-extra--panel .detail-main-box{padding:12px 10px;gap:6px;border-radius:8px}
+.sim-extra--panel .detail-main-box svg{max-width:230px;margin:0 auto}
+.detail-main-label{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;color:#1D3557;text-align:center}
+.sim-extra--panel .detail-main-label{font-size:14.5px}
+.detail-main-desc{font-size:11px;color:var(--color-text-secondary);text-align:center;line-height:1.5;max-width:340px}
+.sim-extra--panel .detail-main-desc{font-size:11.6px;line-height:1.45;max-width:none}
+@media (max-width:640px){
+  .detail-row{grid-template-columns:1fr}
+  .detail-side{flex-direction:row;justify-content:center}
+}
+.bp-speed-rec b{font-family:'Barlow Condensed',sans-serif;font-weight:700}
+.ug-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px;margin-bottom:20px}
+.ug-card{background:var(--color-background-secondary);border-radius:8px;padding:9px 11px;border-left:3px solid #1D3557}
+.steps{display:flex;flex-direction:column;gap:12px;margin:10px 0 22px;background:var(--color-background-secondary);border-radius:10px;padding:14px 16px}
+.step{display:flex;gap:12px;align-items:flex-start}
+.step-num{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:#1D3557;color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}
+.step-body{padding-top:2px}
+.step-t{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;color:#1D3557;margin-bottom:2px}
+.step-b{font-size:11.5px;color:var(--color-text-secondary);line-height:1.55}
+.bp-t{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:#1D3557;margin-bottom:3px}
+.bp-b{font-size:11px;color:var(--color-text-secondary);line-height:1.5}
+.ib{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:#1D3557;color:#fff;font-size:10px;font-weight:700;cursor:pointer;border:none;padding:0;font-family:'Barlow Condensed',sans-serif;flex-shrink:0}
+.ib:hover{background:#E87722}
+.tip{display:none;position:fixed;z-index:999;background-color:#ffffff;background:var(--color-background-primary,#ffffff);border:1px solid var(--color-border-secondary,#d6dbe1);border-radius:10px;padding:14px 16px;width:250px;max-width:min(250px,calc(100vw - 24px));box-shadow:0 8px 28px rgba(20,30,45,.28)}
+.tip.on{display:block}
+.tip-t{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:#1D3557;margin-bottom:5px}
+.tip-b{font-size:12.5px;color:#3a4552;color:var(--color-text-secondary,#3a4552);line-height:1.65}
+.tip-b b{color:#1D3557}
+.tip-x{position:absolute;top:6px;right:9px;cursor:pointer;font-size:14px;color:#8a94a0;color:var(--color-text-secondary,#8a94a0);background:none;border:none;line-height:1}
+.ss-tip{display:none;position:absolute;background-color:#ffffff;background:var(--color-background-primary,#ffffff);border:1px solid var(--color-border-secondary,#d6dbe1);border-radius:9px;padding:11px 13px;width:210px;max-width:min(210px,calc(100vw - 40px));z-index:400;pointer-events:none;box-shadow:0 8px 24px rgba(20,30,45,.25)}
+.ss-tip-t{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:#1D3557;margin-bottom:4px}
+.ss-tip-b{font-size:12px;color:#3a4552;color:var(--color-text-secondary,#3a4552);line-height:1.6}
+.cmp-wrap{padding:14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.cmp-col{display:flex;flex-direction:column;gap:8px}
+.cmp-sel-row{display:flex;gap:6px}
+.cmp-sel-row select{flex:1;font-family:'Inter',sans-serif;font-size:11px;padding:5px 6px;border-radius:5px;border:.5px solid var(--color-border-secondary)}
+.cmp-sel-lbls{display:flex;gap:6px;margin-bottom:3px}
+.cmp-sel-lbls span{flex:1;font-family:'Barlow',sans-serif;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--color-text-secondary);padding-left:2px}
+.cmp-table{width:100%;border-collapse:collapse;font-size:11.5px}
+.cmp-table td{padding:4px 3px;border-bottom:.5px solid var(--color-border-tertiary)}
+.cmp-table td:first-child{color:var(--color-text-secondary)}
+.cmp-table td:first-child .ib{margin-left:5px;vertical-align:middle;position:relative;top:-1px}
+.cmp-table td:last-child{text-align:right;font-family:'Barlow Condensed',sans-serif;font-weight:700;color:#1D3557}
+.cmp-delta-wrap{padding:0 16px 14px}
+.cmp-delta{font-size:12px;color:var(--color-text-secondary);background:var(--color-background-secondary);border-radius:8px;padding:8px 12px;line-height:1.6}
+@media (max-width:760px){
+  .grid2,.cmp-wrap{grid-template-columns:1fr}
+  .pan{border-right:none;border-bottom:.5px solid var(--color-border-tertiary)}
+  .stats{gap:9px}
+  .st-v{font-size:15px}
+  .bp-grid{grid-template-columns:1fr 1fr}
+  .hdr-actions{margin-left:0}
+}
+@media (max-width:460px){
+  .bp-grid,.ug-grid{grid-template-columns:1fr}
+  .cfg-g{min-width:80px}
+}
+.beta-badge{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.6px;background:#E87722;color:#fff;border:none;border-radius:20px;padding:4px 12px;cursor:pointer;flex-shrink:0;line-height:1.3}
+.beta-badge:hover{background:#d4661a}
+.beta-ov{position:fixed;inset:0;background:rgba(15,23,35,.55);display:none;align-items:center;justify-content:center;z-index:2000;padding:20px}
+.beta-ov.on{display:flex}
+.beta-modal{background:#fff;border-radius:12px;max-width:520px;width:100%;max-height:90vh;overflow:auto;box-shadow:0 20px 60px rgba(15,23,35,.35)}
+.beta-modal-hdr{background:#1D3557;border-bottom:3px solid #E87722;border-radius:12px 12px 0 0;padding:16px 20px;display:flex;align-items:center;gap:14px}
+.beta-modal-ic{flex-shrink:0;width:36px;height:36px;border-radius:50%;background:#E87722;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px}
+.beta-modal-t{font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:700;color:#fff}
+.beta-modal-s{font-size:11.5px;color:rgba(255,255,255,.65);margin-top:1px}
+.beta-modal-pill{margin-left:auto;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.6px;background:#E87722;color:#fff;border-radius:20px;padding:4px 12px;flex-shrink:0}
+.beta-modal-body{padding:22px 20px 20px;font-size:13.5px;line-height:1.65;color:var(--color-text-secondary,#3a4552)}
+.beta-modal-body p{margin-bottom:14px}
+.beta-modal-body p:last-child{margin-bottom:0}
+.beta-modal-body b{color:#1D3557}
+.beta-modal-ftr{padding:0 20px 20px;display:flex;justify-content:flex-end}
+.beta-modal-btn{font-family:'Barlow',sans-serif;font-size:14px;font-weight:700;letter-spacing:.4px;background:#E87722;color:#fff;border:none;border-radius:8px;padding:11px 22px;cursor:pointer;transition:background .15s,transform .15s,box-shadow .15s}
+.beta-modal-btn:hover{background:var(--orange-light,#F0913A);transform:translateY(-1px);box-shadow:0 2px 6px rgba(232,119,34,.3)}
+.beta-modal-btn:hover{background:#d4661a}
+</style>
+
+<div class="beta-ov" id="beta-ov">
+  <div class="beta-modal">
+    <div class="beta-modal-hdr">
+      <div class="beta-modal-ic">!</div>
+      <div>
+        <div class="beta-modal-t">Specialty Bolt and Screw</div>
+        <div class="beta-modal-s">Bolt Tensile Strength Simulator</div>
+      </div>
+      <div class="beta-modal-pill">BETA</div>
+    </div>
+    <div class="beta-modal-body">
+      <p>This tool is currently in <b>beta</b>. The simulation logic, material data, and results are directional and educational only. Results should not be used as a final engineering or sourcing decision without a formal print review and DFM analysis.</p>
+      <p>We encourage you to use the tool, explore its outputs, and share your feedback. If you notice a result that seems off, or have a suggestion to improve the logic, we want to hear from you. Your input helps us make this resource more useful for the entire SBS community.</p>
+      <p>Thank you for being an early user of this tool. We appreciate your support and look forward to continuing to improve it.</p>
+    </div>
+    <div class="beta-modal-ftr">
+      <button class="beta-modal-btn" id="beta-ov-close" type="button">I Understand – Continue to Tool</button>
+    </div>
+  </div>
+</div>
+
+<div id="app">
+<div class="hdr">
+<div class="hdr-logo-badge"><a href="https://shop.specialtybolt.com/" target="_blank" rel="noopener noreferrer" aria-label="Visit the Specialty Bolt and Screw e-catalog"><img class="hdr-logo" src="data:image/png;base64,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" alt="Specialty Bolt and Screw, Inc. logo"></a></div>
+  <div class="hdr-divider"></div>
+  <div>
+    <div class="hdr-t">Bolt Tensile Strength Simulator</div>
+    <div class="hdr-s">Tensile Testing Learning Tool</div>
+  </div>
+  <div class="hdr-actions">
+    <button class="beta-badge" id="beta-badge-btn" type="button">BETA</button>
+    <div class="tgl-row"><span>Metric</span><label class="tgl"><input type="checkbox" id="u-tgl"><span class="tgl-sl"></span></label><span>Imperial</span></div>
+  </div>
+</div>
+<div class="cfg">
+  <div class="cfg-g"><label>Material</label><select id="c-mat"></select></div>
+  <div class="cfg-g"><label>Grade</label><select id="c-grade"></select></div>
+  <div class="cfg-g">
+    <label id="dia-label">Diameter (mm)</label>
+    <div class="stepper">
+      <button class="stepper-btn" id="dia-minus" type="button">−</button>
+      <input type="number" class="stepper-val" id="dia-val" value="6" step="0.01" inputmode="decimal">
+      <button class="stepper-btn" id="dia-plus" type="button">+</button>
+    </div>
+  </div>
+  <div class="cfg-g">
+    <label id="gl-label">Gauge length (mm)</label>
+    <div class="stepper">
+      <button class="stepper-btn" id="gl-minus" type="button">−</button>
+      <input type="number" class="stepper-val" id="gl-val" value="25" step="0.01" inputmode="decimal">
+      <button class="stepper-btn" id="gl-plus" type="button">+</button>
+    </div>
+  </div>
+  <div class="cfg-g">
+    <label id="spd-label">Speed (mm/min)</label>
+    <div class="stepper">
+      <button class="stepper-btn" id="spd-minus" type="button">−</button>
+      <input type="number" class="stepper-val" id="spd-val" value="3" step="0.01" inputmode="decimal">
+      <button class="stepper-btn" id="spd-plus" type="button">+</button>
+    </div>
+  </div>
+  <div class="cfg-info" id="c-info"></div>
+  <div class="cfg-g" style="flex:0 0 auto;min-width:auto">
+    <label>Bolt</label>
+    <div style="display:flex;gap:6px">
+      <button class="btn-sm" id="btn-mount" type="button">Mount bolt</button>
+      <button class="btn-sm ghost" id="btn-remove" type="button" disabled>Remove bolt</button>
+    </div>
+  </div>
+</div>
+<div class="mount-notice" id="mount-notice">Set your material, grade, diameter, and gauge length, then click <b>Mount bolt</b> to attach a specimen to the grip and begin testing.</div>
+<div class="tabs">
+  <div class="tab" id="tab-ug" onclick="swTab('ug')">User guide</div>
+  <div class="tab on" id="tab-sim" onclick="swTab('sim')">Simulation</div>
+  <div class="tab" id="tab-cmp" onclick="swTab('cmp')">Compare grades</div>
+  <div class="tab" id="tab-bp" onclick="swTab('bp')">Best practices</div>
+</div>
+<div class="tc on" id="tc-sim">
+  <div class="grid2">
+    <div class="pan">
+      <div class="pan-lbl" style="display:flex;align-items:center;gap:5px">Tensile test setup
+        <span class="ib-wrap"><button class="ib" id="ib-gauge">i</button>
+          <div class="tip" id="tip-gauge"><button class="tip-x" onclick="xt('tip-gauge')">✕</button><div class="tip-t">What am I looking at?</div><div class="tip-b">The bolt is clamped at both ends and stretched, just like in a real testing lab. As the load increases, watch it stretch, change color, and eventually snap. The small labels just mark the section being measured and how much it has stretched.</div></div>
+        </span>
+      </div>
+      <svg id="bsvg" width="100%" viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+    <div class="pan" style="display:flex;flex-direction:column">
+      <div class="pan-lbl" style="display:flex;align-items:center;gap:5px">Stress–strain curve
+        <span class="ib-wrap"><button class="ib" id="ib-ss">i</button>
+          <div class="tip" id="tip-ss"><button class="tip-x" onclick="xt('tip-ss')">✕</button><div class="tip-t">What is this chart?</div><div class="tip-b">This chart is a "story" of the bolt's whole test, plotted as it happens. The bottom axis shows how much the bolt has stretched; the side axis shows how hard it's being pulled. As the dot moves along the line, you're watching the bolt go from safe, to permanently bent, to broken — click any colored section for details on that stage.</div></div>
+        </span>
+      </div>
+      <div style="position:relative">
+        <svg id="ssvg" width="100%" viewBox="0 0 330 230" xmlns="http://www.w3.org/2000/svg"></svg>
+        <div class="ss-tip" id="ss-tip"><div class="ss-tip-t" id="ss-tip-t"></div><div class="ss-tip-b" id="ss-tip-b"></div></div>
+      </div>
+      <div class="stats">
+        <div class="st">
+          <div class="st-l">Tensile load <button class="ib" id="ib-pre">i</button></div>
+          <div class="st-v" id="v-pre">0 kN</div>
+          <div class="tip" id="tip-pre"><button class="tip-x" onclick="xt('tip-pre')">✕</button><div class="tip-t">Pulling force</div><div class="tip-b">This is how hard the bolt is being pulled in this test — like a tug-of-war on the bolt itself. Tensile testing applies exactly this kind of straight-line pulling force to measure a bolt's true strength.</div></div>
+        </div>
+        <div class="st"><div class="st-l">Bolt stress</div><div class="st-v" id="v-stress">0 MPa</div></div>
+        <div class="st"><div class="st-l">Strain</div><div class="st-v" id="v-strain">0.00%</div></div>
+        <div class="st">
+          <div class="st-l">% of yield <button class="ib" id="ib-yield">i</button></div>
+          <div class="st-v" id="v-pct">0%</div>
+          <div class="tip" id="tip-yield"><button class="tip-x" onclick="xt('tip-yield')">✕</button><div class="tip-t">How close to bending permanently?</div><div class="tip-b">At 100%, the bolt starts to permanently stretch and won't spring back — like bending a paperclip too far. Pinpointing exactly where this happens is one of the main things a tensile test is designed to measure.</div></div>
+        </div>
+        <div class="st">
+          <div class="st-l">% of UTS <button class="ib" id="ib-uts">i</button></div>
+          <div class="st-v" id="v-uts">0%</div>
+          <div class="tip r" id="tip-uts"><button class="tip-x" onclick="xt('tip-uts')">✕</button><div class="tip-t">How close to breaking?</div><div class="tip-b">This shows how close the bolt is to its breaking point. Past 100%, the bolt starts thinning out in one spot — called necking — right before it snaps.</div></div>
+        </div>
+        <div class="pill" id="v-pill">No load</div>
+      </div>
+      <div class="sim-extra sim-extra--panel locked" id="stage-panel">
+        <div class="pan-lbl">Jump to a stage</div>
+        <div class="stage-intro">Run the simulation and have it stop automatically right at any stage.</div>
+        <div class="stage-btn-row" id="stage-btn-row"></div>
+
+        <div class="pan-lbl" style="margin-top:16px;display:flex;align-items:center;gap:5px">A closer look
+          <span class="ib-wrap"><button class="ib" id="ib-detail">i</button>
+            <div class="tip" id="tip-detail"><button class="tip-x" onclick="xt('tip-detail')">✕</button><div class="tip-t">What am I looking at?</div><div class="tip-b">An enlarged, schematic view of the current stage, with the stage right before it and right after it shown alongside for context — the same style of icon used in the Best Practices stage table.</div></div>
+          </span>
+        </div>
+        <div class="detail-row">
+          <div class="detail-side" id="detail-prev-wrap" tabindex="0" role="button" aria-label="Jump to previous stage">
+            <div class="detail-side-label">Previous</div>
+            <div class="detail-icon-box" id="detail-prev"></div>
+            <div class="detail-side-name" id="detail-prev-name">—</div>
+          </div>
+          <div class="detail-main-box">
+            <div class="detail-main-label" id="detail-main-label">—</div>
+            <div id="detail-main"></div>
+            <div class="detail-main-desc" id="detail-main-desc"></div>
+          </div>
+          <div class="detail-side" id="detail-next-wrap" tabindex="0" role="button" aria-label="Jump to next stage">
+            <div class="detail-side-label">Next</div>
+            <div class="detail-icon-box" id="detail-next"></div>
+            <div class="detail-side-name" id="detail-next-name">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slider-zone">
+    <div class="play-row">
+      <button class="btn-sm" id="btn-start" disabled>▶ Start</button>
+      <button class="btn-reset" id="btn-reset"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Reset</button>
+      <div class="sl-top" style="flex:1;margin-bottom:0;justify-content:flex-end">
+        <div class="reads">
+          <div class="rd"><div class="rd-l">Axial force</div><div class="rd-v" id="r-forc">0 kN</div></div>
+        </div>
+      </div>
+    </div>
+    <input type="range" id="main-sl" min="0" max="100" value="0" step="1" disabled>
+    <div id="ax-bar"></div>
+    <div class="warn" id="warn-msg">Beyond yield — permanent deformation occurring. Further loading will damage the fastener.</div>
+  </div>
+</div>
+<div class="tc" id="tc-cmp">
+  <div style="padding:12px 16px 0;font-size:11.5px;color:var(--color-text-secondary);display:flex;align-items:center;gap:6px">
+    Compare two bolts side by side to see how their strength and ductility differ.
+    <span class="ib-wrap"><button class="ib" id="ib-cmp">i</button>
+      <div class="tip" id="tip-cmp"><button class="tip-x" onclick="xt('tip-cmp')">✕</button><div class="tip-t">What do these terms mean?</div><div class="tip-b"><b>Yield</b> — the point where the bolt starts to permanently stretch.<br><b>Ultimate</b> — the point where it breaks.<br><b>Stiffness</b> — how much the bolt resists stretching under load.<br><b>Bearing area</b> — the cross-section of the threads that actually carries the load.</div></div>
+    </span>
+  </div>
+  <div class="tip" id="tip-spec"><button class="tip-x" onclick="xt('tip-spec')">✕</button><div class="tip-t" id="tip-spec-t"></div><div class="tip-b" id="tip-spec-b"></div></div>
+  <div class="cmp-wrap">
+    <div class="cmp-col">
+      <div class="pan-lbl">Configuration A</div>
+      <div class="cmp-sel-lbls"><span>Material</span><span>Grade</span><span>Bolt Size</span></div>
+      <div class="cmp-sel-row">
+        <select id="cmpA-mat"></select><select id="cmpA-grade"></select><select id="cmpA-size"></select>
+      </div>
+      <svg id="cmpA-svg" width="100%" viewBox="0 0 260 150" xmlns="http://www.w3.org/2000/svg"></svg>
+      <table class="cmp-table" id="cmpA-tbl"></table>
+    </div>
+    <div class="cmp-col">
+      <div class="pan-lbl">Configuration B</div>
+      <div class="cmp-sel-lbls"><span>Material</span><span>Grade</span><span>Bolt Size</span></div>
+      <div class="cmp-sel-row">
+        <select id="cmpB-mat"></select><select id="cmpB-grade"></select><select id="cmpB-size"></select>
+      </div>
+      <svg id="cmpB-svg" width="100%" viewBox="0 0 260 150" xmlns="http://www.w3.org/2000/svg"></svg>
+      <table class="cmp-table" id="cmpB-tbl"></table>
+    </div>
+  </div>
+  <div class="cmp-delta-wrap">
+    <div class="pan-lbl">Delta (B − A)</div>
+    <div class="cmp-delta" id="cmp-delta"></div>
+  </div>
+</div>
+
+<div class="tc" id="tc-ug">
+  <div class="bp-wrap">
+    <div class="pan-lbl">User guide</div>
+    <div class="pan-lbl" style="margin-top:2px">Step-by-step: running a test</div>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-body"><div class="step-t">Choose a material and grade</div><div class="step-b">In the Simulation tab, pick Carbon steel, Stainless, Titanium, Brass, or Aluminum, then select a grade from the dropdown next to it.</div></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-body"><div class="step-t">Set the bolt's size and test speed</div><div class="step-b">Use the Diameter and Gauge length steppers to match a real bolt, and the Speed (mm/min) stepper to set how fast the test runs — or leave them all at the defaults. Not sure what speed to use? The <b>Best practices</b> tab shows a recommended range calculated from your exact diameter and gauge length.</div></div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-body"><div class="step-t">Click Mount bolt</div><div class="step-b">The grip starts empty — nothing is under test until you attach a specimen. Click <b>Mount bolt</b> to lock in your current material, grade, diameter, and gauge length and attach that bolt to the grip. While a bolt is mounted, those four settings are locked; click <b>Remove bolt</b> first if you want to change any of them, then mount again.</div></div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-body"><div class="step-t">Click Start, or drag the slider yourself</div><div class="step-b">Start runs the test automatically from zero at the speed you set. Dragging the slider by hand lets you stop at any exact point to inspect it. Both are only available once a bolt is mounted.</div></div></div>
+      <div class="step"><div class="step-num">5</div><div class="step-body"><div class="step-t">Watch both panels together</div><div class="step-b">The bolt visibly stretches and changes color on the left, while the stress-strain curve traces live on the right.</div></div></div>
+      <div class="step"><div class="step-num">6</div><div class="step-body"><div class="step-t">Read the stats as they update</div><div class="step-b">Tensile load, stress, strain, % of yield, and % of UTS all update in real time above the panels — hover any "i" bubble for a plain-language explanation.</div></div></div>
+      <div class="step"><div class="step-num">7</div><div class="step-body"><div class="step-t">Jump to a stage or use A closer look</div><div class="step-b">Once a bolt is mounted, the <b>Jump to a stage</b> buttons run the test straight to any stage automatically — the yield stage is marked with an orange border since that's the moment the bolt becomes permanently deformed. In the <b>A closer look</b> panel, hover the Previous/Next thumbnails to enlarge them, then click to jump straight there without restarting the test.</div></div></div>
+      <div class="step"><div class="step-num">8</div><div class="step-body"><div class="step-t">Click Reset to try again, or Remove bolt for a new specimen</div><div class="step-b"><b>Reset</b> returns the current bolt to zero load so you can rerun the same test. <b>Remove bolt</b> detaches it entirely and unlocks material, grade, diameter, and gauge length so you can mount a different specimen.</div></div></div>
+    </div>
+    <div class="ug-grid">
+      <div class="ug-card"><div class="bp-t">What is this tool?</div><div class="bp-b">This tool simulates a standard tensile test on a bolt — pulling it in a straight line until it stretches, yields, necks, and finally breaks — so you can see exactly how a fastener's rated strength is actually measured.</div></div>
+      <div class="ug-card"><div class="bp-t">Getting around the tool</div><div class="bp-b"><b>User guide</b> — you're here. <b>Simulation</b> — mount a bolt, then pull it and watch it stretch. <b>Compare grades</b> — put two bolts side by side. <b>Best practices</b> — what to know when reading or running a tensile test.</div></div>
+      <div class="ug-card"><div class="bp-t">Mount bolt / Remove bolt</div><div class="bp-b">The grip starts empty. <b>Mount bolt</b> attaches your current material, grade, diameter, and gauge length and locks them in; <b>Remove bolt</b> detaches the specimen and unlocks those settings so you can set up a different one. You can mount and remove as often as you like — just remove the current bolt before changing its specs.</div></div>
+      <div class="ug-card"><div class="bp-t">How to read this tool</div><div class="bp-b">Once mounted, drag the slider to apply load like a real tensile test. It's all one continuous pull — watch the color move from safe (green) through yield (orange) to failure (red) as the load increases.</div></div>
+      <div class="ug-card"><div class="bp-t">Why this test matters</div><div class="bp-b">Tensile testing like this is exactly how manufacturers determine a bolt's rated strength — the Sy, Yield Strength and Su, Ultimate Tensile Strength (UTS) values used throughout this tool all come from tests just like this one.</div></div>
+      <div class="ug-card"><div class="bp-t">Look for the (i) icons</div><div class="bp-b">Anywhere you see a small "i" bubble, just hover over it for a plain-language explanation of that term — no need to already know the jargon, and no clicking required.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="tc" id="tc-bp">
+  <div class="bp-wrap">
+    <div class="pan-lbl">Best practices</div>
+    <div class="pan-lbl" style="margin-top:2px">Stages of a tensile test</div>
+    <div class="stage-intro">Every bolt goes through the same sequence on its way to fracture — modeled here on the classic specimen-with-registration-marks diagram. Head to the <b>Simulation</b> tab to run the test and jump straight to any of these stages.</div>
+    <div id="stage-table-wrap"></div>
+    <div class="bp-grid" style="margin-top:18px">
+      <div class="bp-card"><div class="bp-t">Yield vs. ultimate strength</div><div class="bp-b">Yield is where permanent stretch begins; ultimate is the peak load just before failure. A bolt's usable working range sits below yield, with ultimate marking the true safety ceiling.</div></div>
+      <div class="bp-card"><div class="bp-t">0.2% proof strength</div><div class="bp-b">Many stainless, brass, and aluminum alloys have no sharp yield point. The 0.2% offset method defines proof strength from the elastic slope, and is the standard way to report yield for these materials.</div></div>
+      <div class="bp-card"><div class="bp-t">Test speed matters</div><div class="bp-b">Standard tensile tests pull at a controlled, slow, steady rate. Loading too fast can artificially raise the measured strength and give misleading results. Speed should scale with gauge length — and slow down slightly for larger diameters, since more cross-section needs more time to load evenly.</div><div class="bp-speed-rec" id="bp-speed-rec">Recommended for your current setup: <b id="bp-speed-val">—</b></div></div>
+      <div class="bp-card"><div class="bp-t">Necking marks the beginning of the end</div><div class="bp-b">Once a bolt passes ultimate strength, its cross-section starts narrowing at one point. From here, failure is a matter of when, not if.</div></div>
+      <div class="bp-card"><div class="bp-t">Not all failures look the same</div><div class="bp-b">A ductile fracture shows visible necking and a rough, fibrous break. A brittle fracture snaps suddenly with little stretch — often a sign of the wrong material, embrittlement, or damage.</div></div>
+      <div class="bp-card"><div class="bp-t">Elongation shows ductility</div><div class="bp-b">Percent elongation at fracture — how much the gauge section stretched before breaking — is reported alongside Sy, Yield Strength and Su, Ultimate Tensile Strength (UTS) as a standard measure of how ductile a material is.</div></div>
+      <div class="bp-card"><div class="bp-t">Never reuse TTY bolts</div><div class="bp-b">Torque-to-yield bolts are single-use. Once a bolt has been loaded past its yield point, the shank is permanently elongated — this test shows exactly why.</div></div>
+      <div class="bp-card"><div class="bp-t">Temperature affects strength</div><div class="bp-b">Yield and ultimate strength both shift with temperature — most materials weaken as they heat up. Standard tensile ratings assume room temperature unless a test specifically states otherwise.</div></div>
+    </div>
+    <div class="pan-lbl" style="margin-top:22px">Standards referenced in this tool</div>
+    <div id="standards-table-wrap"></div>
+  </div>
+</div>
+</div>
+
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const NS='http://www.w3.org/2000/svg';
+function svgEl(tag,attrs,par){
+  const e=document.createElementNS(NS,tag);
+  Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,String(v)));
+  if(par)par.appendChild(e);return e;
+}
+
+// Each grade is tagged with the unit-system its designation belongs to, so the
+// Grade dropdown can be filtered by the Metric/Imperial toggle: 'metric' (ISO/DIN
+// property class), 'imperial' (SAE/ASTM customary), or 'both' when the same grade
+// designation is used identically regardless of thread/unit system.
+// `proofRatio` = standard-specified proof stress ÷ Rp0.2 yield, used to compute proof load
+// accurately per grade (SAE J429 / ISO 898-1 both define proof stress as a distinct value,
+// NOT a flat 75% of yield — that flat assumption was a bug in earlier versions). Grades
+// without a separately standardized proof stress (stainless, titanium, brass, aluminum)
+// omit this field and fall back to using Sy directly, since the Sy reported for those
+// materials is already the 0.2% offset value that serves as their practical design ceiling.
+//
+// `ductility` = a *relative* elongation-at-break factor (1.0 = most ductile grade in this
+// table), used only to scale the displayed strain axis so higher-strength/lower-ductility
+// grades visibly fracture at a smaller strain than softer grades. These are directional
+// approximations based on typical published elongation ranges per grade, not exact
+// specified minimum-elongation percentages from any single standard — documented here
+// rather than silently presenting every grade as equally ductile (which the tool used
+// to do).
+const GRADES={
+  steel:[
+    {label:'SAE Grade 2',Sy:390,Su:520,E:200,note:'Low-carbon, general purpose',system:'imperial',proofRatio:0.965,ductility:1.00},
+    {label:'SAE Grade 5',Sy:635,Su:830,E:200,note:'Medium carbon, most common',system:'imperial',proofRatio:0.924,ductility:0.60},
+    {label:'SAE Grade 8',Sy:895,Su:1040,E:200,note:'Alloy steel, high strength',system:'imperial',proofRatio:0.923,ductility:0.45},
+    {label:'ISO 4.6',Sy:240,Su:400,E:200,note:'Mild steel, coarse thread',system:'metric',proofRatio:0.938,ductility:0.95},
+    {label:'ISO 8.8',Sy:640,Su:800,E:210,note:'Structural, widely used',system:'metric',proofRatio:0.906,ductility:0.55},
+    {label:'ISO 10.9',Sy:940,Su:1040,E:210,note:'High-strength alloy',system:'metric',proofRatio:0.883,ductility:0.42},
+    {label:'ISO 12.9',Sy:1100,Su:1220,E:210,note:'Ultra-high strength',system:'metric',proofRatio:0.882,ductility:0.38},
+  ],
+  stainless:[
+    {label:'A2-50',Sy:210,Su:500,E:193,note:'304 SS, lightly cold-worked',system:'metric',ductility:1.00},
+    {label:'A2-70',Sy:450,Su:700,E:193,note:'304 SS, standard strength',system:'metric',ductility:0.75},
+    {label:'A2-80',Sy:600,Su:800,E:193,note:'304 SS, high cold-worked',system:'metric',ductility:0.55},
+    {label:'A4-70',Sy:450,Su:700,E:193,note:'316 SS, marine grade',system:'metric',ductility:0.75},
+    {label:'A4-80',Sy:600,Su:800,E:193,note:'316 SS, high strength',system:'metric',ductility:0.55},
+    {label:'F593',Sy:207,Su:517,E:193,note:'ASTM 316, marine/chemical',system:'imperial',ductility:0.75},
+  ],
+  titanium:[
+    {label:'CP Ti Grade 2',Sy:275,Su:345,E:103,note:'Commercially pure, corrosion resistant',system:'both',ductility:0.85},
+    {label:'Ti-6Al-4V (Grade 5)',Sy:880,Su:950,E:114,note:'Most common aerospace alloy',system:'both',ductility:0.55},
+    {label:'Ti-6Al-4V ELI (Grade 23)',Sy:795,Su:860,E:114,note:'Extra-low interstitial, aerospace/medical',system:'both',ductility:0.60},
+    {label:'Ti-6Al-4V STA',Sy:1100,Su:1170,E:114,note:'Solution treated & aged, highest strength',system:'both',ductility:0.42},
+  ],
+  brass:[
+    {label:'C360 Free-Cutting (half-hard)',Sy:150,Su:340,E:100,note:'General purpose, easy machining',system:'both',ductility:0.65},
+    {label:'C260 Cartridge Brass (half-hard)',Sy:195,Su:385,E:110,note:'Good ductility, cold-formed parts',system:'both',ductility:0.85},
+    {label:'C464 Naval Brass',Sy:195,Su:414,E:100,note:'Marine grade, corrosion resistant',system:'both',ductility:0.70},
+  ],
+  aluminum:[
+    {label:'6061-T6',Sy:275,Su:310,E:69,note:'Most common structural alloy',system:'both',ductility:0.55},
+    {label:'2024-T4',Sy:325,Su:470,E:73,note:'High-strength aerospace alloy',system:'both',ductility:0.70},
+    {label:'7075-T6',Sy:503,Su:572,E:71,note:'Very high strength aerospace alloy',system:'both',ductility:0.40},
+  ]
+};
+// Fixed global stress-axis ceiling (10% headroom above the strongest grade across every
+// material family) so the stress-strain chart and mini comparison charts use one constant
+// y-axis scale — switching grades (e.g. Grade 2 → Grade 8) changes the curve's height on
+// screen instead of always rescaling to fill the chart.
+const GLOBAL_MAX_SU=Math.max(...Object.values(GRADES).flatMap(arr=>arr.map(g=>g.Su)))*1.1;
+function gradesFor(matKey){
+  return GRADES[matKey].filter(g=>g.system==='both'||g.system===units);
+}
+// Thread sizes are a function of geometry, not material — every material family
+// can be compared at any of these standard sizes, in either unit system.
+// Metric: full ISO coarse-pitch series M1.6–M30. Imperial: UNC series #0–1".
+// As values computed from standard thread-stress-area formulas for internal consistency.
+const SIZES_METRIC=[
+  {label:'M1.6',d:1.6,As:1.3},{label:'M2',d:2,As:2.1},
+  {label:'M2.5',d:2.5,As:3.4},{label:'M3',d:3,As:5.0},
+  {label:'M4',d:4,As:8.8},{label:'M5',d:5,As:14.2},
+  {label:'M6',d:6,As:20.1},{label:'M8',d:8,As:36.6},
+  {label:'M10',d:10,As:58.0},{label:'M12',d:12,As:84.3},
+  {label:'M14',d:14,As:115.4},{label:'M16',d:16,As:156.7},
+  {label:'M18',d:18,As:192.5},{label:'M20',d:20,As:244.8},
+  {label:'M22',d:22,As:303.4},{label:'M24',d:24,As:352.5},
+  {label:'M27',d:27,As:459.4},{label:'M30',d:30,As:560.6},
+];
+const SIZES_IMPERIAL=[
+  {label:'#0-80',d:1.52,As:1.16},{label:'#1-64',d:1.85,As:1.69},
+  {label:'#2-56',d:2.18,As:2.38},{label:'#3-48',d:2.51,As:3.14},
+  {label:'#4-40',d:2.84,As:3.89},{label:'#5-40',d:3.17,As:5.13},
+  {label:'#6-32',d:3.51,As:5.86},{label:'#8-32',d:4.17,As:9.04},
+  {label:'#10-24',d:4.83,As:11.31},{label:'#12-24',d:5.49,As:15.59},
+  {label:'1/4"-20',d:6.35,As:20.53},{label:'5/16"-18',d:7.94,As:33.83},
+  {label:'3/8"-16',d:9.52,As:49.99},{label:'7/16"-14',d:11.11,As:68.59},
+  {label:'1/2"-13',d:12.70,As:91.55},{label:'9/16"-12',d:14.29,As:117.38},
+  {label:'5/8"-11',d:15.88,As:145.81},{label:'3/4"-10',d:19.05,As:215.78},
+  {label:'7/8"-9',d:22.22,As:297.89},{label:'1"-8',d:25.40,As:390.80},
+];
+const SIZES_BY_UNIT={metric:SIZES_METRIC,imperial:SIZES_IMPERIAL};
+const currentSizeList=()=>SIZES_BY_UNIT[units];
+// Sharp-yield curve shape (typical carbon/alloy steel bolts)
+const SS_PTS_SHARP=[
+  [0,0],[0.02,0.02],[0.04,0.05],
+  [0.06,0.15],[0.10,0.30],[0.16,0.50],[0.22,0.63],[0.28,0.72],
+  [0.30,0.71],[0.33,0.70],[0.36,0.70],
+  [0.42,0.76],[0.50,0.85],[0.58,0.93],[0.64,0.98],[0.72,1.0],
+  [0.76,0.97],[0.80,0.93],[0.84,0.87],[0.88,0.80],[0.92,0.70],[0.96,0.58],[1.0,0.44]
+];
+// Rounded, no-sharp-yield curve shape (typical austenitic stainless — gradual curvature to 0.2% proof, longer/later peak)
+const SS_PTS_ROUND=[
+  [0,0],[0.02,0.03],[0.05,0.09],[0.10,0.20],[0.16,0.34],[0.22,0.46],
+  [0.30,0.58],[0.38,0.68],[0.46,0.76],[0.54,0.83],[0.62,0.89],
+  [0.70,0.94],[0.78,0.98],[0.84,1.0],[0.88,0.99],[0.92,0.94],[0.96,0.85],[1.0,0.70]
+];
+const SS_SETS={steel:SS_PTS_SHARP,stainless:SS_PTS_ROUND,titanium:SS_PTS_SHARP,brass:SS_PTS_ROUND,aluminum:SS_PTS_ROUND};
+const SS_REGIONS=[
+  {x0:0,x1:0.06,phase:'seating',fill:'rgba(100,160,100,.10)',label:'Seating'},
+  {x0:0.06,x1:0.28,phase:'elastic',fill:'rgba(46,125,50,.08)',label:'Elastic'},
+  {x0:0.28,x1:0.36,phase:'yield',fill:'rgba(230,81,0,.11)',label:'Yield'},
+  {x0:0.36,x1:0.72,phase:'hardening',fill:'rgba(183,28,28,.08)',label:'Hardening'},
+  {x0:0.72,x1:0.88,phase:'necking',fill:'rgba(183,28,28,.14)',label:'Necking'},
+  {x0:0.88,x1:1.0,phase:'fracture',fill:'rgba(183,28,28,.21)',label:'Fracture'},
+];
+const SS_TIPS={
+  seating:{t:'Getting started',b:"The bolt is just taking up initial slack in the test grips — barely any stress registers yet."},
+  elastic:{t:'Safe zone — stretches like a spring',b:'The bolt stretches like a spring here. Let go of the load and it springs right back to its original length — no lasting damage. This is the safe operating range for a bolt in service.'},
+  yield:{t:'Starting to permanently stretch',b:"This is where the bolt starts to permanently deform. Past this point, it won't spring all the way back — even if you loosen it."},
+  hardening:{t:'Stretching for good',b:"The bolt keeps stretching permanently here, and actually gets a little stronger as it does — but it will never return to its original length."},
+  necking:{t:'About to snap',b:'The bolt has passed its peak strength and starts thinning out in one spot. Inside that neck, the material goes through void formation, void coalescence, and crack propagation in quick succession before it snaps — see the Best Practices tab for the full breakdown.'},
+  fracture:{t:'Broken',b:'The bolt has snapped. All the load it was carrying is lost instantly.'},
+};
+// Every stage the specimen passes through, from an unloaded bolt to final fracture —
+// modeled on the classic "specimen with registration marks" tensile-test diagram (uniform
+// stretch -> necking -> void formation -> void coalescence -> crack propagation -> fracture).
+// This single array drives: phase(), the bolt animation's necking detail, the Best
+// Practices stage table, its schematic icons, and the "stop simulation at this stage"
+// buttons -- so every part of the tool agrees on the same stage boundaries.
+const STAGES=[
+  {key:'seating',t0:0,t1:4,label:'Seating',shape:'straight',iconColor:'#9fb0c0',
+    title:'Specimen with registration marks',
+    desc:'The bolt is clamped in the test grips with reference marks along the gauge length, ready to be pulled — no meaningful load yet.'},
+  {key:'elastic',t0:4,t1:28,label:'Elastic',shape:'straight',iconColor:'#4a9a4a',
+    title:'Cross section — elastic stretch',
+    desc:'The bolt stretches like a spring. Release the load here and it springs back to its original length — fully reversible, the safe operating range for a bolt in service.'},
+  {key:'yield',t0:28,t1:36,label:'Yield',shape:'straight',iconColor:'#cc7700',
+    title:'Permanent deformation begins',
+    desc:'Past this point the bolt starts to stretch permanently. Even with the load removed, it will not fully spring back — the point of no return for the shank.',
+    warn:true},
+  {key:'hardening',t0:36,t1:72,label:'Strain hardening',shape:'straight',iconColor:'#e65100',
+    title:'Uniform permanent stretching',
+    desc:'The bolt keeps stretching permanently along its full length and gets slightly stronger as it does, but the cross-section is still uniform — necking has not started yet.'},
+  {key:'necking',t0:72,t1:77,label:'Initial necking',shape:'necking',neckH:7,
+    title:'Initial necking',
+    desc:'Past ultimate strength, the cross-section starts narrowing at one location because the material can no longer strain-harden fast enough to keep up with the load.'},
+  {key:'void',t0:77,t1:81,label:'Void formation',shape:'necking',neckH:6,
+    extra:'<circle cx="50" cy="15" r="1.3" fill="#3a1010"/><circle cx="55" cy="13" r="1.3" fill="#3a1010"/><circle cx="60" cy="16" r="1.3" fill="#3a1010"/>',
+    title:'Void formation',
+    desc:'Inside the necked region, microscopic voids nucleate around inclusions and second-phase particles — invisible from the outside, but the start of internal damage.'},
+  {key:'coalescence',t0:81,t1:85,label:'Void coalescence',shape:'necking',neckH:5,
+    extra:'<line x1="55" y1="12" x2="55" y2="18" stroke="#3a1010" stroke-width="2" stroke-linecap="round"/>',
+    title:'Void coalescence',
+    desc:'The internal voids grow and link together into a small central crack, right at the core of the necked cross-section.'},
+  {key:'crack',t0:85,t1:88,label:'Crack propagation',shape:'necking',neckH:4,
+    extra:'<line x1="46" y1="15" x2="64" y2="15" stroke="#2a0808" stroke-width="2.4" stroke-linecap="round"/>',
+    title:'Crack propagation',
+    desc:'The internal crack grows outward from the center toward the surface, rapidly shedding what little load-carrying area remains.'},
+  {key:'fracture',t0:88,t1:100,label:'Fracture',shape:'fracture',iconColor:'#8a97a5',
+    title:'Fracture',
+    desc:'The bolt separates into two pieces. All load is lost instantly — this is the end of the test.'},
+];
+// Stages where the shank is visibly necked (initial necking through crack propagation) --
+// they share the same tapered-shank rendering in drawBolt(), differentiated only by the
+// void/crack detail drawn at the center of the neck.
+const NECK_PHASES=new Set(['necking','void','coalescence','crack']);
+// Small schematic icon per stage — a specimen with registration marks that narrows and
+// eventually splits, echoing the classic tensile-test stage diagram this table is based on.
+// Same fixed viewBox for every size, so it can be reused at table scale, thumbnail scale
+// (previous/next stage), or enlarged scale (the Simulation tab's close-up detail view).
+function stageIconSVG(stage){
+  const marks='<line x1="22" y1="4" x2="22" y2="26" stroke="#333" stroke-width="1.3"/><line x1="88" y1="4" x2="88" y2="26" stroke="#333" stroke-width="1.3"/>';
+  if(stage.shape==='fracture'){
+    return `<svg viewBox="0 0 110 30" width="100%" style="display:block">
+      <rect x="4" y="10" width="44" height="10" rx="4" fill="${stage.iconColor}"/>
+      <rect x="62" y="10" width="44" height="10" rx="4" fill="${stage.iconColor}"/>
+      <line x1="16" y1="6" x2="16" y2="24" stroke="#333" stroke-width="1.3"/>
+      <line x1="94" y1="6" x2="94" y2="24" stroke="#333" stroke-width="1.3"/>
+    </svg>`;
+  }
+  if(stage.shape==='necking'){
+    const c='#b71c1c',neckH=stage.neckH;
+    return `<svg viewBox="0 0 110 30" width="100%" style="display:block">
+      <rect x="4" y="10" width="34" height="10" rx="4" fill="${c}"/>
+      <rect x="38" y="${15-neckH/2}" width="34" height="${neckH}" fill="${c}"/>
+      <rect x="72" y="10" width="34" height="10" rx="4" fill="${c}"/>
+      ${marks}
+      ${stage.extra||''}
+    </svg>`;
+  }
+  return `<svg viewBox="0 0 110 30" width="100%" style="display:block">
+    <rect x="4" y="10" width="102" height="10" rx="5" fill="${stage.iconColor}"/>
+    ${marks}
+  </svg>`;
+}
+// Read-only reference table (icons + descriptions only — the run/stop controls for each
+// stage live in the Simulation tab, alongside the simulation they control).
+function buildStageTable(){
+  const wrap=$('stage-table-wrap');
+  if(!wrap)return;
+  const rows=STAGES.map(s=>{
+    const warnBadge=s.warn?'<span class="stage-warn-badge">⚠ PERMANENT</span>':'';
+    return `<tr class="${s.warn?'stage-row-warn':''}">
+      <td class="stage-icon-cell">${stageIconSVG(s)}</td>
+      <td><div class="stage-name">${PHASE_ICON[s.key]||''} ${s.title}${warnBadge}</div></td>
+      <td class="stage-desc">${s.desc}</td>
+    </tr>`;
+  }).join('');
+  wrap.innerHTML=`<table class="stage-table">
+    <thead><tr><th>Specimen</th><th>Stage</th><th>What's happening</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+// Industry standards the tensile-test methodology and grade property values in this tool
+// are drawn from — surfaced in Best Practices as a quick-reference table with links out
+// to each standard's official listing.
+const STANDARDS_REF=[
+  {code:'ASTM E8/E8M',title:'Standard Test Methods for Tension Testing of Metallic Materials',url:null},
+  {code:'SAE J429',title:'Mechanical and Material Requirements for Externally Threaded Fasteners',url:'https://drive.google.com/file/d/1txdNYoBTeyXSrg1n8tgj7HpTAAeBKiqL/view?usp=drive_link'},
+  {code:'ISO 898-1',title:'Mechanical properties of fasteners made of carbon steel and alloy steel — Bolts, screws and studs',url:'https://drive.google.com/file/d/188mnAQ1KFp6BrNjVWu9-Azkgvmt3qIi7/view?usp=drivesdk'},
+  {code:'ISO 3506-1',title:'Mechanical properties of corrosion-resistant stainless steel fasteners — Bolts, screws and studs',url:'https://drive.google.com/file/d/1qNdBYawo58zZrjdK6b8oKtiz65NVc49f/view?usp=drivesdk'},
+  {code:'ASTM F606/F606M',title:'Standard Test Methods for Determining the Mechanical Properties of Externally and Internally Threaded Fasteners',url:'https://drive.google.com/file/d/12V41rFiO_DEJ41rLW2dRTpUXrudlnsJh/view?usp=drive_link'},
+];
+function buildStandardsTable(){
+  const wrap=$('standards-table-wrap');
+  if(!wrap)return;
+  const rows=STANDARDS_REF.map(s=>`<tr>
+      <td class="std-code">${s.code}</td>
+      <td class="stage-desc">${s.title}</td>
+      <td style="text-align:right">${s.url
+        ?`<button class="btn-sm ghost std-link-btn" type="button" data-std-url="${s.url}">View standard ↗</button>`
+        :`<span class="std-coming-soon">Coming soon</span>`}</td>
+    </tr>`).join('');
+  wrap.innerHTML=`<table class="stage-table">
+    <thead><tr><th>Standard</th><th>Title</th><th></th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+  wrap.querySelectorAll('.std-link-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{window.open(btn.dataset.stdUrl,'_blank','noopener,noreferrer');});
+  });
+}
+// Runs the simulation from zero and automatically stops partway through the requested
+// stage (its midpoint, so the visual is clearly representative of that stage) — used by
+// the "Jump to a stage" buttons in the Simulation tab, including the yield stage (the
+// moment the bolt becomes permanently deformed, marked only with a distinct border color).
+function runToStage(stageKey){
+  if(!boltMounted)return;
+  const target=STAGES.find(s=>s.key===stageKey);
+  if(!target)return;
+  swTab('sim');
+  if(playInt){clearInterval(playInt);playInt=null;}
+  $('main-sl').value=0;update(0);
+  $('btn-start').disabled=true;$('btn-start').textContent='Running…';
+  const stopAt=Math.max(1,Math.round((target.t0+target.t1)/2));
+  const intervalMs=Math.max(15,270/testSpeed);
+  playInt=setInterval(()=>{
+    let v=+$('main-sl').value+1;
+    if(v>=stopAt){
+      clearInterval(playInt);playInt=null;
+      $('btn-start').disabled=false;$('btn-start').textContent='▶ Start';
+      v=stopAt;
+    }
+    $('main-sl').value=v;update(v);
+  },intervalMs);
+}
+window.runToStage=runToStage;
+// Renders the row of "Jump to stage" buttons in the Simulation tab (one per STAGES entry,
+// the yield one visually emphasized since that's the permanent-deformation moment).
+function buildStageButtons(){
+  const wrap=$('stage-btn-row');
+  if(!wrap)return;
+  wrap.innerHTML=STAGES.map(s=>{
+    const cls=s.warn?'stage-stop-btn stagewarn':'stage-stop-btn';
+    const title=s.warn?`${s.title} — permanent deformation begins here`:s.title;
+    return `<button class="${cls}" data-stage="${s.key}" title="${title}">${PHASE_ICON[s.key]||''} ${s.label}</button>`;
+  }).join('');
+  wrap.querySelectorAll('.stage-stop-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      if(!boltMounted)return;
+      setActiveStageButton(btn);
+      runToStage(btn.dataset.stage);
+    });
+  });
+}
+// Tints the pressed stage button with that stage's own color (from BOLTCOLORS) so it stays
+// visually marked as "active" until another stage button — or Reset — is pressed, giving a
+// clear indicator of which stage is currently shown.
+function setActiveStageButton(btn){
+  const wrap=$('stage-btn-row');
+  if(!wrap)return;
+  wrap.querySelectorAll('.stage-stop-btn').forEach(b=>{
+    b.classList.remove('active');
+    b.style.background='';b.style.borderColor='';b.style.color='';
+  });
+  if(!btn)return;
+  const color=BOLTCOLORS[btn.dataset.stage]||'#1D3557';
+  btn.classList.add('active');
+  btn.style.background=color;
+  btn.style.borderColor=color;
+  btn.style.color='#fff';
+}
+window.setActiveStageButton=setActiveStageButton;
+// Live "necking close-up" detail view: an enlarged render of the current stage's schematic
+// (same icon style as the reference table, just bigger), flanked by smaller previous/next
+// stage thumbnails for context. Called every time the slider moves.
+function drawDetailView(t){
+  const mainEl=$('detail-main'),prevEl=$('detail-prev'),nextEl=$('detail-next');
+  if(!mainEl)return;
+  const ph=phase(t);
+  const idx=STAGES.findIndex(s=>s.key===ph);
+  const current=STAGES[idx];
+  const prev=idx>0?STAGES[idx-1]:null;
+  const next=idx<STAGES.length-1?STAGES[idx+1]:null;
+
+  // for the crack stage, grow the crack live with t instead of showing a fixed snapshot
+  let stageForRender=current;
+  if(current.key==='crack'){
+    const crackFrac=Math.min(1,Math.max(0,(t-85)/3));
+    const crackLen=(4+crackFrac*18).toFixed(1);
+    stageForRender=Object.assign({},current,{extra:`<line x1="${55-crackLen/2}" y1="15" x2="${55+crackLen/2}" y2="15" stroke="#2a0808" stroke-width="2.4" stroke-linecap="round"/>`});
+  }
+  mainEl.innerHTML=stageIconSVG(stageForRender);
+  $('detail-main-label').textContent=current.title;
+  $('detail-main-desc').textContent=current.desc;
+  if(prevEl){
+    prevEl.innerHTML=prev?stageIconSVG(prev):stageIconSVG(Object.assign({},STAGES[0],{iconColor:'#c7cdd4'}));
+    $('detail-prev-name').textContent=prev?prev.label:'— start —';
+  }
+  if(nextEl){
+    nextEl.innerHTML=next?stageIconSVG(next):'';
+    $('detail-next-name').textContent=next?next.label:'— end —';
+  }
+  const prevWrap=$('detail-prev-wrap'),nextWrap=$('detail-next-wrap');
+  if(prevWrap){
+    if(prev&&boltMounted){prevWrap.classList.add('clickable');prevWrap.dataset.stage=prev.key;}
+    else{prevWrap.classList.remove('clickable');delete prevWrap.dataset.stage;}
+  }
+  if(nextWrap){
+    if(next&&boltMounted){nextWrap.classList.add('clickable');nextWrap.dataset.stage=next.key;}
+    else{nextWrap.classList.remove('clickable');delete nextWrap.dataset.stage;}
+  }
+}
+// Jump straight to a stage's representative point WITHOUT resetting the simulation to zero
+// and replaying — unlike runToStage(), this preserves the idea that the user is simply
+// navigating to a different point along the same test, the same way dragging the slider
+// by hand would. Used by the clickable previous/next necking close-up thumbnails.
+function jumpToStageDirect(stageKey){
+  if(!boltMounted)return;
+  const target=STAGES.find(s=>s.key===stageKey);
+  if(!target)return;
+  const t=Math.max(1,Math.round((target.t0+target.t1)/2));
+  $('main-sl').value=t;
+  update(t);
+  const btn=$('stage-btn-row')&&$('stage-btn-row').querySelector(`[data-stage="${stageKey}"]`);
+  setActiveStageButton(btn||null);
+}
+window.jumpToStageDirect=jumpToStageDirect;
+const AXIS_SEGS=[
+  {x0:0,x1:0.04,c:'#6aaa6a',lbl:'No load'},
+  {x0:0.04,x1:0.06,c:'#4a9a4a',lbl:'Snug'},
+  {x0:0.06,x1:0.28,c:'#2e7d32',lbl:''},
+  {x0:0.28,x1:0.72,c:'#cc7700',lbl:'Yield zone'},
+  {x0:0.72,x1:0.88,c:'#b71c1c',lbl:'Necking'},
+  {x0:0.88,x1:1.0,c:'#7b0000',lbl:'Fracture'},
+];
+const BOLTCOLORS={none:'#9aabb8',seating:'#7a9ab0',elastic:'#2e7d32',yield:'#cc7700',hardening:'#e65100',necking:'#b71c1c',void:'#b71c1c',coalescence:'#b71c1c',crack:'#b71c1c',fracture:'#666'};
+const PHASE_ICON={none:'○',seating:'◔',elastic:'●',yield:'▲',hardening:'◆',necking:'▽',void:'∴',coalescence:'◐',crack:'⚡',fracture:'✖'};
+
+let mat='steel',gradeIdx=2,T=0,units='metric',diameter=6,gaugeLength=25,testSpeed=3;
+// ── Mount Bolt / Remove Bolt state ──────────────────────────────
+// The simulation starts with no bolt attached. Mount bolt is available any time no bolt
+// is currently mounted (using whatever material/grade/diameter/gauge length are set at
+// that moment); once mounted, those specs lock until Remove Bolt is clicked again.
+let boltMounted=false;
+const DIA_MIN=1,DIA_MAX=36,DIA_STEP=0.5,GL_MIN=1,GL_MAX=200,GL_STEP=1,SPD_MIN=1,SPD_MAX=20,SPD_STEP=1;
+const MM_PER_IN=25.4;
+// imperial step sizes, expressed as "nice" inch increments then converted to mm for internal storage
+const DIA_STEP_IMP=0.125*MM_PER_IN,GL_STEP_IMP=0.25*MM_PER_IN,SPD_STEP_IMP=0.05*MM_PER_IN;
+// Round a stored mm value to the nearest "nice" increment for whichever unit system is
+// currently active — e.g. 0.125in, 0.25in steps in Imperial — so switching units snaps
+// the diameter/gauge length to a clean round number instead of showing an odd converted
+// decimal (like 6mm becoming 0.236in).
+function snapToUnitStep(mm,stepMetric,stepImperialIn,lo,hi){
+  let snapped;
+  if(units==='imperial'){
+    const stepMm=stepImperialIn*MM_PER_IN;
+    snapped=Math.round(mm/stepMm)*stepMm;
+  } else {
+    snapped=Math.round(mm/stepMetric)*stepMetric;
+  }
+  return Math.max(lo,Math.min(hi,+snapped.toFixed(3)));
+}
+const getG=()=>gradesFor(mat)[gradeIdx]||gradesFor(mat)[0];
+// standard ISO metric coarse thread pitch by diameter, interpolated/extrapolated for in-between values
+// Includes the sub-M3 ISO coarse-pitch sizes (M1.6/M2/M2.5) that were previously missing —
+// without them, any diameter below 3mm was incorrectly flattened to the M3 pitch (0.5mm),
+// understating the tensile stress area for small bolts by 20%+.
+const PITCH_TABLE=[[1.6,0.35],[2,0.4],[2.5,0.45],[3,0.5],[4,0.7],[5,0.8],[6,1.0],[8,1.25],[10,1.5],[12,1.75],[14,2.0],[16,2.0],[18,2.5],[20,2.5],[22,2.5],[24,3.0],[27,3.0],[30,3.5],[36,4.0]];
+function estimatePitch(d){
+  if(d<=PITCH_TABLE[0][0])return PITCH_TABLE[0][1];
+  for(let i=1;i<PITCH_TABLE.length;i++){
+    if(d<=PITCH_TABLE[i][0]){
+      const [d0,p0]=PITCH_TABLE[i-1],[d1,p1]=PITCH_TABLE[i];
+      const f=(d-d0)/(d1-d0);
+      return p0+f*(p1-p0);
+    }
+  }
+  return PITCH_TABLE[PITCH_TABLE.length-1][1];
+}
+function stressAreaFromDiameter(d){
+  const p=estimatePitch(d),dp=d-0.9382*p;
+  return Math.max(0.5,Math.PI/4*dp*dp);
+}
+const getS=()=>({d:diameter,As:stressAreaFromDiameter(diameter),label:`⌀${diameter}mm`});
+const getCurve=()=>SS_SETS[mat];
+
+function fmtForce(kN){return units==='metric'?kN.toFixed(2)+' kN':Math.round(kN*224.809)+' lbf';}
+function fmtStress(mpa){return units==='metric'?Math.round(mpa)+' MPa':(mpa*0.145038).toFixed(1)+' ksi';}
+function fmtArea(mm2){return units==='metric'?mm2.toFixed(1)+' mm²':(mm2/645.16).toFixed(3)+' in²';}
+function fmtModulus(gpa){return units==='metric'?gpa+' GPa':Math.round(gpa*145.038)+' ksi';}
+function fmtDiam(mm){return units==='metric'?mm.toFixed(2)+' mm':(mm/25.4).toFixed(3)+' in';}
+
+// The full-ductility reference strain range is 3.0%. Grades with ductility<1 (see GRADES
+// comment above) compress this range proportionally, so their displayed fracture strain is
+// genuinely smaller — matching the real-world pattern that higher-strength grades within a
+// family are less ductile — rather than every grade sharing an identical strain range.
+function maxStrainFor(g){return 3.0*(g.ductility||1);}
+function phase(t){
+  for(const s of STAGES){ if(t>=s.t0&&t<s.t1)return s.key; }
+  return'fracture';
+}
+function interpSS(t){
+  const p=t/100,pts=getCurve();
+  for(let i=1;i<pts.length;i++){
+    if(pts[i][0]>=p-0.0001){
+      const a=pts[i-1],b=pts[i];
+      const f=b[0]===a[0]?0:(p-a[0])/(b[0]-a[0]);
+      return{strain:p,stress:a[1]+f*(b[1]-a[1])};
+    }
+  }
+  return{strain:1,stress:pts[pts.length-1][1]};
+}
+function fillSelect(selId,items,sel){
+  const s=$(selId);s.innerHTML='';
+  items.forEach((item,i)=>{
+    const o=document.createElement('option');
+    o.value=i;o.textContent=typeof item==='string'?item:item.label;
+    if(i===sel)o.selected=true;s.appendChild(o);
+  });
+}
+function initSelects(){
+  fillSelect('c-mat',['Carbon steel','Stainless steel','Titanium','Brass','Aluminum'],0);
+  fillSelect('c-grade',gradesFor(mat),gradeIdx);
+  updateUnitLabels();updateDiaUI();updateGlUI();updateSpdUI();updateSpeedRec();
+  updateInfo();
+}
+function updateDiaUI(){$('dia-val').value=(units==='metric'?diameter:diameter/MM_PER_IN).toFixed(2);}
+function updateGlUI(){$('gl-val').value=(units==='metric'?gaugeLength:gaugeLength/MM_PER_IN).toFixed(2);}
+function updateSpdUI(){$('spd-val').value=(units==='metric'?testSpeed:testSpeed/MM_PER_IN).toFixed(2);}
+function updateUnitLabels(){
+  const im=units==='imperial';
+  $('dia-label').textContent=im?'Diameter (in)':'Diameter (mm)';
+  $('gl-label').textContent=im?'Gauge length (in)':'Gauge length (mm)';
+  $('spd-label').textContent=im?'Speed (in/min)':'Speed (mm/min)';
+}
+function updateSpeedRec(){
+  const el=$('bp-speed-val');
+  if(!el)return;
+  // rule-of-thumb: recommended speed scales with gauge length (maintains a consistent strain rate),
+  // and eases back slightly for larger diameters, which need more time to load evenly
+  const diaFactor=Math.max(0.7,Math.min(1.1,1-(diameter-6)*0.01));
+  const base=Math.max(SPD_MIN,Math.min(SPD_MAX,0.12*gaugeLength*diaFactor));
+  const lo=Math.max(SPD_MIN,base*0.7),hi=Math.min(SPD_MAX,base*1.3);
+  if(units==='imperial'){
+    const loIn=(lo/MM_PER_IN).toFixed(3),hiIn=(hi/MM_PER_IN).toFixed(3);
+    const diaIn=(diameter/MM_PER_IN).toFixed(3),glIn=(gaugeLength/MM_PER_IN).toFixed(2);
+    el.textContent=`${loIn}–${hiIn} in/min for your current ⌀${diaIn}in bolt at a ${glIn}in gauge length`;
+  } else {
+    el.textContent=`${lo.toFixed(1)}–${hi.toFixed(1)} mm/min for your current ⌀${Number.isInteger(diameter)?diameter:diameter.toFixed(1)}mm bolt at a ${gaugeLength}mm gauge length`;
+  }
+}
+function updateInfo(){
+  const g=getG();
+  $('c-info').textContent=`Sy, Yield Strength ${g.Sy} MPa  ·  Su, Ultimate Tensile Strength (UTS) ${g.Su} MPa  ·  E ${g.E} GPa  ·  ${g.note}`;
+}
+function buildAxis(){
+  const bar=$('ax-bar');bar.innerHTML='';
+  AXIS_SEGS.forEach(seg=>{
+    const d=document.createElement('div');
+    d.style.cssText=`position:absolute;left:${seg.x0*100}%;width:${(seg.x1-seg.x0)*100}%;top:0;height:7px;background:${seg.c}`;
+    bar.appendChild(d);
+  });
+  const barW=bar.clientWidth||bar.getBoundingClientRect().width||300;
+  const items=AXIS_SEGS.filter(s=>s.lbl).map(seg=>{
+    const cx=(seg.x0+seg.x1)/2*barW;
+    const estW=seg.lbl.length*5.3+8;
+    return{seg,cx,estW};
+  });
+  // push overlapping labels apart, left to right
+  items.sort((a,b)=>a.cx-b.cx);
+  const gap=6;
+  for(let i=1;i<items.length;i++){
+    const prevRight=items[i-1].cx+items[i-1].estW/2;
+    const curLeft=items[i].cx-items[i].estW/2;
+    if(curLeft<prevRight+gap)items[i].cx+=(prevRight+gap)-curLeft;
+  }
+  items.forEach(it=>{
+    const half=it.estW/2;
+    if(it.cx-half<0)it.cx=half;
+    if(it.cx+half>barW)it.cx=barW-half;
+  });
+  items.forEach(it=>{
+    // small tick marking the label's true segment position, in case the label had to shift
+    const trueCx=(it.seg.x0+it.seg.x1)/2*barW;
+    const tick=document.createElement('div');
+    tick.style.cssText=`position:absolute;left:${trueCx}px;top:7px;width:1px;height:3px;background:${it.seg.c};opacity:.7`;
+    bar.appendChild(tick);
+    const l=document.createElement('div');
+    l.style.cssText=`position:absolute;left:${it.cx}px;transform:translateX(-50%);top:11px;font-size:9px;color:${it.seg.c};font-weight:600;white-space:nowrap`;
+    l.textContent=it.seg.lbl;bar.appendChild(l);
+  });
+}
+
+function jawLabel(svg, word, cx, cy){
+  const fs=16;
+  svgEl('text',{
+    x:cx, y:cy+1,
+    'font-size':fs, 'text-anchor':'middle', 'dominant-baseline':'central',
+    fill:'rgba(0,0,0,.55)',
+    'font-family':'Barlow Condensed,sans-serif','font-weight':'700',
+    'letter-spacing':'1.5px'
+  },svg).textContent=word;
+  svgEl('text',{
+    x:cx, y:cy,
+    'font-size':fs, 'text-anchor':'middle', 'dominant-baseline':'central',
+    fill:'#ffffff',
+    'font-family':'Barlow Condensed,sans-serif','font-weight':'700',
+    'letter-spacing':'1.5px'
+  },svg).textContent=word;
+}
+
+function drawGrip(svg, cx, gripCenterY, gripH, word1, word2, orientation){
+  const jawW=95, boltGap=14;
+  const jL_x=cx-boltGap/2-jawW;
+  const jR_x=cx+boltGap/2;
+  const jawY=gripCenterY-gripH/2;
+  const jawFill='#2a2e34', jawStroke='#1a1e22';
+
+  svgEl('rect',{x:jL_x,y:jawY,width:jawW,height:gripH,rx:4,fill:jawFill,stroke:jawStroke,'stroke-width':'1.2'},svg);
+  svgEl('rect',{x:jL_x+2,y:jawY+1,width:jawW-4,height:4,rx:2,fill:'rgba(255,255,255,.06)'},svg);
+  svgEl('rect',{x:jL_x+jawW-6,y:jawY+2,width:5,height:gripH-4,rx:1,fill:'rgba(255,255,255,.04)'},svg);
+  svgEl('rect',{x:jR_x,y:jawY,width:jawW,height:gripH,rx:4,fill:jawFill,stroke:jawStroke,'stroke-width':'1.2'},svg);
+  svgEl('rect',{x:jR_x+2,y:jawY+1,width:jawW-4,height:4,rx:2,fill:'rgba(255,255,255,.06)'},svg);
+  svgEl('rect',{x:jR_x+1,y:jawY+2,width:5,height:gripH-4,rx:1,fill:'rgba(255,255,255,.04)'},svg);
+  const gc=Math.floor(gripH/7);
+  for(let i=1;i<gc;i++){
+    const gy=jawY+i*(gripH/gc);
+    svgEl('line',{x1:jL_x+4,y1:gy,x2:jL_x+jawW-2,y2:gy,stroke:'rgba(0,0,0,.28)','stroke-width':'.6'},svg);
+    svgEl('line',{x1:jR_x+2,y1:gy,x2:jR_x+jawW-4,y2:gy,stroke:'rgba(0,0,0,.28)','stroke-width':'.6'},svg);
+  }
+  const barH=16, railL=26, railR=274, railInnerL=railL+12, railInnerR=railR-12, barW=railR-railL;
+  const barY=orientation==='top'?jawY-barH:jawY+gripH;
+  const bracketY=orientation==='top'?barY:jawY, bracketH=barH+gripH;
+  svgEl('rect',{x:railInnerL,y:bracketY,width:jL_x-railInnerL,height:bracketH,fill:jawFill,stroke:jawStroke,'stroke-width':'1'},svg);
+  svgEl('rect',{x:jR_x+jawW,y:bracketY,width:railInnerR-(jR_x+jawW),height:bracketH,fill:jawFill,stroke:jawStroke,'stroke-width':'1'},svg);
+  svgEl('rect',{x:railL,y:barY,width:barW,height:barH,rx:3,fill:'#3a4048',stroke:'#1a1e22','stroke-width':'1'},svg);
+  svgEl('rect',{x:railL+2,y:barY+1,width:barW-4,height:4,rx:2,fill:'rgba(255,255,255,.07)'},svg);
+
+  const lblCY = gripCenterY;
+  const leftJawCX  = jL_x + jawW/2;
+  const rightJawCX = jR_x + jawW/2;
+  jawLabel(svg, word1, leftJawCX,  lblCY);
+  jawLabel(svg, word2, rightJawCX, lblCY);
+}
+
+function drawBolt(t){
+  const svg=$('bsvg');svg.innerHTML='';
+  const cx=150;
+  if(!boltMounted){
+    [[26,12],[262,12]].forEach(([x])=>{
+      svgEl('rect',{x,y:20,width:12,height:358,rx:3,fill:'#22262c',stroke:'#111418','stroke-width':'1'},svg);
+      svgEl('rect',{x:x+2,y:20,width:3,height:358,rx:1,fill:'rgba(255,255,255,.08)'},svg);
+    });
+    drawGrip(svg,cx,88,52,'UPPER','GRIP','top');
+    drawGrip(svg,cx,300,52,'LOWER','GRIP','bot');
+    svgEl('line',{x1:cx,y1:114,x2:cx,y2:274,stroke:'#c7cdd4','stroke-width':'2','stroke-dasharray':'4 4'},svg);
+    svgEl('text',{x:cx,y:190,'font-size':'11','font-weight':'700','text-anchor':'middle',fill:'#9aabb8','font-family':"'Barlow Condensed',sans-serif"},svg).textContent='NO BOLT MOUNTED';
+    svgEl('text',{x:cx,y:204,'font-size':'9.5','text-anchor':'middle',fill:'#adb5bd','font-family':"'Barlow',sans-serif"},svg).textContent='select specifications, then Mount bolt';
+    return;
+  }
+  const ph=phase(t),pct=t/100,bc=BOLTCOLORS[ph];
+  const elongPx=ph==='fracture'?0:Math.min(pct*20,20);
+  let neckF=1;
+  if(NECK_PHASES.has(ph))neckF=1-(t-72)/50*0.42;
+
+  const defs=svgEl('defs',{},svg);
+
+  const grad=svgEl('linearGradient',{id:'bgrad',x1:'0',y1:'0',x2:'1',y2:'0'},defs);
+  [{o:'0%',c:'#6a7a8a'},{o:'25%',c:'#b0bcc8'},{o:'50%',c:'#d8e0e8'},{o:'75%',c:'#b0bcc8'},{o:'100%',c:'#6a7a8a'}]
+    .forEach(s=>svgEl('stop',{offset:s.o,'stop-color':s.c},grad));
+  const cL=bc==='#9aabb8'?'#d0dce8':bc==='#2e7d32'?'#6abf6a':bc==='#cc7700'?'#ffb84d':bc==='#e65100'?'#ff8c40':bc==='#b71c1c'?'#ef5350':'#aaa';
+  const gradC=svgEl('linearGradient',{id:'bgradC',x1:'0',y1:'0',x2:'1',y2:'0'},defs);
+  [{o:'0%',c:bc},{o:'35%',c:cL},{o:'65%',c:cL},{o:'100%',c:bc}]
+    .forEach(s=>svgEl('stop',{offset:s.o,'stop-color':s.c},gradC));
+
+  [[26,12],[262,12]].forEach(([x])=>{
+    svgEl('rect',{x,y:20,width:12,height:358+elongPx,rx:3,fill:'#22262c',stroke:'#111418','stroke-width':'1'},svg);
+    svgEl('rect',{x:x+2,y:20,width:3,height:358+elongPx,rx:1,fill:'rgba(255,255,255,.08)'},svg);
+  });
+
+  const gripH=52;
+  const upperGripCY=88;
+  const lowerGripCY=300+elongPx;
+
+  function drawChevronStack(svgEl2,cxp,edgeY,pointOut,color){
+    // three overlapping chevrons receding from the outermost tip, like a >>> motion indicator
+    const w=4.2,h=5,step=3.4,sw=1.6;
+    for(let i=0;i<3;i++){
+      const baseY=edgeY+pointOut*(i*step);
+      const tipY=edgeY+pointOut*(i*step+h);
+      svgEl('polyline',{points:`${cxp-w},${baseY} ${cxp},${tipY} ${cxp+w},${baseY}`,fill:'none',stroke:color,'stroke-width':sw,'stroke-linecap':'round','stroke-linejoin':'round'},svgEl2);
+    }
+    return edgeY+pointOut*(2*step+h);
+  }
+  if(t>2){
+    const barH2=16,gap=6;
+    const topEdgeY=upperGripCY-gripH/2-barH2-gap;
+    const botEdgeY=lowerGripCY+gripH/2+barH2+gap;
+    drawChevronStack(svg,cx,topEdgeY,-1,'#1D3557');
+    const botTipY=drawChevronStack(svg,cx,botEdgeY,1,'#1D3557');
+    svgEl('text',{x:cx+12,y:botTipY+9,'font-size':'10',fill:'#1D3557','font-family':'Barlow,sans-serif','font-weight':'600'},svg).textContent='PULLING FORCE';
+  }
+
+  drawGrip(svg,cx,upperGripCY,gripH,'UPPER','GRIP','top');
+  drawGrip(svg,cx,lowerGripCY,gripH,'LOWER','GRIP','bot');
+
+  const shW=18,headH=20,headW=28;
+  const headY=upperGripCY-headH/2;
+  const nutH=18,nutW=28;
+  const nutY=lowerGripCY-nutH/2;
+  const shTop=headY+headH,shBot=nutY,shH=shBot-shTop;
+
+  if(ph!=='fracture'){
+    const shFill=ph==='none'||ph==='seating'?'url(#bgrad)':'url(#bgradC)';
+    if(!NECK_PHASES.has(ph)){
+      svgEl('rect',{x:cx-shW/2,y:shTop,width:shW,height:shH,fill:shFill,stroke:'rgba(0,0,0,.15)','stroke-width':'.5'},svg);
+    } else {
+      const neckY=shTop+shH*0.72,mW=Math.max(shW*neckF,2);
+      svgEl('rect',{x:cx-shW/2,y:shTop,width:shW,height:neckY-shTop-5,fill:shFill,stroke:'rgba(0,0,0,.15)','stroke-width':'.5'},svg);
+      svgEl('path',{d:`M${cx-shW/2},${neckY-5}L${cx+shW/2},${neckY-5}L${cx+mW/2},${neckY+5}L${cx-mW/2},${neckY+5}Z`,fill:shFill},svg);
+      svgEl('rect',{x:cx-mW/2,y:neckY+5,width:mW,height:shBot-(neckY+5),fill:shFill,stroke:'rgba(0,0,0,.15)','stroke-width':'.5'},svg);
+      // internal void/crack detail at the center of the neck, matching the exact sub-stage
+      if(ph==='void'){
+        [[-3,-2],[3,1],[0,4]].forEach(([dx,dy])=>{
+          svgEl('circle',{cx:cx+dx,cy:neckY+dy,r:'1',fill:'#3a1010'},svg);
+        });
+      } else if(ph==='coalescence'){
+        svgEl('line',{x1:cx,y1:neckY-3,x2:cx,y2:neckY+3,stroke:'#3a1010','stroke-width':'2','stroke-linecap':'round'},svg);
+      } else if(ph==='crack'){
+        const crackFrac=Math.min(1,Math.max(0,(t-85)/3));
+        const crackLen=Math.max(2,(mW/2-1)*crackFrac);
+        svgEl('line',{x1:cx-crackLen,y1:neckY,x2:cx+crackLen,y2:neckY,stroke:'#2a0808','stroke-width':'2.4','stroke-linecap':'round'},svg);
+      }
+      svgEl('line',{x1:cx+mW/2+2,y1:neckY,x2:cx+64,y2:neckY,stroke:'#b71c1c','stroke-width':'.8','stroke-dasharray':'3 2'},svg);
+      const neckLabelText={necking:'Necking',void:'Voids forming',coalescence:'Voids linking',crack:'Crack growing'}[ph]||'Necking';
+      svgEl('text',{x:cx+72,y:neckY+3,'font-size':'9.5',fill:'#b71c1c','font-family':'Barlow,sans-serif','font-weight':'600'},svg).textContent=neckLabelText;
+      svgEl('text',{x:cx+72,y:neckY+14,'font-size':'8.5',fill:'#b71c1c','font-family':'Barlow,sans-serif'},svg).textContent='(1st thread)';
+    }
+    svgEl('rect',{x:cx-headW/2,y:headY,width:headW,height:headH,rx:3,fill:'#8898a8',stroke:'#5a6a7a','stroke-width':'1.2'},svg);
+    svgEl('rect',{x:cx-headW/2+1,y:headY+1,width:headW-2,height:4,rx:1,fill:'rgba(255,255,255,.15)'},svg);
+    svgEl('line',{x1:cx-headW/2+7,y1:headY+3,x2:cx-headW/2+7,y2:headY+headH-3,stroke:'rgba(0,0,0,.2)','stroke-width':'1'},svg);
+    svgEl('line',{x1:cx+headW/2-7,y1:headY+3,x2:cx+headW/2-7,y2:headY+headH-3,stroke:'rgba(0,0,0,.2)','stroke-width':'1'},svg);
+    const tStart=shTop+shH*0.60;
+    for(let i=0;i<10;i++){
+      const ty=tStart+i*((shBot-tStart)/10);
+      svgEl('line',{x1:cx-shW/2-2,y1:ty,x2:cx+shW/2+2,y2:ty,stroke:'rgba(90,105,115,.55)','stroke-width':'1.1'},svg);
+    }
+    svgEl('rect',{x:cx-nutW/2,y:nutY,width:nutW,height:nutH,rx:3,fill:'#8898a8',stroke:'#5a6a7a','stroke-width':'1.2'},svg);
+    svgEl('rect',{x:cx-nutW/2+1,y:nutY+1,width:nutW-2,height:4,rx:1,fill:'rgba(255,255,255,.15)'},svg);
+    svgEl('line',{x1:cx-nutW/2+7,y1:nutY+3,x2:cx-nutW/2+7,y2:nutY+nutH-3,stroke:'rgba(0,0,0,.2)','stroke-width':'1'},svg);
+    svgEl('line',{x1:cx+nutW/2-7,y1:nutY+3,x2:cx+nutW/2-7,y2:nutY+nutH-3,stroke:'rgba(0,0,0,.2)','stroke-width':'1'},svg);
+    if(t>4){
+      const g1=shTop+shH*0.18,g2=shTop+shH*0.58;
+      svgEl('line',{x1:cx-shW/2-12,y1:g1,x2:cx-shW/2-12,y2:g2,stroke:'rgba(80,80,200,.4)','stroke-width':'.8'},svg);
+      svgEl('line',{x1:cx-shW/2-17,y1:g1,x2:cx-shW/2-7,y2:g1,stroke:'rgba(80,80,200,.4)','stroke-width':'.8'},svg);
+      svgEl('line',{x1:cx-shW/2-17,y1:g2,x2:cx-shW/2-7,y2:g2,stroke:'rgba(80,80,200,.4)','stroke-width':'.8'},svg);
+      svgEl('text',{x:cx-shW/2-22,y:(g1+g2)/2+4,'font-size':'7.5',fill:'rgba(60,60,180,.65)','font-family':'Barlow,sans-serif','text-anchor':'middle',transform:`rotate(-90,${cx-shW/2-22},${(g1+g2)/2+4})`},svg).textContent='GAUGE LENGTH';
+    }
+    if(elongPx>5){
+      const origBot=300-gripH/2,bkX=cx+shW/2+14;
+      svgEl('line',{x1:bkX,y1:shTop,x2:bkX,y2:origBot,stroke:'#1D3557','stroke-width':'.7',opacity:'.3'},svg);
+      svgEl('line',{x1:bkX-4,y1:shTop,x2:bkX+4,y2:shTop,stroke:'#1D3557','stroke-width':'.8',opacity:'.3'},svg);
+      svgEl('line',{x1:bkX-4,y1:origBot,x2:bkX+4,y2:origBot,stroke:'#1D3557','stroke-width':'.8',opacity:'.3'},svg);
+      const strainFrac=interpSS(t).strain*maxStrainFor(getG())/100,elongMm=strainFrac*gaugeLength;
+      svgEl('text',{x:bkX+7,y:(shTop+origBot)/2+4,'font-size':'8','font-weight':'700',fill:'#1D3557','font-family':'Barlow Condensed,sans-serif'},svg).textContent=`ΔL ${elongMm.toFixed(2)}mm`;
+    }
+  } else {
+    const breakY=shTop+shH*0.72;
+    svgEl('rect',{x:cx-headW/2,y:headY,width:headW,height:headH,rx:3,fill:'#8898a8',stroke:'#5a6a7a','stroke-width':'1.2'},svg);
+    svgEl('rect',{x:cx-shW/2,y:shTop,width:shW,height:breakY-shTop-4,fill:'#888'},svg);
+    svgEl('path',{d:`M${cx-shW/2},${breakY-4}L${cx-shW/2+3},${breakY+1}L${cx-2},${breakY-2}L${cx+3},${breakY+3}L${cx+shW/2-3},${breakY-1}L${cx+shW/2},${breakY-4}Z`,fill:'#666'},svg);
+    svgEl('rect',{x:cx-shW/2,y:breakY+14,width:shW,height:shBot-(breakY+14),fill:'#888'},svg);
+    for(let i=0;i<10;i++){const ty=shTop+shH*0.6+i*((shBot-(shTop+shH*0.6))/10);svgEl('line',{x1:cx-shW/2-2,y1:ty,x2:cx+shW/2+2,y2:ty,stroke:'rgba(90,105,115,.5)','stroke-width':'1.1'},svg);}
+    svgEl('rect',{x:cx-nutW/2,y:nutY,width:nutW,height:nutH,rx:3,fill:'#8898a8',stroke:'#5a6a7a','stroke-width':'1.2'},svg);
+    svgEl('text',{x:cx,y:breakY+9,'font-size':'11',fill:'#b71c1c','font-family':'Barlow Condensed,sans-serif','font-weight':'700','text-anchor':'middle'},svg).textContent='FRACTURED';
+    svgEl('line',{x1:cx+shW/2+4,y1:breakY+4,x2:cx+70,y2:breakY+4,stroke:'#b71c1c','stroke-width':'.8','stroke-dasharray':'3 2'},svg);
+    svgEl('text',{x:cx+72,y:breakY+8,'font-size':'8.5',fill:'#b71c1c','font-family':'Barlow,sans-serif'},svg).textContent='1st thread';
+  }
+}
+
+function drawSS(t){
+  const svg=$('ssvg');svg.innerHTML='';
+  const PL=42,PR=12,PT=14,PB=40,W=330,H=230,CW=W-PL-PR,CH=H-PT-PB;
+  const g=getG(),maxStrain=maxStrainFor(g),maxStress=GLOBAL_MAX_SU,pts=getCurve();
+  const px=s=>PL+s*CW;
+  const pxS=s=>PL+(s/maxStrain)*CW,pyS=s=>PT+(1-s/maxStress)*CH;
+  // The traced stress-strain curve is stored as a 0–1 fraction of this grade's own Su.
+  // Convert that fraction to a real MPa value, then map it through the same fixed-scale
+  // pyS() used for the axis and reference markers — so a weak grade's curve genuinely
+  // sits lower and shorter on the chart, and a strong grade's curve genuinely reaches
+  // higher, instead of every grade's curve always filling the same height.
+  const pyFrac=st=>pyS(st*g.Su);
+  for(let i=0;i<=15;i++){const x=PL+i*(CW/15);svgEl('line',{x1:x,y1:PT,x2:x,y2:PT+CH,stroke:'rgba(100,149,237,.25)','stroke-width':i%5===0?'0.8':'0.4'},svg);}
+  for(let i=0;i<=9;i++){const y=PT+i*(CH/9);svgEl('line',{x1:PL,y1:y,x2:PL+CW,y2:y,stroke:'rgba(100,149,237,.25)','stroke-width':i%3===0?'0.8':'0.4'},svg);}
+  SS_REGIONS.forEach(r=>{
+    const x0=px(r.x0),rw=(r.x1-r.x0)*CW;
+    const bg=svgEl('rect',{x:x0,y:PT,width:rw,height:CH,fill:r.fill,cursor:'pointer'},svg);
+    bg.addEventListener('mouseenter',e=>showSST(r.phase,e));bg.addEventListener('mouseleave',hideSST);
+    if(rw>=14){
+      const bx=x0+rw/2-6,by=PT+4;
+      const ib=svgEl('rect',{x:bx,y:by,width:13,height:13,rx:'6',fill:'#1D3557',cursor:'pointer'},svg);
+      const il=svgEl('text',{x:bx+6.5,y:by+7,'font-size':'9','text-anchor':'middle','dominant-baseline':'central',fill:'#fff','font-family':'Barlow Condensed,sans-serif','font-weight':'700',cursor:'pointer'},svg);
+      il.textContent='i';
+      [ib,il].forEach(e=>{e.addEventListener('mouseenter',ev=>showSST(r.phase,ev));e.addEventListener('mouseleave',hideSST);e.addEventListener('click',ev=>{ev.stopPropagation();pinSST(r.phase);});});
+    }
+  });
+  // region labels — sequentially packed left-to-right with evenly distributed slack, so adjacent narrow zones can never overlap
+  const labelItems=SS_REGIONS.map(r=>({r,estW:r.label.length*4.9+6}));
+  const lgap=4;
+  const totalW=labelItems.reduce((s,it)=>s+it.estW,0)+lgap*(labelItems.length-1);
+  const slack=Math.max(0,CW-totalW);
+  const extra=slack/Math.max(1,labelItems.length-1);
+  let curX=PL;
+  labelItems.forEach((it,i)=>{
+    if(i>0)curX+=lgap+extra;
+    it.cx=curX+it.estW/2;
+    curX+=it.estW;
+  });
+  labelItems.forEach(it=>{
+    const trueCx=px(it.r.x0)+(it.r.x1-it.r.x0)*CW/2;
+    if(Math.abs(trueCx-it.cx)>3){
+      svgEl('line',{x1:trueCx,y1:PT+CH+2,x2:trueCx,y2:PT+CH+6,stroke:'var(--color-text-secondary)','stroke-width':'.6',opacity:'.5'},svg);
+    }
+    svgEl('text',{x:it.cx,y:PT+CH+25,'font-size':'9','text-anchor':'middle',fill:'var(--color-text-secondary)','font-family':'Barlow,sans-serif'},svg).textContent=it.r.label;
+  });
+  [{x0:0,x1:0.06,c:'#4a9a4a'},{x0:0.06,x1:0.28,c:'#2e7d32'},{x0:0.28,x1:0.72,c:'#cc7700'},{x0:0.72,x1:0.88,c:'#b71c1c'},{x0:0.88,x1:1.0,c:'#7b0000'}]
+    .forEach(s=>svgEl('line',{x1:px(s.x0),y1:PT+CH,x2:px(s.x1),y2:PT+CH,stroke:s.c,'stroke-width':'2.5','stroke-linecap':'round'},svg));
+  svgEl('line',{x1:PL,y1:PT,x2:PL,y2:PT+CH,stroke:'var(--color-text-secondary)','stroke-width':'1'},svg);
+  // Ticks are generated as even fractions of THIS grade's maxStrain (rather than a fixed
+  // absolute list like [0.2 ... 3.0]) so low-ductility grades — whose maxStrain is
+  // compressed below the 3.0% reference — still get readable, in-range tick marks instead
+  // of ticks bunching up or drawing off-chart.
+  const tickCount=6,tickStep=maxStrain/tickCount;
+  for(let i=1;i<=tickCount;i++){
+    const v=+(tickStep*i).toFixed(2),x=pxS(v);
+    svgEl('line',{x1:x,y1:PT+CH,x2:x,y2:PT+CH+4,stroke:'var(--color-text-secondary)','stroke-width':'1'},svg);
+    svgEl('text',{x,y:PT+CH+12,'font-size':'8','text-anchor':'middle',fill:'var(--color-text-secondary)','font-family':'Barlow,sans-serif'},svg).textContent=v.toFixed(1);
+  }
+  const yStep=Math.ceil(maxStress/8/50)*50;
+  for(let v=0;v<=maxStress;v+=yStep){
+    const y=pyS(v);
+    svgEl('line',{x1:PL-3,y1:y,x2:PL,y2:y,stroke:'var(--color-text-secondary)','stroke-width':'1'},svg);
+    if(v>0)svgEl('text',{x:PL-5,y:y+3,'font-size':'8','text-anchor':'end',fill:'var(--color-text-secondary)','font-family':'Barlow,sans-serif'},svg).textContent=v;
+  }
+  svgEl('text',{x:W/2,y:H-2,'font-size':'10','text-anchor':'middle',fill:'var(--color-text-secondary)','font-family':'Barlow,sans-serif'},svg).textContent='STRAIN (%) →';
+  svgEl('text',{x:9,y:PT+CH/2,'font-size':'10','text-anchor':'middle',fill:'var(--color-text-secondary)','font-family':'Barlow,sans-serif',transform:`rotate(-90,9,${PT+CH/2})`},svg).textContent='STRESS (MPa) →';
+  const pct=t/100;
+  const remainPts=pts.filter(p=>p[0]>=pct-0.001);
+  if(remainPts.length>1){
+    const remain=remainPts.map(([s,st])=>`${px(s).toFixed(1)},${pyFrac(st).toFixed(1)}`).join(' ');
+    svgEl('polyline',{points:remain,fill:'none',stroke:'#1D3557','stroke-width':'1.6','stroke-dasharray':'5 4','stroke-linecap':'round','stroke-linejoin':'round',opacity:'.4'},svg);
+  }
+  const active=pts.filter(p=>p[0]<=pct+0.001).map(([s,st])=>`${px(s).toFixed(1)},${pyFrac(st).toFixed(1)}`).join(' ');
+  if(active&&t>0)svgEl('polyline',{points:active,fill:'none',stroke:'#c0392b','stroke-width':'2.5','stroke-linecap':'round','stroke-linejoin':'round'},svg);
+  // Reference annotations (elastic slope, 0.2% offset, Sy/Su markers, optimum-torque zone,
+  // modulus callout) are drawn AFTER the traced curve above, so the curve can never cut
+  // through and obscure their text — they always render on top, fully legible.
+  const elSlope=(g.Sy*0.72)/(0.28*maxStrain);
+  svgEl('line',{x1:pxS(0.2),y1:pyS(0),x2:pxS(0.2+g.Sy/elSlope*0.8),y2:pyS(g.Sy*0.8),stroke:'#1D3557','stroke-width':'1','stroke-dasharray':'5 3',opacity:'.7'},svg);
+  svgEl('line',{x1:pxS(0.2),y1:PT+CH,x2:pxS(0.2),y2:PT+CH+4,stroke:'#1D3557','stroke-width':'1'},svg);
+  svgEl('text',{x:pxS(0.2)+4,y:pyS(0)-5,'font-size':'8','text-anchor':'start',fill:'#1D3557','font-family':'Barlow Condensed,sans-serif','font-weight':'700'},svg).textContent='0.2% offset';
+  svgEl('circle',{cx:pxS(0.28*maxStrain),cy:pyS(g.Sy),r:'3.5',fill:'#1D3557',stroke:'#fff','stroke-width':'1.5'},svg);
+  svgEl('text',{x:pxS(0.28*maxStrain)+5,y:pyS(g.Sy)-4,'font-size':'8',fill:'#1D3557','font-family':'Barlow Condensed,sans-serif','font-weight':'700'},svg).textContent=`Sy ${g.Sy} MPa`;
+  svgEl('line',{x1:pxS(0.72*maxStrain),y1:PT,x2:pxS(0.72*maxStrain),y2:PT+CH,stroke:'#b71c1c','stroke-width':'.7','stroke-dasharray':'3 2'},svg);
+  svgEl('text',{x:pxS(0.72*maxStrain)-2,y:PT+10,'font-size':'8','text-anchor':'end',fill:'#b71c1c','font-family':'Barlow Condensed,sans-serif','font-weight':'700'},svg).textContent=`Su, UTS ${g.Su}`;
+  const optX=pxS(0.22*maxStrain),optY=pyS(g.Sy*0.70);
+  svgEl('line',{x1:optX,y1:PT,x2:optX,y2:PT+CH,stroke:'#1a6622','stroke-width':'1','stroke-dasharray':'3 2'},svg);
+  svgEl('circle',{cx:optX,cy:optY,r:'4.5',fill:'#1a6622',stroke:'#fff','stroke-width':'1.5'},svg);
+  svgEl('rect',{x:optX+4,y:optY-22,width:54,height:13,rx:'3',fill:'#1a6622'},svg);
+  svgEl('text',{x:optX+31,y:optY-15,'font-size':'8.5','text-anchor':'middle','dominant-baseline':'central',fill:'#fff','font-family':'Barlow Condensed,sans-serif','font-weight':'700'},svg).textContent='Optimum ~70%';
+  const emLabel=`E = ${g.E} GPa`;
+  // Clamp the modulus callout's vertical position so it never drifts down into the
+  // "0.2% offset" label near the axis — weak grades (low Sy) would otherwise place it
+  // right on top of that text since both would sit near the chart's bottom edge.
+  const emX=pxS(0.12*maxStrain),emY=Math.min(pyS(g.Sy*0.28),PT+CH-40);
+  svgEl('rect',{x:emX-2,y:emY-22,width:emLabel.length*5.8+6,height:22,rx:'3',fill:'rgba(10,110,58,.1)'},svg);
+  svgEl('text',{x:emX+1,y:emY-11,'font-size':'8.5',fill:'#0a6e3a','font-family':'Barlow Condensed,sans-serif','font-weight':'700'},svg).textContent=emLabel;
+  svgEl('text',{x:emX+1,y:emY-2,'font-size':'7.5',fill:'#0a6e3a','font-family':'Barlow,sans-serif'},svg).textContent="Young's Modulus";
+  if(t>0){
+    const ss=interpSS(t),ph=phase(t);
+    const dc={none:'#8090a0',seating:'#5a7a90',elastic:'#2e7d32',yield:'#cc7700',hardening:'#e65100',necking:'#b71c1c',void:'#b71c1c',coalescence:'#b71c1c',crack:'#b71c1c',fracture:'#b71c1c'}[ph];
+    const dotX=+px(ss.strain).toFixed(0),dotY=+pyFrac(ss.stress).toFixed(0);
+    svgEl('circle',{cx:dotX,cy:dotY,r:'5.5',fill:dc,stroke:'#fff','stroke-width':'2'},svg);
+    if(t>3){
+      const rS=Math.round(ss.stress*g.Su),rE=(ss.strain*maxStrain).toFixed(2);
+      const lx=dotX+12,ly=dotY-6;
+      svgEl('rect',{x:lx-2,y:ly-11,width:62,height:22,rx:'3',fill:'var(--color-background-primary)',stroke:dc,'stroke-width':'0.8',opacity:'0.95'},svg);
+      svgEl('text',{x:lx+1,y:ly,'font-size':'8',fill:dc,'font-family':'Barlow Condensed,sans-serif','font-weight':'700'},svg).textContent=`${rS} MPa`;
+      svgEl('text',{x:lx+1,y:ly+9,'font-size':'8',fill:dc,'font-family':'Barlow,sans-serif'},svg).textContent=`ε = ${rE}%`;
+    }
+  }
+}
+
+let ssPinned=false;
+function showSST(ph,evt){
+  if(ssPinned)return;
+  const tip=SS_TIPS[ph];if(!tip)return;
+  $('ss-tip-t').textContent=tip.t;$('ss-tip-b').textContent=tip.b;
+  const tt=$('ss-tip'),par=$('ssvg').parentElement,pr=par.getBoundingClientRect();
+  let left=evt.clientX-pr.left+10;
+  if(left+195>pr.width)left=evt.clientX-pr.left-205;
+  tt.style.left=Math.max(0,left)+'px';tt.style.top=Math.max(0,evt.clientY-pr.top-20)+'px';
+  tt.style.display='block';tt.style.pointerEvents='none';
+}
+function hideSST(){if(!ssPinned)$('ss-tip').style.display='none';}
+function pinSST(ph){
+  ssPinned=true;const tip=SS_TIPS[ph];if(!tip)return;
+  $('ss-tip-t').textContent=tip.t;$('ss-tip-b').textContent=tip.b;
+  const tt=$('ss-tip');tt.style.pointerEvents='auto';tt.style.display='block';
+  if(!tt.querySelector('.ssx')){
+    const cb=document.createElement('button');cb.className='ssx';cb.textContent='✕';
+    cb.style.cssText='position:absolute;top:5px;right:8px;background:none;border:none;cursor:pointer;font-size:11px;color:var(--color-text-secondary)';
+    cb.onclick=()=>{ssPinned=false;tt.style.display='none';};tt.appendChild(cb);
+  }
+}
+function xt(id){$(id).classList.remove('on');}window.xt=xt;
+function positionTip(btn,t){
+  const r=btn.getBoundingClientRect();
+  const vw=window.innerWidth,vh=window.innerHeight;
+  const tw=Math.min(250,vw-24);
+  t.style.width=tw+'px';
+  let left=r.left;
+  if(left+tw>vw-12)left=vw-tw-12;
+  if(left<12)left=12;
+  let top=r.bottom+8;
+  const th=t.offsetHeight||120;
+  if(top+th>vh-12){top=r.top-th-8;if(top<12)top=12;}
+  t.style.left=left+'px';
+  t.style.top=top+'px';
+}
+function toggleTip(id,btn){
+  const t=$(id),was=t.classList.contains('on');
+  document.querySelectorAll('.tip').forEach(x=>x.classList.remove('on'));
+  if(!was){
+    t.classList.add('on');
+    if(btn)positionTip(btn,t);
+  }
+}
+function ibTipFor(btn){
+  if(btn.classList.contains('ib-spec')){
+    const info=SPEC_INFO[btn.dataset.spec];
+    if(!info)return null;
+    $('tip-spec-t').textContent=info.t;$('tip-spec-b').textContent=info.b;
+    return $('tip-spec');
+  }
+  return document.getElementById('tip'+btn.id.slice(2));
+}
+function showIBTip(btn){
+  const t=ibTipFor(btn);
+  if(!t)return;
+  document.querySelectorAll('.tip').forEach(x=>{if(x!==t)x.classList.remove('on');});
+  t.classList.add('on');
+  positionTip(btn,t);
+}
+// hover reveals a bubble the moment the pointer touches the "i" — no click needed.
+// Click/tap is kept as a fallback for touch devices where hover doesn't exist.
+document.addEventListener('mouseover',e=>{
+  const btn=e.target.closest('.ib');
+  if(btn)showIBTip(btn);
+});
+document.addEventListener('mouseout',e=>{
+  const btn=e.target.closest('.ib');
+  if(!btn)return;
+  const t=ibTipFor(btn);
+  if(!t)return;
+  const to=e.relatedTarget;
+  if(to&&(t.contains(to)||to===t))return;
+  t.classList.remove('on');
+});
+document.addEventListener('click',e=>{
+  const btn=e.target.closest('.ib');
+  if(btn){e.stopPropagation();showIBTip(btn);}
+});
+document.addEventListener('click',e=>{
+  if(!$('ss-tip').contains(e.target)){ssPinned=false;$('ss-tip').style.display='none';}
+  document.querySelectorAll('.tip').forEach(x=>{if(!x.contains(e.target)&&!e.target.classList.contains('ib'))x.classList.remove('on');});
+});
+window.addEventListener('resize',()=>{document.querySelectorAll('.tip').forEach(x=>x.classList.remove('on'));});
+
+function update(t){
+  T=t;
+  const ss=interpSS(t),ph=phase(t),g=getG(),s=getS();
+  const stressMPa=ss.stress*g.Su;
+  const forceN=stressMPa*s.As;
+  const forceKN=forceN/1000;
+  const ypct=Math.round(stressMPa/g.Sy*100),upct=Math.round(stressMPa/g.Su*100);
+  $('r-forc').textContent=fmtForce(forceKN);
+  $('v-pre').textContent=fmtForce(forceKN);$('v-stress').textContent=fmtStress(stressMPa);
+  $('v-strain').textContent=(ss.strain*maxStrainFor(g)).toFixed(2)+'%';
+  $('v-pct').textContent=ypct+'%';$('v-uts').textContent=upct+'%';
+  $('v-pct').className='st-v'+(ph==='elastic'||ph==='seating'||ph==='none'?'':ph==='yield'||ph==='hardening'?' w':' d');
+  $('v-uts').className='st-v'+(upct<70?'':upct<90?' w':' d');
+  const PI={none:['No load',''],seating:['Seating',''],elastic:['Elastic — safe',''],
+    yield:['Yield — caution','w'],hardening:['Strain hardening','w'],necking:['Initial necking','r'],
+    void:['Necking — void formation','r'],coalescence:['Necking — void coalescence','r'],crack:['Necking — crack propagation','r'],
+    fracture:['FRACTURED','x']};
+  const [lbl,cls]=PI[ph];
+  const pill=$('v-pill');pill.textContent=(PHASE_ICON[ph]||'')+' '+lbl;pill.className='pill'+(cls?' '+cls:'');
+  $('warn-msg').className='warn'+(t>=28&&ph!=='fracture'?' on':'');
+  const stageBtn=$('stage-btn-row')&&$('stage-btn-row').querySelector(`[data-stage="${ph}"]`);
+  setActiveStageButton(stageBtn||null);
+  drawBolt(t);drawSS(t);drawDetailView(t);
+}
+
+function swTab(id){
+  document.querySelectorAll('.tip').forEach(x=>x.classList.remove('on'));
+  ssPinned=false;$('ss-tip').style.display='none';
+  ['ug','sim','cmp','bp'].forEach(x=>{$('tab-'+x).className='tab'+(x===id?' on':'');$('tc-'+x).className='tc'+(x===id?' on':'');});
+  if(id==='cmp')updateCmp();
+  if(id==='bp')updateSpeedRec();
+}
+window.swTab=swTab;
+
+// ── Compare tab ──────────────────────────────────────────────────
+let cmpA={mat:'steel',gradeIdx:1,sizeIdx:9},cmpB={mat:'steel',gradeIdx:2,sizeIdx:9};
+const gOf=st=>gradesFor(st.mat)[st.gradeIdx]||gradesFor(st.mat)[0];
+const sOf=st=>currentSizeList()[st.sizeIdx];
+function initCmpSide(pfx,st){
+  const matNames=['Carbon steel','Stainless steel','Titanium','Brass','Aluminum'];
+  const matKeys=['steel','stainless','titanium','brass','aluminum'];
+  fillSelect(pfx+'-mat',matNames,matKeys.indexOf(st.mat));
+  fillSelect(pfx+'-grade',gradesFor(st.mat),st.gradeIdx);
+  fillSelect(pfx+'-size',currentSizeList(),st.sizeIdx);
+  $(pfx+'-mat').addEventListener('change',()=>{
+    st.mat=matKeys[+$(pfx+'-mat').value];st.gradeIdx=0;
+    fillSelect(pfx+'-grade',gradesFor(st.mat),0);
+    updateCmp();
+  });
+  $(pfx+'-grade').addEventListener('change',()=>{st.gradeIdx=+$(pfx+'-grade').value;updateCmp();});
+  $(pfx+'-size').addEventListener('change',()=>{st.sizeIdx=+$(pfx+'-size').value;updateCmp();});
+}
+function refreshCmpSizeSelects(){
+  const list=currentSizeList();
+  cmpA.sizeIdx=Math.min(cmpA.sizeIdx,list.length-1);
+  cmpB.sizeIdx=Math.min(cmpB.sizeIdx,list.length-1);
+  fillSelect('cmpA-size',list,cmpA.sizeIdx);
+  fillSelect('cmpB-size',list,cmpB.sizeIdx);
+}
+// On a unit-system toggle, some grades may no longer be valid for a material (e.g. SAE
+// grades disappear in Metric mode). Re-map a grade selection to the same grade label if
+// it still exists in the newly-filtered list for that material, otherwise fall back to
+// that material's first available grade. `oldLabel` must be captured BEFORE `units` is
+// reassigned, since gradesFor() always filters against the current global `units`.
+function remapGradeIdx(matKey,oldLabel){
+  const newList=gradesFor(matKey);
+  const idx=newList.findIndex(g=>g.label===oldLabel);
+  return idx>=0?idx:0;
+}
+function drawMiniCurve(svgId,matFam,g){
+  const svg=$(svgId);svg.innerHTML='';
+  const W=260,H=150,PL=34,PR=8,PT=8,PB=22,CW=W-PL-PR,CH=H-PT-PB;
+  const pts=SS_SETS[matFam];
+  // fixed global stress scale — each grade's real stress values (not a 0–1 curve-local
+  // fraction) are plotted against the same ceiling, so a Grade 8 curve visibly towers
+  // over a Grade 2 curve on the same axes instead of both filling the chart identically
+  const maxStress=GLOBAL_MAX_SU;
+  const px=s=>PL+s*CW;
+  const py=stressMPa=>PT+(1-stressMPa/maxStress)*CH;
+  svgEl('line',{x1:PL,y1:PT,x2:PL,y2:PT+CH,stroke:'var(--color-text-secondary)','stroke-width':1},svg);
+  svgEl('line',{x1:PL,y1:PT+CH,x2:PL+CW,y2:PT+CH,stroke:'var(--color-text-secondary)','stroke-width':1},svg);
+  svgEl('polyline',{points:pts.map(([s,st])=>`${px(s).toFixed(1)},${py(st*g.Su).toFixed(1)}`).join(' '),fill:'none',stroke:'#1D3557','stroke-width':2},svg);
+  const syY=py(g.Sy),suY=py(g.Su);
+  svgEl('line',{x1:PL,y1:syY,x2:PL+CW,y2:syY,stroke:'#cc7700','stroke-width':.8,'stroke-dasharray':'3 2'},svg);
+  svgEl('text',{x:PL+CW-2,y:syY-3,'font-size':8,'text-anchor':'end',fill:'#cc7700','font-family':'Barlow Condensed,sans-serif','font-weight':700},svg).textContent=`Sy ${g.Sy}`;
+  svgEl('text',{x:PL+CW-2,y:suY-3,'font-size':8,'text-anchor':'end',fill:'#1D3557','font-family':'Barlow Condensed,sans-serif','font-weight':700},svg).textContent=`Su ${g.Su}`;
+  svgEl('text',{x:PL+CW/2,y:H-4,'font-size':7.5,'text-anchor':'middle',fill:'var(--color-text-secondary)','font-family':'Barlow,sans-serif'},svg).textContent='STRAIN →';
+}
+const SPEC_INFO={
+  grade:{t:'Grade',b:'The specific strength class of the bolt. Even in the same material, different grades can be much stronger than others — like comparing a regular vs. heavy-duty version of the same part.'},
+  size:{t:'Thread size',b:'The bolt\'s diameter and thread spacing. A bigger, thicker bolt generally carries more load, all else being equal.'},
+  sy:{t:'Sy, Yield Strength',b:'The point where the bolt starts to permanently stretch. Below this, it always springs back to its original length after the load is removed.'},
+  su:{t:'Su, Ultimate Tensile Strength (UTS)',b:'The peak pulling force the bolt can take before it starts to break.'},
+  e:{t:'Stiffness',b:'How much the bolt resists stretching under load. A stiffer bolt (higher number) stretches less for the same pull.'},
+  as:{t:'Bearing area',b:'The cross-section of the threads that actually carries the load — roughly, how much material is doing the work.'},
+  proof:{t:'Proof load',b:"A standard reference load used to rate fastener strength, set below yield with margin to spare. For SAE/ISO steel grades this uses that standard's actual specified proof stress; for stainless, titanium, brass, and aluminum — which don't have a separately standardized proof stress — this uses the 0.2% offset yield value directly."},
+};
+function cmpStats(st){
+  const g=gOf(st),s=sOf(st);
+  // Proof load = Sy × proofRatio × As. For SAE J429 / ISO 898-1 steel grades, proofRatio is
+  // that standard's actual specified proof-stress/yield ratio (~88–97%, not a flat 75%).
+  // Stainless, titanium, brass, and aluminum don't have a separately standardized proof
+  // stress the way bolt-grade steels do, so proofRatio defaults to 1.0 — meaning proof load
+  // falls back to using the 0.2% offset Sy directly, which is already their practical design
+  // ceiling. This is called out in the "Proof load" tooltip so the assumption stays visible.
+  const proofN=g.Sy*(g.proofRatio||1)*s.As;
+  return{g,s,proofKN:proofN/1000};
+}
+function renderCmpTable(tblId,stats){
+  const rows=[
+    ['grade','Grade',stats.g.label],['size','Size',stats.s.label],
+    ['sy','Sy, Yield Strength',fmtStress(stats.g.Sy)],['su','Su, Ultimate Tensile Strength (UTS)',fmtStress(stats.g.Su)],
+    ['e','Modulus E',fmtModulus(stats.g.E)],['as','Tensile area As',fmtArea(stats.s.As)],
+    ['proof','Proof load',fmtForce(stats.proofKN)],
+  ];
+  $(tblId).innerHTML=rows.map(([key,k,v])=>`<tr><td>${k} <button class="ib ib-spec" data-spec="${key}">i</button></td><td>${v}</td></tr>`).join('');
+}
+function fmtSignedStress(mpa){const im=units==='imperial';const v=im?mpa*0.145038:mpa;return `${v>=0?'+':''}${v.toFixed(im?1:0)} ${im?'ksi':'MPa'}`;}
+function fmtSignedForce(kN){const im=units==='imperial';const v=im?kN*224.809:kN;return `${v>=0?'+':''}${v.toFixed(im?0:2)} ${im?'lbf':'kN'}`;}
+function updateCmp(){
+  const a=cmpStats(cmpA),b=cmpStats(cmpB);
+  renderCmpTable('cmpA-tbl',a);renderCmpTable('cmpB-tbl',b);
+  drawMiniCurve('cmpA-svg',cmpA.mat,a.g);drawMiniCurve('cmpB-svg',cmpB.mat,b.g);
+  const dSy=b.g.Sy-a.g.Sy,dSu=b.g.Su-a.g.Su,dProof=b.proofKN-a.proofKN;
+  $('cmp-delta').textContent=`Yield strength: ${fmtSignedStress(dSy)}  ·  Ultimate strength: ${fmtSignedStress(dSu)}  ·  Proof load: ${fmtSignedForce(dProof)}`;
+}
+
+// ── Mount Bolt / Remove Bolt ──────────────────────────────────────
+function updateMountButtonState(){
+  $('btn-mount').disabled=boltMounted;
+  $('btn-remove').disabled=!boltMounted;
+  $('stage-panel').classList.toggle('locked',!boltMounted);
+  const notice=$('mount-notice');
+  if(boltMounted){
+    notice.textContent='Bolt mounted — specifications are locked. Click Remove bolt to change material, grade, diameter, or gauge length.';
+    notice.className='mount-notice on mounted';
+  } else {
+    notice.textContent='Set your material, grade, diameter, and gauge length, then click Mount bolt to attach a specimen to the grip and begin testing.';
+    notice.className='mount-notice on';
+  }
+}
+function lockSpecControls(locked){
+  ['c-mat','c-grade','dia-val','dia-minus','dia-plus','gl-val','gl-minus','gl-plus'].forEach(id=>{
+    $(id).disabled=locked;
+  });
+}
+function mountBolt(){
+  if(boltMounted)return;
+  boltMounted=true;
+  lockSpecControls(true);
+  $('btn-start').disabled=false;
+  $('main-sl').disabled=false;
+  updateMountButtonState();
+  $('main-sl').value=0;update(0);
+}
+function removeBolt(){
+  if(!boltMounted)return;
+  if(playInt){clearInterval(playInt);playInt=null;}
+  boltMounted=false;
+  lockSpecControls(false);
+  $('btn-start').disabled=true;$('btn-start').textContent='▶ Start';
+  $('main-sl').disabled=true;
+  updateMountButtonState();
+  $('main-sl').value=0;update(0);
+  setActiveStageButton(null);
+}
+$('btn-mount').addEventListener('click',mountBolt);
+$('btn-remove').addEventListener('click',removeBolt);
+
+// ── Start / Reset test ──────────────────────────────────────────
+let playInt=null;
+function startTest(){
+  if(playInt||!boltMounted)return;
+  $('main-sl').value=0;update(0);
+  $('btn-start').disabled=true;$('btn-start').textContent='Running…';
+  const intervalMs=Math.max(15,270/testSpeed);
+  playInt=setInterval(()=>{
+    let v=+$('main-sl').value+1;
+    if(v>=92){
+      clearInterval(playInt);playInt=null;
+      $('btn-start').disabled=false;$('btn-start').textContent='▶ Start';
+      v=92;
+    }
+    $('main-sl').value=v;update(v);
+  },intervalMs);
+}
+function resetTest(){
+  if(playInt){clearInterval(playInt);playInt=null;}
+  $('btn-start').disabled=!boltMounted;$('btn-start').textContent='▶ Start';
+  $('main-sl').value=0;update(0);
+}
+
+// ── Wire up events ───────────────────────────────────────────────
+$('c-mat').addEventListener('change',()=>{
+  const v=$('c-mat').value;
+  const MAT_KEYS=['steel','stainless','titanium','brass','aluminum'];
+  mat=MAT_KEYS[+v]||'steel';
+  gradeIdx=0;
+  fillSelect('c-grade',gradesFor(mat),0);
+  updateInfo();$('main-sl').value=0;update(0);
+});
+$('c-grade').addEventListener('change',()=>{gradeIdx=+$('c-grade').value;updateInfo();update(T);});
+function stepDia(dir){
+  if(boltMounted)return;
+  const step=units==='imperial'?DIA_STEP_IMP:DIA_STEP;
+  diameter=dir>0?Math.min(DIA_MAX,+(diameter+step).toFixed(3)):Math.max(DIA_MIN,+(diameter-step).toFixed(3));
+  updateDiaUI();update(T);updateSpeedRec();
+}
+function stepGl(dir){
+  if(boltMounted)return;
+  const step=units==='imperial'?GL_STEP_IMP:GL_STEP;
+  gaugeLength=dir>0?Math.min(GL_MAX,+(gaugeLength+step).toFixed(3)):Math.max(GL_MIN,+(gaugeLength-step).toFixed(3));
+  updateGlUI();update(T);updateSpeedRec();
+}
+function stepSpd(dir){
+  const step=units==='imperial'?SPD_STEP_IMP:SPD_STEP;
+  testSpeed=dir>0?Math.min(SPD_MAX,+(testSpeed+step).toFixed(3)):Math.max(SPD_MIN,+(testSpeed-step).toFixed(3));
+  updateSpdUI();
+}
+// press-and-hold support: fires once immediately, then repeats while held
+function setupHoldButton(id,fn){
+  const btn=$(id);
+  let holdTimeout=null,holdInterval=null;
+  function stop(){
+    if(holdTimeout){clearTimeout(holdTimeout);holdTimeout=null;}
+    if(holdInterval){clearInterval(holdInterval);holdInterval=null;}
+  }
+  function start(e){
+    if(e)e.preventDefault();
+    stop();
+    fn();
+    holdTimeout=setTimeout(()=>{holdInterval=setInterval(fn,80);},420);
+  }
+  btn.addEventListener('mousedown',start);
+  btn.addEventListener('mouseup',stop);
+  btn.addEventListener('mouseleave',stop);
+  btn.addEventListener('touchstart',start,{passive:false});
+  btn.addEventListener('touchend',stop);
+  btn.addEventListener('touchcancel',stop);
+}
+setupHoldButton('dia-minus',()=>stepDia(-1));
+setupHoldButton('dia-plus',()=>stepDia(1));
+setupHoldButton('gl-minus',()=>stepGl(-1));
+setupHoldButton('gl-plus',()=>stepGl(1));
+setupHoldButton('spd-minus',()=>stepSpd(-1));
+setupHoldButton('spd-plus',()=>stepSpd(1));
+// manual entry — type an exact value directly, accurate to 1/100 (hundredths)
+function commitDiaInput(){
+  if(boltMounted)return;
+  let v=parseFloat($('dia-val').value);
+  if(isNaN(v)){updateDiaUI();return;}
+  let mm=units==='imperial'?v*MM_PER_IN:v;
+  diameter=Math.max(DIA_MIN,Math.min(DIA_MAX,+mm.toFixed(2)));
+  updateDiaUI();update(T);updateSpeedRec();
+}
+function commitGlInput(){
+  if(boltMounted)return;
+  let v=parseFloat($('gl-val').value);
+  if(isNaN(v)){updateGlUI();return;}
+  let mm=units==='imperial'?v*MM_PER_IN:v;
+  gaugeLength=Math.max(GL_MIN,Math.min(GL_MAX,+mm.toFixed(2)));
+  updateGlUI();update(T);updateSpeedRec();
+}
+function commitSpdInput(){
+  let v=parseFloat($('spd-val').value);
+  if(isNaN(v)){updateSpdUI();return;}
+  let mm=units==='imperial'?v*MM_PER_IN:v;
+  testSpeed=Math.max(SPD_MIN,Math.min(SPD_MAX,+mm.toFixed(2)));
+  updateSpdUI();
+}
+[['dia-val',commitDiaInput],['gl-val',commitGlInput],['spd-val',commitSpdInput]].forEach(([id,fn])=>{
+  $(id).addEventListener('change',fn);
+  $(id).addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$(id).blur();}});
+});
+$('main-sl').addEventListener('input',()=>update(+$('main-sl').value));
+['detail-prev-wrap','detail-next-wrap'].forEach(id=>{
+  const el=$(id);
+  el.addEventListener('click',()=>{if(el.dataset.stage)jumpToStageDirect(el.dataset.stage);});
+  el.addEventListener('keydown',e=>{
+    if((e.key==='Enter'||e.key===' ')&&el.dataset.stage){e.preventDefault();jumpToStageDirect(el.dataset.stage);}
+  });
+});
+$('btn-start').addEventListener('click',startTest);
+$('btn-reset').addEventListener('click',resetTest);
+$('u-tgl').addEventListener('change',()=>{
+  // capture current grade labels BEFORE switching units, since gradesFor() filters
+  // against whatever `units` currently is
+  const oldMainLabel=getG().label;
+  const oldCmpALabel=gOf(cmpA).label;
+  const oldCmpBLabel=gOf(cmpB).label;
+
+  units=$('u-tgl').checked?'imperial':'metric';
+
+  // re-map grade selections to an equivalent grade in the new unit system, or default
+  // to that material's first available grade if the old one no longer applies
+  gradeIdx=remapGradeIdx(mat,oldMainLabel);
+  fillSelect('c-grade',gradesFor(mat),gradeIdx);
+  cmpA.gradeIdx=remapGradeIdx(cmpA.mat,oldCmpALabel);
+  fillSelect('cmpA-grade',gradesFor(cmpA.mat),cmpA.gradeIdx);
+  cmpB.gradeIdx=remapGradeIdx(cmpB.mat,oldCmpBLabel);
+  fillSelect('cmpB-grade',gradesFor(cmpB.mat),cmpB.gradeIdx);
+
+  // snap diameter/gauge length to a round value in whichever unit system is now active
+  // (e.g. 0.125in, 0.25in, 0.375in... rather than an odd converted decimal)
+  diameter=snapToUnitStep(diameter,DIA_STEP,0.125,DIA_MIN,DIA_MAX);
+  gaugeLength=snapToUnitStep(gaugeLength,GL_STEP,0.25,GL_MIN,GL_MAX);
+
+  updateUnitLabels();updateDiaUI();updateGlUI();updateSpdUI();updateSpeedRec();updateInfo();update(T);
+  refreshCmpSizeSelects();updateCmp();
+});
+
+$('c-mat').value='0';
+initSelects();buildAxis();update(0);buildStageTable();buildStageButtons();buildStandardsTable();updateMountButtonState();
+initCmpSide('cmpA',cmpA);initCmpSide('cmpB',cmpB);
+window.addEventListener('resize',buildAxis);
+
+// beta notice modal
+const betaOv=$('beta-ov');
+function openBeta(){betaOv.classList.add('on');}
+function closeBeta(){betaOv.classList.remove('on');}
+$('beta-ov-close').addEventListener('click',closeBeta);
+$('beta-badge-btn').addEventListener('click',openBeta);
+betaOv.addEventListener('click',e=>{if(e.target===betaOv)closeBeta();});
+openBeta();
+
+// ── In-browser regression suite ─────────────────────────────────────────────────────────
+// Callable from the browser console as runRegressionTests(). Runs a battery of checks
+// against this tool's actual live calculation/render functions — not a re-implementation
+// of the formulas in a second place, which is exactly how the pitch-table, ISO 898-1
+// yield-value, ductility-scaling, and proof-load bugs shipped unnoticed in earlier
+// versions. Whatever state the tool was in when called (mounted bolt, current
+// material/grade/units, Compare-tab selections) is snapshotted first and restored at the
+// end, so running it doesn't disturb an in-progress session.
+function runRegressionTests(){
+  const snap={mat,gradeIdx,diameter,gaugeLength,units,T,boltMounted,
+    cmpA:Object.assign({},cmpA),cmpB:Object.assign({},cmpB)};
+  if(boltMounted)removeBolt();
+  const MAT_NAMES=['Carbon steel','Stainless steel','Titanium','Brass','Aluminum'];
+  const MAT_KEYS=['steel','stainless','titanium','brass','aluminum'];
+  const results=[];let pass=0,fail=0;
+  function check(name,cond,detail){
+    if(cond){pass++;results.push({Check:name,Result:'PASS',Detail:detail||''});}
+    else{fail++;results.push({Check:name,Result:'FAIL',Detail:detail||''});}
+  }
+  function num(text){const m=String(text).match(/-?\d+(\.\d+)?/);return m?parseFloat(m[0]):NaN;}
+  function sy(){const m=$('c-info').textContent.match(/Sy, Yield Strength (\d+) MPa/);return m?parseFloat(m[1]):NaN;}
+
+  units='metric';mat='steel';
+  updateUnitLabels();fillSelect('c-mat',MAT_NAMES,0);
+
+  // 1 & 2 — ISO 898-1 yield values (were 900/1080, corrected to 940/1100)
+  gradeIdx=2; // metric-filtered steel list [4.6, 8.8, 10.9, 12.9][2] = 10.9
+  fillSelect('c-grade',gradesFor(mat),gradeIdx);updateInfo();
+  check('ISO 10.9 Sy matches ISO 898-1 (940 MPa)', Math.abs(sy()-940)<0.5, `got ${sy()}`);
+  gradeIdx=3;fillSelect('c-grade',gradesFor(mat),gradeIdx);updateInfo();
+  check('ISO 12.9 Sy matches ISO 898-1 (1100 MPa)', Math.abs(sy()-1100)<0.5, `got ${sy()}`);
+
+  // 3 — small-diameter stress-area bug (pitch table was missing M1.6/M2/M2.5, flattening
+  // every diameter under 3mm to the M3 pitch and understating tensile area by 20%+)
+  diameter=1.6;update(50);
+  {
+    const forceKN=num($('r-forc').textContent),stressMPa=num($('v-stress').textContent);
+    const impliedAs=(forceKN*1000)/stressMPa;
+    check('M1.6-equivalent diameter: tensile area ≈ ISO spec (1.27 mm²)',
+      Math.abs(impliedAs-1.27)<0.06, `implied As=${impliedAs.toFixed(3)}mm²`);
+  }
+
+  // 4 & 5 — ductility-scaled strain axis (was a flat 3.0% max strain for every grade)
+  update(100); // ss.strain === 1 exactly at t=100, so v-strain === maxStrainFor(g)
+  check('ISO 12.9 (ductility 0.38): compressed max strain ≈1.14%',
+    Math.abs(num($('v-strain').textContent)-1.14)<0.03, `got ${$('v-strain').textContent}`);
+  gradeIdx=0;fillSelect('c-grade',gradesFor(mat),gradeIdx);updateInfo();update(100);
+  check('ISO 4.6 (ductility 0.95): near-full max strain ≈2.85%',
+    Math.abs(num($('v-strain').textContent)-2.85)<0.03, `got ${$('v-strain').textContent}`);
+
+  // 6 & 7 — proof load: real per-grade proof ratio (steel) vs. Sy fallback (non-steel)
+  cmpA.mat='steel';cmpA.gradeIdx=1;cmpA.sizeIdx=9; // ISO 8.8 @ M12
+  cmpB.mat='titanium';cmpB.gradeIdx=3;cmpB.sizeIdx=9; // Ti-6Al-4V STA @ M12
+  updateCmp();
+  {
+    const mA=$('cmpA-tbl').innerHTML.match(/Proof load[\s\S]*?<\/td><td>([\d.]+)\s*kN/);
+    const expA=640*0.906*84.3/1000;
+    check('Steel (ISO 8.8) proof load uses the real ISO 898-1 ratio (~0.906), not a flat 75%',
+      mA&&Math.abs(parseFloat(mA[1])-expA)<0.3, mA?`got ${mA[1]} kN, expected ~${expA.toFixed(2)} kN`:'row not found');
+    const mB=$('cmpB-tbl').innerHTML.match(/Proof load[\s\S]*?<\/td><td>([\d.]+)\s*kN/);
+    const expB=1100*1*84.3/1000;
+    check('Non-steel (Ti-6Al-4V STA) proof load falls back to Sy, no fabricated ratio',
+      mB&&Math.abs(parseFloat(mB[1])-expB)<0.3, mB?`got ${mB[1]} kN, expected ~${expB.toFixed(2)} kN`:'row not found');
+  }
+
+  // 8 & 9 — unit toggle sanity (regression guard, unrelated to the fixes above)
+  units='imperial';updateUnitLabels();update(T);
+  check('Unit toggle: diameter label switches to inches', $('dia-label').textContent.includes('(in)'));
+  check('Unit toggle: stress readout switches to ksi', $('v-stress').textContent.includes('ksi'));
+
+  // ── restore whatever state the tool was in before the run ──
+  units=snap.units;mat=snap.mat;gradeIdx=snap.gradeIdx;diameter=snap.diameter;gaugeLength=snap.gaugeLength;T=snap.T;
+  Object.assign(cmpA,snap.cmpA);Object.assign(cmpB,snap.cmpB);
+  updateUnitLabels();fillSelect('c-mat',MAT_NAMES,MAT_KEYS.indexOf(mat));
+  fillSelect('c-grade',gradesFor(mat),gradeIdx);updateInfo();
+  updateDiaUI();updateGlUI();updateSpdUI();updateSpeedRec();
+  refreshCmpSizeSelects();
+  fillSelect('cmpA-mat',MAT_NAMES,MAT_KEYS.indexOf(cmpA.mat));fillSelect('cmpA-grade',gradesFor(cmpA.mat),cmpA.gradeIdx);fillSelect('cmpA-size',currentSizeList(),cmpA.sizeIdx);
+  fillSelect('cmpB-mat',MAT_NAMES,MAT_KEYS.indexOf(cmpB.mat));fillSelect('cmpB-grade',gradesFor(cmpB.mat),cmpB.gradeIdx);fillSelect('cmpB-size',currentSizeList(),cmpB.sizeIdx);
+  updateCmp();
+  if(snap.boltMounted)mountBolt();
+  $('main-sl').value=snap.T;update(snap.T);
+
+  console.log(`%cBolt Tensile Strength Simulator — regression suite: ${pass} passed, ${fail} failed`,
+    fail?'color:#b71c1c;font-weight:bold':'color:#2e7d32;font-weight:bold');
+  console.table(results);
+  return {pass,fail,results};
+}
+window.runRegressionTests=runRegressionTests;
+})();
+</script>
