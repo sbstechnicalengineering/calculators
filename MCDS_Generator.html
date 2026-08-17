@@ -9,6 +9,8 @@ Fingerprint: SBS-MCDS-GENERATOR-v1 | https://shop.specialtybolt.com/
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Material Comparison Data Sheet Generator</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 :root{
   --navy:#1D3557; --navy-dark:#12243a; --orange:#E87722; --orange-light:#F0913A; --orange-pale:#FDF0E5;
@@ -16,7 +18,7 @@ Fingerprint: SBS-MCDS-GENERATOR-v1 | https://shop.specialtybolt.com/
   --gray-400:#ADB5BD; --gray-500:#6C757D; --gray-600:#495057; --gray-700:#343A40;
   --active-green:#1A8A4A; --active-bg:#E8F5EE; --obsolete-red:#C0392B; --obsolete-bg:#FDECEA;
   --withdrawn-amber:#B7610A; --withdrawn-bg:#FEF3E2;
-  --mcds-orange:#ED7D31; --mcds-tint:#F4B183;
+  --mcds-orange:#ED7D31; --mcds-tint:#F4B183; --mcds-orange-dark:#A8480F;
 }
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;background:var(--gray-100);font-family:'Inter',sans-serif;color:var(--gray-700);}
@@ -151,6 +153,19 @@ a{text-decoration:none;color:inherit;}
 .sbs-load-status{font-family:'Inter',sans-serif; font-size:12px; color:var(--gray-500); margin-top:10px;}
 .sbs-load-status.sbs-error{color:var(--obsolete-red);}
 
+.sbs-note-check-label{
+  display:flex; align-items:flex-start; gap:6px; margin-top:12px; cursor:pointer;
+  font-family:'Inter',sans-serif; font-size:11px; color:var(--gray-600); line-height:1.35;
+}
+.sbs-note-check-label input[type="checkbox"]{margin-top:2px; flex-shrink:0; cursor:pointer; accent-color:var(--orange);}
+.sbs-note-input{
+  width:100%; margin-top:6px; background:#fff; border:1.5px solid var(--orange); border-radius:6px; padding:7px 9px;
+  font-family:'Inter',sans-serif; font-size:12.5px; color:var(--navy);
+}
+.sbs-note-input:focus{outline:none; border-color:var(--navy);}
+
+.sbs-btn-primary.sbs-btn-loading{opacity:0.7; cursor:progress; pointer-events:none;}
+
 /* ============ GENERATED MCDS SHEET (classic layout) ============ */
 .sbs-sheet-panel{background:#fff; border:1.5px solid var(--gray-200); border-radius:10px; padding:24px; overflow-x:auto;}
 .sbs-sheet-empty{
@@ -164,8 +179,9 @@ a{text-decoration:none;color:inherit;}
   margin:0; flex:1; text-align:right; letter-spacing:0.02em; text-transform:uppercase;
 }
 #mcdsSheet .mcds-bar{
-  background:var(--mcds-orange); color:#fff; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:12.5px;
-  letter-spacing:0.05em; text-transform:uppercase; text-align:center; padding:6px 8px; border:1px solid #000;
+  background:linear-gradient(to right, var(--mcds-orange-dark), var(--mcds-orange) 55%, var(--mcds-tint));
+  color:#fff; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:22.5px;
+  letter-spacing:0.05em; text-transform:uppercase; text-align:center; padding:8px 8px; border:1px solid #000;
 }
 #mcdsSheet .mcds-bar-spacer{height:12px;}
 #mcdsSheet table.mcds-grid{width:100%; border-collapse:collapse; table-layout:fixed; margin-bottom:0;}
@@ -249,7 +265,7 @@ a{text-decoration:none;color:inherit;}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
       Reset
     </button>
-    <button type="button" class="sbs-btn sbs-btn-primary" data-sbs-action="printSheet">
+    <button type="button" class="sbs-btn sbs-btn-primary" id="sbsDownloadBtn" data-sbs-action="downloadPdf">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9V3h12v6"/><path d="M6 18H4a1 1 0 0 1-1-1v-6a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-2"/><rect x="6" y="14" width="12" height="7"/></svg>
       Download PDF
     </button>
@@ -285,11 +301,24 @@ var sbsState = {
   materials: [],
   categories: [],
   slots: [
-    { search:'', category:'', grade:'', suggestionsOpen:false },
-    { search:'', category:'', grade:'', suggestionsOpen:false }
+    { search:'', category:'', grade:'', suggestionsOpen:false, overrideNote:false, overrideText:'' },
+    { search:'', category:'', grade:'', suggestionsOpen:false, overrideNote:false, overrideText:'' }
   ],
   loaded: false
 };
+
+/* Default note text per slot position: slot 0 = "as per print", slot 1 = "Proposed Alternative",
+   slot 2+ = "Proposed Alternative #N" (N = slot index). Can be overridden per-slot by the user. */
+function defaultNoteFor(idx){
+  if (idx === 0) return 'As per Print or Specification';
+  if (idx === 1) return 'Proposed Alternative';
+  return 'Proposed Alternative #' + idx;
+}
+function noteForSlotIdx(idx){
+  var slot = sbsState.slots[idx];
+  if (slot && slot.overrideNote && slot.overrideText && slot.overrideText.trim() !== '') return slot.overrideText.trim();
+  return defaultNoteFor(idx);
+}
 
 /* ---------------- CSV parsing (handles quoted fields, embedded commas/newlines) ---------------- */
 function parseCSV(text){
@@ -439,7 +468,7 @@ function renderSlots(){
   sbsState.slots.forEach(function(slot, idx){
     var card = el('div','sbs-slot');
     var label = el('div','sbs-slot-label');
-    label.textContent = idx === 0 ? 'Material 1 (As per Print or Specification)' : (idx === n-1 ? 'Material ' + (idx+1) + ' (Proposed Alternative)' : 'Material ' + (idx+1));
+    label.textContent = 'Material ' + (idx+1) + ' (' + noteForSlotIdx(idx) + ')';
     card.appendChild(label);
 
     if (n > 2){
@@ -507,6 +536,21 @@ function renderSlots(){
     gradeWrap.appendChild(svgChevron());
     card.appendChild(gradeWrap);
 
+    var noteCheckLabel = el('label','sbs-note-check-label');
+    var noteCheck = el('input', null, { type:'checkbox', 'data-sbs-action':'toggleNoteOverride', 'data-slot-index':idx });
+    noteCheck.checked = !!slot.overrideNote;
+    var noteCheckText = document.createElement('span');
+    noteCheckText.textContent = 'Override the note "' + defaultNoteFor(idx) + '"';
+    noteCheckLabel.appendChild(noteCheck);
+    noteCheckLabel.appendChild(noteCheckText);
+    card.appendChild(noteCheckLabel);
+
+    if (slot.overrideNote){
+      var noteInput = el('input','sbs-note-input', { type:'text', 'data-sbs-action':'noteInput', 'data-slot-index':idx, placeholder:defaultNoteFor(idx), autocomplete:'off' });
+      noteInput.value = slot.overrideText || '';
+      card.appendChild(noteInput);
+    }
+
     container.appendChild(card);
   });
 
@@ -535,19 +579,22 @@ function rowHasAnyValue(mats, rowKey){
 
 function renderSheet(){
   var host = document.getElementById('mcdsSheet');
-  var mats = selectedMaterials();
-  var filled = mats.filter(Boolean);
+  var rawMats = selectedMaterials();
+  var filled = rawMats.filter(Boolean);
 
-  if (filled.length < 2){
+  if (filled.length < 1){
     host.innerHTML = '';
     var empty = el('div','sbs-sheet-empty');
-    empty.textContent = 'Select at least two materials above to generate a comparison sheet.';
+    empty.textContent = 'Select at least one material above to generate a comparison sheet.';
     host.appendChild(empty);
     return;
   }
 
   host.innerHTML = '';
-  var n = mats.length;
+  var n = rawMats.length;
+  /* Unselected slots render as blank placeholder columns (rather than blocking the whole
+     sheet) so the MCDS updates and stays visible after every single material pick. */
+  var mats = rawMats.map(function(m){ return m || {}; });
 
   var headerRow = el('div','mcds-header-row');
   var logo = el('img', null, { src: document.getElementById('sbsLogoPrint').src, alt:'Specialty Bolt and Screw' });
@@ -565,7 +612,7 @@ function renderSheet(){
   hdrRow.appendChild(el('td','mcds-blank'));
   mats.forEach(function(m, idx){
     var td = el('td','mcds-colhead');
-    td.textContent = idx === n-1 ? 'Proposed Alternative' : 'As per Print or Specification';
+    td.textContent = noteForSlotIdx(idx);
     if (n > 2){
       var rm = el('button','mcds-remove-col sbs-no-print', { type:'button', 'data-sbs-action':'removeSlot', 'data-slot-index':idx, title:'Remove this material' });
       rm.innerHTML = svgClearIcon();
@@ -604,7 +651,7 @@ function renderSheet(){
   }
 
   var descBlock = el('div','mcds-desc-block');
-  mats.forEach(function(m){
+  filled.forEach(function(m){
     var item = el('div','mcds-desc-item');
     var nameLbl = el('div','mcds-mat-name');
     nameLbl.textContent = (m['Grade'] || 'Material') + ':';
@@ -625,7 +672,7 @@ function renderSheet(){
   mats.forEach(function(m){
     var td = document.createElement('td');
     var url = m['Source URL'];
-    var name = m['Source Name'] || m['Grade'];
+    var name = m['Source Name'] || m['Grade'] || '';
     if (url && url.trim() !== ''){
       var a = el('a','mcds-source-link', { href:url, target:'_blank', rel:'noopener' });
       a.textContent = name;
@@ -688,7 +735,7 @@ function buildPropertyTable(rowKeys, mats, n){
   hdr.appendChild(el('td','mcds-blank'));
   mats.forEach(function(m, idx){
     var td = el('td','mcds-colhead');
-    td.textContent = idx === n-1 ? 'Proposed Alternative' : 'As per Print or Specification';
+    td.textContent = noteForSlotIdx(idx);
     hdr.appendChild(td);
   });
   var diffHdr = el('td','mcds-diffhead'); diffHdr.textContent = String.fromCharCode(0x0394);
@@ -742,18 +789,27 @@ document.addEventListener('click', function(evt){
   if (action === 'dismissBeta'){
     document.getElementById('sbsBetaModal').classList.add('sbs-hidden');
   }
-  else if (action === 'printSheet'){
-    window.print();
+  else if (action === 'downloadPdf'){
+    downloadMcdsPdf();
   }
   else if (action === 'resetTool'){
     sbsState.slots = [
-      { search:'', category:'', grade:'', suggestionsOpen:false },
-      { search:'', category:'', grade:'', suggestionsOpen:false }
+      { search:'', category:'', grade:'', suggestionsOpen:false, overrideNote:false, overrideText:'' },
+      { search:'', category:'', grade:'', suggestionsOpen:false, overrideNote:false, overrideText:'' }
     ];
     renderSlots(); renderSheet();
   }
   else if (action === 'addSlot'){
-    sbsState.slots.splice(sbsState.slots.length - 1, 0, { search:'', category:'', grade:'', suggestionsOpen:false });
+    /* New materials are always appended at the end, so a newly added material becomes
+       the next sequential Material # (e.g. Material 3, then Material 4, ...) rather than
+       being inserted in the middle. */
+    sbsState.slots.push({ search:'', category:'', grade:'', suggestionsOpen:false, overrideNote:false, overrideText:'' });
+    renderSlots(); renderSheet();
+  }
+  else if (action === 'toggleNoteOverride'){
+    var s = sbsState.slots[slotIdx];
+    s.overrideNote = !s.overrideNote;
+    if (!s.overrideNote) s.overrideText = '';
     renderSlots(); renderSheet();
   }
   else if (action === 'removeSlot'){
@@ -788,6 +844,14 @@ document.addEventListener('input', function(evt){
     renderSlots();
     var newInput = document.querySelector('input[data-sbs-action="searchInput"][data-slot-index="' + slotIdx + '"]');
     if (newInput){ newInput.focus(); newInput.setSelectionRange(newInput.value.length, newInput.value.length); }
+  }
+  else if (el2.getAttribute && el2.getAttribute('data-sbs-action') === 'noteInput'){
+    var noteSlotIdx = parseInt(el2.getAttribute('data-slot-index'), 10);
+    var caretPos = el2.selectionStart;
+    sbsState.slots[noteSlotIdx].overrideText = el2.value;
+    renderSlots(); renderSheet();
+    var newNoteInput = document.querySelector('input[data-sbs-action="noteInput"][data-slot-index="' + noteSlotIdx + '"]');
+    if (newNoteInput){ newNoteInput.focus(); newNoteInput.setSelectionRange(caretPos, caretPos); }
   }
 });
 
@@ -829,6 +893,68 @@ document.addEventListener('change', function(evt){
     renderSlots(); renderSheet();
   }
 });
+
+/* ---------------- PDF download (no browser print dialog, matches on-screen look) ---------------- */
+function downloadMcdsPdf(){
+  var target = document.getElementById('mcdsSheet');
+  if (!target || !target.querySelector('table')){
+    return; /* nothing generated yet */
+  }
+  if (typeof html2canvas === 'undefined' || !window.jspdf){
+    alert('The PDF engine did not load (check your internet connection) - please try again.');
+    return;
+  }
+
+  var btn = document.getElementById('sbsDownloadBtn');
+  var originalBtnHtml = btn ? btn.innerHTML : null;
+  if (btn){
+    btn.classList.add('sbs-btn-loading');
+    btn.innerHTML = 'Preparing PDF...';
+  }
+
+  /* Render the sheet host on a plain white background at high resolution so the PDF
+     captures the exact same colors/gradients/fonts shown on screen. */
+  html2canvas(target, {
+    scale: 2.5,
+    backgroundColor: '#ffffff',
+    useCORS: true,
+    logging: false
+  }).then(function(canvas){
+    var imgData = canvas.toDataURL('image/png', 1.0);
+    var jsPDFCtor = window.jspdf.jsPDF;
+    var pdf = new jsPDFCtor({ orientation:'portrait', unit:'pt', format:'letter' });
+
+    var pageWidth = pdf.internal.pageSize.getWidth();
+    var pageHeight = pdf.internal.pageSize.getHeight();
+    var margin = 24;
+    var maxWidth = pageWidth - (margin * 2);
+    var maxHeight = pageHeight - (margin * 2);
+
+    var imgWidth = maxWidth;
+    var imgHeight = canvas.height * (imgWidth / canvas.width);
+
+    if (imgHeight > maxHeight){
+      imgHeight = maxHeight;
+      imgWidth = canvas.width * (imgHeight / canvas.height);
+    }
+
+    var x = (pageWidth - imgWidth) / 2;
+    var y = margin;
+
+    pdf.addImage(imgData, 'PNG', x, y, imgWidth, imgHeight, undefined, 'FAST');
+
+    var mats = selectedMaterials().filter(Boolean);
+    var namePart = mats.length ? mats.map(function(m){ return (m['Grade']||'').replace(/[^a-z0-9]+/ig,'-'); }).join('_vs_') : 'MCDS';
+    pdf.save('Material-Comparison-' + namePart + '.pdf');
+  }).catch(function(err){
+    alert('Sorry, the PDF could not be generated (' + err.message + '). Please try again.');
+  }).finally(function(){
+    if (btn){
+      btn.classList.remove('sbs-btn-loading');
+      btn.innerHTML = originalBtnHtml;
+    }
+  });
+}
 
 /* ---------------- Init ---------------- */
 loadMaterials();
