@@ -1,28 +1,45 @@
 <!DOCTYPE html>
 <!-- SBS TDS Generator — Google Sheet Live Version 1.20.0 (V_D12) | Specialty Bolt & Screw, Inc. -->
-<!-- V_D12 changelog — Reverse-Engineer: one-sided limits, thread input, relabel:
-     1. ONE-SIDED (min-only / max-only) DIMENSIONS become matchable as "consistent".
-        reBandFor()/reDir() read direction from the Dim_Name text: "(max)" → upper
-        limit (v ≤ max+slop), "(min)" → lower limit (v ≥ min−slop); "basic"/nominal/
-        unlabeled single values stay EXCLUDED (never guess direction). Signatures now
-        carry a kind ('band'|'min'|'max'). A one-sided pass counts as CONSISTENT
-        (new state ≈), not confirmed — it can contradict/rule-out but cannot fully
-        confirm, and a standard viable only on consistent evidence is capped at
-        "possible" (never likely/ambiguous). Unlocks Flange Diameter, Flange
-        Thickness, Head Height, etc. as inputs. reScoreSizes/reIdentify updated;
-        viable = no contradiction AND (confirmed+consistent)>0.
-     2. THREAD INPUT for threaded categories. When a category has any threaded
-        standard (Sheet 1 ThreadDataKey), a "Thread Size" dropdown appears (union of
-        the category's known thread sizes from THREAD_MAP via reThreadSizesForCategory).
-        A standard WITH thread data whose set lacks the pick is RULED OUT; a match
-        confirms and, when no dimensional size was resolved, supplies the size from
-        the thread designation (thread resolves size). Standards without thread data
-        are unaffected (thread "not defined"). New helpers on window.__RE:
-        reThreadDesignation, reThreadSizesForCategory (also reBandFor, reDir).
-     3. RELABEL card-grid sub-header → "Filter Category / Type of Part (optional)"
-        (dropped "Step 1 —"). Label only.
-     Tested at logic layer (node/jsdom) + real MASTER_24 data; BROWSER smoke-test
-     still required before production. -->
+<!-- V_D12 changelog — Reverse-Engineer promoted to a top-level tab + UX edits:
+     D12-1/2. IDENTIFY PART TAB. "What Is This Part? (Reverse-Engineer)" moved out of
+        the Step-1 mode toggle into its own top-nav tab "Identify Part" (between Compare
+        Parts and Best Practices). #identifyWrap relocated into new #tab-identify panel.
+        switchTab() populates the category list on first open (guarded on data-ready).
+        Step-1 toggle now has TWO buttons (from a Standard / from SBS Part #); part-#
+        lookup unchanged. setStep1Mode() 'identify' branch and all iw refs removed.
+     D12-3. NAV: "Guided Tour" renamed "Guided Tour / Help" and pinned to the far-right
+        edge (margin-left:auto). data-tab="tour" unchanged.
+     D12-4. Walkthrough video embedded (Google Drive /preview iframe, 16:9 hero) at the
+        top of the Guided Tour / Help tab, above the card grid.
+     D12-5. C_DIMENSIONAL_LABELS gains a ReverseEngineer column. Value N/No (case-insens.)
+        hides that feature from the Identify Part grid. Authored per RawDimName; a
+        canonical feature is hidden ONLY if EVERY contributing raw row is No (rule (i));
+        unmapped/blank/other = shown. Grid-build filter only — RE_SIGN/scoring untouched.
+        New global RE_KEY_SHOWN; DIM_NAME_MAP rows carry a .show flag.
+     D12-6. Section header "ENTER WHAT YOU CAN MEASURE" (+ helper line) rendered above
+        the Identify Part measurement grid in renderIdentifyForm().
+     Tested at logic layer (node/jsdom) + node --check; BROWSER smoke-test still required
+     before production. -->
+<!-- V_D11 changelog — Reverse-Engineer: size-gated viability + filter-card GUI:
+     1. VIABILITY GATED ON A FITTING SIZE. A standard with per-size data is viable /
+        "dimensionally tied" only if ONE size fits every measured feature at once.
+        New reScoreSizes() scores every size row; reIdentify() takes the best-fitting
+        size as the representative (or the closest size when none fully fits) and
+        derives confirmed/contradicted/not-defined from THAT size — never from
+        cross-size flattening. Fixes the false "confirmed 3 · Ambiguous" (e.g. ISO
+        7092 no longer ties on 15.1/27.8/2.5: no single 7092 size has both ID 15.1 and
+        OD 27.8, so it drops off, leaving ISO 7089 M14). Standards WITHOUT per-size
+        data keep the flattened standard-level path unchanged. New helper on
+        window.__RE: reScoreSizes.
+     2. FILTER-CARD GUI RESTRUCTURE. (a) Removed the outer card minimize icon.
+        (b) Category card grid now sits ABOVE the two dropdowns. (c) The card grid has
+        its own minimize toggle (toggleReCatGrid).
+     3. COLLAPSE-TO-SELECTED + REFRESH. Picking a category hides all other cards,
+        leaving only the selected one; a "Refresh Filters" button (Build-TDS style)
+        reopens the full grid (reRefreshFilters), keeping the current pick checked.
+        Dropdown ↔ grid stay in sync (dropdown change collapses the grid too).
+     Tested at logic layer (node/jsdom) + real MASTER_24 washer data; BROWSER
+     smoke-test still required before production. -->
 <!-- V_D08 changelog — Dimensional Labels + Reverse-Engineer ("What Is This Part?"):
      A. NEW published sheet C_DIMENSIONAL_LABELS (gid 90289898) wired into
         SHEET_URLS / DB / parallel-load steps. buildIndexes() builds
@@ -1069,6 +1086,9 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-
 .identify-controls{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px;}
 .identify-controls .field-group{flex:1;min-width:220px;}
 .identify-measure{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:14px;}
+.re-measure-head{grid-column:1/-1;margin:4px 0 2px;}
+.re-measure-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;letter-spacing:0.4px;color:var(--navy);text-transform:uppercase;}
+.re-measure-sub{font-size:12px;color:var(--gray-500);line-height:1.5;margin-top:3px;max-width:640px;}
 .identify-hint,.identify-note{font-size:12.5px;color:var(--gray-600);line-height:1.5;padding:8px 0;}
 .identify-note{background:#fff;border:1px solid var(--gray-200);border-radius:8px;padding:10px 12px;margin-bottom:12px;}
 .identify-actions{display:flex;gap:10px;margin-bottom:8px;}
@@ -1088,11 +1108,8 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-
 .re-chips{display:flex;flex-wrap:wrap;gap:5px;}
 .re-chip{font-size:10.5px;padding:2px 7px;border-radius:9px;font-weight:600;}
 .re-chip-fit{background:#e2f3e9;color:#2b7a4b;}
-.re-chip-cons{background:#fbeecf;color:#a86c15;}
 .re-chip-miss{background:#f7dede;color:#9b2c2c;}
 .re-chip-unk{background:var(--gray-100);color:var(--gray-500);}
-.re-thread-group select.re-thread{width:100%;padding:7px 9px;border:1px solid var(--gray-200);border-radius:7px;font-size:13px;font-family:'Inter',sans-serif;background:#fff;}
-.re-thread-hint{font-weight:500;color:var(--gray-400);font-size:10.5px;text-transform:none;letter-spacing:0;}
 .identify-foot{font-size:10.5px;color:var(--gray-400);line-height:1.5;margin-top:10px;}
 /* ── Filter card (collapsible) + matched-size chip (V_D09) ── */
 .re-filter-card{border:1px solid var(--gray-200);border-radius:10px;background:#fff;margin-bottom:14px;overflow:hidden;}
@@ -1123,7 +1140,6 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-
   font-size:12px;font-weight:800;letter-spacing:0.5px;text-transform:uppercase;
   color:var(--gray-600);font-family:'Barlow',sans-serif;}
 .re-catgrid-head .re-catgrid-count{color:var(--gray-400);font-weight:600;text-transform:none;letter-spacing:0;margin-left:6px;}
-.re-catgrid-head .re-catgrid-optional{color:var(--gray-400);font-weight:600;text-transform:none;letter-spacing:0;}
 .re-catgrid-toggle{border:1px solid var(--gray-300);background:#fff;color:var(--gray-600);
   width:26px;height:26px;border-radius:6px;font-size:16px;line-height:1;cursor:pointer;
   display:flex;align-items:center;justify-content:center;flex-shrink:0;}
@@ -1651,8 +1667,9 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-
   <button class="tab-btn active" data-tab="tds" onclick="switchTab('tds')">TDS Generator</button>
   <button class="tab-btn" data-tab="sds" onclick="switchTab('sds')">Standard Data Sheet</button>
   <button class="tab-btn" data-tab="compare" onclick="switchTab('compare')">Compare Parts</button>
+  <button class="tab-btn" data-tab="identify" onclick="switchTab('identify')">Identify Part</button>
   <button class="tab-btn" data-tab="bp" onclick="switchTab('bp')">Best Practices</button>
-  <button class="tab-btn" data-tab="tour" onclick="switchTab('tour')">Guided Tour</button>
+  <button class="tab-btn" data-tab="tour" onclick="switchTab('tour')" style="margin-left:auto;">Guided Tour / Help</button>
 </nav>
 
 <!-- ══ TAB 1: TDS GENERATOR ══════════════════════════════════ -->
@@ -1669,7 +1686,6 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-
       <div class="step1-mode" id="step1Mode">
         <button type="button" class="step1-mode-btn active" data-mode="find" onclick="setStep1Mode('find')">Build TDS and Inspection Plan from a Standard</button>
         <button type="button" class="step1-mode-btn" data-mode="part" onclick="setStep1Mode('part')">Build TDS and Inspection Plan from SBS Part #</button>
-        <button type="button" class="step1-mode-btn" data-mode="identify" onclick="setStep1Mode('identify')">What Is This Part? (Reverse-Engineer)</button>
       </div>
       <div class="sbs-partno-wrap" id="partNoWrap" style="display:none;">
         <div class="sbs-partno-row">
@@ -1677,63 +1693,6 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-
           <button type="button" class="btn btn-orange" onclick="lookupPartNumber()">Look up</button>
         </div>
         <div class="sbs-partno-status" id="partNoStatus"></div>
-      </div>
-      <!-- V_D08: Reverse-Engineer ("What Is This Part?") panel -->
-      <div class="identify-wrap" id="identifyWrap" style="display:none;">
-        <div class="identify-intro">
-          Pick the category of part you have in hand, enter what you can measure
-          (caliper &amp; ring/thread gauges), and the tool will rank the standards
-          whose published tolerances your part fits. Dimensions alone often narrow
-          to a shortlist — confirm the final pick by the head marking / grade.
-        </div>
-        <!-- V_D11: Filter card. Grid sits ABOVE the dropdowns; the card grid has its
-             own minimize toggle; picking a category collapses to the selected card,
-             and "Refresh Filters" (Build-TDS style) reopens the full grid. -->
-        <div class="re-filter-card" id="reFilterCard">
-          <div class="re-filter-head">
-            <span class="re-filter-title">Filter — Category / Type of Part</span>
-          </div>
-          <div class="re-filter-body" id="reFilterBody">
-            <div class="re-catgrid-wrap" id="reCatGridWrap">
-              <div class="re-catgrid-head">
-                <span>Filter Category / Type of Part <span class="re-catgrid-optional">(optional)</span><span class="re-catgrid-count" id="reCatGridCount"></span></span>
-                <button type="button" class="re-catgrid-toggle" id="reCatGridToggle"
-                  aria-expanded="true" aria-controls="reCatGridBody"
-                  onclick="toggleReCatGrid();" title="Minimize / expand category cards">&minus;</button>
-              </div>
-              <div class="re-catgrid-collapse" id="reCatGridBody">
-                <button type="button" class="sbs-refresh-btn re-refresh-btn" id="reRefreshBtn"
-                  onclick="reRefreshFilters();" style="display:none;">
-                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"
-                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-                  Refresh Filters
-                </button>
-                <div class="sbs-card-grid sbs-scroll" id="reCatCardGrid"></div>
-              </div>
-            </div>
-            <div class="identify-controls">
-              <div class="field-group">
-                <label class="field-label">Category of part</label>
-                <select id="reCategory" onchange="renderIdentifyCategoryCards(RE_CAT_NAMES, this.value, !!this.value);renderIdentifyForm();"></select>
-              </div>
-              <div class="field-group identify-eps">
-                <label class="field-label">Measurement units / slop</label>
-                <select id="reUnits" onchange="renderIdentifyForm()">
-                  <option value="0.005|in">Inch — ±0.005"</option>
-                  <option value="0.002|in">Inch — ±0.002" (tight)</option>
-                  <option value="0.1|mm">Metric — ±0.1 mm</option>
-                  <option value="0.05|mm">Metric — ±0.05 mm (tight)</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="identify-measure" id="reMeasureGrid"></div>
-        <div class="identify-actions">
-          <button type="button" class="btn btn-orange" onclick="runIdentify()">Identify part</button>
-          <button type="button" class="btn btn-outline" onclick="renderIdentifyForm()">Reset</button>
-        </div>
-        <div class="identify-results" id="reResults"></div>
       </div>
 
       <div class="search-wrap">
@@ -2062,6 +2021,70 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-
 </div>
 </div>
 
+
+<!-- ══ TAB: IDENTIFY PART (Reverse-Engineer) — promoted to top nav in V_D12 ══ -->
+<div id="tab-identify" class="tab-panel">
+<div class="page-body">
+      <!-- V_D08: Reverse-Engineer ("What Is This Part?") panel -->
+      <div class="identify-wrap" id="identifyWrap">
+        <div class="identify-intro">
+          Pick the category of part you have in hand, enter what you can measure
+          (caliper &amp; ring/thread gauges), and the tool will rank the standards
+          whose published tolerances your part fits. Dimensions alone often narrow
+          to a shortlist — confirm the final pick by the head marking / grade.
+        </div>
+        <!-- V_D11: Filter card. Grid sits ABOVE the dropdowns; the card grid has its
+             own minimize toggle; picking a category collapses to the selected card,
+             and "Refresh Filters" (Build-TDS style) reopens the full grid. -->
+        <div class="re-filter-card" id="reFilterCard">
+          <div class="re-filter-head">
+            <span class="re-filter-title">Filter — Category / Type of Part</span>
+          </div>
+          <div class="re-filter-body" id="reFilterBody">
+            <div class="re-catgrid-wrap" id="reCatGridWrap">
+              <div class="re-catgrid-head">
+                <span>Step 1 — Filter Category / Type of Part<span class="re-catgrid-count" id="reCatGridCount"></span></span>
+                <button type="button" class="re-catgrid-toggle" id="reCatGridToggle"
+                  aria-expanded="true" aria-controls="reCatGridBody"
+                  onclick="toggleReCatGrid();" title="Minimize / expand category cards">&minus;</button>
+              </div>
+              <div class="re-catgrid-collapse" id="reCatGridBody">
+                <button type="button" class="sbs-refresh-btn re-refresh-btn" id="reRefreshBtn"
+                  onclick="reRefreshFilters();" style="display:none;">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                  Refresh Filters
+                </button>
+                <div class="sbs-card-grid sbs-scroll" id="reCatCardGrid"></div>
+              </div>
+            </div>
+            <div class="identify-controls">
+              <div class="field-group">
+                <label class="field-label">Category of part</label>
+                <select id="reCategory" onchange="renderIdentifyCategoryCards(RE_CAT_NAMES, this.value, !!this.value);renderIdentifyForm();"></select>
+              </div>
+              <div class="field-group identify-eps">
+                <label class="field-label">Measurement units / slop</label>
+                <select id="reUnits" onchange="renderIdentifyForm()">
+                  <option value="0.005|in">Inch — ±0.005"</option>
+                  <option value="0.002|in">Inch — ±0.002" (tight)</option>
+                  <option value="0.1|mm">Metric — ±0.1 mm</option>
+                  <option value="0.05|mm">Metric — ±0.05 mm (tight)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="identify-measure" id="reMeasureGrid"></div>
+        <div class="identify-actions">
+          <button type="button" class="btn btn-orange" onclick="runIdentify()">Identify part</button>
+          <button type="button" class="btn btn-outline" onclick="renderIdentifyForm()">Reset</button>
+        </div>
+        <div class="identify-results" id="reResults"></div>
+      </div>
+</div>
+</div>
+
 <!-- ══ TAB 3: BEST PRACTICES ════════════════════════════════ -->
 <div id="tab-bp" class="tab-panel">
 <div class="page-body">
@@ -2110,6 +2133,14 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-
     supplier, an inspector, or an engineer. Each tab answers a different question —
     start with the one that matches what you are trying to produce.
   </p>
+
+  <!-- V_D12 (D12-4): walkthrough video hero (Google Drive /preview embed). File must
+       be shared "Anyone with the link — Viewer" for public playback. -->
+  <div style="position:relative;width:100%;max-width:900px;margin:0 auto 26px;aspect-ratio:16/9;background:#000;border-radius:10px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.12);">
+    <iframe src="https://drive.google.com/file/d/16ATby9GGpNZ8u_VY7m2du2IbFEWn6Onr/preview"
+      style="position:absolute;inset:0;width:100%;height:100%;border:0;"
+      allow="autoplay; fullscreen" allowfullscreen title="SBS TDS Generator walkthrough"></iframe>
+  </div>
 
   <div class="bp-grid">
     <div class="bp-card">
@@ -2224,6 +2255,7 @@ let DIM_MAP       = {};   // configKey  → {dimName: value}
 let DIM_NAME_MAP  = {};   // rawDimName → {key, label}  (V_D08, from C_DIMENSIONAL_LABELS)
 let RE_SIGN       = {};   // standardID → {canonKey: [{min,max}]}  reverse-engineer signatures (V_D08)
 let RE_SIZE       = {};   // standardID → [{size, bands:{canonKey:{min,max}}}]  per-size bands (V_D09)
+let RE_KEY_SHOWN  = {};   // canonKey → true if ANY contributing raw dim row is shown (V_D12, D12-5 rule (i))
 let MECH_MAP      = {};   // configKey  → {propName: value}
 let FINISH_MAP    = {};   // finishCode → row object
 let CHEM_MAP      = {};   // materialCode → {element: value}
@@ -2653,42 +2685,15 @@ function reNormUnit(u) {
   return u;
 }
 
-// V_D12 (item 1): a single value that is a LIMIT carries a one-sided test.
-// reDir() reads the direction from the Dim_Name text: '(max)' → upper limit,
-// '(min)' → lower limit; 'basic'/'nominal'/'ref' or unlabeled → excluded (a target
-// isn't a limit, and we never guess direction).
-function reDir(name) {
-  const s = String(name || '').toLowerCase();
-  if (/\bbasic\b|\bnominal\b|\bnom\.?\b|\bref\.?\b/.test(s)) return 'basic';
-  if (/\bmax\b/.test(s)) return 'max';
-  if (/\bmin\b/.test(s)) return 'min';
-  return null;
-}
-// reBandFor() → normalized descriptor with a kind:
-//   {kind:'band', min, max}                two-sided tolerance (fully confirmable)
-//   {kind:'max',  min:-Infinity, max:v}    upper limit  (pass = "consistent")
-//   {kind:'min',  min:v, max:Infinity}     lower limit  (pass = "consistent")
-//   null                                    excluded (basic/nominal/unlabeled single)
-// The ±eps comparison v>=min-e && v<=max+e works unchanged with the infinities.
-function reBandFor(name, rawVal) {
-  const b = reParseBand(rawVal);
-  if (b && !b.single) return { kind: 'band', min: b.min, max: b.max };
-  if (!b) return null;
-  const v = b.val != null ? b.val : b.min;   // single numeric
-  if (isNaN(v)) return null;
-  const d = reDir(name);
-  if (d === 'max') return { kind: 'max', min: -Infinity, max: v };
-  if (d === 'min') return { kind: 'min', min: v, max: Infinity };
-  return null;   // basic / nominal / unlabeled → exclude (no guessing)
-}
-
-// buildReverseSignatures builds two structures from banded AND one-sided-limit rows:
-//   RE_SIGN[stdId][canonKey] = [{min,max,unit,kind}, ...]        (viability)
-//   RE_SIZE[stdId] = [ {size, bands:{canonKey:{min,max,unit,kind}}, disp:[...]}, ... ]
-// kind ∈ 'band' (confirmable) | 'min' | 'max' (one-sided → "consistent" only).
+// buildReverseSignatures builds TWO structures from banded dimensional rows:
+//   RE_SIGN[stdId][canonKey] = [{min,max,unit}, ...]        (standard-level viability)
+//   RE_SIZE[stdId] = [ {size, bands:{canonKey:{min,max,unit}}, disp:[{key,label,text}]}, ... ]
+// Only BANDED rows (real min-max, not single nominals) are kept — a caliper
+// reading never equals a nominal exactly, so nominals can't discriminate.
 function buildReverseSignatures() {
   RE_SIGN = {};
   RE_SIZE = {};
+  RE_KEY_SHOWN = {};   // V_D12 (D12-5): rebuild per-feature Identify-Part visibility
   for (const ck in DIM_MAP) {
     const block = DIM_MAP[ck];
     if (!block || !block._rows) continue;
@@ -2698,20 +2703,23 @@ function buildReverseSignatures() {
     const sizeLabel = reSizeLabel(ck);
     const sizeBands = {}, disp = [];
     for (const r of block._rows) {
-      const bd = reBandFor(r.name, r._rawVal != null ? r._rawVal : r.val);
-      if (!bd) continue;                                   // excluded
+      const band = reParseBand(r._rawVal != null ? r._rawVal : r.val);
+      if (!band || band.single) continue;                 // banded rows only
       const ck2 = reCanonical(r.name).key;
       if (!ck2) continue;
+      // V_D12 (D12-5, rule (i)): a canonical feature is hidden from the Identify Part
+      // grid only if EVERY contributing raw row is flagged No. An unmapped raw name has
+      // no C_DIMENSIONAL_LABELS row → DIM_NAME_MAP[raw] undefined → treated as shown.
+      if (RE_KEY_SHOWN[ck2] !== true) {
+        const _lm = DIM_NAME_MAP[String(r.name || '').trim()];
+        RE_KEY_SHOWN[ck2] = (!_lm || _lm.show !== false);
+      }
       const unit = reNormUnit(r._unit);
-      const rec = { min: bd.min, max: bd.max, unit: unit, kind: bd.kind };
-      (RE_SIGN[stdId][ck2] = RE_SIGN[stdId][ck2] || []).push(rec);
-      sizeBands[ck2] = rec;                                // last-wins within a block
-      // published value for display: bands show "a – b unit", limits show "≤ v" / "≥ v"
-      const raw = String(r._rawVal != null ? r._rawVal : r.val).trim();
-      let txt;
-      if (bd.kind === 'band') txt = raw.replace(/\s*-\s*/, ' – ') + (unit ? ' ' + unit : '');
-      else txt = (bd.kind === 'max' ? '≤ ' : '≥ ') + raw + (unit ? ' ' + unit : '');
-      disp.push({ key: ck2, label: reKeyLabel(ck2), text: txt, kind: bd.kind });
+      (RE_SIGN[stdId][ck2] = RE_SIGN[stdId][ck2] || []).push({ min: band.min, max: band.max, unit: unit });
+      sizeBands[ck2] = { min: band.min, max: band.max, unit: unit };   // last-wins within a block
+      // V_D10 (edit 2): human-readable published value for this feature at this size
+      const rawTxt = String(r._rawVal != null ? r._rawVal : r.val).replace(/\s*-\s*/, ' – ').trim();
+      disp.push({ key: ck2, label: reKeyLabel(ck2), text: rawTxt + (unit ? ' ' + unit : '') });
     }
     if (sizeLabel && Object.keys(sizeBands).length) {
       (RE_SIZE[stdId] = RE_SIZE[stdId] || []).push({ size: sizeLabel, bands: sizeBands, disp: disp });
@@ -2755,22 +2763,19 @@ function reScoreSizes(stdId, measurements, eps, sizeMap, userUnit) {
   const provided = Object.keys(measurements).filter(function (k) { return measurements[k] != null && !isNaN(measurements[k]); });
   const out = [];
   for (const row of rows) {
-    let confirmed = 0, consistent = 0, contradicted = 0, defined = 0, slack = 0; const detail = {};
+    let confirmed = 0, contradicted = 0, defined = 0, slack = 0; const detail = {};
     for (const key of provided) {
       const b = row.bands[key];
       if (!b) { detail[key] = 'not defined'; continue; }
       defined++;
       const v = reConvLen(+measurements[key], userUnit, b.unit);
       const e = reConvLen(eps, userUnit, b.unit);
-      const pass = v >= b.min - e && v <= b.max + e;
-      if (!pass) { contradicted++; detail[key] = 'miss'; }
-      else if (b.kind === 'band') { confirmed++; detail[key] = 'fit'; slack += Math.min(v - (b.min - e), (b.max + e) - v); }
-      else { consistent++; detail[key] = 'consistent'; }   // V_D12: one-sided limit pass
+      if (v >= b.min - e && v <= b.max + e) { confirmed++; detail[key] = 'fit'; slack += Math.min(v - (b.min - e), (b.max + e) - v); }
+      else { contradicted++; detail[key] = 'miss'; }
     }
-    out.push({ size: row.size, confirmed: confirmed, consistent: consistent, contradicted: contradicted, defined: defined, slack: slack, detail: detail, disp: row.disp });
+    out.push({ size: row.size, confirmed: confirmed, contradicted: contradicted, defined: defined, slack: slack, detail: detail, disp: row.disp });
   }
-  // best-fitting: most band-confirms, then most consistent, then fewest contradictions, tightest slack
-  out.sort(function (a, b) { return (b.confirmed - a.confirmed) || (b.consistent - a.consistent) || (a.contradicted - b.contradicted) || (b.slack - a.slack); });
+  out.sort(function (a, b) { return (b.confirmed - a.confirmed) || (a.contradicted - b.contradicted) || (b.slack - a.slack); });
   return out;
 }
 // standards' signatures), most-common first — drives the measurement form.
@@ -2780,7 +2785,11 @@ function reFeaturesForCategory(catName, standardMap, signatures) {
     if (!standardMap[sid] || standardMap[sid].catName !== catName) continue;
     for (const key in signatures[sid]) count[key] = (count[key] || 0) + 1;
   }
-  return Object.keys(count).sort(function (a, b) { return count[b] - count[a] || a.localeCompare(b); });
+  // V_D12 (D12-5): drop features whose every contributing raw dim row is flagged No
+  // (RE_KEY_SHOWN[key] === false). Unknown/undefined keys default to shown.
+  return Object.keys(count)
+    .filter(function (k) { return RE_KEY_SHOWN[k] !== false; })
+    .sort(function (a, b) { return count[b] - count[a] || a.localeCompare(b); });
 }
 
 // Score every standard in a category against the user's measurements.
@@ -2795,8 +2804,6 @@ function reIdentify(catName, measurements, opts) {
   const signatures = opts.signatures || RE_SIGN;
   const sizeMap = opts.sizeMap || RE_SIZE;
   const userUnit = reNormUnit(opts.userUnit || 'in');   // V_D10: unit the operator measured in
-  const thread = opts.thread || '';                     // V_D12: picked thread designation
-  const threadSets = opts.threadSets || {};             // V_D12: stdId → Set(designations)
   const provided = Object.keys(measurements).filter(function (k) { return measurements[k] != null && !isNaN(measurements[k]); });
   const out = [];
   for (const sid in signatures) {
@@ -2804,16 +2811,18 @@ function reIdentify(catName, measurements, opts) {
     if (!sm || sm.catName !== catName) continue;
     const sig = signatures[sid];
     const hasSize = ((sizeMap[sid] || []).length > 0);   // V_D11
-    let confirmed = 0, consistent = 0, contradicted = 0, unknown = 0, detail = {},
-        sizesFit = [], bestSize = null, bestSizeDisp = [], tiedSizes = [];
+    let confirmed = 0, contradicted = 0, unknown = 0, detail = {},
+        sizesFit = [], bestSize = null, bestSizeDisp = [], tiedSizes = [], viable;
 
     if (hasSize) {
-      // V_D11/D12: viable only if ONE size fits every measured feature (band-confirm
-      // or one-sided-consistent, no contradiction). Counts come from that size.
+      // V_D11: a standard is viable only if ONE size fits every measured feature.
+      // Display counts come from that representative size (the best-fitting one, or
+      // the closest size when none fully fits) — never from cross-size flattening.
       const scored = reScoreSizes(sid, measurements, eps, sizeMap, userUnit);
-      sizesFit = scored.filter(function (s) { return s.contradicted === 0 && (s.confirmed + s.consistent) > 0; });
-      const rep = sizesFit.length ? sizesFit[0] : (scored[0] || null);
-      if (rep) { confirmed = rep.confirmed; consistent = rep.consistent; contradicted = rep.contradicted; unknown = provided.length - rep.defined; detail = rep.detail; }
+      sizesFit = scored.filter(function (s) { return s.contradicted === 0 && s.confirmed > 0; });
+      viable = sizesFit.length > 0;
+      const rep = viable ? sizesFit[0] : (scored[0] || null);
+      if (rep) { confirmed = rep.confirmed; contradicted = rep.contradicted; unknown = provided.length - rep.defined; detail = rep.detail; }
       else { unknown = provided.length; }
       const topN = sizesFit.length ? sizesFit[0].confirmed : 0;
       const bestSet = sizesFit.filter(function (s) { return s.confirmed === topN; });
@@ -2821,94 +2830,47 @@ function reIdentify(catName, measurements, opts) {
       bestSizeDisp = bestSet.length === 1 ? (bestSet[0].disp || []) : [];
       tiedSizes = bestSet.length > 1 ? bestSet.map(function (s) { return s.size; }) : [];
     } else {
-      // No per-size data: flattened standard-level signature.
+      // No per-size data: fall back to the flattened standard-level signature.
       for (const key of provided) {
         const bands = sig[key];
         if (!bands || !bands.length) { unknown++; detail[key] = 'not defined'; continue; }
-        let pass = false, bandKind = false;
-        for (const b of bands) {
+        const fit = bands.some(function (b) {
           const v = reConvLen(+measurements[key], userUnit, b.unit);
           const e = reConvLen(eps, userUnit, b.unit);
-          if (v >= b.min - e && v <= b.max + e) { pass = true; if (b.kind === 'band') bandKind = true; }
-        }
-        if (!pass) { contradicted++; detail[key] = 'miss'; }
-        else if (bandKind) { confirmed++; detail[key] = 'fit'; }
-        else { consistent++; detail[key] = 'consistent'; }
+          return v >= b.min - e && v <= b.max + e;
+        });
+        if (fit) { confirmed++; detail[key] = 'fit'; } else { contradicted++; detail[key] = 'miss'; }
       }
+      viable = contradicted === 0 && confirmed > 0;
     }
 
-    // V_D12 (item 2): thread gate. A standard WITH thread data whose set lacks the
-    // picked thread is ruled out; a match confirms and (when no dimensional size was
-    // resolved) supplies the size from the thread designation. Standards without
-    // thread data are unaffected (thread "not defined").
-    if (thread) {
-      const tset = threadSets[sid];
-      if (tset && tset.size) {
-        if (tset.has(thread)) { confirmed++; detail['__thread'] = 'fit'; if (!bestSize && !tiedSizes.length) bestSize = thread; }
-        else { contradicted++; detail['__thread'] = 'miss'; }
-      } else { detail['__thread'] = 'not defined'; unknown++; }
-    }
-
-    const viable = contradicted === 0 && (confirmed + consistent) > 0;
     out.push({ stdId: sid, name: sm.name || sid, viable: viable,
-               confirmed: confirmed, consistent: consistent, contradicted: contradicted, unknown: unknown, detail: detail,
+               confirmed: confirmed, contradicted: contradicted, unknown: unknown, detail: detail,
                sizes: sizesFit, bestSize: bestSize, bestSizeDisp: bestSizeDisp, tiedSizes: tiedSizes });
   }
-  // rank: viable first, then most band-confirmed, then most consistent, fewest unknown, fewest contradicted
+  // rank: viable first, then most confirmed, then fewest unknown, then fewest contradicted
   out.sort(function (a, b) {
-    return (b.viable - a.viable) || (b.confirmed - a.confirmed) || (b.consistent - a.consistent) || (a.unknown - b.unknown) || (a.contradicted - b.contradicted);
+    return (b.viable - a.viable) || (b.confirmed - a.confirmed) || (a.unknown - b.unknown) || (a.contradicted - b.contradicted);
   });
-  // confidence + disambiguation flag. A standard viable only on one-sided "consistent"
-  // evidence (confirmed===0) can never be "likely"/"ambiguous" — at most "possible".
+  // confidence + disambiguation flag
   const viable = out.filter(function (r) { return r.viable; });
-  const topN = viable.length ? viable[0].confirmed : 0;
+  const topN = viable.length && viable[0].confirmed;
   const tiedTop = viable.filter(function (r) { return r.confirmed === topN; });
   out.forEach(function (r) {
     if (!r.viable) { r.confidence = r.contradicted ? 'ruled-out' : 'unconfirmed'; return; }
-    if (topN === 0) { r.confidence = 'possible'; return; }          // only consistent evidence anywhere
     if (tiedTop.length === 1 && r === tiedTop[0]) r.confidence = 'likely';
     else if (r.confirmed === topN) r.confidence = 'ambiguous';
     else r.confidence = 'possible';
   });
-  return { candidates: out, viableCount: viable.length, ambiguousTop: topN > 0 && tiedTop.length > 1 };
+  return { candidates: out, viableCount: viable.length, ambiguousTop: tiedTop.length > 1 };
 }
 
 if (typeof window !== 'undefined') {
   window.__RE = { reNormalizeName: reNormalizeName, reCanonical: reCanonical, dimDisplayName: dimDisplayName,
-                  reParseBand: reParseBand, reBandFor: reBandFor, reDir: reDir, buildReverseSignatures: buildReverseSignatures,
+                  reParseBand: reParseBand, buildReverseSignatures: buildReverseSignatures,
                   reFeaturesForCategory: reFeaturesForCategory, reIdentify: reIdentify,
                   reSizeLabel: reSizeLabel, reResolveSizes: reResolveSizes, reScoreSizes: reScoreSizes,
-                  reConvLen: reConvLen, reNormUnit: reNormUnit,
-                  reThreadDesignation: reThreadDesignation, reThreadSizesForCategory: reThreadSizesForCategory };
-}
-
-// V_D12 (item 2): a thread designation from a THREAD_MAP key: "1/4-20", "#0-80",
-// "M12-1.5", or just the size when there's no second token.
-function reThreadDesignation(size, second) {
-  return second ? (size + '-' + second) : size;
-}
-// Enumerate the thread sizes available to a category. Returns
-// { designations:[unique sorted], byStd:{stdId:Set(designations)} } built from each
-// standard's threadKey (Sheet 1 ThreadDataKey) against THREAD_MAP. Placeholder keys
-// ('Not Applicable'/'None'/'TBD'/'') are treated as no-thread.
-function reThreadSizesForCategory(catName, standardMap, threadMap) {
-  const BAD = { '': 1, 'not applicable': 1, 'none': 1, 'tbd': 1, 'n/a': 1 };
-  const byStd = {}, all = {};
-  for (const sid in standardMap) {
-    const sm = standardMap[sid];
-    if (!sm || sm.catName !== catName) continue;
-    const tk = String(sm.threadKey || '').trim();
-    if (BAD[tk.toLowerCase()]) continue;
-    const set = new Set();
-    for (const ik in threadMap) {
-      if (ik.indexOf(tk + '|') !== 0) continue;
-      const p = ik.split('|');
-      const d = reThreadDesignation(p[1], p[2]);
-      if (d) { set.add(d); all[d] = true; }
-    }
-    if (set.size) byStd[sid] = set;
-  }
-  return { designations: Object.keys(all).sort(function (a, b) { return a.localeCompare(b, undefined, { numeric: true }); }), byStd: byStd };
+                  reConvLen: reConvLen, reNormUnit: reNormUnit };
 }
 
 function buildIndexes() {
@@ -2918,7 +2880,10 @@ function buildIndexes() {
   for (const row of (DB.dimLabels || [])) {
     const raw = (row['RawDimName'] || '').trim();
     if (!raw) continue;
-    DIM_NAME_MAP[raw] = { key: (row['CanonicalKey'] || '').trim(), label: (row['DisplayLabel'] || '').trim() };
+    // V_D12 (D12-5): ReverseEngineer column — "N"/"No" (case-insensitive) hides this
+    // feature from the Identify Part grid. Blank / missing / anything else → shown.
+    const show = !/^(n|no)$/i.test((row['ReverseEngineer'] || '').trim());
+    DIM_NAME_MAP[raw] = { key: (row['CanonicalKey'] || '').trim(), label: (row['DisplayLabel'] || '').trim(), show: show };
   }
 
   // ── STANDARD_MAP ─────────────────────────────────────────────
@@ -3779,7 +3744,6 @@ function setStep1Mode(mode) {
   btns.forEach(function (b) { b.classList.toggle('active', b.getAttribute('data-mode') === mode); });
   const sw = document.querySelector('.search-wrap');
   const pw = document.getElementById('partNoWrap');
-  const iw = document.getElementById('identifyWrap');
   const filters = document.querySelector('.sec1-filters');
   const cardsec = document.querySelector('.sbs-card-section');
   const showBuild = function (on) {
@@ -3787,19 +3751,13 @@ function setStep1Mode(mode) {
     if (filters) filters.style.display = on ? '' : 'none';
     if (cardsec) cardsec.style.display = on ? '' : 'none';
   };
+  // V_D12: 'identify' is no longer a Step-1 mode — it is its own top-nav tab.
   if (mode === 'part') {
     showBuild(true);
     if (pw) pw.style.display = 'block';
-    if (iw) iw.style.display = 'none';
-  } else if (mode === 'identify') {
-    showBuild(false);
-    if (pw) pw.style.display = 'none';
-    if (iw) iw.style.display = 'block';
-    populateIdentifyCategories();
   } else {
     showBuild(true);
     if (pw) pw.style.display = 'none';
-    if (iw) iw.style.display = 'none';
     sbsPartCandidates = null; sbsPartStash = null;
     const st = document.getElementById('partNoStatus'); if (st) { st.textContent = ''; st.className = 'sbs-partno-status'; }
     syncStep1Cards();
@@ -3905,21 +3863,18 @@ function renderIdentifyForm() {
   const cat = (document.getElementById('reCategory') || {}).value || '';
   if (!cat) { grid.innerHTML = '<div class="identify-hint">Choose a category to see what you can measure.</div>'; return; }
   const feats = reFeaturesForCategory(cat, STANDARD_MAP, RE_SIGN);
-  // V_D12 (item 2): Thread Size dropdown when the category has any threaded standard.
-  const th = reThreadSizesForCategory(cat, STANDARD_MAP, THREAD_MAP);
-  let threadHtml = '';
-  if (th.designations.length) {
-    threadHtml = '<div class="field-group re-thread-group"><label class="field-label">Thread Size ' +
-      '<span class="re-thread-hint">(gauge / checker)</span></label>' +
-      '<select class="re-measure re-thread" data-key="__thread"><option value="">— skip —</option>' +
-      th.designations.map(function (d) { return '<option value="' + d.replace(/"/g, '&quot;') + '">' + d + '</option>'; }).join('') +
-      '</select></div>';
-  }
-  if (!feats.length && !threadHtml) {
+  if (!feats.length) {
     grid.innerHTML = '<div class="identify-hint">No standards in this category carry measurable tolerance bands yet, so a part here can\'t be identified by dimensions. (Populate min-max bands in Sheet 5 to enable it.)</div>';
     return;
   }
-  grid.innerHTML = threadHtml + feats.map(function (k) {
+  // V_D12 (D12-6): section header introducing the measurement grid. Spans the full grid
+  // width (grid-column:1/-1 via .re-measure-head) so the field columns stay intact.
+  const reHeader =
+    '<div class="re-measure-head">' +
+      '<div class="re-measure-title">ENTER WHAT YOU CAN MEASURE</div>' +
+      '<div class="re-measure-sub">Fill in any features you can check with calipers or gauges — leave the rest blank. The more you enter, the tighter the match.</div>' +
+    '</div>';
+  grid.innerHTML = reHeader + feats.map(function (k) {
     return '<div class="field-group"><label class="field-label">' + reKeyLabel(k) +
       '</label><input type="text" class="re-measure" data-key="' + k +
       '" inputmode="decimal" placeholder="measured value (blank = skip)"></div>';
@@ -3933,15 +3888,12 @@ function runIdentify() {
   const eps = parseFloat(upair[0]) || 0.005;
   const userUnit = upair[1] || 'in';
   const meas = {};
-  let thread = '';
   document.querySelectorAll('.re-measure').forEach(function (el) {
-    if (el.dataset.key === '__thread') { thread = el.value || ''; return; }   // V_D12: thread handled separately
     const v = parseNumericLoose(el.value);
     if (!isNaN(v)) meas[el.dataset.key] = v;
   });
-  if (!Object.keys(meas).length && !thread) { if (res) res.innerHTML = '<div class="identify-hint">Enter at least one measurement or a thread size.</div>'; return; }
-  const th = reThreadSizesForCategory(cat, STANDARD_MAP, THREAD_MAP);
-  const r = reIdentify(cat, meas, { epsilon: eps, userUnit: userUnit, thread: thread, threadSets: th.byStd });
+  if (!Object.keys(meas).length) { if (res) res.innerHTML = '<div class="identify-hint">Enter at least one measurement.</div>'; return; }
+  const r = reIdentify(cat, meas, { epsilon: eps, userUnit: userUnit });
   renderIdentifyResults(r, meas);
 }
 function renderIdentifyResults(r, meas) {
@@ -3957,11 +3909,9 @@ function renderIdentifyResults(r, meas) {
   const rows = r.candidates.slice(0, 8).map(function (c) {
     const cf = CONF[c.confidence] || ['', ''];
     const chips = Object.keys(c.detail).map(function (k) {
-      const st = c.detail[k];
-      const cls = st === 'fit' ? 're-chip-fit' : st === 'consistent' ? 're-chip-cons' : st === 'miss' ? 're-chip-miss' : 're-chip-unk';
-      const txt = st === 'fit' ? '✓' : st === 'consistent' ? '≈' : st === 'miss' ? '✕' : '–';
-      const label = k === '__thread' ? 'Thread' : reKeyLabel(k);
-      return '<span class="re-chip ' + cls + '">' + txt + ' ' + label + '</span>';
+      const st = c.detail[k]; const cls = st === 'fit' ? 're-chip-fit' : st === 'miss' ? 're-chip-miss' : 're-chip-unk';
+      const txt = st === 'fit' ? '✓' : st === 'miss' ? '✕' : '–';
+      return '<span class="re-chip ' + cls + '">' + txt + ' ' + reKeyLabel(k) + '</span>';
     }).join('');
     // V_D09/D10: STANDARD + SIZE. Chip reads "size : M14" (edit 1); a tie set or
     // "size not resolved" otherwise.
@@ -3982,9 +3932,7 @@ function renderIdentifyResults(r, meas) {
     return '<div class="re-cand ' + (c.viable ? '' : 're-cand-out') + '">' +
       '<div class="re-cand-top"><span class="re-cand-name">' + c.name + sizeHtml + '</span>' +
       '<span class="re-conf ' + cf[1] + '">' + cf[0] + '</span></div>' +
-      '<div class="re-cand-meta">confirmed ' + c.confirmed +
-      (c.consistent ? ' · consistent ' + c.consistent : '') +
-      ' · contradicted ' + c.contradicted + ' · not-defined ' + c.unknown +
+      '<div class="re-cand-meta">confirmed ' + c.confirmed + ' · contradicted ' + c.contradicted + ' · not-defined ' + c.unknown +
       (c.viable && c.sizes && c.sizes.length ? ' · ' + c.sizes.length + ' size' + (c.sizes.length > 1 ? 's' : '') + ' fit' : '') + '</div>' +
       '<div class="re-chips">' + chips + '</div>' + dimsHtml + '</div>';
   }).join('');
@@ -7503,6 +7451,14 @@ function switchTab(id) {
   // vD07 (J3): key off data-tab so adding a tab can't desync a hardcoded index map.
   const btn = document.querySelector('.tab-btn[data-tab="'+id+'"]');
   if (btn) btn.classList.add('active');
+  // V_D12: Identify Part is now its own tab. Populate its category list on first open
+  // (once, so a selection is preserved on later opens), guarded until data has loaded.
+  if (id === 'identify' && !window.__identifyInit) {
+    if (typeof STANDARD_MAP === 'object' && Object.keys(STANDARD_MAP).length) {
+      populateIdentifyCategories();
+      window.__identifyInit = true;
+    }
+  }
 }
 
 // ════════════════════════════════════════════════════════════════
