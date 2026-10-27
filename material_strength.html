@@ -40,6 +40,11 @@ html,body{height:100%;font-family:"Inter",sans-serif;background:var(--gray-100);
 .header-actions{display:flex;gap:8px;flex-shrink:0;}
 .btn-primary{background:var(--orange);color:var(--white);border:none;border-radius:6px;padding:7px 14px;font-family:"Barlow",sans-serif;font-size:12px;font-weight:700;letter-spacing:0.3px;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 2px 6px rgba(232,119,34,0.3);transition:all 0.15s;}
 .btn-primary:hover{background:var(--orange-light);transform:translateY(-1px);}
+.btn-icon{background:var(--white);color:var(--navy);border:1px solid var(--gray-300,#ccc);border-radius:6px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.15s;}
+.btn-icon:hover{background:var(--navy);color:var(--white);}
+.btn-icon .ic-shrink{display:none;}
+.btn-icon.is-fs .ic-expand{display:none;}
+.btn-icon.is-fs .ic-shrink{display:block;}
 .btn-secondary{background:var(--navy);color:var(--white);border:none;border-radius:6px;padding:7px 14px;font-family:"Barlow",sans-serif;font-size:12px;font-weight:700;letter-spacing:0.3px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all 0.15s;}
 .btn-secondary:hover{background:var(--navy-dark);}
 
@@ -261,6 +266,10 @@ select.ctrl-select:focus{border-color:var(--navy);}
     <button class="btn-secondary" data-sbs-action="clearSel">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
       Clear Compare
+    </button>
+    <button class="btn-icon" id="fsBtn" data-sbs-action="toggleFullscreen" title="Full screen" aria-label="Full screen">
+      <svg class="ic-expand" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+      <svg class="ic-shrink" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" y1="10" x2="21" y2="3"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
     </button>
   </div>
 </header>
@@ -1344,6 +1353,48 @@ function measureHeader(){
   if(sb)sb.style.top=(hh+cb_h)+"px";
 }
 window.addEventListener("resize",measureHeader);
+
+/* ---- FULLSCREEN (works when embedded in an iframe that has allowfullscreen) ---- */
+function fsElement(){return document.fullscreenElement||document.webkitFullscreenElement||null;}
+function toggleFullscreen(){
+  var root=document.documentElement;
+  if(fsElement()){
+    (document.exitFullscreen||document.webkitExitFullscreen).call(document);
+    return;
+  }
+  var req=root.requestFullscreen||root.webkitRequestFullscreen;
+  if(req){
+    var p=req.call(root);
+    if(p&&p.catch)p.catch(function(){fsFallback();});
+  } else fsFallback();
+}
+function fsFallback(){
+  /* Embedding page did not allow fullscreen: ask parent page to expand the iframe (needs listener on parent) or open standalone */
+  var handled=false;
+  try{if(window.parent&&window.parent!==window){window.parent.postMessage({type:"sbs-toggle-expand"},"*");handled=true;}}catch(e){}
+  if(!handled)alert("Fullscreen is not available in this browser.");
+}
+function syncFsUi(){
+  var on=!!fsElement();
+  var b=document.getElementById("fsBtn");
+  if(b){b.classList.toggle("is-fs",on);b.title=on?"Exit full screen":"Full screen";b.setAttribute("aria-label",b.title);}
+  setTimeout(measureHeader,50);
+}
+document.addEventListener("fullscreenchange",syncFsUi);
+document.addEventListener("webkitfullscreenchange",syncFsUi);
+document.addEventListener("click",function(e){
+  var el=e.target;
+  for(var i=0;i<6;i++){
+    if(!el||el===document.body)break;
+    if(el.getAttribute&&el.getAttribute("data-sbs-action")==="toggleFullscreen"){toggleFullscreen();return;}
+    el=el.parentNode;
+  }
+});
+
+/* ---- INIT ---- */
+buildSidebar();
+populateThreads();   /* fills the size dropdown and calls render() */
+measureHeader();
 
 /* ---- BETA MODAL ---- */
 (function(){
