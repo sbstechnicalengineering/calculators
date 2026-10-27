@@ -45,6 +45,11 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);color:var(--gray-
 .hdr-actions{display:flex;gap:8px;}
 .btn-hdr{background:var(--orange);color:#fff;border:none;border-radius:6px;padding:8px 15px;font-family:'Barlow',sans-serif;font-size:0.78rem;font-weight:700;letter-spacing:0.3px;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 2px 6px rgba(232,119,34,0.3);transition:background 0.15s,transform 0.1s;}
 .btn-hdr:hover{background:var(--orange-light);transform:translateY(-1px);}
+.btn-icon{background:#fff;color:var(--navy);border:1px solid var(--gray-300);border-radius:6px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .15s;}
+.btn-icon:hover{background:var(--navy);color:#fff;}
+.btn-icon .ic-shrink{display:none;}
+.btn-icon.is-fs .ic-expand{display:none;}
+.btn-icon.is-fs .ic-shrink{display:block;}
 
 /* STICKY SEARCH BAR */
 #srchBar{position:sticky;z-index:99;background:var(--white);border-bottom:1px solid var(--gray-200);padding:14px 24px;}
@@ -173,6 +178,10 @@ td.td-q{text-align:center;}
     <button class="btn-hdr" data-sbs-action="doPrint">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
       Print / PDF
+    </button>
+    <button class="btn-icon" id="fsBtn" data-sbs-action="toggleFullscreen" title="Full screen" aria-label="Full screen">
+      <svg class="ic-expand" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+      <svg class="ic-shrink" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" y1="10" x2="21" y2="3"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
     </button>
   </div>
 </header>
@@ -333,6 +342,29 @@ render();
   var ov=document.getElementById('betaOverlay');
   if(ov){ov.addEventListener('click',function(e){if(e.target===ov){ov.style.display='none';}},true);}
 })();
+/* ---- FULLSCREEN (needs allowfullscreen on the embedding iframe) ---- */
+function fsEl(){return document.fullscreenElement||document.webkitFullscreenElement||null;}
+function toggleFullscreen(){
+  var r=document.documentElement;
+  if(fsEl()){(document.exitFullscreen||document.webkitExitFullscreen).call(document);return;}
+  var req=r.requestFullscreen||r.webkitRequestFullscreen;
+  if(req){var p=req.call(r);if(p&&p.catch)p.catch(function(){alert('Full screen is not allowed here. Ask the site admin to add allowfullscreen to the embed.');});}
+  else alert('Fullscreen is not available in this browser.');
+}
+function fsSync(){
+  var on=!!fsEl(),b=document.getElementById('fsBtn');
+  if(b){b.classList.toggle('is-fs',on);b.title=on?'Exit full screen':'Full screen';b.setAttribute('aria-label',b.title);}
+  setTimeout(setTop,50);
+}
+document.addEventListener('fullscreenchange',fsSync);
+document.addEventListener('webkitfullscreenchange',fsSync);
+document.addEventListener('click',function(e){
+  var el=e.target;
+  for(var i=0;i<6&&el&&el!==document.body;i++){
+    if(el.getAttribute&&el.getAttribute('data-sbs-action')==='toggleFullscreen'){toggleFullscreen();return;}
+    el=el.parentNode;
+  }
+});
 </script>
 </body>
 </html>
