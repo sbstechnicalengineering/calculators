@@ -8,7 +8,7 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      background: #1a1a1a;
+      background: #ffffff;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -18,15 +18,44 @@
 
     .map-wrapper {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: 1fr 1.157fr 1fr;   /* matches panel aspect ratios so all three share one height */
       gap: 10px;
-      width: min(1000px, 96vw);
+      align-items: start;
+      width: min(1400px, 96vw);
       padding: 10px;
     }
+
+    /* Asia panel — one image, four clickable country regions */
+    .asia {
+      position: relative;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.18);
+      border-radius: 14px;
+      overflow: hidden;
+      aspect-ratio: 1349 / 1166;
+    }
+
+    .asia > img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      -webkit-user-drag: none;
+      user-select: none;
+    }
+
+    .hot {
+      position: absolute;
+      inset: 0;
+      cursor: pointer;
+      background: transparent;
+      transition: background 0.15s ease;
+    }
+
+    .hot:hover { background: rgba(255, 102, 0, 0.18); }
 
     /* Clickable location tiles */
     .zone {
       position: relative;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.18);
       aspect-ratio: 1 / 1;
       cursor: pointer;
       user-select: none;
@@ -43,13 +72,14 @@
     }
 
     .zone:hover {
-      box-shadow: 0 0 0 3px #FF6600;
+      box-shadow: 0 0 0 3px #FF6600, 0 3px 12px rgba(0, 0, 0, 0.18);
       filter: brightness(0.97);
     }
 
     /* Worldwide panel — globe with two clickable halves (same as BRP) */
     .world {
       position: relative;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.18);
       aspect-ratio: 1 / 1;
       background: #fff;
       border: 2px solid #c9d6ea;
@@ -70,6 +100,7 @@
       left: 0; width: 100%; height: 50%;
       aspect-ratio: auto;
       border-radius: 0;
+      box-shadow: none;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -136,32 +167,34 @@
     <img src="Brooks USA.png" alt="Brooks — USA" draggable="false">
   </div>
 
-  <div class="zone" id="zone-2"
-    data-title="Brooks — China"
-    data-body="Brooks China parts"
-    data-url="https://shop.specialtybolt.com/products/search/?Keyword=BROOKS_2026_CN">
-    <img src="Brooks China.png" alt="Brooks — China" draggable="false">
-  </div>
-
-  <div class="zone" id="zone-3"
-    data-title="Brooks — South Korea"
-    data-body="Brooks South Korea parts"
-    data-url="https://shop.specialtybolt.com/products/search/?Keyword=BROOKS_2026_KR">
-    <img src="Brooks South Korea.png" alt="Brooks — South Korea" draggable="false">
-  </div>
-
-  <div class="zone" id="zone-4"
-    data-title="Brooks — Malaysia"
-    data-body="Brooks Malaysia parts"
-    data-url="https://shop.specialtybolt.com/products/search/?Keyword=BROOKS_2026_MY">
-    <img src="Brooks Malaysia.png" alt="Brooks — Malaysia" draggable="false">
-  </div>
-
-  <div class="zone" id="zone-5"
-    data-title="Brooks — Taiwan"
-    data-body="Brooks Taiwan parts"
-    data-url="https://shop.specialtybolt.com/products/search/?Keyword=BROOKS_2026_TW">
-    <img src="Brooks Taiwan.png" alt="Brooks — Taiwan" draggable="false">
+  <!-- Asia panel: regions traced from the annotated map (China / South Korea / Japan / Taiwan / Malaysia-and-south). -->
+  <div class="asia">
+    <img src="Brooks Asia.png" alt="Brooks — Asia" draggable="false">
+    <div class="hot" id="zone-2"
+      data-title="Brooks — China"
+      data-body="Brooks China parts"
+      data-url="https://shop.specialtybolt.com/products/search/?Keyword=BROOKS_2026_CN"
+      style="clip-path:polygon(0.21% 49.03%, 22.76% 49.03%, 26.1% 48.31%, 32.36% 48.31%, 38.0% 50.97%, 40.92% 54.59%, 43.84% 53.62%, 45.93% 51.45%, 49.48% 49.52%, 52.19% 45.65%, 57.2% 40.58%, 58.25% 38.41%, 58.87% 37.92%, 59.08% 34.3%, 58.46% 30.19%, 58.46% 25.85%, 59.08% 24.4%, 62.21% 21.01%, 66.18% 18.6%, 70.77% 12.56%, 70.98% 7.97%, 70.56% 3.86%, 69.94% 2.42%, 69.94% 0.24%, 0.21% 0.24%);"></div>
+    <div class="hot" id="zone-3"
+      data-title="Brooks — South Korea"
+      data-body="Brooks South Korea parts"
+      data-url="https://shop.specialtybolt.com/products/search/?Keyword=BROOKS_2026_KR"
+      style="clip-path:polygon(87.06% 0.24%, 70.77% 0.24%, 70.77% 1.45%, 71.4% 2.42%, 71.82% 4.35%, 72.03% 12.32%, 71.19% 14.25%, 67.43% 19.08%, 65.76% 20.53%, 62.63% 22.22%, 60.13% 24.88%, 59.5% 26.33%, 60.13% 33.09%, 60.13% 38.16%, 65.97% 38.41%, 68.27% 35.51%, 71.4% 32.61%, 77.04% 30.43%, 79.54% 28.26%, 84.13% 20.53%, 84.97% 11.35%, 86.22% 5.07%, 87.27% 2.17%);"></div>
+    <div class="hot" id="zone-5"
+      data-title="Brooks — Taiwan"
+      data-body="Brooks Taiwan parts"
+      data-url="https://shop.specialtybolt.com/products/search/?Keyword=BROOKS_2026_TW"
+      style="clip-path:polygon(68.06% 42.03%, 67.01% 40.82%, 64.93% 39.61%, 59.5% 39.37%, 57.2% 42.27%, 53.65% 45.65%, 49.9% 50.72%, 46.35% 52.66%, 44.26% 54.83%, 44.47% 57.49%, 45.72% 60.14%, 47.6% 62.56%, 48.85% 63.29%, 57.2% 63.04%, 64.3% 60.39%, 64.72% 59.18%, 66.6% 59.18%, 67.85% 58.21%, 70.15% 55.31%, 69.94% 47.1%, 69.31% 44.44%);"></div>
+    <div class="hot" id="zone-4"
+      data-title="Brooks — Malaysia"
+      data-body="Brooks Malaysia parts"
+      data-url="https://shop.specialtybolt.com/products/search/?Keyword=BROOKS_2026_MY"
+      style="clip-path:polygon(0.21% 50.0%, 0.21% 99.76%, 99.79% 99.76%, 99.79% 69.32%, 96.66% 68.6%, 87.89% 68.6%, 84.55% 67.87%, 74.11% 64.25%, 67.01% 61.11%, 65.55% 61.11%, 62.84% 62.56%, 57.83% 64.25%, 48.43% 64.49%, 47.18% 63.77%, 44.68% 60.63%, 43.42% 57.97%, 43.22% 55.56%, 40.5% 55.8%, 37.58% 52.17%, 31.52% 49.52%, 27.56% 49.52%, 23.59% 50.24%, 1.88% 50.48%, 1.67% 50.0%);"></div>
+    <div class="hot" id="zone-8"
+      data-title="Brooks — Japan"
+      data-body="Brooks Japan parts"
+      data-url="https://shop.specialtybolt.com/products/search/?Keyword=BROOKS_2026_JP"
+      style="clip-path:polygon(88.52% 0.24%, 88.73% 1.69%, 87.68% 4.11%, 86.64% 8.21%, 85.59% 19.08%, 84.55% 22.46%, 80.58% 28.74%, 78.71% 30.92%, 71.82% 33.82%, 67.22% 38.41%, 67.22% 39.61%, 69.1% 41.55%, 70.56% 44.44%, 71.4% 50.24%, 71.19% 55.8%, 70.56% 57.0%, 68.27% 59.42%, 68.27% 60.39%, 73.9% 62.8%, 85.18% 66.67%, 89.35% 67.39%, 97.7% 67.39%, 99.79% 67.87%, 99.79% 0.24%);"></div>
   </div>
 
   <!-- Worldwide panel: whole panel links to all Brooks parts -->
@@ -188,7 +221,7 @@
   const tooltip = document.getElementById('tooltip');
   const ttTitle = document.getElementById('tt-title');
   const ttBody  = document.getElementById('tt-body');
-  const zones   = document.querySelectorAll('.zone');
+  const zones   = document.querySelectorAll('.zone, .hot');
   const OFFSET  = 16;
 
   function positionTooltip(e) {
