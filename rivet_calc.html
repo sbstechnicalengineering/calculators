@@ -33,6 +33,11 @@ body{background:var(--gray-50);color:var(--gray-700);font-family:'Inter',sans-se
 .hdr-sub2{font-family:'Inter',sans-serif;font-size:10px;color:var(--gray-400);margin-top:1px;}
 .hdr-btn{background:var(--navy);color:#fff;border:none;border-radius:var(--radius);font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;padding:8px 14px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;text-decoration:none;flex-shrink:0;}
 .hdr-btn:hover{background:var(--navy-dark);}
+.hdr-icon{background:#fff;color:var(--navy);border:1px solid var(--gray-300);border-radius:var(--radius);width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .15s;}
+.hdr-icon:hover{background:var(--navy);color:#fff;}
+.hdr-icon .ic-shrink{display:none;}
+.hdr-icon.is-fs .ic-expand{display:none;}
+.hdr-icon.is-fs .ic-shrink{display:block;}
 
 /* TABS */
 .tab-nav{background:#fff;border-bottom:1px solid var(--gray-200);display:flex;padding:0 20px;flex-wrap:wrap;}
@@ -365,6 +370,10 @@ select.full-w{width:100%;}
   <button class="hdr-btn" onclick="sbsPrint()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="width:13px;height:13px;"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
     Print Results
+  </button>
+  <button class="hdr-icon" id="fsBtn" onclick="sbsFullscreen()" title="Full screen" aria-label="Full screen">
+    <svg class="ic-expand" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+    <svg class="ic-shrink" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" y1="10" x2="21" y2="3"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
   </button>
 </div>
 
@@ -1576,6 +1585,21 @@ function sbsPrint() {
   w.document.write('<\/body><\/html>');
   w.document.close(); w.focus(); w.print();
 }
+/* ---- FULLSCREEN (needs allowfullscreen on the embedding iframe) ---- */
+function sbsFsEl(){return document.fullscreenElement||document.webkitFullscreenElement||null;}
+function sbsFullscreen(){
+  var r=document.documentElement;
+  if(sbsFsEl()){(document.exitFullscreen||document.webkitExitFullscreen).call(document);return;}
+  var req=r.requestFullscreen||r.webkitRequestFullscreen;
+  if(req){var p=req.call(r);if(p&&p.catch)p.catch(function(){alert("Full screen is not allowed here. Ask the site admin to add allowfullscreen to the embed.");});}
+  else alert("Fullscreen is not available in this browser.");
+}
+function sbsFsSync(){
+  var on=!!sbsFsEl(),b=document.getElementById("fsBtn");
+  if(b){b.classList.toggle("is-fs",on);b.title=on?"Exit full screen":"Full screen";b.setAttribute("aria-label",b.title);}
+}
+document.addEventListener("fullscreenchange",sbsFsSync);
+document.addEventListener("webkitfullscreenchange",sbsFsSync);
 </script>
 </body>
 </html>
