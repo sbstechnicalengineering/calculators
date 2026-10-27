@@ -85,6 +85,18 @@ body{font-family:'Inter',sans-serif;background:var(--gray-100);min-height:100vh;
 .sec-procurement .tooltip-bubble::after{top:auto;bottom:12px}
 .sec-procurement.tooltip-left .tooltip-bubble{left:auto;right:100%}
 
+.sec-underdev{grid-column:1/-1}
+.sec-underdev .sec-toggle{width:100%;border:0;cursor:pointer;text-align:left;position:static}
+.sec-underdev .sec-toggle:hover{filter:brightness(1.25)}
+.sec-underdev .sec-toggle:focus-visible{outline:2px solid var(--orange);outline-offset:-2px}
+.sec-toggle .sec-chev{width:14px;height:14px;margin-left:auto;color:var(--white);flex-shrink:0;transition:transform 0.2s}
+.sec-underdev.open .sec-chev{transform:rotate(180deg)}
+.sec-underdev .items{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.sec-underdev .items[hidden]{display:none}
+.sec-underdev .tooltip-bubble{z-index:2000;top:auto;bottom:0;left:100%}
+.sec-underdev .tooltip-bubble::before,.sec-underdev .tooltip-bubble::after{top:auto;bottom:12px}
+.sec-underdev .tooltip-left .tooltip-bubble{left:auto;right:100%}
+
 @media(max-width:600px){
   .tools-grid{grid-template-columns:1fr}
   .sbs-header{flex-wrap:wrap}
@@ -309,9 +321,22 @@ function buildDirectory(rows) {
   var grid = document.getElementById('toolsGrid');
   grid.innerHTML = ''; // clear loading state
 
+  var udSec = null;
   sectionOrder.forEach(function(sid) {
     var sec = sectionMap[sid];
-    var isBottom = BOTTOM_SECTIONS.indexOf(sid) !== -1;
+    if (sec.label.toLowerCase() === 'under development') {
+      // Merge every "Under Development" section into one collapsible full-width panel
+      if (!udSec) udSec = { id: 'sec-underdev', label: 'Under Development', url: '', color: sec.color, tools: [], ud: true };
+      sec.tools.forEach(function(t){ t.color = sec.color; udSec.tools.push(t); });
+      return;
+    }
+    renderSection(sec);
+  });
+  if (udSec) renderSection(udSec);
+
+  function renderSection(sec) {
+    var sid = sec.id;
+    var isBottom = !!sec.ud || BOTTOM_SECTIONS.indexOf(sid) !== -1;
 
     var div = document.createElement('div');
     div.className = 'section ' + sid;
@@ -320,19 +345,34 @@ function buildDirectory(rows) {
     var headInner = sec.url
       ? '<a href="' + esc(sec.url) + '" target="_blank">' + esc(sec.label) + '</a>'
       : '<span>' + esc(sec.label) + '</span>';
-    div.innerHTML =
-      '<div class="sec-head" style="background:' + esc(sec.color) + '">' +
-        '<span class="sec-dot"></span>' +
-        headInner +
-      '</div>' +
-      '<ul class="items" id="items-' + sid + '"></ul>';
+    if (sec.ud) {
+      div.innerHTML =
+        '<button type="button" class="sec-head sec-toggle" aria-expanded="false" aria-controls="items-' + sid + '" style="background:' + esc(sec.color) + '">' +
+          '<span class="sec-dot"></span>' +
+          '<span>' + esc(sec.label) + ' (' + sec.tools.length + ')</span>' +
+          '<svg class="sec-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>' +
+        '</button>' +
+        '<ul class="items" id="items-' + sid + '" hidden></ul>';
+      div.querySelector('.sec-toggle').addEventListener('click', function() {
+        var open = div.classList.toggle('open');
+        this.setAttribute('aria-expanded', open ? 'true' : 'false');
+        div.querySelector('ul').hidden = !open;
+        positionTooltips();
+      });
+    } else {
+      div.innerHTML =
+        '<div class="sec-head" style="background:' + esc(sec.color) + '">' +
+          '<span class="sec-dot"></span>' +
+          headInner +
+        '</div>' +
+        '<ul class="items" id="items-' + sid + '"></ul>';
+    }
 
     grid.appendChild(div);
 
     var ul = div.querySelector('ul');
-    var iconColor = sec.color;
-
     sec.tools.forEach(function(tool) {
+      var iconColor = tool.color || sec.color;
       var li = document.createElement('li');
 
       var iconSvg = tool.iconSvg
@@ -371,7 +411,7 @@ function buildDirectory(rows) {
 
       ul.appendChild(li);
     });
-  });
+  }
 
   // Update badge
   var dot = document.getElementById('badgeDot');
