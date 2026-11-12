@@ -308,6 +308,8 @@ body.is-fs #btn-fs .ico-exit{display:block;}
 
 #tbl td:nth-child(5),#tbl td:nth-child(6),#tbl td:nth-child(7){white-space:nowrap;}
 
+.conv-note{padding:.45rem .85rem 0;font-family:'Inter',sans-serif;font-size:11px;color:var(--gray-500);border-top:1px solid var(--gray-200);}
+
 </style>
 </head>
 <body>
@@ -505,7 +507,7 @@ body.is-fs #btn-fs .ico-exit{display:block;}
       </tr></thead>
       <tbody id="tbl"></tbody>
     </table>
-    <div class="pagination">
+    <div class="conv-note" id="conv-note"></div><div class="pagination">
       <div class="pg-info" id="pg-info">Page 1 of 1</div>
       <div class="pg-btns">
         <button class="pg-btn" data-sbs-action="pg-prev" disabled>&#8592; Prev</button>
@@ -987,7 +989,11 @@ W.forEach(function(w,i){w.i=i;});
 var $=function(id){return document.getElementById(id);};
 
 /* ---------- helpers ---------- */
-function nv(w,f){return S.unit==='mm'?w[f+'_mm']:w[f+'_in'];}
+function nv(w,f){
+  if(S.unit==='mm'){var m=w[f+'_mm'];if(m!==null&&m!==undefined)return m;var i=w[f+'_in'];return(i===null||i===undefined)?null:i*IN;}
+  var v=w[f+'_in'];if(v!==null&&v!==undefined)return v;
+  var mm=w[f+'_mm'];return(mm===null||mm===undefined)?null:mm/IN;
+}
 function dp(){return S.unit==='mm'?2:4;}
 function u(){return S.unit==='mm'?' mm':'"';}
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
@@ -1215,6 +1221,7 @@ function renderTable(){
   document.querySelector('[data-sbs-action="pg-prev"]').disabled=p<=1;
   document.querySelector('[data-sbs-action="pg-next"]').disabled=p>=pages;
   setHeaders();
+  $('conv-note').textContent=S.unit==='inch'?'Metric standards are published in mm; their inch values are converted (mm ÷ 25.4).':'Inch standards are published in inches; their mm values are converted (in × 25.4).';
   var tb=$('tbl');tb.innerHTML='';
   var cols=S.measure&&S.mode==='identify'?9:8;
   if(!slice.length){
@@ -1390,7 +1397,7 @@ function exportCsv(){
   var lines=[head.join(',')];
   rows.forEach(function(w){
     var info=STD_INFO[w.std];
-    lines.push([w.ms,w.std,w.thread,tags(w).join('/'),w.id_mm,w.id_in===null?'':w.id_in,w.od_mm,w.od_in===null?'':w.od_in,w.t_mm,w.t_in===null?'':w.t_in,w.id_tol,w.od_tol,w.t_tol,HARD_LBL[hardLevel(w)],(w.mats||[]).join('; '),info?info.url:''].map(q).join(','));
+    lines.push([w.ms,w.std,w.thread,tags(w).join('/'),w.id_mm,(w.id_in===null?+(w.id_mm/IN).toFixed(4):w.id_in),w.od_mm,(w.od_in===null?+(w.od_mm/IN).toFixed(4):w.od_in),w.t_mm,(w.t_in===null?+(w.t_mm/IN).toFixed(4):w.t_in),w.id_tol,w.od_tol,w.t_tol,HARD_LBL[hardLevel(w)],(w.mats||[]).join('; '),info?info.url:''].map(q).join(','));
   });
   var csv='﻿'+lines.join('\r\n');
   try{
