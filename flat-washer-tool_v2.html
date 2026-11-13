@@ -310,6 +310,23 @@ body.is-fs #btn-fs .ico-exit{display:block;}
 
 .conv-note{padding:.45rem .85rem 0;font-family:'Inter',sans-serif;font-size:11px;color:var(--gray-500);border-top:1px solid var(--gray-200);}
 
+/* about */
+#about-panel{display:none;padding:1.1rem 1.5rem 2rem;max-width:1100px;margin:0 auto;}
+.about-card{background:#fff;border:1px solid var(--gray-200);border-radius:10px;padding:1.1rem 1.3rem;margin-bottom:1rem;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.about-card h3{font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:800;color:var(--navy);margin-bottom:.55rem;padding-bottom:.4rem;border-bottom:2px solid var(--orange);}
+.about-card p{font-family:'Inter',sans-serif;font-size:13px;color:var(--gray-700);line-height:1.6;margin-bottom:.6rem;}
+.about-small{font-size:12px!important;color:var(--gray-600)!important;}
+.about-tbl{margin:.5rem 0 .7rem;}
+.about-tbl td,.about-tbl th{vertical-align:top;}
+.about-list{font-family:'Inter',sans-serif;font-size:12.5px;color:var(--gray-700);line-height:1.55;padding-left:1.1rem;}
+.about-list li{margin-bottom:.4rem;}
+.about-scroll{overflow-x:auto;}
+.std-table{width:100%;border-collapse:collapse;min-width:820px;}
+.std-table th{cursor:default;}
+.std-table tr{cursor:default;}.std-table tr:hover{background:none;}
+.std-table td{vertical-align:top;font-size:12px;border-bottom:1px solid var(--gray-100);}
+@media(max-width:700px){#about-panel{padding:.75rem;}.about-card{padding:.85rem .9rem;}}
+
 </style>
 </head>
 <body>
@@ -361,6 +378,7 @@ body.is-fs #btn-fs .ico-exit{display:block;}
     <button class="mode-tab" data-sbs-action="tab-size"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg> By Bolt Size</button>
     <button class="mode-tab" data-sbs-action="tab-guide"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Guide Me</button>
     <button class="mode-tab" data-sbs-action="tab-bp"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> Best Practices</button>
+    <button class="mode-tab" data-sbs-action="tab-about"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg> About</button>
   </div>
   <button class="reset-btn share-btn" data-sbs-action="share" title="Copy a link to this search"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg> Copy link</button>
   <div class="unit-toggle" id="unit-toggle-wrap">
@@ -514,6 +532,85 @@ body.is-fs #btn-fs .ico-exit{display:block;}
         <button class="pg-btn" data-sbs-action="pg-next" disabled>Next &#8594;</button>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<div id="about-panel">
+  <div class="about-card">
+    <h3>About This Tool</h3>
+    <p>The SBS Flat Washer Reference Tool helps you work out which flat washer you are holding, find the washer that suits a joint, and compare the published standards side by side. It is built for sales, purchasing, engineering and customers who need to answer questions such as "What is this washer?", "What goes under this bolt?" and "Are these two standards interchangeable?"</p>
+    <p>It is a reference aid, not a substitute for the standard or for engineering judgement. All dimensions are the nominal values published in each standard. The tool covers <strong id="about-count">0</strong> size entries across 12 standards, metric and inch.</p>
+  </div>
+
+  <div class="about-card">
+    <h3>How to Use It</h3>
+    <table class="bp-table about-tbl">
+      <tr><th>Tab</th><th>Use it when</th></tr>
+      <tr><td><strong>Identify</strong></td><td>You have a washer and a caliper or micrometer. Type the ID, OD and thickness you measured. Blank fields are ignored. Results are ranked nearest first.</td></tr>
+      <tr><td><strong>Design Requirements</strong></td><td>You know the dimensions you need and want every standard that offers them. Enter any combination; blank fields match everything.</td></tr>
+      <tr><td><strong>By Bolt Size</strong></td><td>You know the bolt size and want to see every standard that covers it, side by side, and compare up to three.</td></tr>
+      <tr><td><strong>Guide Me</strong></td><td>You know the bolt size, material, grade and application, and want a ranked recommendation with the reasons.</td></tr>
+      <tr><td><strong>Best Practices</strong></td><td>You want the selection rules behind the tool: sizing, hardness, materials, standards and installation.</td></tr>
+    </table>
+    <p class="about-small">Tips: use the series chips (Small, Normal, Large, Hardened, Chamfered) and the material filter to narrow results. Switch between mm and inch at any time; values for standards published in the other system are converted. Copy link shares your current search. Export CSV saves the current results.</p>
+  </div>
+
+  <div class="about-card">
+    <h3>How Measurement Matching Works</h3>
+    <p>Calipers and micrometers are not perfect, and a real washer is rarely exactly nominal. The Identify tab allows for both. A standard is shown when your reading falls inside a window around the washer's nominal size. The window is twice the typical error of the instrument, widened by the standard's own published tolerance where this tool has it.</p>
+    <table class="bp-table about-tbl">
+      <tr><th>Dimension</th><th>Typical user error</th><th>Window used (2&times;)</th></tr>
+      <tr><td>ID (caliper)</td><td>&plusmn;0.10 mm / &plusmn;0.004"</td><td>&plusmn;0.20 mm / &plusmn;0.008"</td></tr>
+      <tr><td>OD (caliper)</td><td>&plusmn;0.05 mm / &plusmn;0.002"</td><td>&plusmn;0.10 mm / &plusmn;0.004"</td></tr>
+      <tr><td>Thickness (caliper)</td><td>&plusmn;0.05 mm / &plusmn;0.002"</td><td>&plusmn;0.10 mm / &plusmn;0.004"</td></tr>
+      <tr><td>Thickness (micrometer)</td><td>&plusmn;0.01 mm / &plusmn;0.0004"</td><td>&plusmn;0.02 mm / &plusmn;0.0008"</td></tr>
+    </table>
+    <p class="about-small">The error figures are SBS engineering estimates for careful use, not instrument specifications. Each result is labeled <strong>In tolerance</strong> (your reading is inside the standard's tolerance band) or <strong>Close</strong> (outside the band but inside the window), and the deviation from nominal is shown for each dimension you entered. Untick "Include standard tolerance" to use the instrument window alone. Several standards share dimensions, so a measurement alone cannot always tell them apart. Check the hardness and markings as well.</p>
+  </div>
+
+  <div class="about-card">
+    <h3>How the Bolt Grade Check and Guide Me Work</h3>
+    <p>Each standard is placed on a hardness ladder using the hardness class and the bolts it is stated to suit. A washer softer than the bolt calls for will embed under load and lose clamp force, so it is flagged.</p>
+    <table class="bp-table about-tbl">
+      <tr><th>Level</th><th>Hardness</th><th>Standards</th><th>Suits bolts up to</th></tr>
+      <tr><td>1</td><td>Unhardened / low (100&ndash;140 HV)</td><td>ISO 7091, ISO 7093-2, DIN 9021, ASME B18.22.1, ASTM F844</td><td>6.8 / SAE Gr. 2 (ISO 7093-2 states 6.8)</td></tr>
+      <tr><td>2</td><td>200 HV</td><td>DIN 125 A, ISO 7089, ISO 7090</td><td>8.8 / SAE Gr. 5</td></tr>
+      <tr><td>3</td><td>300 HV class</td><td>ISO 7092, ISO 7093-1 (300 HV option)</td><td>10.9 / SAE Gr. 8 (stated in both standards)</td></tr>
+      <tr><td>4</td><td>Hardened, 35&ndash;45 HRC</td><td>ISO 7415, ASTM F436</td><td>Structural bolting (A325 / A490, ISO 7411)</td></tr>
+    </table>
+    <p class="about-small">Where a standard does not state a bolt class (DIN 9021, ASME B18.22.1, ASTM F844), the tool treats it conservatively as level 1. For stainless bolts (A2-50 to A4-80, ISO 3506-1) the check looks for a stainless washer to avoid galvanic corrosion and galling. This data does not distinguish A2 from A4 washers, so confirm that for A4 (316) work. Guide Me then ranks the remaining washers by series (normal for general use, large for soft material or oversized holes, small for confined heads, hardened for structural joints) and lists the washers it ruled out and why.</p>
+  </div>
+
+  <div class="about-card">
+    <h3>Referenced Standards</h3>
+    <p>Links open the copy in the SBS Standards Library (Google Drive access required). "Checked against standard" means the dimensions and tolerances were read from the standard document line by line. Other entries were carried over from the original tool and are being verified.</p>
+    <div class="about-scroll">
+      <table class="std-table">
+        <thead><tr><th>Standard</th><th>Title</th><th>Library edition</th><th>Sizes (entries)</th><th>Hardness</th><th>Tolerances</th><th>Data status</th></tr></thead>
+        <tbody id="about-std"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="about-card">
+    <h3>Data Notes and Limitations</h3>
+    <ul class="about-list">
+      <li><strong>Nominal values.</strong> Dimensions are the nominal sizes in the standard. Tolerances are shown in millimetres, calculated from the standard's maximum and minimum limits.</li>
+      <li><strong>Unit conversion.</strong> Metric standards are published in mm and inch standards in inches. The other unit is converted (25.4 mm per inch), so converted values can differ from a published figure in the last digit.</li>
+      <li><strong>Non-preferred sizes.</strong> Sizes the standard lists as non-preferred are marked NP. They exist but are less commonly stocked.</li>
+      <li><strong>ISO 7415 thickness.</strong> The standard gives thickness as a range rather than a nominal. The tool shows the maximum and applies the range as the tolerance.</li>
+      <li><strong>DIN 125 A</strong> was withdrawn and replaced by ISO 7089. It is kept because many drawings still call it out.</li>
+      <li><strong>Edition.</strong> Each link points to the library's current edition for that standard. The inch standards link to the withdrawn ASME B18.22.1 (1998) and to the ASTM F844 abstract. Check the standards body for the latest revision.</li>
+      <li><strong>Pending data.</strong> Tolerances for the inch standards and ISO 7091 are still being added and show as pending. Additional standards will be added as data is verified.</li>
+      <li><strong>Not included.</strong> Coatings and platings, spring and lock washers, and live stock or pricing. Use the search button in each detail view to find matching items in the SBS catalog.</li>
+    </ul>
+  </div>
+
+  <div class="about-card">
+    <h3>Disclaimer and Feedback</h3>
+    <p>This tool is provided for reference only. Always verify against the official standard document before use in safety-critical applications, and consult a qualified engineer for structural or safety-critical joints. SBS makes no warranty that every standard, size or edition is included.</p>
+    <p>Found an error or a missing standard? Use <strong>Report an error</strong> in any detail view, or contact the SBS team. Tool version 2.1, November 2026.</p>
   </div>
 </div>
 
@@ -1458,7 +1555,7 @@ function loadHash(){
   $('d-ms').value=g('dms');populateScrewSelect();$('d-screw').value=g('dsc');$('d-id').value=g('did');$('d-od').value=g('dod');$('d-th').value=g('dth');
   $('sz-sel').value=g('sz');$('g-size').value=g('gs');$('g-bolt').value=g('gb')||'carbon';populateGuideGrades(g('gg'));$('g-app').value=g('ga')||'general';
   _noHash=false;
-  var m=g('m');if(['identify','design','size','guide','bp'].indexOf(m)>-1)S.pendingMode=m;
+  var m=g('m');if(['identify','design','size','guide','bp','about'].indexOf(m)>-1)S.pendingMode=m;
 }
 
 /* ---------- view / tabs / units ---------- */
@@ -1479,6 +1576,41 @@ function syncControls(){
   var lab=S.unit==='mm'?'(mm)':'(in)';
   ['lbl-id','lbl-od','lbl-t','d-id-label','d-od-label','d-th-label'].forEach(function(id){var e=$(id);if(e)e.textContent=e.getAttribute('data-base')+' '+lab;});
 }
+var ABOUT_TITLES={
+ 'DIN 125 A':'Plain washers, product grade A, up to 250 HV, for hexagon head bolts (DIN 125-1)',
+ 'ISO 7089':'Plain washers, normal series, product grade A',
+ 'ISO 7090':'Plain washers, chamfered, normal series, product grade A',
+ 'ISO 7091':'Plain washers, normal series, product grade C',
+ 'ISO 7092':'Plain washers, small series, product grade A',
+ 'ISO 7093-1':'Plain washers, large series, part 1: product grade A',
+ 'ISO 7093-2':'Plain washers, large series, part 2: product grade C',
+ 'ISO 7415':'Plain washers for high-strength structural bolting, hardened and tempered',
+ 'DIN 9021':'Large size washers (outside diameter about 3 \u00d7 thread diameter)',
+ 'ASME B18.22.1':'Plain washers',
+ 'ASTM F844':'Unhardened steel washers',
+ 'ASTM F436':'Hardened steel washers'};
+var ABOUT_HARD={'ISO 7089':'200 HV','DIN 125 A':'140 HV or 200 HV','ISO 7090':'200 HV','ISO 7091':'Grade C, unhardened','ISO 7092':'200 HV or 300 HV','ISO 7093-1':'200 HV or 300 HV','ISO 7093-2':'100 HV','DIN 9021':'140 HV (grade A) / 100 HV (grade C)','ISO 7415':'35–45 HRC','ASME B18.22.1':'Low carbon steel, plain','ASTM F844':'Unhardened','ASTM F436':'38–45 HRC'};
+var ABOUT_ORDER=['ISO 7089','DIN 125 A','ISO 7090','ISO 7091','ISO 7092','ISO 7093-1','ISO 7093-2','DIN 9021','ISO 7415','ASME B18.22.1','ASTM F844','ASTM F436'];
+// Standards whose tables were checked line by line against the standard document.
+var ABOUT_VERIFIED={'ISO 7092':1,'ISO 7093-1':1,'ISO 7093-2':1,'DIN 9021':1,'ISO 7415':1};
+function renderAbout(){
+  var rows=ABOUT_ORDER.map(function(std){
+    var ws=W.filter(function(w){return w.std===std;});
+    if(!ws.length)return '';
+    ws.sort(function(a,b){return threadVal(a)-threadVal(b);});
+    var tolN=ws.filter(function(w){return w.id_tol||w.od_tol||w.t_tol;}).length;
+    var info=STD_INFO[std];
+    var sizes=ws[0].thread+' to '+ws[ws.length-1].thread;
+    var link=info?'<a class="std-link" href="'+info.url+'" target="_blank" rel="noopener">'+esc(info.label)+'</a>'+(info.note?'<div class="m-sub">'+esc(info.note)+'</div>':''):'<span class="m-sub">No library copy linked</span>';
+    var ver=ABOUT_VERIFIED[std]?'<span class="fit fit-ok">Checked against standard</span>':'<span class="fit fit-unk">Carried over; verification in progress</span>';
+    return '<tr><td class="td-std">'+esc(std)+'<div class="td-sub">'+tags(w0(ws)).map(function(t){return '<span class="chip-s chip-'+t.toLowerCase()+'">'+t+'</span>';}).join('')+'</div></td>'+
+      '<td>'+esc(ABOUT_TITLES[std]||'')+'</td><td>'+link+'</td><td>'+esc(sizes)+' ('+ws.length+')</td>'+
+      '<td>'+esc(ABOUT_HARD[std]||HARD_LBL[hardLevel(ws[0])])+'</td><td>'+(tolN===ws.length?'Complete':(tolN?tolN+' of '+ws.length:'Pending'))+'</td><td>'+ver+'</td></tr>';
+  }).join('');
+  $('about-std').innerHTML=rows;
+  $('about-count').textContent=W.length;
+}
+function w0(ws){return ws[0];}
 function setMode(m){
   S.mode=m;
   document.querySelectorAll('.mode-tab').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-sbs-action')==='tab-'+m);});
@@ -1486,13 +1618,13 @@ function setMode(m){
   show('filters-bar',m==='identify');show('design-panel',m==='design');
   show('opts-bar',m==='identify'||m==='design'||m==='size');
   show('main-content',m==='identify'||m==='design');
-  show('size-panel',m==='size');show('guide-panel',m==='guide');show('bp-panel',m==='bp');
-  $('unit-toggle-wrap').style.display=m==='bp'||m==='guide'?'none':'';
+  show('size-panel',m==='size');show('guide-panel',m==='guide');show('bp-panel',m==='bp');show('about-panel',m==='about');
+  $('unit-toggle-wrap').style.display=m==='bp'||m==='guide'||m==='about'?'none':'';
   $('opts-guide-only').style.display=m==='size'?'none':'';
   if(m==='identify'||m==='design')applyFilters();
   else if(m==='size')renderSize();
   else if(m==='guide')renderGuide();
-  else saveHash();
+  else{if(m==='about')renderAbout();saveHash();}
   syncControls();
 }
 function setUnit(un){
