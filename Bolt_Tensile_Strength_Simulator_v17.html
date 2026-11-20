@@ -416,7 +416,7 @@ html.fs-lock,html.fs-lock body{overflow:hidden}
   </div>
   <div class="hdr-actions"><button class="beta-badge" id="beta-badge-btn" type="button" aria-haspopup="dialog">BETA</button>
   <div class="units"><span>Metric</span><label class="tgl"><input type="checkbox" id="u-tgl" aria-label="Switch between metric and imperial units"><span class="sl"></span></label><span>Imperial</span></div>
-  <button class="fsbtn" id="fs-btn" type="button" aria-label="Enter full screen" title="Full screen"><svg class="ic-max" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg><svg class="ic-min" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h3a2 2 0 0 0 2-2V3M21 8h-3a2 2 0 0 1-2-2V3M3 16h3a2 2 0 0 1 2 2v3M21 16h-3a2 2 0 0 0-2 2v3"/></svg><span class="fs-lbl" id="fs-lbl">Full screen</span></button></div>
+  <button class="fsbtn" id="fs-btn" type="button" aria-label="Open in a new tab" title="Open in a new tab"><svg class="ic-max" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg><svg class="ic-min" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h3a2 2 0 0 0 2-2V3M21 8h-3a2 2 0 0 1-2-2V3M3 16h3a2 2 0 0 1 2 2v3M21 16h-3a2 2 0 0 0-2 2v3"/></svg><span class="fs-lbl" id="fs-lbl">Full screen</span></button></div>
 </header>
 
 <section class="cfg" aria-label="Specimen setup">
@@ -2797,20 +2797,18 @@ function setFS(on){
   fsOn=on;
   $('app').classList.toggle('fs',on);
   document.documentElement.classList.toggle('fs-lock',on);
-  $('fs-lbl').textContent=on?'Exit full screen':'Full screen';
-  const b=$('fs-btn');b.setAttribute('aria-label',on?'Exit full screen':'Enter full screen');b.title=on?'Exit full screen':'Full screen';
   requestAnimationFrame(()=>{resize();drawHUDChart();requestAnimationFrame(resize);});
 }
 const isEmbedded=()=>{try{return window.self!==window.top;}catch(e){return true;}};
-/* When the tool sits inside another website, full screen opens the tool as its own browser tab,
-   fully separate from the host page. Returns true if the tab opened. */
+/* The full-screen layout is now the normal interface. The Full screen button only opens the tool in its own
+   browser tab, fully separate from any host page. Returns true if the tab opened. */
 function openStandalone(){
   let url='';
   const proto=location.protocol;
   if((proto==='http:'||proto==='https:'||proto==='file:')&&location.href.indexOf('about:')!==0){
-    url=location.href.split('#')[0]+'#fs';                       // the tool's own address, no host page involved
+    url=location.href.split('#')[0];                             // the tool's own address, no host page involved
   }else if(PAGE_SRC){
-    try{url=URL.createObjectURL(new Blob([PAGE_SRC],{type:'text/html'}))+'#fs';}catch(e){}   // pasted/inline embeds: rebuild the page from its own source
+    try{url=URL.createObjectURL(new Blob([PAGE_SRC],{type:'text/html'}));}catch(e){}   // pasted/inline embeds: rebuild the page from its own source
   }
   if(!url)return false;
   let w=null;try{w=window.open(url,'_blank');}catch(e){}
@@ -2818,28 +2816,14 @@ function openStandalone(){
   try{w.opener=null;}catch(e){}
   return true;
 }
-function enterFS(){
-  if(isEmbedded()&&openStandalone())return;                        // opened in its own tab; this embedded copy stays as it is
-  setFS(true);
+function openInNewTab(){
+  if(openStandalone())return;
+  /* last resort when the browser or host blocks new tabs: ask the browser for its own full screen */
   const el=document.documentElement,rq=el.requestFullscreen||el.webkitRequestFullscreen;
-  if(rq){try{const r=rq.call(el);if(r&&r.catch)r.catch(()=>{});}catch(e){}}   // if the browser refuses, the tool still fills the window
-}
-function exitFS(){
-  const real=document.fullscreenElement||document.webkitFullscreenElement,ex=document.exitFullscreen||document.webkitExitFullscreen;
-  if(real&&ex){try{const r=ex.call(document);if(r&&r.catch)r.catch(()=>{});}catch(e){}}
-  setFS(false);
+  if(rq){try{const r=rq.call(el);if(r&&r.catch)r.catch(()=>{});}catch(e){}}
 }
 function initFS(){
-  $('fs-btn').addEventListener('click',()=>fsOn?exitFS():enterFS());
-  const onChange=()=>{if(fsOn&&!(document.fullscreenElement||document.webkitFullscreenElement))setFS(false);};
-  document.addEventListener('fullscreenchange',onChange);
-  document.addEventListener('webkitfullscreenchange',onChange);
-  document.addEventListener('keydown',e=>{
-    if(e.key!=='Escape'||!fsOn)return;
-    if(document.fullscreenElement||document.webkitFullscreenElement)return;      // the browser handles Esc itself
-    if(!$('sv-modal').hidden||$('beta-ov').classList.contains('on'))return;
-    exitFS();
-  });
+  $('fs-btn').addEventListener('click',openInNewTab);
   document.querySelectorAll('#sidetabs button').forEach(b=>b.addEventListener('click',()=>showSideTab(b.dataset.spt)));
   showSideTab('live');
 }
@@ -2848,7 +2832,7 @@ function initFS(){
 wireUI();
 initPages();
 initFS();
-if(!isEmbedded()&&location.hash==='#fs')setFS(true);   // tab opened by the full screen button: fill the tab
+setFS(true);   // the full-screen layout is the default interface
 initGL();
 updateNotice();refreshAll();
 if(GLOK){drawDisplays();requestAnimationFrame(frame);}
