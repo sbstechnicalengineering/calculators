@@ -668,6 +668,8 @@ html.fs-lock,html.fs-lock body{overflow:hidden}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (function(){'use strict';
+/* clean copy of this page, taken before any setup runs, so the full screen button can reopen it as its own tab */
+let PAGE_SRC='';try{PAGE_SRC='<!DOCTYPE html>\n'+document.documentElement.outerHTML;}catch(e){}
 if(typeof THREE==='undefined'){var f=document.getElementById('gl-fail');if(f)f.hidden=false;return;}
 const $=id=>document.getElementById(id);
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
@@ -2799,7 +2801,25 @@ function setFS(on){
   const b=$('fs-btn');b.setAttribute('aria-label',on?'Exit full screen':'Enter full screen');b.title=on?'Exit full screen':'Full screen';
   requestAnimationFrame(()=>{resize();drawHUDChart();requestAnimationFrame(resize);});
 }
+const isEmbedded=()=>{try{return window.self!==window.top;}catch(e){return true;}};
+/* When the tool sits inside another website, full screen opens the tool as its own browser tab,
+   fully separate from the host page. Returns true if the tab opened. */
+function openStandalone(){
+  let url='';
+  const proto=location.protocol;
+  if((proto==='http:'||proto==='https:'||proto==='file:')&&location.href.indexOf('about:')!==0){
+    url=location.href.split('#')[0]+'#fs';                       // the tool's own address, no host page involved
+  }else if(PAGE_SRC){
+    try{url=URL.createObjectURL(new Blob([PAGE_SRC],{type:'text/html'}))+'#fs';}catch(e){}   // pasted/inline embeds: rebuild the page from its own source
+  }
+  if(!url)return false;
+  let w=null;try{w=window.open(url,'_blank');}catch(e){}
+  if(!w)return false;                                              // popup blocked or embed not allowed to open tabs
+  try{w.opener=null;}catch(e){}
+  return true;
+}
 function enterFS(){
+  if(isEmbedded()&&openStandalone())return;                        // opened in its own tab; this embedded copy stays as it is
   setFS(true);
   const el=document.documentElement,rq=el.requestFullscreen||el.webkitRequestFullscreen;
   if(rq){try{const r=rq.call(el);if(r&&r.catch)r.catch(()=>{});}catch(e){}}   // if the browser refuses, the tool still fills the window
@@ -2828,6 +2848,7 @@ function initFS(){
 wireUI();
 initPages();
 initFS();
+if(!isEmbedded()&&location.hash==='#fs')setFS(true);   // tab opened by the full screen button: fill the tab
 initGL();
 updateNotice();refreshAll();
 if(GLOK){drawDisplays();requestAnimationFrame(frame);}
