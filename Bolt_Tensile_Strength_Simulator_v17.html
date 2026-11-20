@@ -117,15 +117,16 @@ button:focus-visible,input:focus-visible,select:focus-visible,canvas:focus-visib
 .chip[aria-pressed=true]{color:var(--ink);border-color:var(--orange)}
 .chip:hover:not(:disabled){color:var(--ink)}
 .chip:disabled{opacity:.5;cursor:not-allowed}
-.partcard{position:absolute;left:12px;bottom:78px;z-index:4;width:min(340px,calc(100% - 24px));background:var(--hud);border:1px solid var(--hud-line);border-left:3px solid var(--orange);border-radius:8px;padding:10px 32px 10px 12px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.partcard{position:absolute;left:12px;bottom:12px;z-index:4;width:min(340px,calc(100% - 24px));background:var(--hud);border:1px solid var(--hud-line);border-left:3px solid var(--orange);border-radius:8px;padding:10px 32px 10px 12px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .partcard[hidden]{display:none}
 .partcard h3{font:700 15px 'Barlow Condensed',sans-serif;color:var(--title);margin-bottom:3px;letter-spacing:.2px}
 .partcard p{font-size:12px;color:var(--ink);line-height:1.45}
 .partcard button{position:absolute;right:6px;top:6px;border:0;background:transparent;width:24px;height:24px;border-radius:6px;color:var(--ink2);font-size:14px}
 .partcard button:hover{background:var(--bg3)}
-.bot{left:12px;right:12px;bottom:12px}
-.transport{display:flex;align-items:center;gap:10px;background:var(--hud);border:1px solid var(--hud-line);border-radius:10px;padding:8px 10px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);flex-wrap:wrap}
-.trk{flex:1;min-width:150px;position:relative;height:22px;display:flex;align-items:center}
+.transport{display:flex;align-items:center;gap:8px;height:30px}
+.transport .btn{justify-content:center}
+#btn-start{min-width:116px}
+.trk{flex:1;min-width:110px;position:relative;height:22px;display:flex;align-items:center}
 .trk input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:10px;border-radius:5px;background:var(--trk,#ccc);outline-offset:4px;cursor:pointer}
 .trk input[type=range]:disabled{opacity:.5;cursor:not-allowed}
 .trk input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#fff;border:3px solid var(--navy);box-shadow:0 1px 4px rgba(0,0,0,.3)}
@@ -198,7 +199,6 @@ dl.spec dd.sb{color:var(--ink2);font-weight:500;font-style:italic;opacity:.75}
   .stage{height:70vh;min-height:440px}
   .side{border-left:0;border-top:1px solid var(--line)}
   .tr{max-width:70%}
-  .partcard{bottom:112px}
 }
 @media (max-width:560px){
   .ttl{font-size:18px}.sub{display:none}
@@ -314,7 +314,7 @@ dl.spec dd.sb{color:var(--ink2);font-weight:500;font-style:italic;opacity:.75}
 .tour-promo>div{flex:1;min-width:260px}
 .tour-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px 18px;margin:10px 0 0;padding-left:18px;font-size:12.5px;color:var(--ink)}
 .tour-promo .btn{height:36px;font-size:13px;padding:0 18px}
-.tour{position:absolute;left:12px;bottom:84px;z-index:6;width:min(410px,calc(100% - 24px));background:var(--bg);border:1px solid var(--line2);border-left:4px solid var(--orange);border-radius:10px;padding:9px 12px 8px;box-shadow:0 8px 28px rgba(0,0,0,.3)}
+.tour{position:absolute;left:12px;bottom:12px;z-index:6;width:min(410px,calc(100% - 24px));background:var(--bg);border:1px solid var(--line2);border-left:4px solid var(--orange);border-radius:10px;padding:9px 12px 8px;box-shadow:0 8px 28px rgba(0,0,0,.3)}
 .tour[hidden]{display:none}
 .tour-top{display:flex;justify-content:space-between;align-items:center;font:600 11.5px 'Barlow',sans-serif;color:var(--ink2)}
 .tour-top button{border:0;background:transparent;width:24px;height:24px;border-radius:6px;color:var(--ink2);font-size:14px;margin:-4px -6px 0 0}
@@ -332,7 +332,7 @@ dl.spec dd.sb{color:var(--ink2);font-weight:500;font-style:italic;opacity:.75}
 .tour-bar i{display:block;height:100%;width:0;background:var(--orange)}
 .tour-hl{outline:3px solid var(--orange)!important;outline-offset:3px;border-radius:8px;animation:tourpulse 1.4s ease-in-out infinite}
 @keyframes tourpulse{0%,100%{outline-color:#E87722}50%{outline-color:rgba(232,119,34,.3)}}
-@media (max-width:620px){.tour-list{grid-template-columns:1fr}.tour{bottom:112px}}
+@media (max-width:620px){.tour-list{grid-template-columns:1fr}}
 .beta-badge{font:700 11px/1.3 'Barlow Condensed',sans-serif;letter-spacing:.6px;background:#E87722;color:#fff;border:0;border-radius:20px;padding:4px 12px;flex-shrink:0}
 .beta-badge:hover{background:#d4661a}
 .beta-ov{position:fixed;inset:0;background:rgba(15,23,35,.58);display:none;align-items:center;justify-content:center;z-index:2000;padding:20px}
@@ -350,6 +350,59 @@ dl.spec dd.sb{color:var(--ink2);font-weight:500;font-style:italic;opacity:.75}
 .beta-modal-btn{font:700 14px 'Barlow',sans-serif;letter-spacing:.4px;background:#E87722;color:#fff;border:0;border-radius:8px;padding:11px 22px;transition:background .15s,transform .15s,box-shadow .15s}
 .beta-modal-btn:hover{background:#d4661a;transform:translateY(-1px);box-shadow:0 2px 6px rgba(232,119,34,.3)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}.tour-hl{animation:none}}
+/* run bar: mount / remove + start / timeline, grouped at the top */
+.runbar{display:flex;gap:14px;align-items:flex-end;flex:3 1 520px;min-width:0;flex-wrap:wrap}
+.runbar .cg.tp{flex:1 1 300px;min-width:260px}
+.cinfo{flex:1 1 150px}
+
+/* full-screen button */
+.fsbtn{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 11px;border-radius:8px;border:1px solid var(--line2);background:var(--bg);color:var(--ink);font:600 12px 'Barlow',sans-serif;white-space:nowrap}
+.fsbtn:hover{border-color:var(--orange);color:var(--orange)}
+.fsbtn svg{width:16px;height:16px;flex-shrink:0}
+.fsbtn .ic-min{display:none}
+#app.fs .fsbtn .ic-max{display:none}
+#app.fs .fsbtn .ic-min{display:block}
+html.fs-lock,html.fs-lock body{overflow:hidden}
+
+/* side-panel tabs (only used in full screen, where nothing may scroll) */
+.sidetabs{display:none}
+.sidetabs button{flex:1;background:transparent;border:0;border-bottom:3px solid transparent;font:700 14px 'Barlow Condensed',sans-serif;letter-spacing:.3px;padding:7px 6px;color:var(--ink2)}
+.sidetabs button:hover{color:var(--ink)}
+.sidetabs button.on{color:var(--title);border-bottom-color:var(--orange)}
+
+/* FULL SCREEN: the whole tool fits the screen, no page scrolling. Extra content moves to tabs. */
+#app.fs{position:fixed;inset:0;z-index:3000;height:auto;width:auto;overflow:hidden;background:var(--bg);padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+#app.fs .hdr{padding:.3rem 1rem;gap:10px}
+#app.fs .logo img{height:28px}
+#app.fs .vr{height:26px}
+#app.fs .ttl{font-size:19px}
+#app.fs .sub{display:none}
+#app.fs .cfg{padding:6px 14px}
+#app.fs .notice{padding:4px 14px}
+#app.fs .tabs button{padding:5px 14px}
+#app.fs .work{display:grid;grid-template-columns:minmax(0,1fr) clamp(380px,34vw,520px);grid-template-rows:minmax(0,1fr);overflow:hidden}
+#app.fs .stage{height:auto;min-height:0}
+#app.fs .side{border-left:1px solid var(--line);border-top:0;overflow:hidden;min-height:0;padding:0 12px 10px;gap:10px}
+#app.fs .sidetabs{display:flex;flex-shrink:0;border-bottom:1px solid var(--line);margin:0 -12px}
+#app.fs .side [data-sp]:not(.sp-on){display:none}
+#app.fs .side>.card{flex-shrink:0}
+#app.fs #card-curve.sp-on{display:flex;flex-direction:column;flex:1 1 0;min-height:0}
+#app.fs #card-curve .sswrap{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
+#app.fs #ssvg{width:100%;height:100%;max-height:100%}
+#app.fs .page{overflow:auto}
+#app.fs .work[hidden],#app.fs .page[hidden]{display:none}
+@media (max-width:980px){
+  #app.fs .work{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) minmax(0,46%)}
+  #app.fs .side{border-top:1px solid var(--line);border-left:0}
+  #app.fs .stage{height:auto}
+}
+@media (max-height:780px){
+  #app.fs .big b{font-size:34px}
+  #app.fs .met b{font-size:17px}
+  #app.fs .card{padding:9px 12px}
+  #app.fs .sbtns button{min-height:64px;padding:8px 6px}
+}
+@media (max-width:560px){.fsbtn .fs-lbl{display:none}.fsbtn{padding:0 8px}}
 </style>
 </head>
 <body>
@@ -362,7 +415,8 @@ dl.spec dd.sb{color:var(--ink2);font-weight:500;font-style:italic;opacity:.75}
     <div class="sub">Tensile Testing Learning Tool</div>
   </div>
   <div class="hdr-actions"><button class="beta-badge" id="beta-badge-btn" type="button" aria-haspopup="dialog">BETA</button>
-  <div class="units"><span>Metric</span><label class="tgl"><input type="checkbox" id="u-tgl" aria-label="Switch between metric and imperial units"><span class="sl"></span></label><span>Imperial</span></div></div>
+  <div class="units"><span>Metric</span><label class="tgl"><input type="checkbox" id="u-tgl" aria-label="Switch between metric and imperial units"><span class="sl"></span></label><span>Imperial</span></div>
+  <button class="fsbtn" id="fs-btn" type="button" aria-label="Enter full screen" title="Full screen"><svg class="ic-max" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg><svg class="ic-min" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h3a2 2 0 0 0 2-2V3M21 8h-3a2 2 0 0 1-2-2V3M3 16h3a2 2 0 0 1 2 2v3M21 16h-3a2 2 0 0 0-2 2v3"/></svg><span class="fs-lbl" id="fs-lbl">Full screen</span></button></div>
 </header>
 
 <section class="cfg" aria-label="Specimen setup">
@@ -375,8 +429,16 @@ dl.spec dd.sb{color:var(--ink2);font-weight:500;font-style:italic;opacity:.75}
   <div class="cg"><label id="spd-label" for="spd-val">Speed (mm/min)</label>
     <div class="stepper"><button id="spd-minus" type="button" aria-label="Decrease speed">−</button><input type="number" id="spd-val" value="3" step="0.01" inputmode="decimal"><button id="spd-plus" type="button" aria-label="Increase speed">+</button></div></div>
   <div class="cinfo" id="c-info"></div>
-  <div class="cg" style="flex:0 0 auto;min-width:auto"><label>Bolt</label>
-    <div style="display:flex;gap:6px"><button class="btn" id="btn-mount" type="button">Mount bolt</button><button class="btn ghost" id="btn-remove" type="button" disabled>Remove bolt</button></div></div>
+  <div class="runbar">
+    <div class="cg" style="flex:0 0 auto;min-width:auto"><label>Bolt</label>
+      <div style="display:flex;gap:6px"><button class="btn" id="btn-mount" type="button">Mount bolt</button><button class="btn ghost" id="btn-remove" type="button" disabled>Remove bolt</button></div></div>
+    <div class="cg tp"><label for="main-sl">Test</label>
+      <div class="transport">
+        <button class="btn" id="btn-start" type="button" disabled>▶ Start test</button>
+        <button class="btn ghost" id="btn-reset" type="button">↺ Reset</button>
+        <div class="trk"><input type="range" id="main-sl" min="0" max="100" value="0" step="0.5" disabled aria-label="Test progress"></div>
+      </div></div>
+  </div>
 </section>
 <div class="notice" id="notice" role="status"></div>
 <nav class="tabs" id="tabs" role="tablist" aria-label="Sections">
@@ -421,19 +483,16 @@ dl.spec dd.sb{color:var(--ink2);font-weight:500;font-style:italic;opacity:.75}
       <button type="button" id="pc-x" aria-label="Close part description">✕</button>
     </div>
 
-    <div class="ov bot">
-      <div class="transport">
-        <button class="btn" id="btn-start" type="button" disabled>▶ Start test</button>
-        <button class="btn ghost" id="btn-reset" type="button">↺ Reset</button>
-        <div class="trk"><input type="range" id="main-sl" min="0" max="100" value="0" step="0.5" disabled aria-label="Test progress"></div>
-      </div>
-    </div>
-
     <div class="glfail" id="gl-fail" hidden><div><b>3D view unavailable</b><br>This browser could not start WebGL. Try a recent version of Chrome, Edge, Firefox or Safari with hardware acceleration enabled.</div></div>
   </section>
 
-  <aside class="side" aria-label="Live test data">
-    <div class="card">
+  <aside class="side" id="side" aria-label="Live test data">
+    <nav class="sidetabs" id="sidetabs" role="tablist" aria-label="Side panel sections">
+      <button type="button" role="tab" data-spt="live">Live data</button>
+      <button type="button" role="tab" data-spt="stages">Stages</button>
+      <button type="button" role="tab" data-spt="specs">Specs</button>
+    </nav>
+    <div class="card" id="card-live" data-sp="live">
       <div class="card-h">Live test data <span class="pill" id="v-pill">No load</span></div>
       <div class="big"><b id="v-force">0.00 kN</b><small>axial force</small></div>
       <div class="met">
@@ -447,7 +506,7 @@ dl.spec dd.sb{color:var(--ink2);font-weight:500;font-style:italic;opacity:.75}
       <div class="warn" id="warn-msg">The bolt is now stretching for good. Pulling harder will damage it.</div>
     </div>
 
-    <div class="card">
+    <div class="card" id="card-curve" data-sp="live">
       <div class="card-h"><span>Stress–strain curve <button class="ib" id="ib-ss" type="button" data-spec="ss" aria-label="What is this chart?">i</button></span></div>
       <div class="sswrap">
         <svg id="ssvg" viewBox="0 0 330 230" role="img" aria-label="Live stress–strain curve of the test. Hover or tap the coloured sections and labels for explanations."></svg>
@@ -455,22 +514,22 @@ dl.spec dd.sb{color:var(--ink2);font-weight:500;font-style:italic;opacity:.75}
       </div>
     </div>
 
-    <div class="card">
+    <div class="card" id="card-stat" data-sp="stages">
       <div class="card-h" id="st-title">Specimen in the test fixtures</div>
       <p id="st-desc"></p>
     </div>
 
-    <div class="card">
+    <div class="card" id="card-jump" data-sp="stages">
       <div class="card-h">Jump to a stage</div>
       <div class="sbtns" id="stage-btn-row"></div>
       <span class="sbtn-note">Mount a bolt, then the machine runs and stops right at that stage.</span>
     </div>
 
-    <div class="card">
+    <div class="card" id="card-spec" data-sp="specs">
       <div class="card-h">Machine and specimen</div>
       <dl class="spec" id="spec"></dl>
     </div>
-    <div class="foot">Teaching model. Strength numbers come from the listed standards or typical reference data. The curve shapes and stretch amounts are typical, not results for a specific batch of bolts.</div>
+    <div class="foot" data-sp="specs">Teaching model. Strength numbers come from the listed standards or typical reference data. The curve shapes and stretch amounts are typical, not results for a specific batch of bolts.</div>
   </aside>
 </main>
 
@@ -542,7 +601,7 @@ dl.spec dd.sb{color:var(--ink2);font-weight:500;font-style:italic;opacity:.75}
   <h2 class="h2 sp">Setting up the machine</h2>
   <div class="bp-grid">
     <div class="bp-card"><div class="bp-t">Pull straight along the bolt's axis</div><div class="bp-b">Look at the <b>Fixtures</b> view: the head holder and nut holder sit on the bolt's centre line, so the pull is purely axial. On a real machine, misalignment adds bending and can lower the measured strength.</div></div>
-    <div class="bp-card"><div class="bp-t">Hold the head and the nut properly</div><div class="bp-b">The head bears on a hardened slotted plate above and the nut bears on a hardened plate below, so the load goes through the same surfaces as in service. Test standards also ask for some bare thread between the nut and the smooth part of the bolt (at least one bolt diameter in ISO 898-1), so the test measures the bolt itself.</div></div>
+    <div class="bp-card"><div class="bp-t">Hold the head and the nut properly</div><div class="bp-b">A hardened flat washer sits under the head and another under the nut, and these bear on hardened slotted plates, so the load is spread over flat, hard surfaces as it is in a real test. Test standards also ask for some bare thread between the nut and the smooth part of the bolt (at least one bolt diameter in ISO 898-1), so the test measures the bolt itself.</div></div>
     <div class="bp-card"><div class="bp-t">Pick the right load cell</div><div class="bp-b">A load cell is the sensor that measures the pull, and it works best when the break load sits well inside its range. The machine fits the smallest standard cell with at least 25% headroom over the expected break load. Once a bolt is mounted, the <b>Machine and specimen</b> panel shows the choice and how much of its range you use.</div></div>
     <div class="bp-card"><div class="bp-t">The elastic stretch you see is enlarged</div><div class="bp-b">While it is still springy, a real bolt stretches by only a tiny fraction of a percent, far too little to see. The 3D view enlarges that springy stretch about 10 times so you can follow it. Stretch that stays after the pull is released is shown at its true size. The numbers on screen (force, stress, strain and extension) are always the true values.</div></div>
     <div class="bp-card"><div class="bp-t">Test speed matters</div><div class="bp-b">Real tests pull slowly and steadily, because pulling too fast can make a bolt look stronger than it really is. A longer gauge length can be pulled a little faster. The suggestion below is a simple guide of about 12% of the gauge length per minute. For an official test, follow the speed set by the test standard.</div><div class="bp-speed-rec">Recommended for your current setup: <b id="bp-speed-val">—</b></div></div>
@@ -572,6 +631,7 @@ dl.spec dd.sb{color:var(--ink2);font-weight:500;font-style:italic;opacity:.75}
   <div class="vid"><iframe title="Tensile test of a stainless steel bolt" src="https://drive.google.com/file/d/13JIwnlyMTnZVGP3eJvr-CRqmmZcYQXTK/preview" allow="autoplay" allowfullscreen loading="lazy"></iframe></div>
   <p class="lead" style="margin-top:8px;text-align:center">If the video does not load here, <a class="lnk" href="https://www.youtube.com/watch?v=SEVJFHVndTI" target="_blank" rel="noopener">watch the original on YouTube</a>.</p>
 
+  <div class="bp-card" style="margin-top:14px"><div class="bp-t">Hardened washers in a real test</div><div class="bp-b">In a real tensile test a hardened washer is placed under the head of the bolt and another between the nut and the fixture. They spread the load over a larger, flat, hard surface so the head and nut bear evenly and do not dig into the fixture. The 3D model shows both washers.</div></div>
   <div class="bp-card" style="margin-top:14px"><div class="bp-t">Credit</div><div class="bp-b">Credit to Todd Flessner's <i>Tensile Test Stainless Steel 1/2-13 Bolt DACC</i> video. Original video: <a class="lnk" href="https://www.youtube.com/watch?v=SEVJFHVndTI" target="_blank" rel="noopener">https://www.youtube.com/watch?v=SEVJFHVndTI</a></div></div>
 </div>
 </section>
@@ -921,7 +981,7 @@ function refreshHUD(){
   $('warn-msg').className='warn'+(!idle&&T>=T_EL&&!d.broken?' on':'');
   const st=STAGES.find(s=>s.key===ph)||STAGES[0];
   $('st-title').textContent=idle?'Waiting for a specimen':st.title;
-  $('st-desc').textContent=idle?'Choose a material, grade, diameter and gauge length, then press Mount bolt. The bolt slides into the head holder and nut holder.':st.desc;
+  $('st-desc').textContent=idle?'Choose a material, grade, diameter and gauge length, then press Mount bolt. The bolt, with its two hardened washers, slides into the head holder and nut holder.':st.desc;
   $('main-sl').value=T;
   document.querySelectorAll('#stage-btn-row button').forEach(b=>{
     const on=!idle&&b.dataset.stage===ph;
@@ -946,6 +1006,7 @@ function refreshSpec(){
     ['Expected peak',fmtForce(D.expectedKN),true],
     ['Crosshead speed',fmtSpeed(testSpeed),true],
     ['Fixtures','Head holder + nut holder',false],
+    ['Washers','Hardened flat, head and nut',false],
   ];
   const warn=D.expectedKN>D.cap*0.95;
   if(typeof updateSpeedRec==='function')updateSpeedRec();
@@ -1039,10 +1100,12 @@ function dims(){
   const lw=Math.max(6,w*0.2);
   const m=0.8*d,k=0.65*d,tail=2.4*p+0.1*d,clr=6+0.2*d,slot=d*1.1+0.5;
   const tb=Math.max(10,w*0.3);
+  // hardened flat washers: one under the head, one between the nut and the lower plate
+  const tw=Math.max(.3,Math.min(.18*d,.1*L)),wid=1.08*d,wod=Math.max(1.4*d,Math.min(2.1*d,(w-2*lw)*.96));
   const yCageBot=Y_SEAT-(m+tail+6),y0=yCageBot-tb;
   const yTBb=Y_SEAT+L+k+clr,yTBt=yTBb+tb;
   const hLC=90+rc*0.8,yLCb=Y_CROSS-hLC,rodLen=yLCb-yTBt;
-  return{d,L,As,expectedKN,capIdx,cap,frameKN,rc,rodR,p,w,wz,tp,lw,m,k,tail,clr,slot,tb,yCageBot,y0,yTBb,yTBt,hLC,yLCb,rodLen};
+  return{d,L,As,expectedKN,capIdx,cap,frameKN,rc,rodR,p,w,wz,tp,lw,m,k,tail,clr,slot,tb,tw,wid,wod,yCageBot,y0,yTBb,yTBt,hLC,yLCb,rodLen};
 }
 
 let renderer,scene,camera,GLOK=false,machine,moving,upperFixG,lowerFixG,fixDims=null;
@@ -1067,6 +1130,7 @@ function makeMaterials(){
   MAT.red=S({color:0xd62828,roughness:.35,metalness:.1});
   MAT.white=S({color:0xffffff,roughness:.5,metalness:0});
   MAT.cell=S({color:0x2c4f80,roughness:.34,metalness:.7});
+  MAT.washer=S({color:0x7b848c,roughness:.42,metalness:.9});
   MAT.zinc=S({color:0xb7c0c8,roughness:.4,metalness:.85,flatShading:true});
   MAT.glass=new THREE.MeshStandardMaterial({color:0xdfeaf5,roughness:.06,metalness:0,transparent:true,opacity:.13,side:THREE.DoubleSide,depthWrite:false,envMapIntensity:.5});MAT.glass.color.convertSRGBToLinear();
   MAT.fract=S({color:0xc8ced4,roughness:.9,metalness:.45,side:THREE.DoubleSide});
@@ -1095,6 +1159,11 @@ function hexPrism(R,h,chamfer){
   const c=chamfer||0.14;
   const pts=[[0,0],[R*0.86,0],[R,h*c],[R,h*(1-c)],[R*0.86,h],[0,h]].map(p=>new THREE.Vector2(p[0],p[1]));
   return new THREE.LatheGeometry(pts,6);
+}
+function washerGeometry(r,R,t){
+  const c=Math.min(t*.18,(R-r)*.2);
+  const pts=[[r,0],[R-c,0],[R,c],[R,t-c],[R-c,t],[r,t],[r,0]].map(p=>new THREE.Vector2(p[0],p[1]));
+  return new THREE.LatheGeometry(pts,64);
 }
 function slotPlate(w,wz,t,slot,mat){
   const sh=new THREE.Shape(),hw=w/2,hz=wz/2,r=slot/2;
@@ -1237,12 +1306,12 @@ function rebuildFixtures(){
   put(cyl(D.rodR*1.7,D.rodR*1.7,14,MAT.dark,40),0,7,0,lowerFixG,true,false);
   put(cyl(D.rodR,D.rodR,D.y0-14,MAT.chrome,40),0,14+(D.y0-14)/2,0,lowerFixG,true,false);
   put(rbox(D.w,D.tb,D.wz,3,MAT.hard),0,D.y0+D.tb/2,0,lowerFixG,true,false);
-  const legH=Y_SEAT-(D.y0+D.tb);
+  const legH=Y_SEAT+D.tw-(D.y0+D.tb);
   [-1,1].forEach(s=>put(box(D.lw,legH+0.02,D.wz,MAT.hard),s*(D.w/2-D.lw/2),D.y0+D.tb+legH/2,0,lowerFixG,true,false));
-  put(slotPlate(D.w,D.wz,D.tp,D.slot,MAT.hard),0,Y_SEAT,0,lowerFixG,true,false);
+  put(slotPlate(D.w,D.wz,D.tp,D.slot,MAT.hard),0,Y_SEAT+D.tw,0,lowerFixG,true,false);
 
   // upper: plate under the head, two side bars, top block, rod, load cell
-  const yPlate=Y_SEAT+D.L-D.tp;
+  const yPlate=Y_SEAT+D.L-D.tw-D.tp;
   put(slotPlate(D.w,D.wz,D.tp,D.slot,MAT.hard),0,yPlate,0,upperFixG,true,false);
   const barH=D.yTBt-D.tb-yPlate;
   [-1,1].forEach(s=>put(box(D.lw,barH+0.02,D.wz,MAT.hard),s*(D.w/2-D.lw/2),yPlate+barH/2,0,upperFixG,true,false));
@@ -1376,6 +1445,8 @@ function buildBolt(){
   const cg=new THREE.CircleGeometry(rMin*.8,n);cg.rotateX(Math.PI/2);cg.translate(0,yTail,0);add(cg,MAT.bolt);
   const nutG=hexPrism(0.866*d,D.m,.12);nutG.translate(0,-D.m,0);add(nutG,MAT.zinc);
   const head=add(hexPrism(0.866*d,D.k,.12),MAT.zinc,L);
+  add(washerGeometry(D.wid/2,D.wod/2,D.tw),MAT.washer,0);                 // between the nut and the lower plate
+  const wHi=add(washerGeometry(D.wid/2,D.wod/2,D.tw),MAT.washer,L-D.tw);  // under the head
   const capLo=add(fractureCap(),MAT.fract,0),capHi=add(fractureCap(),MAT.fract,0);
   capLo.visible=capHi.visible=false;
   const jc=Math.round((neckY-yTail)/dy);
@@ -1384,7 +1455,7 @@ function buildBolt(){
   U.uMarkStep.value=L/8;U.uMarkW.value=Math.max(L/8*.12,d*.08);
   rig.traverse(o=>{if(o.isMesh){o.castShadow=false;o.receiveShadow=false;}});
   scene.add(rig);boltRig=rig;
-  bolt={rig,head,capLo,capHi,rMaj,rMin,L,d,neckY,w:U.uNeckW.value,cutLo:U.uCutLo.value,cutHi:U.uCutHi.value,mountOffset:keepOffset};
+  bolt={rig,head,wHi,capLo,capHi,rMaj,rMin,L,d,neckY,w:U.uNeckW.value,cutLo:U.uCutLo.value,cutHi:U.uCutHi.value,mountOffset:keepOffset};
   rig.visible=boltMounted;
 }
 
@@ -1404,6 +1475,7 @@ function applyScene(dt){
   U.uStrain.value=epsVis;U.uElastic.value=epsElVis;U.uBroken.value=broken?1:0;
   U.uNeckDepth.value=neckDepth(g,tEff);
   bolt.head.position.y=L*(1+epsVis);
+  if(bolt.wHi)bolt.wHi.position.y=L*(1+epsVis)-D.tw;
   // fracture faces
   const rc=(bolt.rMin+(bolt.rMaj-bolt.rMin)*0.15)*(1-U.uNeckDepth.value*Math.exp(-Math.pow((bolt.cutLo-bolt.neckY)/bolt.w,2)));
   const s2=1+epsVis-epsElVis;
@@ -1599,17 +1671,21 @@ const PARTS=[
   {id:'cell',n:'Load cell',rng:[300,2700],pos:()=>[fixDims.rc*1.1,fixDims.yLCb+fixDims.hLC*.55+moving.position.y,fixDims.rc*.5],fr:()=>presetForFocus('cellview'),
     d:'A sensor between the crosshead and the upper fixture that measures how hard the bolt is being pulled. Its size is chosen so the expected break load of the bolt sits comfortably within its range.'},
   {id:'upfix',n:'Upper fixture (head holder)',rng:[110,1500],pos:()=>[fixDims.w/2+4,Y_SEAT+fixDims.L+fixDims.k*.5+moving.position.y,fixDims.wz/2],fr:()=>presetForFocus('up'),
-    d:'A strong steel frame. The bolt head rests on its slotted plate, and the crosshead lifts this plate, which pulls the head straight up.'},
+    d:'A strong steel frame. The bolt head rests, through a hardened washer, on its slotted plate, and the crosshead lifts this plate, which pulls the head straight up.'},
   {id:'lowfix',n:'Lower fixture (nut holder)',rng:[110,1500],pos:()=>[fixDims.w/2+4,Y_SEAT-fixDims.m*.5,fixDims.wz/2],fr:()=>presetForFocus('low'),
-    d:'A strong steel frame fixed to the base. The nut presses against its slotted plate and holds the bolt still while it is pulled. Standards ask for some bare thread below the smooth part of the bolt (at least one bolt diameter in ISO 898-1), so the test measures the bolt itself.'},
+    d:'A strong steel frame fixed to the base. The nut presses, through a hardened washer, against its slotted plate and holds the bolt still while it is pulled. Standards ask for some bare thread below the smooth part of the bolt (at least one bolt diameter in ISO 898-1), so the test measures the bolt itself.'},
   {id:'bolt',n:'Test specimen',rng:[260,1500],bolt:true,pos:()=>[fixDims.d/2+2,Y_SEAT+fixDims.L*.5+moving.position.y*.5,fixDims.d/2],fr:()=>presetForFocus('specimen'),
     d:'The bolt under test. The shank stretches as the pull increases, and the neck forms at the first engaged thread.'},
   {id:'neck',n:'Neck at first thread',rng:[20,260],bolt:true,pos:()=>[fixDims.d/2+1,Y_SEAT+fixDims.L*.38+moving.position.y*.38,fixDims.d/2],
     d:'After its peak strength, the bolt thins here, at the first thread inside the nut where the strain is greatest, and finally breaks.'},
+  {id:'wlo',n:'Hardened washer (nut side)',rng:[20,170],bolt:true,pos:()=>[fixDims.wod*.5+1,Y_SEAT+fixDims.tw*.5,fixDims.wod*.3],
+    d:'A hardened flat washer sits between the nut and the lower plate. It spreads the clamp load over a wider, flat, hard surface so the nut does not dig into the plate and the bearing face stays square while the bolt is pulled.'},
+  {id:'whi',n:'Hardened washer (head side)',rng:[20,170],bolt:true,pos:()=>[fixDims.wod*.5+1,Y_SEAT+fixDims.L+moving.position.y-fixDims.tw*.5,fixDims.wod*.3],
+    d:'A hardened flat washer sits under the bolt head. It spreads the load from the head onto the upper plate so the head does not dig in, and it keeps the bearing surface flat while the bolt is pulled.'},
   {id:'nut',n:'Nut',rng:[20,260],bolt:true,pos:()=>[fixDims.d*.8,Y_SEAT-fixDims.m*.5,fixDims.d*.5],
-    d:'A hardened nut threaded on the bolt. At least two full threads should show beyond it.'},
+    d:'A hardened nut threaded on the bolt and seated on a hardened washer. At least two full threads should show beyond it.'},
   {id:'head',n:'Bolt head',rng:[20,260],bolt:true,pos:()=>[fixDims.d*.8,Y_SEAT+fixDims.L*(1+(moving.position.y/fixDims.L))+fixDims.k*.5,fixDims.d*.5],
-    d:'The head bears on the upper plate. The pull is applied through this contact, the same way it is when the bolt is in service.'},
+    d:'The head bears on a hardened washer, which rests on the upper plate. The pull is applied through this contact, the same way it is when the bolt is in service.'},
 ];
 function presetForFocus(k){
   const D=fixDims||dims();
@@ -1696,7 +1772,7 @@ function buildStageTable(){
   $('stage-table-wrap').querySelectorAll('.stage-3d').forEach(b=>b.addEventListener('click',()=>openStageViewer(b.dataset.stage,b)));
 }
 const STANDARDS_REF=[
-  {code:'ASTM E8/E8M',title:'Standard Test Methods for Tension Testing of Metallic Materials',url:null},
+  {code:'ASTM E8/E8M',title:'Standard Test Methods for Tension Testing of Metallic Materials',url:'https://drive.google.com/file/d/1uw6Csp-f0gKTOp34xZfLPhnJWfu5eIZT/view?usp=sharing'},
   {code:'SAE J429',title:'Mechanical and Material Requirements for Externally Threaded Fasteners',url:'https://drive.google.com/file/d/1txdNYoBTeyXSrg1n8tgj7HpTAAeBKiqL/view?usp=drive_link'},
   {code:'ISO 898-1',title:'Mechanical properties of fasteners made of carbon steel and alloy steel — Part 1: Bolts, screws and studs with specified property classes',url:'https://drive.google.com/file/d/188mnAQ1KFp6BrNjVWu9-Azkgvmt3qIi7/view?usp=drivesdk'},
   {code:'ISO 3506-1',title:'Mechanical properties of corrosion-resistant stainless steel fasteners — Part 1: Bolts, screws and studs',url:'https://drive.google.com/file/d/1qNdBYawo58zZrjdK6b8oKtiz65NVc49f/view?usp=drivesdk'},
@@ -2170,7 +2246,7 @@ const TOUR=[
   {t:'Choose a bolt',b:'Pick a material, grade, diameter and gauge length in the bar above. The fixtures resize to fit the bolt, and a load cell with enough range is fitted. Any settings work for this tour.',
    hl:()=>['c-mat','c-grade','dia-val','gl-val'].map(cg),min:14,max:40,until:()=>!busy(),
    enter(){tourDo(()=>{if(boltMounted)removeBolt();else if(T>0){T=0;running=false;paused=false;hudDirty=true;}});setView('machine');}},
-  {t:'Mount the bolt',b:'Mount bolt slides the bolt sideways into the slots of the head holder and nut holder. The settings lock while a bolt is mounted.',
+  {t:'Mount the bolt',b:'Mount bolt slides the bolt, with its two hardened washers, sideways into the slots of the head holder and nut holder. The settings lock while a bolt is mounted.',
    hl:()=>[$('btn-mount')],min:13,max:50,until:()=>boltMounted&&!busy(),
    enter(){tourDo(()=>{if(!boltMounted)mountBolt();});setView('test');}},
   {t:'Look around the machine',b:'Drag to orbit, scroll to zoom, right-drag to pan. These buttons jump to the whole machine, the load train, the fixtures and the specimen. Click any part label to see what it does.',
@@ -2181,7 +2257,7 @@ const TOUR=[
    hl:()=>[$('btn-start')],min:12,max:50,until:()=>T>=30&&!running,
    enter(){tourRunTo(30);setView('specimen');}},
   {t:'Watch the live data',b:'Force, stress and strain update as the bolt stretches. The shank turns from green to orange at yield, the shank lengthens, and the curve draws here and on the PC monitor.',
-   hl:()=>[document.querySelector('.side .card:nth-child(1)'),document.querySelector('.side .card:nth-child(2)')],min:14,max:50,until:()=>T>=72&&!running,
+   hl:()=>[$('card-live'),$('card-curve')],min:14,max:50,until:()=>T>=72&&!running,
    enter(){tourRunTo(72);setView('specimen');}},
   {t:'Necking and fracture',b:'Past ultimate strength the bolt necks at the first thread and the force falls. Then it breaks: the load drops to zero and the two halves separate.',
    hl:()=>[$('v-pill')],min:14,max:50,until:()=>T>=FRACTURE_T,
@@ -2196,7 +2272,9 @@ function tourClear(){document.querySelectorAll('.tour-hl').forEach(e=>e.classLis
 function goStep(i){
   tour.i=clamp(i,0,TOUR.length-1);tour.time=0;tour.fired=0;tour.q=[];
   const s=TOUR[tour.i];
-  tourClear();s.hl().forEach(e=>e&&e.classList.add('tour-hl'));
+  tourClear();const hls=s.hl();
+  const spEl=hls.find(e=>e&&e.closest&&e.closest('[data-sp]'));if(spEl&&typeof showSideTab==='function')showSideTab(spEl.closest('[data-sp]').dataset.sp);
+  hls.forEach(e=>e&&e.classList.add('tour-hl'));
   $('tour-step').textContent=`Step ${tour.i+1} of ${TOUR.length}`;
   $('tour-t').textContent=s.t;$('tour-b').textContent=s.b;
   $('tour-dots').innerHTML=TOUR.map((_,k)=>`<i class="${k<tour.i?'done':k===tour.i?'on':''}"></i>`).join('');
@@ -2705,9 +2783,51 @@ function initGL(){
   return true;
 }
 
+/* ---- full screen + side-panel tabs ---- */
+let fsOn=false,sideTab='live';
+function showSideTab(k){
+  sideTab=k;
+  document.querySelectorAll('#side [data-sp]').forEach(e=>e.classList.toggle('sp-on',e.dataset.sp===k));
+  document.querySelectorAll('#sidetabs button').forEach(b=>{const on=b.dataset.spt===k;b.classList.toggle('on',on);b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1;});
+  hudDirty=true;
+}
+function setFS(on){
+  fsOn=on;
+  $('app').classList.toggle('fs',on);
+  document.documentElement.classList.toggle('fs-lock',on);
+  $('fs-lbl').textContent=on?'Exit full screen':'Full screen';
+  const b=$('fs-btn');b.setAttribute('aria-label',on?'Exit full screen':'Enter full screen');b.title=on?'Exit full screen':'Full screen';
+  requestAnimationFrame(()=>{resize();drawHUDChart();requestAnimationFrame(resize);});
+}
+function enterFS(){
+  setFS(true);
+  const el=document.documentElement,rq=el.requestFullscreen||el.webkitRequestFullscreen;
+  if(rq){try{const r=rq.call(el);if(r&&r.catch)r.catch(()=>{});}catch(e){}}   // if the browser refuses, the tool still fills the window
+}
+function exitFS(){
+  const real=document.fullscreenElement||document.webkitFullscreenElement,ex=document.exitFullscreen||document.webkitExitFullscreen;
+  if(real&&ex){try{const r=ex.call(document);if(r&&r.catch)r.catch(()=>{});}catch(e){}}
+  setFS(false);
+}
+function initFS(){
+  $('fs-btn').addEventListener('click',()=>fsOn?exitFS():enterFS());
+  const onChange=()=>{if(fsOn&&!(document.fullscreenElement||document.webkitFullscreenElement))setFS(false);};
+  document.addEventListener('fullscreenchange',onChange);
+  document.addEventListener('webkitfullscreenchange',onChange);
+  document.addEventListener('keydown',e=>{
+    if(e.key!=='Escape'||!fsOn)return;
+    if(document.fullscreenElement||document.webkitFullscreenElement)return;      // the browser handles Esc itself
+    if(!$('sv-modal').hidden||$('beta-ov').classList.contains('on'))return;
+    exitFS();
+  });
+  document.querySelectorAll('#sidetabs button').forEach(b=>b.addEventListener('click',()=>showSideTab(b.dataset.spt)));
+  showSideTab('live');
+}
+
 /* ---- boot ---- */
 wireUI();
 initPages();
+initFS();
 initGL();
 updateNotice();refreshAll();
 if(GLOK){drawDisplays();requestAnimationFrame(frame);}
